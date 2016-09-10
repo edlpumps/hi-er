@@ -1,0 +1,20 @@
+{
+  "name": "hi-energy-ratings",
+  "version": "0.0.1",
+  "description": "Web application for Hydraulic Institute's Energy Ratings program",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://sfrees@bitbucket.org/intelliquipllc/hi-enery-ratings.git"
+  },
+  "private":true,
+  "author": "Intelliquip LLC",
+  "license": "UNLICENSED",
+  "homepage": "https://bitbucket.org/intelliquipllc/hi-enery-ratings#readme",
+  "engines": {
+    "node": "6.5.0"
+  } 
+}
