@@ -2,6 +2,7 @@ var Schema = require('mongoose').Schema;
 
 exports.init = function init(mongoose) {
   var users = mongoose.model('users', {
+    _id : Schema.Types.ObjectId,
     name: {
         first: String, 
         last:  String
@@ -18,6 +19,7 @@ exports.init = function init(mongoose) {
 
 
   var participants = mongoose.model('participants',  {
+      _id : Schema.Types.ObjectId,
       name : String,
       active: Boolean,
       pumpLimit : Number,

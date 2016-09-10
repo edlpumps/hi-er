@@ -19,6 +19,9 @@ const port = process.env.PORT || 3000;
 const session_connection_str = process.env.MONGO_CONNECTION_SESSIONS;
 const data_connection_str = process.env.MONGO_CONNECTION_DATA;
 
+const passport = require('passport');
+const Strategy = require('passport-local').Strategy;
+
 ////////////////////////////////////////////////////
 // Basic express configuration
 ////////////////////////////////////////////////////
@@ -64,7 +67,6 @@ var conn = mongoose.connect(data_connection_str, {auto_reconnect:true}, function
       Users: schemas.Users,
       Participants: schemas.Participants
     };
-
     // Startup the http server once the database is connected.
     startup();
   }
@@ -72,11 +74,57 @@ var conn = mongoose.connect(data_connection_str, {auto_reconnect:true}, function
 
 
 ////////////////////////////////////////////////////
+// Authentication
+////////////////////////////////////////////////////
+passport.use(new Strategy (  
+    function (username, password, done) {
+        app.locals.db.Users.findOne({username:username}, function(err, user) {
+            if ( err ) {
+                mainlog.info("Authentication of " + username + " failed (error)");
+                mainlog.error(err);
+                return done(err);
+            }
+            if (user) {
+                if (password != "password") {
+                    mainlog.info("Authentication of " + username + " failed (password)");
+                    return done(null, false);
+                }
+                mainlog.info("Authenticated " + username + " successfully");
+                return done(null, user);
+            }
+            else {
+                mainlog.info("Authentication of " + username + " failed (user unknown)");
+                return done(null, false);
+            }
+        })
+    }
+));
+
+passport.serializeUser(function(user, cb) {
+    cb(null, user._id);
+});
+
+passport.deserializeUser(function(id, cb) {
+    app.locals.db.Users.findById(id, function(err, user) {
+        if ( err ) return cb(err);
+        return cb(null, user);
+    });
+});
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+////////////////////////////////////////////////////
 // Route configuration
 ////////////////////////////////////////////////////
 var registration = require("./routes/registration");
 app.use("/", registration);
-
+registration.post('/login', 
+  passport.authenticate('local', { failureRedirect: '/login' }),
+  function(req, res) {
+    req.log.info("User authenticated, redirecting to landing page");
+    res.redirect('/');
+});
 
 ////////////////////////////////////////////////////
 // Startup

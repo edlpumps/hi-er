@@ -5,3 +5,12 @@ extends layout
 block content
     .container(ng-controller="ERController as app")
         h1 Hydraulic Institute Energy Rating Program
+
+        form(method="post" action="/login")
+            .form-group
+                label(for="username") Username:
+                input.form-control(type="username", name="username")
+            .form-group
+                label(for="password") Password:
+                input.form-control(type="password", name="password")
+            button.btn.btn-primary(type="submit") Login
