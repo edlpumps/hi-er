@@ -1,0 +1,12 @@
+extends layout
+
+block nav
+    a(href="/logout") Logout
+block content
+    .container
+        h1 Participant Portal Home
+        p Logged in as #{user.name.first} #{user.name.last} / #{user.email}
+
+        p Organization:  #{participant.name}
+        p Pump Limit: #{participant.pumpLimit}
+        p Active:  #{participant.active}

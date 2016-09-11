@@ -5,12 +5,62 @@ extends layout
 block content
     .container(ng-controller="ERController as app")
         h1 Hydraulic Institute Energy Rating Program
+        .login
+            form(method="post" action="/login")
+                .form-group
+                    label(for="email") Email:
+                    input.form-control(type="text", name="email")
+                .form-group
+                    label(for="password") Password:
+                    input.form-control(type="password", name="password")
+                button.btn.btn-primary(type="submit") Login
+                p #{messages.loginMessage}
 
-        form(method="post" action="/login")
-            .form-group
-                label(for="username") Username:
-                input.form-control(type="username", name="username")
-            .form-group
-                label(for="password") Password:
-                input.form-control(type="password", name="password")
-            button.btn.btn-primary(type="submit") Login
+
+        .register
+            
+            form(method="post", action="register")
+                h2 Organization information
+                .form-group
+                    label(for="user.participant.name") Organization Name:
+                    input.form-control(type="text", name="participant[name]" value=participant? participant.name : null)
+                    .help-block Please enter your organization's full legal name.  All Energy Rating labels and listings will contain this value.
+                h2 Primary Contact / Account
+                .row
+                    .col.col-sm-6
+                        .form-group
+                            label(for="user.name.first") First Name:
+                            input.form-control(type="text", name="user[name][first]" value=user && user.name ? user.name.first : null)
+                    .col.col-sm-6
+                        .form-group
+                            label(for="user.name.last") Last Name:
+                            input.form-control(type="text", name="user[name][last]" value=user && user.name ? user.name.last : null)
+                .row
+                    .col.col-md-6
+                        .form-group
+                            label(for="user.email") Email:
+                            input.form-control(type="email", name="user[email]" value=user ? user.email : null)
+                            .help-block This will be used as your username as well.
+                .row
+                    .col.col-md-6
+                        .form-group
+                            label(for="user.password") Password:
+                            input.form-control(type="password", name="user[password]")
+                    .col.col-md-6
+                        .form-group
+                            label(for="pswdconfirm") Confirm Password:
+                            input.form-control(type="password", name="pswdconfirm")
+                .row
+                    .col.col-sm-12
+                        .text-info 
+                            | Please note that you should only register if your organization does not already have
+                            | an account with us.  If your organization has already registered, please contact 
+                            | the primary account holder.  Your
+                            | organization's primary account holder can create a personal login for you.
+                .row
+                    .col.col-sm-12
+                        button.btn.btn-primary(type="submit") Register
+                .row
+                    .col.col-sm-12
+                        if messages.registrationMessage
+                          .alert.alert-danger #{messages.registrationMessage}

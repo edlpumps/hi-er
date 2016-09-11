@@ -1,0 +1,89 @@
+extends ../layout
+
+
+
+block content
+    .container
+        if stop
+           .row
+            .col.col-sm-12
+                .panel.panel-danger
+                    .panel-heading
+                        h3 Your organization is already registered.
+                    .panel-body
+                        p.text-danger 
+                         | Your organization is already registered.   
+                        
+                        p 
+                         | Please note you should NOT create a new account through this site.  Please ask your 
+                         | organization's primary account holder to create a login for you under the existing account.
+                        
+                        p
+                          a(href="/") Go back to Hydraulic Institute's Energy Rating Program Homepage
+                        
+        else 
+          if warn
+           .row
+            .col.col-sm-12
+                .panel.panel-warning
+                    .panel-heading
+                        h3 Has your organization already registered?
+                    .panel-body
+                        p.text-warning 
+                         | We've noticed that there are participant organization(s) already registered with HI
+                         | with very similar names as what you've entered.  
+                        
+                        p 
+                         | Please note that if your organization is 
+                         | already registered, you should NOT create a new account through this site.  Please ask your 
+                         | organization's primary account holder to create a login for you under the existing account.
+                        
+                        h4 Similarly named organizations:
+                        ul
+                          each p in similar
+                            li #{p}  
+                        p.text-primary If the organizations listed above are not your organization, you may proceed.
+          .row
+            .col.col-sm-12
+              h1 Confirmation registration information
+          .row
+            .col.col-sm-12
+              p You are about to create an account for your Organization:
+              .well
+                .row
+                 .col.col-sm-3
+                   label Organization Name:
+                 .col.col-sm-9
+                   p #{participant.name}
+     
+          .row
+            .col.col-sm-12
+              p You will be set as the primary account holder:
+              .well
+                .row
+                 .col.col-sm-3
+                   label Name:
+                 .col.col-sm-9
+                   p #{user.name.first} #{user.name.last}
+                .row
+                 .col.col-sm-3
+                   label Email:
+                 .col.col-sm-9
+                   a(href="mailto:#{user.email}") #{user.email}
+          .row
+            .col.col-sm-12
+                p     
+                    | You will be able to add additional logins under this organization later, so be sure to let
+                    | others in your organization know that there is already an account for <org>.
+                p
+                    | Please click "Register now" to confirm.  Your account will be created, and you will
+                    | then be able to enter payment information in order to list pumps within the system.
+          .row
+            .col.col-sm-12
+                form(action="registration_confirm", method="post")
+                    input.form-control(type="hidden", name="participant[name]" value=participant? participant.name : null)
+                    input.form-control(type="hidden", name="user[name][first]" value=user && user.name ? user.name.first : null)
+                    input.form-control(type="hidden", name="user[name][last]" value=user && user.name ? user.name.last : null)
+                    input.form-control(type="hidden", name="user[email]" value=user ? user.email : null)
+                    input.form-control(type="hidden", name="user[password]" value=user ? user.password : null)
+                    button.btn.btn-primary(type="submit") Confirm Registration

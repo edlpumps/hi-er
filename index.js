@@ -9,6 +9,7 @@ const session = require('express-session');
 const favicon = require('serve-favicon');
 const cookieParser = require('cookie-parser');
 const busboy = require('express-busboy');
+const flash = require('express-flash')
 const helmet = require('helmet');
 const bunyan = require('bunyan');
 
@@ -42,6 +43,7 @@ app.use(session({
 busboy.extend(app);
 
 app.use(helmet());
+app.use(flash());
 
 ////////////////////////////////////////////////////
 // Logging configuration, main log added to each
@@ -76,25 +78,29 @@ var conn = mongoose.connect(data_connection_str, {auto_reconnect:true}, function
 ////////////////////////////////////////////////////
 // Authentication
 ////////////////////////////////////////////////////
-passport.use(new Strategy (  
-    function (username, password, done) {
-        app.locals.db.Users.findOne({username:username}, function(err, user) {
+passport.use(new Strategy (
+    {
+        usernameField: 'email',
+        passReqToCallback : true 
+    },  
+    function (req, email, password, done) {
+        app.locals.db.Users.findOne({email:email}, function(err, user) {
             if ( err ) {
-                mainlog.info("Authentication of " + username + " failed (error)");
+                mainlog.info("Authentication of " + email + " failed (error)");
                 mainlog.error(err);
                 return done(err);
             }
             if (user) {
                 if (password != "password") {
-                    mainlog.info("Authentication of " + username + " failed (password)");
-                    return done(null, false);
+                    mainlog.info("Authentication of " + email + " failed (password)");
+                    return done(null, false, req.flash('loginMessage', "Authentication failed"));
                 }
-                mainlog.info("Authenticated " + username + " successfully");
+                mainlog.info("Authenticated " + email + " successfully");
                 return done(null, user);
             }
             else {
-                mainlog.info("Authentication of " + username + " failed (user unknown)");
-                return done(null, false);
+                mainlog.info("Authentication of " + email + " failed (user unknown)");
+                return done(null, false, req.flash('loginMessage', "Authentication failed"));
             }
         })
     }
@@ -113,18 +119,29 @@ passport.deserializeUser(function(id, cb) {
 
 app.use(passport.initialize());
 app.use(passport.session());
+app.locals.passport = passport;
+
 
 ////////////////////////////////////////////////////
 // Route configuration
 ////////////////////////////////////////////////////
-var registration = require("./routes/registration");
+const registration = require("./routes/registration");
+const participant = require("./routes/participant");
 app.use("/", registration);
+app.use("/participant", participant);
+
 registration.post('/login', 
-  passport.authenticate('local', { failureRedirect: '/login' }),
+  passport.authenticate('local', { failureRedirect: '/' }),
   function(req, res) {
-    req.log.info("User authenticated, redirecting to landing page");
+    req.log.debug("User authenticated, redirecting to landing page");
     res.redirect('/');
 });
+registration.get('/logout', function (req, res){
+  req.logOut() ;
+  res.redirect('/')
+});
+
+
 
 ////////////////////////////////////////////////////
 // Startup
