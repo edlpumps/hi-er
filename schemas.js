@@ -8,7 +8,9 @@ exports.init = function init(mongoose) {
     },
     email:String,
     password: String,
-    confirmed:Boolean,
+    salt: String,
+    activationKey:String,
+    needsActivation:{type:Boolean, default:false},
     admin : Boolean, 
     participant : Schema.Types.ObjectId,
   }, "users");

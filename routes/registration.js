@@ -117,9 +117,14 @@ router.post("/registration_confirm", function(req, res) {
         newParticipant.active = true;
         newParticipant.pumpLimit = 0;
         newParticipant.save(function(err, saved) {
-            req.log.debug(saved, "Saved participant = " +saved._id);
+            req.log.debug("Saved participant = " +saved._id);
             var newUser = new db.Users(user);
+            var pswd = require("../utils/password");
+            var secured = pswd.saltHashPassword(user.password);
+            newUser.password = secured.hash;
+            newUser.salt = secured.salt;
             newUser.participant = saved._id;
+
             newUser.save(function(err, savedUser) {
                 // Log the user in
                 req.body.email = user.email;

@@ -91,7 +91,9 @@ passport.use(new Strategy (
                 return done(err);
             }
             if (user) {
-                if (password != "password") {
+                var pswd = require("./utils/password");
+
+                if (!pswd.checkPassword(password, user.password, user.salt)) {
                     mainlog.info("Authentication of " + email + " failed (password)");
                     return done(null, false, req.flash('loginMessage', "Authentication failed"));
                 }
@@ -125,6 +127,12 @@ app.locals.passport = passport;
 ////////////////////////////////////////////////////
 // Route configuration
 ////////////////////////////////////////////////////
+app.use(function(req, res, next){
+    req.Participants = req.app.locals.db.Participants;
+    req.Users = req.app.locals.db.Users;
+    next();
+})
+
 const registration = require("./routes/registration");
 const participant = require("./routes/participant");
 app.use("/", registration);
@@ -140,6 +148,11 @@ registration.get('/logout', function (req, res){
   req.logOut() ;
   res.redirect('/')
 });
+
+app.use("/error", function(req, res) {
+    res.render("error", {});
+})
+
 
 
 

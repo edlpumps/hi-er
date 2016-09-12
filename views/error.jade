@@ -1,0 +1,15 @@
+extends layout
+
+
+
+block content
+    .container
+        .panel.panel-danger
+            .panel-heading
+                h1 An error has occured
+            .panel-body
+                
+                if messages.errorMessage
+                    .text-danger #{messages.errorMessage}
+                else 
+                    .text-danger There was no additional detail associated with this error.

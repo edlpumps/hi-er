@@ -3,10 +3,70 @@ extends layout
 block nav
     a(href="/logout") Logout
 block content
-    .container
+    .container(ng-controller="ERParticipantController as app",ng-init="app.user= #{JSON.stringify(user)}")
         h1 Participant Portal Home
         p Logged in as #{user.name.first} #{user.name.last} / #{user.email}
 
         p Organization:  #{participant.name}
         p Pump Limit: #{participant.pumpLimit}
         p Active:  #{participant.active}
+
+        .panel.panel-primary
+          .panel-heading
+            h3 Users
+          .panel-body
+            .row
+              .col.col-sm-12
+                button(type="button", ng-click="app.showAddUser()").btn.btn-primary New user
+            .row
+              .col.col-sm-12
+
+                table.table.table-striped
+                    thead
+                        tr
+                            th Name 
+                            th Email
+                            th Activation
+                            th 
+                    tbody
+                        tr(ng-repeat="user in app.users")
+                            td {{user.name.first}} {{user.name.last}}
+                            td 
+                                a(href="mailto:{{user.email}}") {{user.email}}
+                            td
+                                span(ng-show="user.needsActivation") 
+                                 button(type="button").btn.btn-primary Needs Activation
+                                span(ng-show="user.needsActivation==false") Active
+                            td 
+                                button(type="button", ng-click="app.removeUser(user)", ng-hide="user._id == app.user._id").btn.btn-danger Delete
+        
+        
+        .modal.fade#add(tabindex='-1', role='dialog' aria-labelledby='titleLabel', aria-hidden='true')
+              .modal-dialog
+                  .modal-content
+                      .modal-header
+                          button(type='button', class='close' data-dismiss='modal' aria-hidden='hidden') &times;
+                          h4.modal-title#titleLabel Add New User
+                      .modal-body
+                          form(role='form' name='new_user')
+                              .row
+                                  .col-sm-12
+                                      .form-group
+                                          label First Name:
+                                          input.form-control.input-sm(ng-model='app.new_user.name.first', required)
+                              .row
+                                  .col-sm-12
+                                      .form-group
+                                          label Last Name:
+                                          input.form-control.input-sm(ng-model='app.new_user.name.last', required)
+                              .row
+                                  .col-sm-12
+                                      .form-group
+                                          label Email:
+                                          input.form-control.input-sm(type="email", ng-model='app.new_user.email', required)
+                             
+                      .modal-footer
+                          div
+                              .pull-left.text-danger(ng-show='app.new_user_error') {{app.new_user_error}}
+                              button.btn.btn-primary(type='button' ng-click='app.addUser()') Add User
+                              button.btn.btn-default(type='button' data-dismiss='modal') Cancel
