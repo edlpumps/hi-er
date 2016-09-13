@@ -5,13 +5,8 @@ mixin warning(field, message)
   p(ng-show="settingsForm."+field+".$invalid && !settingsForm."+field+".$pristine").text-danger #{message}
 
 block nav
-    h1 Participant Portal 
-    p Logged in as #{user.name.first} #{user.name.last} / #{user.email}
+    +navigation("home")
     
-    a(href="/participant") Home
-    a(href="/participant/users") User Management
-    a(href="/participant/pumps") Pump Listings
-    a(href="/logout") Logout
 block content
     .container(ng-controller="ERParticipantController as app",ng-init="app.user= #{JSON.stringify(user)}; app.participant= #{JSON.stringify(participant)}")
 

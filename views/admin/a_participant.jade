@@ -1,10 +1,9 @@
 extends layout
 
 block nav
-    h1 Administration Portal Home
-    p Logged in as #{user.name.first} #{user.name.last} / #{user.email}
-    p: a(href="/") Home
-    p: a(href="/logout") Logout
+    +navigation("participant")
+
+    
 
 block content
     .container

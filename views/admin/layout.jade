@@ -12,6 +12,28 @@ html(ng-app='ERAdminApp')
     block script
     
   body
+
+     mixin navigation(active)
+       .navbar.navbar-default
+        .container-fluid
+           .navbar-header
+              button.navbar-toggle.collapsed(type="button", data-toggle="collapse", data-target="#navcollabse",aria-expanded="false")
+                .sr-only Toggle navigation
+                .icon-bar 
+                .icon-bar 
+                .icon-bar 
+              a.navbar-brand(href="/") Hydraulic Institute Energy Ratings Program
+               
+              
+           .collapse.navbar-collapse
+               ul.nav.navbar-nav
+                  li(class=(active == 'home' ? 'active' : ''))
+                    a(href="/") Home
+                ul.nav.navbar-nav.navbar-right
+                  li
+                    .navbar-text #{user.name.first} #{user.name.last}
+                  li
+                    a(href="/logout") Sign out
      //- heading stuff
      block nav
      block content

@@ -2,9 +2,7 @@ extends layout
 include ../common/user_list
 
 block nav
-   h1 Administration Portal Home
-   p Logged in as #{user.name.first} #{user.name.last} / #{user.email}
-   a(href="/logout") Logout
+   +navigation("home")
 block content
     
     .container(ng-controller="ERAdminController as app",ng-init="app.user= #{JSON.stringify(user)}")
