@@ -1,43 +1,42 @@
-var app = angular.module('ERParticipantApp', []);
-
+var app = angular.module('ERAdminApp', []);
 
 var service = app.factory('service', function($http) {
    return {
-     getUsers : function () {
-       return $http.get('/participant/api/users', {})
+    getUsers : function () {
+       return $http.get('/admin/api/users', {})
            .then(function(docs) {
                 return docs.data;
            });
      },
+    getParticipants : function () {
+        return $http.get('/admin/api/participants', {})
+            .then(function(docs) {
+                return docs.data;
+           });
+     },
      saveNewUser : function (user) {
-        return $http.post('/participant/api/users/add', {user:user})
+        return $http.post('/admin/api/users/add', {user:user})
             .success(function(docs) { return docs.data; })
             .error(function(data, status) {
                 return data;
             });
      },
      deleteUser : function (user) {
-        return $http.post('/participant/api/users/delete/'+user._id, {})
+        return $http.post('/admin/api/users/delete/'+user._id, {})
             .success(function(docs) { return docs.data; })
             .error(function(data, status) {
                 return data;
             });
-     }, 
-     saveSettings : function (participant) {
-       return $http.post('/participant/api/settings', {participant:participant})
-           .then(function(docs) {
-                return docs.data;
-           });
      }
    };
 });
 
-const ERParticipantController = function($scope, $location, service) {
+
+const ERAdminController = function($scope, $location, service) {
   var vm = this;
   
   vm.base_url = make_base_url($location);
-  vm.settings_readonly = true;
-
+  
   vm.refreshUsers = function(callback) {
       service.getUsers().then(function(results) {
         vm.users = results.users;
@@ -51,8 +50,22 @@ const ERParticipantController = function($scope, $location, service) {
       });
   }
 
+  vm.refreshParticipants = function(callback) {
+      service.getParticipants().then(function(results) {
+        vm.participants = results.participants;
+        vm.participants_error = false;
+        if ( callback ) {
+          callback();
+        }
+      }).catch(function(error) {
+        vm.participants_error = true;
+        console.error(error);
+      });
+  }
+
   vm.addUser = function() {
-      service.saveNewUser(vm.new_user).then(function(saved) {
+      
+  service.saveNewUser(vm.new_user).then(function(saved) {
         vm.new_user_error = false;
         vm.refreshUsers(function() {
             var u = vm.users.filter(u_ => u_.email == vm.new_user.email);
@@ -81,6 +94,7 @@ const ERParticipantController = function($scope, $location, service) {
       vm.new_user = {
           email : ""
       };
+      
       $('#add').modal('show')
   }
 
@@ -97,33 +111,11 @@ const ERParticipantController = function($scope, $location, service) {
      })
   }
 
-  vm.reload = function() {
-    $route.reload();
-  }
-
-
-
-
-  vm.saveParticipant = function(isValid) {
-    if (isValid) {
-      service.saveSettings(vm.participant).then(function(saved) {
-        window.location = "/participant";
-      })
-    }
-    
-
-  };
-
-
-
-
-
 
   vm.refreshUsers();
-
+  vm.refreshParticipants();
 
 }
 
 
-
-app.controller('ERParticipantController', ERParticipantController);
+app.controller('ERAdminController', ERAdminController);

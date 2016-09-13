@@ -1,0 +1,16 @@
+extends layout
+
+block nav
+    h1 Administration Portal Home
+    p Logged in as #{user.name.first} #{user.name.last} / #{user.email}
+    p: a(href="/") Home
+    p: a(href="/logout") Logout
+
+block content
+    .container
+        .page-header 
+            h1 Pump listings
+
+        .row
+            .col.col-xs-12
+                .alert.alert-warning Pump listings not available yet.

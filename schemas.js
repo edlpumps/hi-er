@@ -19,6 +19,22 @@ exports.init = function init(mongoose) {
 
   var participants = mongoose.model('participants',  {
       name : String,
+      address : {
+        street : String,
+        street2 : String,
+        city : String,
+        state : String,
+        zip: String, 
+        country:String
+      },
+      contact : {
+        name : {
+          first : String,
+          last: String
+        },
+        phone : String,
+        email:String
+      },
       active: Boolean,
       pumpLimit : Number
   }, "participants");

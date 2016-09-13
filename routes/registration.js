@@ -6,17 +6,20 @@ router.get('/', function(req, res) {
     // Check if a user is logged in, if so, redirect to the correct landing page - 
     // either participant portal or admin portal.
     // If not logged in, the landing page is the signin/signup page.
-    req.log.debug("Serving landing page");
     if ( req.user && req.user.participant ) {
-        req.log.debug("Participant is already logged in, redirecting to portal home");
+        req.log.debug("Participant logged in, redirecting to portal home");
         res.redirect("/participant");
     }
     else if ( req.user && req.user.admin) {
-        req.log.debug("Admin is already logged in, redirecting to admin portal home");
+        req.log.debug("Admin logged in, redirecting to admin portal home");
         res.redirect("/admin");
     }
     else {
-        res.render("landing", {});
+        req.log.debug("No user is logged in, rendering landing page");
+        var email = req.cookies.email;
+        res.render("landing", {
+            email: email
+        });
     }
 });
 

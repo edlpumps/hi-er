@@ -9,7 +9,7 @@ block content
             form(method="post" action="/login")
                 .form-group
                     label(for="email") Email:
-                    input.form-control(type="email", name="email")
+                    input.form-control(type="email", name="email", value =email)
                 .form-group
                     label(for="password") Password:
                     input.form-control(type="password", name="password")
@@ -20,12 +20,20 @@ block content
         .register
             
             form(method="post", action="register")
-                h2 Organization information
-                .form-group
-                    label(for="user.participant.name") Organization Name:
-                    input.form-control(type="text", name="participant[name]" value=participant? participant.name : null)
-                    .help-block Please enter your organization's full legal name.  All Energy Rating labels and listings will contain this value.
-                h2 Primary Contact / Account
+                .row
+                  .col.col-md-12
+                    h2 Organization information
+                .row
+                  .col.col-md-12
+                    .form-group
+                        label(for="user.participant.name") Organization Name:
+                        input.form-control(type="text", name="participant[name]" value=participant? participant.name : null)
+                        .help-block Please enter your organization's full legal name.  All Energy Rating labels and listings will contain this value.
+                        .help-block After you register, you will be able to enter additional information such as your organization's mailing address and contact information.
+                
+                .row
+                  .col.col-md-12
+                     h2 Primary Contact / Account
                 .row
                     .col.col-md-6
                         .form-group
@@ -51,16 +59,16 @@ block content
                             label(for="pswdconfirm") Confirm Password:
                             input.form-control(type="password", name="pswdconfirm")
                 .row
-                    .col.col-sm-12
-                        .text-info 
+                    .col.col-md-12
+                        .help-block 
                             | Please note that you should only register if your organization does not already have
                             | an account with us.  If your organization has already registered, please contact 
                             | the primary account holder.  Your
                             | organization's primary account holder can create a personal login for you.
                 .row
-                    .col.col-sm-12
+                    .col.col-md-12
                         button.btn.btn-primary(type="submit") Register
                 .row
-                    .col.col-sm-12
+                    .col.col-md-12
                         if messages.registrationMessage
                           .alert.alert-danger #{messages.registrationMessage}

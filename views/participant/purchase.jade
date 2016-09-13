@@ -1,0 +1,21 @@
+extends layout
+include ../common/user_list
+
+block nav
+    h1 Participant Portal 
+    p Logged in as #{user.name.first} #{user.name.last} / #{user.email}
+    
+    a(href="/participant") Home
+    a(href="/participant/users") User Management
+    a(href="/participant/pumps") Pump Listings
+    a(href="/logout") Logout
+block content
+    .container
+        .page-header 
+            h1 Purchase / Subscribe
+
+        .row
+            .col.col-xs-12
+                .alert.alert-warning Payments handled offline during MVP / beta
+      
+        

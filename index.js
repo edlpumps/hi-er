@@ -135,12 +135,15 @@ app.use(function(req, res, next){
 
 const registration = require("./routes/registration");
 const participant = require("./routes/participant");
+const admin = require("./routes/admin");
 app.use("/", registration);
 app.use("/participant", participant);
+app.use("/admin", admin);
 
 registration.post('/login', 
   passport.authenticate('local', { failureRedirect: '/' }),
   function(req, res) {
+    res.cookie('email', req.body.email);
     req.log.debug("User authenticated, redirecting to landing page");
     res.redirect('/');
 });

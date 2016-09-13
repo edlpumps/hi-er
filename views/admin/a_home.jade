@@ -1,0 +1,38 @@
+extends layout
+include ../common/user_list
+
+block nav
+   h1 Administration Portal Home
+   p Logged in as #{user.name.first} #{user.name.last} / #{user.email}
+   a(href="/logout") Logout
+block content
+    
+    .container(ng-controller="ERAdminController as app",ng-init="app.user= #{JSON.stringify(user)}")
+        
+
+        .panel.panel-primary
+            .panel-heading
+                h3 Participating Organizations
+            .panel-body
+                .row
+                  .col.col-sm-12
+                    table.table.table-striped
+                        thead
+                            tr
+                                th Name 
+                                th Status
+                                th Subscription Level
+                                th Pumps Listings
+                        tbody
+                            tr(ng-repeat="participant in app.participants")
+                                td: a(href="/admin/participant/{{participant._id}}") {{participant.name}}
+                                td {{participant.active ? "Active" : "Disabled"}} 
+                                td 
+                                  span(ng-show="participant.pumpLimit === 0") Cannot list - payment needed
+                                  span(ng-show="participant.pumpLimit") Up to {{participant.pumpLimit + " Listings"}}
+                                  span(ng-show="participant.pumpLimit == Infinity") Unlimited listings
+                                td 
+                                  a(href="admin/participant/{{participant._id}}/pumps") View {{participant.pumps ? participant.pumps.length : 0}} listings
+                                
+        //- found in ../common/user_list
+        +userlist()                        

@@ -1,103 +1,130 @@
 extends layout
+include ../common/user_list
+
+mixin warning(field, message)
+  p(ng-show="settingsForm."+field+".$invalid && !settingsForm."+field+".$pristine").text-danger #{message}
 
 block nav
+    h1 Participant Portal 
+    p Logged in as #{user.name.first} #{user.name.last} / #{user.email}
+    
+    a(href="/participant") Home
+    a(href="/participant/users") User Management
+    a(href="/participant/pumps") Pump Listings
     a(href="/logout") Logout
 block content
-    .container(ng-controller="ERParticipantController as app",ng-init="app.user= #{JSON.stringify(user)}")
-        h1 Participant Portal Home
-        p Logged in as #{user.name.first} #{user.name.last} / #{user.email}
+    .container(ng-controller="ERParticipantController as app",ng-init="app.user= #{JSON.stringify(user)}; app.participant= #{JSON.stringify(participant)}")
 
-        p Organization:  #{participant.name}
-        p Pump Limit: #{participant.pumpLimit}
-        p Active:  #{participant.active}
+        form(name="settingsForm",ng-submit="app.saveParticipant(settingsForm.$valid)", novalidate)
+             .panel.panel-default
+               .panel-heading
+                    .pull-right
+                        a(href="#", ng-hide="vm.edit_settings", ng-click="vm.edit_settings = true") Edit organizational settings
+                        button.btn.btn-primary(type="submit", ng-show="vm.edit_settings", ng-disabled="settingsForm.$invalid") Save changes
+                        a.btn.btn-default.btn-space(type="button", href="javascript:window.location.reload(true)", ng-show="vm.edit_settings", ) Cancel
+                    h4 Organization Profile
 
-        .panel.panel-primary
-          .panel-heading
-            h3 Users
-          .panel-body
-            .row
-              .col.col-sm-12
-                button(type="button", ng-click="app.showAddUser()").btn.btn-primary New user
-            .row
-              .col.col-sm-12
+               .panel-body(ng-hide="vm.edit_settings")     
+                   h1 {{app.participant.name}}
+                   fieldset
+                     legend Mailing Address
+                   address
+                     strong {{app.participant.name}}
+                     br 
+                     | {{app.participant.address.street}}
+                     br 
+                     | {{app.participant.address.street2}}
+                     br 
+                     | {{app.participant.address.city}}, {{app.participant.address.state}} {{app.participant.address.zip}}
+                     br 
+                     | {{app.participant.address.country}}
+                   fieldset
+                     legend Contact information
+                   address
+                     strong {{app.participant.contact.name.first}} {{app.participant.contact.name.last}}
+                     br
+                     a(href="mailto:{{app.participant.contact.email}}") {{app.participant.contact.email}}
+                     br
+                     a(href="tel:{{app.participant.contact.phone}}") {{app.participant.contact.phone}}
+          
 
-                table.table.table-striped
-                    thead
-                        tr
-                            th Name 
-                            th Email
-                            th Activation
-                            th 
-                    tbody
-                        tr(ng-repeat="user in app.users")
-                            td {{user.name.first}} {{user.name.last}}
-                            td 
-                                a(href="mailto:{{user.email}}") {{user.email}}
-                            td
-                                span(ng-show="user.needsActivation") 
-                                 button(type="button", ng-click="app.activateInfo(user)").btn.btn-primary Needs Activation
-                                span(ng-show="user.needsActivation==false") Active
-                            td 
-                                button(type="button", ng-click="app.removeUser(user)", ng-hide="user._id == app.user._id").btn.btn-danger Delete
+               .panel-body(ng-show="vm.edit_settings")
+                 fieldset
+                   legend Organization Name
+                 .row 
+                   .col.col-md-12
+                     .form-group
+                        input.form-control(type="text", name="name", ng-model="app.participant.name", required)
+                        +warning("name", "Organization name is required")
+                        .help-block Please use your organization's full legal name.  All Energy Rating labels and listings will contain this value.
+                 fieldset
+                   legend Contact Person
+                 .row
+                    .col.col-md-6
+                        .form-group
+                            label First Name
+                            input.form-control(type="text", name="firstName", ng-model="app.participant.contact.name.first", required)
+                            +warning("firstName", "Contact's first name is required")
+                    .col.col-md-6
+                        .form-group
+                            label Last Name
+                            input.form-control(type="text", name="lastName", ng-model="app.participant.contact.name.last", required)
+                            +warning("lastName", "Contact's last name is required")
+                 .row
+                    .col.col-md-6
+                        .form-group
+                            label Email Address
+                            input.form-control(type="email", name="email", ng-model="app.participant.contact.email", required)
+                            +warning("email", "Contact's email address is required")
+                    .col.col-md-6
+                        .form-group
+                            label Phone
+                            input.form-control(type="phone", name="phone", ng-model="app.participant.contact.phone", required)
+                            +warning("phone", "Contact's phone number is required")
+                 fieldset
+                   legend Mailing address
+                   
+                 .row
+                    .col.col-md-12
+                        .form-group
+                            label Street
+                            input.form-control(type="text", name="street", ng-model="app.participant.address.street", required)
+                            +warning("street", "Street address is required")
+                 .row
+                    .col.col-md-12
+                        .form-group
+                            label Street (second line)
+                            input.form-control(type="text", name="street2", ng-model="app.participant.address.street2")
+                 .row
+                    .col.col-md-5
+                        .form-group
+                            label City
+                            input.form-control(type="text", name="city", ng-model="app.participant.address.city", required)
+                            +warning("city", "City is required")
+                    .col.col-md-4
+                        .form-group
+                            label State / Province
+                            input.form-control(type="text", name="state", ng-model="app.participant.address.state", required)
+                            +warning("state", "State / Province / Region is required")
+                    .col.col-md-3
+                        .form-group
+                            label Postal code
+                            input.form-control(type="text", name="zip", ng-model="app.participant.address.zip", required)
+                            +warning("zip", "Postal code / zip code is required")
+                 .row
+                    .col.col-md-5  
+                      .form-group
+                        label Country
+                        input.form-control(type="text", name="country", ng-model="app.participant.address.country", required)
+                        +warning("country", "Country is required")
+
+            .panel.panel-default
+               .panel-heading
+                    h4 Subscription level
+               .panel-body
+                    h4 {{app.participant.pumps ? app.participant.pumps.length : 0}} of {{app.participant.pumpLimit}} available pump listings are being used.
+                    a(href="/participant/purchase") Upgrade your subscription level
+
+                    
         
-        
-        .modal.fade#add(tabindex='-1', role='dialog' aria-labelledby='titleLabel', aria-hidden='true')
-              .modal-dialog
-                  .modal-content
-                      .modal-header
-                          button(type='button', class='close' data-dismiss='modal' aria-hidden='hidden') &times;
-                          h4.modal-title#titleLabel Add New User
-                      .modal-body
-                          form(role='form' name='new_user')
-                              .row
-                                  .col-sm-12
-                                      .form-group
-                                          label First Name:
-                                          input.form-control.input-sm(ng-model='app.new_user.name.first', required)
-                              .row
-                                  .col-sm-12
-                                      .form-group
-                                          label Last Name:
-                                          input.form-control.input-sm(ng-model='app.new_user.name.last', required)
-                              .row
-                                  .col-sm-12
-                                      .form-group
-                                          label Email:
-                                          input.form-control.input-sm(type="email", ng-model='app.new_user.email', required)
-                             
-                      .modal-footer
-                          div
-                              .pull-left.text-danger(ng-show='app.new_user_error') {{app.new_user_error}}
-                              button.btn.btn-primary(type='button' ng-click='app.addUser()') Add User
-                              button.btn.btn-default(type='button' data-dismiss='modal') Cancel
-
-        .modal.fade#activation(tabindex='-1', role='dialog' aria-labelledby='titleLabel', aria-hidden='true')
-              .modal-dialog
-                  .modal-content
-                      .modal-header
-                          button(type='button', class='close' data-dismiss='modal' aria-hidden='hidden') &times;
-                          h4.modal-title#titleLabel User Activation
-                      .modal-body
-                          form(role='form' name='new_user')
-                              .row
-                                .col.col-sm-12
-                                    h4 The account for {{app.activate_user.name.first}} {{app.activate_user.name.last}} must be activated.
-                                    p 
-                                        | Please send the following link to {{app.activate_user.name.first}} at 
-                                        a(href='mailto:{{app.activate_user.email}}') {{app.activate_user.email}}: 
-                                    p
-                                        a(target="_blank", href="{{app.base_url + '/activate/' + app.activate_user.activationKey}}") {{app.base_url + '/activate/' + app.activate_user.activationKey}}
-                                    
-                                    p  
-                                        | {{app.activate_user.name.first}} will be able to create a password on that page, which will activate this account.
-                                        | Until this is done, {{app.activate_user.name.first}} will not be able to access this application.
-                              .row
-                                .col.col-sm-12
-                                  p.alert.alert-info
-                                    b Note:  
-                                    | This process will be streamlined after the beta/MVP period.  An email will automatically sent to 
-                                    | the new user with this information - eliminating the need to send this link manually.
-                             
-                      .modal-footer
-                          div
-                              button.btn.btn-default(type='button' data-dismiss='modal') Dismiss
+       
