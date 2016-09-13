@@ -21,16 +21,106 @@ router.get('/', function(req, res) {
 });
 
 
-var missing_reg = function(user, participant, password) {
+router.get("/activate/:key", function(req, res) {
+    var user = null;
+    req.Users.findOne({"$and": [{activationKey:req.params.key}, {needsActivation:true}]}, function(err, user) {
+        if ( err ) {
+            req.log.error(err);
+            req.flash("errorTitle", "Internal application error");
+            req.flash("errorMessage", "Database lookup (activation) failed.");
+            res.redirect("/error");
+            return;
+        }
+        else if ( user ) {
+            req.Participants.findOne({_id:user.participant}, function(err, participant) {
+                    res.render("registration/activate", {
+                        user : user, 
+                        participant : participant
+                    })
+            });
+        }
+        else {
+            req.flash("errorTitle", "Account activation error");
+            req.flash("errorMessage", "This activation key is expired, or has already been used.");
+            res.redirect("/error");
+        }
+    })
+});
+
+router.post("/activate/:key", function(req, res) {
+    req.Users.findOne({"$and": [{activationKey:req.params.key}, {needsActivation:true}]}, function(err, toActivate) {
+        if ( err ) {
+            req.log.error(err);
+            req.flash("errorTitle", "Internal application error");
+            req.flash("errorMessage", "Database lookup (activation) failed.");
+            res.redirect("/error");
+            return;
+        }
+        if ( !toActivate || !toActivate.needsActivation) {
+            req.flash("errorTitle", "Account activation error");
+            req.flash("errorMessage", "This activation key is expired, or has already been used.");
+            res.redirect("/error");
+            return;
+        }
+        var user = req.body.user;
+        var participant = req.body.participant;
+
+        var missing = missing_reg(user);
+        var invalid = invalid_reg(user, req, true);
+        
+        if ( missing.length > 0 || invalid.length > 0 ) {
+            var message = "Registration data is incomplete.  ";
+            if ( missing.length ) {
+                message += "You must enter " + missing.join() + ".  ";
+            }
+            if (invalid.length) {
+                message += invalid.join();
+            }
+            req.flash('activationMessage', message);
+            req.Participants.findOne({_id:toActivate.participant}, function(err, participant) {
+                    res.render("registration/activate", {
+                        user : toActivate, 
+                        participant : participant
+                    })
+            });
+            
+            return;
+        }
+
+        toActivate.name = user.name;
+        toActivate.email = user.email;
+        toActivate.needsActivation = false;
+        var pswd = require("../utils/password");
+        var secured = pswd.saltHashPassword(user.password);
+        toActivate.password = secured.hash;
+        toActivate.salt = secured.salt;
+        toActivate.save(function(err, savedUser) {
+            req.logOut() ;
+            req.body.email = req.body.user.email;
+            req.body.password = req.body.user.password;
+            req.app.locals.passport.authenticate('local', { failureRedirect: '/' })(req, res, function () {
+                res.redirect('/');
+            })
+        })
+    });
+})
+
+
+var missing_reg = function(user) {
     var missing = [];
     if ( !user.name || !user.name.first || !user.name.last) missing.push("Name");
     if ( !user.email ) missing.push("Email address");
     if ( !user.password) missing.push("Password");
+    return missing;
+}
+
+var missing_participant = function(participant) {
+    var missing = [];
     if ( !participant || !participant.name) missing.push("Organization name");
     return missing;
 }
 
-var invalid_reg = function(user, participant, req, check_password) {
+var invalid_reg = function(user, req, check_password) {
     var invalid = [];
     if ( check_password && (user.password != req.body.pswdconfirm)) {
         invalid.push("Passwords entered do not match");
@@ -78,13 +168,16 @@ router.post("/registration_confirm", function(req, res) {
     var user = req.body.user;
     var participant = req.body.participant;
     var db = req.app.locals.db;
-    var missing = missing_reg(user, participant);
-    var invalid = invalid_reg(user, participant, req, false);
+    var missing = missing_reg(user);
+    var invalid = invalid_reg(user, req, false);
+    var missing_p = missing_participant(participant);
+    missing = missing.concat(missing_p);
 
-    if ( missing.length || invalid.length) {
+    if ( missing.length || invalid.length ) {
         req.log.debug("Invalid registration request");
         req.log.debug("Missing:  " + missing.join());
         req.log.debug("Invalid:  " + invalid.join());
+        req.flash("errorTitle", "Registration error");
         req.flash("errorMessage", "Invalid registration request.");
         res.redirect("/error");
         return;
@@ -93,18 +186,21 @@ router.post("/registration_confirm", function(req, res) {
     check_similar_orgs(req, user, participant, function(err, result) {
         if ( err ) {
             req.log.error(err);
+            req.flash("errorTitle", "Internal application error");
             req.flash("errorMessage", "Database lookup (participants) failed.");
             res.redirect("/error");
             return;
         }
         if ( result.stop ) {
             req.log.error("Duplicate participant registration");
+            req.flash("errorTitle", "Registration error");
             req.flash("errorMessage", "You cannot register this organization, it has already been registered in the program.");
             res.redirect("/error");
             return;
         }
         if ( result.user_exists ) {
             req.log.error("Duplicate user registration");
+            req.flash("errorTitle", "Registration error");
             req.flash("errorMessage", "You cannot register this email address, it's already in use.");
             res.redirect("/error");
             return;
@@ -143,8 +239,10 @@ router.post("/register", function(req, res) {
     var user = req.body.user;
     var participant = req.body.participant;
 
-    var missing = missing_reg(user, participant);
-    var invalid = invalid_reg(user, participant, req, true);
+    var missing = missing_reg(user);
+    var invalid = invalid_reg(user, req, true);
+    var missing_p = missing_participant(participant);
+    missing = missing.concat(missing_p);
 
     if ( missing.length > 0 || invalid.length > 0 ) {
         var message = "Registration data is incomplete.  ";
@@ -165,6 +263,7 @@ router.post("/register", function(req, res) {
     check_similar_orgs(req, user, participant, function(err, result) {
         if ( err ) {
             req.log.error(err);
+            req.flash("errorTitle", "Internal application error");
             req.flash("errorMessage", "Database lookup (participants) failed.");
             res.redirect("/error");
             return;

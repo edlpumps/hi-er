@@ -35,7 +35,7 @@ block content
                                 a(href="mailto:{{user.email}}") {{user.email}}
                             td
                                 span(ng-show="user.needsActivation") 
-                                 button(type="button").btn.btn-primary Needs Activation
+                                 button(type="button", ng-click="app.activateInfo(user)").btn.btn-primary Needs Activation
                                 span(ng-show="user.needsActivation==false") Active
                             td 
                                 button(type="button", ng-click="app.removeUser(user)", ng-hide="user._id == app.user._id").btn.btn-danger Delete
@@ -70,3 +70,34 @@ block content
                               .pull-left.text-danger(ng-show='app.new_user_error') {{app.new_user_error}}
                               button.btn.btn-primary(type='button' ng-click='app.addUser()') Add User
                               button.btn.btn-default(type='button' data-dismiss='modal') Cancel
+
+        .modal.fade#activation(tabindex='-1', role='dialog' aria-labelledby='titleLabel', aria-hidden='true')
+              .modal-dialog
+                  .modal-content
+                      .modal-header
+                          button(type='button', class='close' data-dismiss='modal' aria-hidden='hidden') &times;
+                          h4.modal-title#titleLabel User Activation
+                      .modal-body
+                          form(role='form' name='new_user')
+                              .row
+                                .col.col-sm-12
+                                    h4 The account for {{app.activate_user.name.first}} {{app.activate_user.name.last}} must be activated.
+                                    p 
+                                        | Please send the following link to {{app.activate_user.name.first}} at 
+                                        a(href='mailto:{{app.activate_user.email}}') {{app.activate_user.email}}: 
+                                    p
+                                        a(target="_blank", href="{{app.base_url + '/activate/' + app.activate_user.activationKey}}") {{app.base_url + '/activate/' + app.activate_user.activationKey}}
+                                    
+                                    p  
+                                        | {{app.activate_user.name.first}} will be able to create a password on that page, which will activate this account.
+                                        | Until this is done, {{app.activate_user.name.first}} will not be able to access this application.
+                              .row
+                                .col.col-sm-12
+                                  p.alert.alert-info
+                                    b Note:  
+                                    | This process will be streamlined after the beta/MVP period.  An email will automatically sent to 
+                                    | the new user with this information - eliminating the need to send this link manually.
+                             
+                      .modal-footer
+                          div
+                              button.btn.btn-default(type='button' data-dismiss='modal') Dismiss

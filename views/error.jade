@@ -6,7 +6,10 @@ block content
     .container
         .panel.panel-danger
             .panel-heading
-                h1 An error has occured
+                if messages.errorTitle
+                    h1 #{messages.errorTitle}
+                else
+                    h1 An error has occured
             .panel-body
                 
                 if messages.errorMessage
