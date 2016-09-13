@@ -8,9 +8,60 @@ block nav
 
 block content
     .container
-        .page-header 
-            h1 Pump listings
+       form(method="post" action="/admin/participant/#{participant._id}")
+        .panel.panel-default
+         .panel-heading
+           h1 #{participant.name}
+         .panel-body
+                fieldset
+                  legend Mailing address
+                  address
+                     strong #{participant.name}
+                     br 
+                     | #{participant.address.street}
+                     if participant.address.street2
+                       br 
+                       | #{participant.address.street2}
+                     br 
+                     | #{participant.address.city}, #{participant.address.state} #{participant.address.zip}
+                     br 
+                     | #{participant.address.country}
+                fieldset
+                  legend Contact Person
+                  address
+                     strong #{participant.contact.name.first} #{participant.contact.name.last}
+                     br
+                     a(href="mailto:#{participant.contact.email}") #{participant.contact.email}
+                     br
+                     a(href="tel:#{participant.contact.phone}") #{participant.contact.phone}
+                fieldset
+                  legend Account administration
 
-        .row
-            .col.col-xs-12
-                .alert.alert-warning Pump listings not available yet.
+                .row 
+                  .col.col-xs-12
+                    .form-group
+                        label(style="margin-right:10px") Subcription level:  
+                        select.selectpicker(name="participant[pumpLimit]")
+                            option(value="0", selected=(participant.pumpLimit == 0)) Payment needed
+                            option(value="50", selected=(participant.pumpLimit == 50)) Up to 50 pump listings
+                            option(value="150", selected=(participant.pumpLimit == 150)) Up to 150 pump listings
+                            option(value="250", selected=(participant.pumpLimit == 250)) Up to 250 pump listings
+                            option(value="Infinity", selected=(participant.pumpLimit == Infinity)) Unlimited pump listings
+                        
+                        .help-block This value is based on payment.  During the MVP / beta period this is manually set by HI adminstrators.
+                .row 
+                  .col.col-xs-12
+                    .form-group
+                        label(style="margin-right:10px") Participant Status:  
+                        input.switchBox(type="checkbox", name="participant[active]", checked=(participant.active), data-on-text="Active", data-off-text="Disabled")
+                        .help-block Administrators can disable a participant account if terms of service are violated.  This will prevent all users associated with this organization from logging in.  For payment issues, simply set the subscription level as appropriate instead of disabling the account.  This allows users to continue to log in, and possibly update their subscription level.
+         .panel-footer
+                .row     
+                    .col.col-xs-12   
+                        button.btn.btn-primary(type="submit") Save Changes
+
+                        a.btn.btn-default.btn-space(href="/") Cancel
+        
+        
+                                
+                                
