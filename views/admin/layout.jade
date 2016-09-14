@@ -22,10 +22,12 @@ html(ng-app='ERAdminApp')
                 .icon-bar 
                 .icon-bar 
                 .icon-bar 
-              a.navbar-brand(href="/") Hydraulic Institute Energy Ratings Program
+              a.navbar-brand(href="/") 
+                img(style="max-width:27px; margin-top: -7px;", src="/images/logo-big.png")
                
               
            .collapse.navbar-collapse
+               .navbar-text HI Energy Ratings Program
                ul.nav.navbar-nav
                   li(class=(active == 'home' ? 'active' : ''))
                     a(href="/") Home

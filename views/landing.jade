@@ -3,26 +3,45 @@ extends layout
 
 
 block content
-    .container(ng-controller="ERController as app")
-        h1 Hydraulic Institute Energy Rating Program
-        .login
-            form(method="post" action="/login")
-                .form-group
-                    label(for="email") Email:
-                    input.form-control(type="email", name="email", value =email)
-                .form-group
-                    label(for="password") Password:
-                    input.form-control(type="password", name="password")
-                button.btn.btn-primary(type="submit") Login
-                p #{messages.loginMessage}
-
-
-        .register
+  .container.entry(ng-controller="ERController as app")
+    .panel.pandel-default
+      .panel-heading
+        .row
+          .col.col-xs-12
+            .hi
+             img(src="/images/hydraulic-institute-logo.jpg")
+        .row
+           .col.col-xs-12
+            .er Energy Rating Program
             
-            form(method="post", action="register")
-                .row
-                  .col.col-md-12
-                    h2 Organization information
+      .panel-body
+        
+       
+
+        ul.nav.nav-tabs
+            li.active
+              a(data-toggle="tab", href="#login") Sign in
+            li
+              a(data-toggle="tab", href="#register") Create an account
+        
+        .tab-content
+           .tab-pane.active#login
+              .login
+                 form(method="post" action="/login")
+                        .form-group
+                            label(for="email") Email:
+                            input.form-control(type="email", name="email", value =email)
+                        .form-group
+                            label(for="password") Password:
+                            input.form-control(type="password", name="password")
+                        button.btn.btn-primary(type="submit") Login
+                        p #{messages.loginMessage}
+           .tab-pane#register
+              .register
+            
+               form(method="post", action="register")
+                fieldset
+                    legend Organization information
                 .row
                   .col.col-md-12
                     .form-group
@@ -31,9 +50,8 @@ block content
                         .help-block Please enter your organization's full legal name.  All Energy Rating labels and listings will contain this value.
                         .help-block After you register, you will be able to enter additional information such as your organization's mailing address and contact information.
                 
-                .row
-                  .col.col-md-12
-                     h2 Primary Contact / Account
+                fieldset
+                    legend Initial account / user
                 .row
                     .col.col-md-6
                         .form-group
