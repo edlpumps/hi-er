@@ -17,8 +17,8 @@ const mongoose = require("mongoose");
 const schemas = require("./schemas");
 const MongoStore = require('connect-mongo')(session);
 const port = process.env.PORT || 3000;
-const session_connection_str = process.env.MONGO_CONNECTION_SESSIONS + "/er-sessions";
-const data_connection_str = process.env.MONGO_CONNECTION_DATA + "/er";
+const session_connection_str = process.env.MONGO_CONNECTION_SESSIONS;
+const data_connection_str = process.env.MONGO_CONNECTION_DATA;
 
 const passport = require('passport');
 const Strategy = require('passport-local').Strategy;
