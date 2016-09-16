@@ -4,143 +4,114 @@ mixin calculator(er)
   //- bring in required scripts and css for the calculator itself
 
   //- add angular controller here
-  .container
+  .container(ng-controller="PEIController as app").pei
     
-    .panel.panel-default.pei_root
+    .panel.panel-default.solo
         .panel-heading
-            h1 PEI Calculator
+            h1 Pump Energy Index Calculator
         
         //- each panel body is shown at various times throughout the calculation
-        .panel-body
+        .panel-body(ng-show="app.step=='configuration'")
             .row
               .col.col-xs-12
                 fieldset
-                  legend Step 1 - Configuration selection
+                  legend Configuration selection
             .row 
               .form-group
                 .col.col-xs-5
                     label.text-primary Configuration:
                 .col.col-xs-7
-                    select.selectpicker(name="configuration", data-width="auto")
-                        option(value="0") Bare Pump
-                        option(value="50") Pump + Motor
-                        option(value="150") Pump + Motor w/ Continuous Controls
-                        option(value="250") Pump + Motor w/ Non-continuous Controls
-               
-                        
+                    select.form-control(name="configuration", data-width="auto", ng-model="app.configuration", ng-options="config as config.label for config in app.configurations track by config.value")
+                     
             hr           
             .row
               .col.col-xs-12
-                button.btn.btn-primary(type="button") Next
+                button.btn.btn-primary(type="button", ng-disabled="!app.configuration", ng-click="app.go2MotorMethod()") Next
 
 
-        .panel-body
+        .panel-body(ng-show="app.step=='motor_method'")
             .row
               .col.col-xs-12
                 fieldset
-                  legend Step 2 - Motor performance method
+                  legend Motor performance method
             .row 
               
                 .form-group
                   .col.col-xs-5
                     label Configuration:
                   .col.col-xs-7
-                    .form-control-static Pump Sold with Motor 
+                    .form-control-static {{app.configuration.label}}
             hr 
             .row
                 .form-group
                   .col.col-xs-5
                     label.text-primary How is motor performance determined?  
                   .col.col-xs-7
-                    select.selectpicker(name="motor_measure", data-width="auto")
-                        option(value="0") Tested (wire to water)
-                        option(value="50") Calculated    
+                    label.radio-inline
+                      input(type="radio" ng-model="app.motor_method", value="tested") 
+                      | Tested
+                    label.radio-inline
+                      input(type="radio" ng-model="app.motor_method", value="calculated") 
+                      | Calculated
             hr
             .row
-              .col.col-xs-12
-                button.btn.btn-primary(type="button") Next
-                button.btn.btn-default.btn-space(type="button") Back
+              .col.col-xs-10
+                button.btn.btn-primary(type="button", ng-click="app.go2Options()") Next
+                button.btn.btn-default.btn-space(type="button", ng-click="app.go2Configuration(true)") Back
+              .col.col-xs-2
+                  a(href="#" ng-click="app.go2Configuration()") Start over
 
-        .panel-body
+        .panel-body(ng-show="app.step=='options'")
             .row
               .col.col-xs-12
                 fieldset
-                  legend Step 3 - Option selection
+                  legend Option selection
             .row 
                 .form-group
                   .col.col-xs-5
                     label Configuration:
                   .col.col-xs-7
-                    .form-control-static Pump Sold with Motor 
-            .row 
+                    .form-control-static {{app.configuration.label}}
+            .row(ng-show="app.motor_method_required()")
                 .form-group
                   .col.col-xs-5
                     label Motor performance method:
                   .col.col-xs-7
-                    .form-control-static Tested
+                    .form-control-static {{app.motor_method == "tested" ? "Tested (water to wire)" : "Calculated"}}
             .row 
                 .form-group
                   .col.col-xs-5
                     label PEI calculation method:
                   .col.col-xs-7
-                    .form-control-static: strong Section IV
+                    .form-control-static: strong {{app.section_label()}}
             hr 
-
             .row
                 .form-group
                   .col.col-xs-5
                     label.text-primary Can the pump be tested at 120% of BEP flow?  
                   .col.col-xs-7
-                    select.selectpicker(name="load120", data-width="auto")
-                        option(value="0") Yes - (75%, 100%, and 110% BEP load points)
-                        option(value="50") No - (65%, 90%, and 100% BEP load points)
-
-            //- the following questions must be filtered based on which section has been selected.
-            
-            .row
-                .form-group
-                  .col.col-xs-5
-                    label.text-primary DOE Pump Category 
-                  .col.col-xs-7
-                    select.selectpicker(name="doe", data-width="auto")
-                        option(value="0") ESCC
-                        option(value="0") ESFM
-                        option(value="0") IL
-                        option(value="0") RSV
-                        option(value="0") ST
-
-            //- only show this if DOE = st
-            .row
-                .form-group
-                  .col.col-xs-5
-                    label.text-primary Bowl diameter (inches)
-                  .col.col-xs-7
-                    select.selectpicker(name="bowl_diameter", data-width="auto")
-                        option(value="0") 1"
-                        option(value="0") 2"
-                        option(value="0") 3"
-                        option(value="0") 4"
-                        option(value="0") 6"
-
-
+                    div.radio
+                      label
+                        input(type="radio" ng-model="app.load120", value="true") 
+                        | Yes (75% / 100% / 110% load points)
+                    div.radio
+                      label.radio
+                        input(type="radio" ng-model="app.load120", value="false") 
+                        | No (65% / 90% / 100% load points)
+            hr 
             .row
                 .form-group
                   .col.col-xs-5
                     label.text-primary Nominal speed of rotation
                   .col.col-xs-7
-                    select.selectpicker(name="rotation", data-width="auto")
-                        option(value="0") 3600 rpm
-                        option(value="0") 1800 rpm
+                    label.radio-inline
+                      input(type="radio" ng-model="app.speed", value="3600") 
+                      | 3600 rpm
+                    label.radio-inline
+                      input(type="radio" ng-model="app.speed", value="1800") 
+                      | 1800 rpm
                         
-            .row
-                .form-group
-                  .col.col-xs-5
-                    label.text-primary Is motor regulated under 10CFR 431.25?
-                  .col.col-xs-7
-                    select.selectpicker(name="regulated", data-width="auto")
-                        option(value="0") Yes
-                        option(value="0") No
-
+            
             .row
                 .form-group
                   .col.col-xs-5
@@ -148,7 +119,70 @@ mixin calculator(er)
                   .col.col-xs-7.col-sm-4.col-md-2
                     input.form-control(type="number", min="1", name="stages")
 
+            
+                    
+                    
             .row
+                hr
+                .form-group
+                  .col.col-xs-5
+                    label.text-primary DOE Pump Category 
+                  .col.col-xs-7
+                    select.form-control(ng-model="app.doe", data-width="auto", ng-options="opt as opt.label for opt in app.doe_opts track by opt.value")
+                        option(value="")  
+                hr(ng-show="app.doe.value!='ST'") 
+            
+           
+            .row(ng-show="app.doe.value=='ST'")
+                .form-group
+                  .col.col-xs-5
+                    label.text-primary Bowl diameter (inches)
+                  .col.col-xs-7
+                    select.form-control(ng-model="bowl_diameter", data-width="auto", ng-options="val as (val+'\"') for val in [1, 2, 3, 4, 6] track by val")
+                        option(value="")
+                hr(ng-show="app.doe.value=='ST'") 
+
+            
+
+
+
+            .row(ng-show="app.configuration.value != 'bare'")
+               
+                .form-group
+                  .col.col-xs-5
+                    label.text-primary Is motor regulated under 10CFR 431.25?
+                  .col.col-xs-7
+                    label.radio-inline
+                      input(type="radio" ng-model="app.motor_regulated", value="true") 
+                      | Yes
+                    label.radio-inline
+                      input(type="radio" ng-model="app.motor_regulated", value="false") 
+                      | No
+            
+            
+
+            .row(ng-show="app.configuration.value != 'bare'")
+                .form-group
+                  .col.col-xs-5
+                    label.text-primary Rated Motor Power used for default losses or Nameplate Rated Motor Power 
+                  .col.col-xs-7.col-sm-4.col-md-2
+                    input.form-control(type="number", min="0", name="motor_power_rated")
+                hr(ng-hide="app.doe.value != 'ST' && app.motor_regulated =='false'")
+
+            .row(ng-show="app.doe.value != 'ST' && app.motor_regulated =='false'")
+                .form-group
+                  .col.col-xs-5
+                    label.text-primary  Nominal nameplate motor efficiency
+                  .col.col-xs-7.col-sm-4.col-md-2
+                    input.form-control(type="number", min="0", name="motor_power_rated")
+                hr
+            
+
+
+            
+            
+            .row
+               
                 .form-group
                   .col.col-xs-5
                     label.text-primary Basic Model Designation
@@ -168,119 +202,119 @@ mixin calculator(er)
                     label.text-primary HI Approved Laboratory Registration Number
                   .col.col-xs-7.col-sm-4
                     input.form-control(type="text", name="lab")
-
-            .row
-                .form-group
-                  .col.col-xs-5
-                    label.text-primary Rated Motor Power used for default losses or Nameplate Rated Motor Power 
-                  .col.col-xs-7.col-sm-4.col-md-2
-                    input.form-control(type="number", min="0", name="motor_power_rated")
+                
             
-            //- rather complicated logic deciding if this should be shown / enabled....
-            .row
-                .form-group
-                  .col.col-xs-5
-                    label.text-primary  Enter nominal nameplate motor efficiency
-                  .col.col-xs-7.col-sm-4.col-md-2
-                    input.form-control(type="number", min="0", name="motor_power_rated")
 
             hr
             .row
-              .col.col-xs-12
-                button.btn.btn-primary(type="button") Next
-                button.btn.btn-default.btn-space(type="button") Back
+              .col.col-xs-10
+                button.btn.btn-primary(type="button", ng-click="app.go2Data()") Next
+                button.btn.btn-default.btn-space(type="button", ng-click="app.go2MotorMethod(true)") Back
+              .col.col-xs-2
+                  a(href="#" ng-click="app.go2Configuration()") Start over
           
 
-        .panel-body
+        .panel-body(ng-show="app.step=='data'")
             .row
               .col.col-xs-12
                 fieldset
-                  legend Step 4 - Load point data entry
+                  legend Load point data entry
             .row 
                 .form-group
                   .col.col-xs-5
                     label Configuration:
                   .col.col-xs-7
-                    .form-control-static Pump Sold with Motor 
-            .row 
+                    .form-control-static {{app.configuration.label}}
+            .row(ng-show="app.motor_method_required()")
+                
                 .form-group
                   .col.col-xs-5
                     label Motor performance method:
                   .col.col-xs-7
-                    .form-control-static Tested
+                    .form-control-static {{app.motor_method == "tested" ? "Tested (water to wire)" : "Calculated"}}
             .row 
                 .form-group
                   .col.col-xs-5
                     label PEI calculation method:
                   .col.col-xs-7
-                    .form-control-static: strong Section IV
+                    .form-control-static: strong {{app.section_label()}}
             hr 
 
-            //- some rows will not be shown (variable ones), based on calculation type (section)
-            //- labels will be edited based on load point choice.
             
-
-            //- CHANGE, PUT VARIABLE SPEED STUFF IN NEW TABLE
             .row
                .col.col-xs-12
                  table.table
                    thead
                      tr
-                       th Value at Nominal Speed of Rotation
-                       th @ 25% BEP
-                       th @ 50% BEP
-                       th @ 75% BEP
-                       th @ 100% BEP
-                       th @ 110% BEP
+                       th.col-label Value at Nominal Speed of Rotation
+                       th {{app.load120 == "true" ? "@ 75% BEP" : "@ 60% BEP"}}
+                       th {{app.load120 == "true" ? "@ 100% BEP" : "@ 90% BEP"}}
+                       th {{app.load120 == "true" ? "@ @ 110% BEP" : "@ 100% BEP"}}
                     tbody
                       tr
-                       td Rate of flow (gpm)
-                       td
-                       td
+                       td.col-label Rate of flow (gpm)
                        td: input.form-control(type="text")
                        td: input.form-control(type="text")
                        td: input.form-control(type="text")
                       tr
-                       td Head (ft) 
-                       td
-                       td
+                       td.col-label Head (ft) 
                        td: input.form-control(type="text")
                        td: input.form-control(type="text")
                        td: input.form-control(type="text")
                      tr
-                       td Control Power Input (hp)
-                       td
-                       td
+                       td.col-label Control Power Input (hp)
                        td: input.form-control(type="text")
                        td: input.form-control(type="text")
                        td: input.form-control(type="text")
                 
-                     tr
-                       td Measured variable load flow rate (gpm)
-                       td: input.form-control(type="text")
-                       td: input.form-control(type="text")
-                       td: input.form-control(type="text")
-                       td
-                       td
-                      tr
-                       td Measured variable load head (ft) 
-                       td: input.form-control(type="text")
-                       td: input.form-control(type="text")
-                       td: input.form-control(type="text")
-                       td
-                       td
-                     tr
-                       td Measured control power input (hp)
-                       td: input.form-control(type="text")
-                       td: input.form-control(type="text")
-                       td: input.form-control(type="text")
-                       td
-                       td
+            .row(ng-show="app.section=='3'")
+              .form-group
+               .col.col-xs-5
+                 label Pump Power Input @ 120% of BEP Rate of Flow (hp)
+               .col.col-xs-7
+                    input.form-control(ng-model="app.power_at_120BEP", type="number")
 
-
-
-
-            .row
+            .row(ng-show="app.section=='6a' || app.section=='6b'")
                .col.col-xs-12
-                  button(type="button").btn.btn-danger Calculate PEI
-                  button(type="button").btn.btn-default.btn-space Back
+                 table.table
+                   thead
+                     tr
+                       th.col-label Measured value
+                       th @ 25% BEP target
+                       th @ 50% BEP target
+                       th @ 75% BEP target
+                    tbody
+                     tr
+                       td.col-label Load flow rate (gpm)
+                       td: input.form-control(type="text")
+                       td: input.form-control(type="text")
+                       td: input.form-control(type="text")
+                      tr
+                       td.col-label Load head (ft) 
+                       td: input.form-control(type="text")
+                       td: input.form-control(type="text")
+                       td: input.form-control(type="text")
+                     tr
+                       td.col-label Power input (hp)
+                       td: input.form-control(type="text")
+                       td: input.form-control(type="text")
+                       td: input.form-control(type="text")
+            hr
+            .row
+               .col.col-xs-10
+                  button(type="button", ng-click="app.go2Results()").btn.btn-danger Calculate PEI
+                  button(type="button", ng-click="app.go2Options(true)").btn.btn-default.btn-space Back
+               .col.col-xs-2
+                  a(href="#" ng-click="app.go2Configuration()") Start over
+
+
+        .panel-body(ng-show="app.step=='results'")
+            row
+               .col.col-xs-12
+                .alert.alert-success Results will be coming soon...
+
+            row
+               .col.col-xs-10
+                  button(type="button", ng-click="app.go2Data(true)").btn.btn-default.btn-space Back
+               .col.col-xs-2
+                  a(href="#" ng-click="app.go2Configuration()") Start over
