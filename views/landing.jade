@@ -16,16 +16,15 @@ block content
             
       .panel-body
         
-       
 
         ul.nav.nav-tabs
-            li.active
+            li(class=(target != "register" ? "active" : ""))
               a(data-toggle="tab", href="#login") Sign in
-            li
+            li(class=(target == "register" ? "active" : ""))
               a(data-toggle="tab", href="#register") Create an account
         
         .tab-content
-           .tab-pane.active#login
+           .tab-pane#login(class=(target != "register" ? "active" : ""))
               .login
                  form(method="post" action="/login")
                         .form-group
@@ -35,11 +34,16 @@ block content
                             label(for="password") Password:
                             input.form-control(type="password", name="password")
                         button.btn.btn-primary(type="submit") Login
-                        p #{messages.loginMessage}
-           .tab-pane#register
+                        if messages.loginMessage
+                          .alert.alert-warning.solo #{messages.loginMessage}
+           .tab-pane#register(class=(target == "register" ? "active" : ""))
               .register
             
                form(method="post", action="register")
+                .row
+                    .col.col-md-12
+                        if messages.registrationMessage
+                          .alert.alert-danger #{messages.registrationMessage}
                 fieldset
                     legend Organization information
                 .row
@@ -86,7 +90,4 @@ block content
                 .row
                     .col.col-md-12
                         button.btn.btn-primary(type="submit") Register
-                .row
-                    .col.col-md-12
-                        if messages.registrationMessage
-                          .alert.alert-danger #{messages.registrationMessage}
+                

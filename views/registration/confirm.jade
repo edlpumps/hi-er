@@ -3,23 +3,21 @@ extends ../layout
 
 
 block content
-    .container
+ .container
+  .panel.panel-default.solo
+    .panel-heading
+      h1 Confirm registration information
+    .panel-body
         if stop
            .row
             .col.col-sm-12
-                .panel.panel-danger
-                    .panel-heading
-                        h3 Your organization is already registered.
-                    .panel-body
-                        p.text-danger 
-                         | Your organization is already registered.   
+                .alert.alert-danger 
+                  h4 #{participant.name} is already registered as a participant in the Energy Ratings program.
+                
+                p You cannot create a new account through this site.  
+                p Please ask your organization's primary account holder to create a login for you under the existing account.
                         
-                        p 
-                         | Please note you should NOT create a new account through this site.  Please ask your 
-                         | organization's primary account holder to create a login for you under the existing account.
-                        
-                        p
-                          a(href="/") Go back to Hydraulic Institute's Energy Rating Program Homepage
+                p: a(href="/") Go back to Hydraulic Institute's Energy Rating Program Homepage
                         
         else 
           if warn
@@ -43,9 +41,7 @@ block content
                           each p in similar
                             li #{p}  
                         p.text-primary If the organizations listed above are not your organization, you may proceed.
-          .row
-            .col.col-sm-12
-              h1 Confirmation registration information
+          
           .row
             .col.col-sm-12
               p You are about to create an account for your Organization:

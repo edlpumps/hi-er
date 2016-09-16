@@ -2,19 +2,19 @@ extends ../layout
 
 block content
     .container
-        
-        h1 Account Activation
+        .panel.panel-default.solo
+            .panel-heading 
+                h1 Account Activation
 
-        p.text-info
-            | Welcome to the Hydraulic Institute's Energy Rating Program!  
-        p.text-info
-            | Your account is ready for activation, your
-            | just need to create a password and you'll be able to get started. 
-
-        form(method="post" action="/activate/#{user.activationKey}")
-            .panel.panel-default
-              .panel-body
-                .row
+            .panel-body
+                p.text-info
+                    | Welcome to the Hydraulic Institute's Energy Rating Program!  
+                p.text-info
+                    | Your account is ready for activation, your
+                    | just need to create a password and you'll be able to get started. 
+                hr
+                form(method="post" action="/activate/#{user.activationKey}")
+                  .row
                     .col.col-md-6
                         .form-group
                             label(for="user.name.first") Organization:
@@ -22,36 +22,36 @@ block content
                                p.form-control-static HI Administration Account
                             else
                                p.form-control-static #{participant && participant.name ? participant.name : null}
-                .row
+                  .row
                     .col.col-md-6
                         .form-group
                             label(for="user.name.first") First Name:
                             input.form-control(type="text", name="user[name][first]" value=user && user.name ? user.name.first : null)
-                .row
+                  .row
                     .col.col-md-6
                         .form-group
                             label(for="user.name.last") Last Name:
                             input.form-control(type="text", name="user[name][last]" value=user && user.name ? user.name.last : null)
-                .row
+                  .row
                     .col.col-md-6
                         .form-group
                             label(for="user.email") Email:
                             input.form-control(type="email", name="user[email]" value=user ? user.email : null)
                             .help-block This will be used as your username as well.
-                .row
+                  .row
                     .col.col-md-6
                         .form-group
                             label(for="user.password") Password:
                             input.form-control(type="password", name="user[password]")
-                .row
+                  .row
                     .col.col-md-6
                         .form-group
                             label(for="pswdconfirm") Confirm Password:
                             input.form-control(type="password", name="pswdconfirm")
-                .row
+                  .row
                     .col.col-sm-4
                         button.btn.btn-primary(type="submit") Activate account
-                .row
+                  .row
                     .col.col-sm-12
                         if messages.activationMessage
                           .text-danger #{messages.activationMessage}

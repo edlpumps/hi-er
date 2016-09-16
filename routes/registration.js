@@ -74,10 +74,10 @@ router.post("/activate/:key", function(req, res) {
         if ( missing.length > 0 || invalid.length > 0 ) {
             var message = "Registration data is incomplete.  ";
             if ( missing.length ) {
-                message += "You must enter " + missing.join() + ".  ";
+                message += "You must enter " + missing.join(", ") + ".  ";
             }
             if (invalid.length) {
-                message += invalid.join();
+                message += invalid.join(", ");
             }
             req.flash('activationMessage', message);
             req.Participants.findOne({_id:toActivate.participant}, function(err, participant) {
@@ -142,7 +142,7 @@ var check_similar_orgs = function(req, user, participant, callback) {
         }
         participants.forEach(function(p){
             var sim = distance(participant.name.trim(), p.name, { caseSensitive: false });
-            if ( sim >= 0.8 && sim < 1) {
+            if ( sim >= 0.9 && sim < 1) {
                 similar.push(p.name);
                 req.log.debug("Similarity between " + participant.name + " and existing [" + p.name + "] score = " + sim);
             }
@@ -215,6 +215,7 @@ router.post("/registration_confirm", function(req, res) {
         newParticipant.name = participant.name.trim();
         newParticipant.active = true;
         newParticipant.pumpLimit = 0;
+        newParticipant.contact = user;
         newParticipant.save(function(err, saved) {
             req.log.debug("Saved participant = " +saved._id);
             var newUser = new db.Users(user);
@@ -250,15 +251,17 @@ router.post("/register", function(req, res) {
     if ( missing.length > 0 || invalid.length > 0 ) {
         var message = "Registration data is incomplete.  ";
         if ( missing.length ) {
-            message += "You must enter " + missing.join() + ".  ";
+            message += "You must enter " + missing.join(", ") + ".  ";
         }
         if (invalid.length) {
-            message += invalid.join();
+            message += invalid.join(", ");
         }
         req.flash('registrationMessage', message)
+        req.log.debug("Registration cannot be completed - missing/invalid information");
         res.render("landing", {
             user : user, 
-            participant: participant
+            participant: participant, 
+            target : "register"
         })
         return;
     }
@@ -276,7 +279,8 @@ router.post("/register", function(req, res) {
             req.flash("registrationMessage", "A user with this email address has already registered for this program");
             res.render("landing", {
                 user : req.body.user,
-                participant: req.body.participant
+                participant: req.body.participant, 
+                target : "register"
             })
             return;
         }
