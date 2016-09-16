@@ -1,0 +1,286 @@
+
+mixin calculator(er)
+  
+  //- bring in required scripts and css for the calculator itself
+
+  //- add angular controller here
+  .container
+    
+    .panel.panel-default.pei_root
+        .panel-heading
+            h1 PEI Calculator
+        
+        //- each panel body is shown at various times throughout the calculation
+        .panel-body
+            .row
+              .col.col-xs-12
+                fieldset
+                  legend Step 1 - Configuration selection
+            .row 
+              .form-group
+                .col.col-xs-5
+                    label.text-primary Configuration:
+                .col.col-xs-7
+                    select.selectpicker(name="configuration", data-width="auto")
+                        option(value="0") Bare Pump
+                        option(value="50") Pump + Motor
+                        option(value="150") Pump + Motor w/ Continuous Controls
+                        option(value="250") Pump + Motor w/ Non-continuous Controls
+               
+                        
+            hr           
+            .row
+              .col.col-xs-12
+                button.btn.btn-primary(type="button") Next
+
+
+        .panel-body
+            .row
+              .col.col-xs-12
+                fieldset
+                  legend Step 2 - Motor performance method
+            .row 
+              
+                .form-group
+                  .col.col-xs-5
+                    label Configuration:
+                  .col.col-xs-7
+                    .form-control-static Pump Sold with Motor 
+            hr 
+            .row
+                .form-group
+                  .col.col-xs-5
+                    label.text-primary How is motor performance determined?  
+                  .col.col-xs-7
+                    select.selectpicker(name="motor_measure", data-width="auto")
+                        option(value="0") Tested (wire to water)
+                        option(value="50") Calculated    
+            hr
+            .row
+              .col.col-xs-12
+                button.btn.btn-primary(type="button") Next
+                button.btn.btn-default.btn-space(type="button") Back
+
+        .panel-body
+            .row
+              .col.col-xs-12
+                fieldset
+                  legend Step 3 - Option selection
+            .row 
+                .form-group
+                  .col.col-xs-5
+                    label Configuration:
+                  .col.col-xs-7
+                    .form-control-static Pump Sold with Motor 
+            .row 
+                .form-group
+                  .col.col-xs-5
+                    label Motor performance method:
+                  .col.col-xs-7
+                    .form-control-static Tested
+            .row 
+                .form-group
+                  .col.col-xs-5
+                    label PEI calculation method:
+                  .col.col-xs-7
+                    .form-control-static: strong Section IV
+            hr 
+
+            .row
+                .form-group
+                  .col.col-xs-5
+                    label.text-primary Can the pump be tested at 120% of BEP flow?  
+                  .col.col-xs-7
+                    select.selectpicker(name="load120", data-width="auto")
+                        option(value="0") Yes - (75%, 100%, and 110% BEP load points)
+                        option(value="50") No - (65%, 90%, and 100% BEP load points)
+
+            //- the following questions must be filtered based on which section has been selected.
+            
+            .row
+                .form-group
+                  .col.col-xs-5
+                    label.text-primary DOE Pump Category 
+                  .col.col-xs-7
+                    select.selectpicker(name="doe", data-width="auto")
+                        option(value="0") ESCC
+                        option(value="0") ESFM
+                        option(value="0") IL
+                        option(value="0") RSV
+                        option(value="0") ST
+
+            //- only show this if DOE = st
+            .row
+                .form-group
+                  .col.col-xs-5
+                    label.text-primary Bowl diameter (inches)
+                  .col.col-xs-7
+                    select.selectpicker(name="bowl_diameter", data-width="auto")
+                        option(value="0") 1"
+                        option(value="0") 2"
+                        option(value="0") 3"
+                        option(value="0") 4"
+                        option(value="0") 6"
+
+
+            .row
+                .form-group
+                  .col.col-xs-5
+                    label.text-primary Nominal speed of rotation
+                  .col.col-xs-7
+                    select.selectpicker(name="rotation", data-width="auto")
+                        option(value="0") 3600 rpm
+                        option(value="0") 1800 rpm
+                        
+            .row
+                .form-group
+                  .col.col-xs-5
+                    label.text-primary Is motor regulated under 10CFR 431.25?
+                  .col.col-xs-7
+                    select.selectpicker(name="regulated", data-width="auto")
+                        option(value="0") Yes
+                        option(value="0") No
+
+            .row
+                .form-group
+                  .col.col-xs-5
+                    label.text-primary Number of stages tested
+                  .col.col-xs-7.col-sm-4.col-md-2
+                    input.form-control(type="number", min="1", name="stages")
+
+            .row
+                .form-group
+                  .col.col-xs-5
+                    label.text-primary Basic Model Designation
+                  .col.col-xs-7.col-sm-4
+                    input.form-control(type="text", name="model")
+            
+            .row
+                .form-group
+                  .col.col-xs-5
+                    label.text-primary Model Full Impeller Diameter (in)
+                  .col.col-xs-7.col-sm-4.col-md-2
+                    input.form-control(type="number", min="0", step=".0625", name="modeldia")
+
+            .row
+                .form-group
+                  .col.col-xs-5
+                    label.text-primary HI Approved Laboratory Registration Number
+                  .col.col-xs-7.col-sm-4
+                    input.form-control(type="text", name="lab")
+
+            .row
+                .form-group
+                  .col.col-xs-5
+                    label.text-primary Rated Motor Power used for default losses or Nameplate Rated Motor Power 
+                  .col.col-xs-7.col-sm-4.col-md-2
+                    input.form-control(type="number", min="0", name="motor_power_rated")
+            
+            //- rather complicated logic deciding if this should be shown / enabled....
+            .row
+                .form-group
+                  .col.col-xs-5
+                    label.text-primary  Enter nominal nameplate motor efficiency
+                  .col.col-xs-7.col-sm-4.col-md-2
+                    input.form-control(type="number", min="0", name="motor_power_rated")
+
+            hr
+            .row
+              .col.col-xs-12
+                button.btn.btn-primary(type="button") Next
+                button.btn.btn-default.btn-space(type="button") Back
+          
+
+        .panel-body
+            .row
+              .col.col-xs-12
+                fieldset
+                  legend Step 4 - Load point data entry
+            .row 
+                .form-group
+                  .col.col-xs-5
+                    label Configuration:
+                  .col.col-xs-7
+                    .form-control-static Pump Sold with Motor 
+            .row 
+                .form-group
+                  .col.col-xs-5
+                    label Motor performance method:
+                  .col.col-xs-7
+                    .form-control-static Tested
+            .row 
+                .form-group
+                  .col.col-xs-5
+                    label PEI calculation method:
+                  .col.col-xs-7
+                    .form-control-static: strong Section IV
+            hr 
+
+            //- some rows will not be shown (variable ones), based on calculation type (section)
+            //- labels will be edited based on load point choice.
+            
+
+            //- CHANGE, PUT VARIABLE SPEED STUFF IN NEW TABLE
+            .row
+               .col.col-xs-12
+                 table.table
+                   thead
+                     tr
+                       th Value at Nominal Speed of Rotation
+                       th @ 25% BEP
+                       th @ 50% BEP
+                       th @ 75% BEP
+                       th @ 100% BEP
+                       th @ 110% BEP
+                    tbody
+                      tr
+                       td Rate of flow (gpm)
+                       td
+                       td
+                       td: input.form-control(type="text")
+                       td: input.form-control(type="text")
+                       td: input.form-control(type="text")
+                      tr
+                       td Head (ft) 
+                       td
+                       td
+                       td: input.form-control(type="text")
+                       td: input.form-control(type="text")
+                       td: input.form-control(type="text")
+                     tr
+                       td Control Power Input (hp)
+                       td
+                       td
+                       td: input.form-control(type="text")
+                       td: input.form-control(type="text")
+                       td: input.form-control(type="text")
+                
+                     tr
+                       td Measured variable load flow rate (gpm)
+                       td: input.form-control(type="text")
+                       td: input.form-control(type="text")
+                       td: input.form-control(type="text")
+                       td
+                       td
+                      tr
+                       td Measured variable load head (ft) 
+                       td: input.form-control(type="text")
+                       td: input.form-control(type="text")
+                       td: input.form-control(type="text")
+                       td
+                       td
+                     tr
+                       td Measured control power input (hp)
+                       td: input.form-control(type="text")
+                       td: input.form-control(type="text")
+                       td: input.form-control(type="text")
+                       td
+                       td
+
+
+
+
+            .row
+               .col.col-xs-12
+                  button(type="button").btn.btn-danger Calculate PEI
+                  button(type="button").btn.btn-default.btn-space Back

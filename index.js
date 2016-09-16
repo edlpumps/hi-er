@@ -17,8 +17,8 @@ const mongoose = require("mongoose");
 const schemas = require("./schemas");
 const MongoStore = require('connect-mongo')(session);
 const port = process.env.PORT || 3000;
-const session_connection_str = process.env.MONGO_CONNECTION_SESSIONS;
-const data_connection_str = process.env.MONGO_CONNECTION_DATA;
+const session_connection_str = process.env.MONGO_CONNECTION_SESSIONS + "/er-sessions";
+const data_connection_str = process.env.MONGO_CONNECTION_DATA + "/er";
 
 const passport = require('passport');
 const Strategy = require('passport-local').Strategy;
@@ -136,9 +136,11 @@ app.use(function(req, res, next){
 const registration = require("./routes/registration");
 const participant = require("./routes/participant");
 const admin = require("./routes/admin");
+const pei = require("./routes/pei");
 app.use("/", registration);
 app.use("/participant", participant);
 app.use("/admin", admin);
+app.use("/pei", pei);
 
 registration.post('/login', 
   passport.authenticate('local', { failureRedirect: '/' }),
