@@ -68,7 +68,7 @@ const ERAdminController = function($scope, $location, service) {
   service.saveNewUser(vm.new_user).then(function(saved) {
         vm.new_user_error = false;
         vm.refreshUsers(function() {
-            var u = vm.users.filter(u_ => u_.email == vm.new_user.email);
+            var u = vm.users.filter(function(u_){return u_email ==  vm.new_user.email});
             vm.activateInfo(u[0])
             vm.new_user = null;
         });
