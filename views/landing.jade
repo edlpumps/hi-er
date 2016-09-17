@@ -6,13 +6,21 @@ block content
   .container.entry(ng-controller="ERController as app")
     .panel.pandel-default
       .panel-heading
-        .row
+        .row.hidden-xs
           .col.col-xs-12
             .hi
-             img(src="/images/hydraulic-institute-logo.jpg")
-        .row
+              img(src="/images/hydraulic-institute-logo.jpg")
+            
+        .row.hidden-xs
            .col.col-xs-12
             .er Energy Rating Program
+
+        .row.visible-xs-block
+           .col.col-xs-3
+             .hi-mobile
+               img(src="/images/logo-big.png")
+           .col.col-xs-9
+            .er-mobile Energy Ratings
             
       .panel-body
         

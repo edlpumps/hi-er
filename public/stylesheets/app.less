@@ -1,5 +1,6 @@
 
 @hi_blue: #0460ab;
+@er_accent: #E6AF2E;
 
 .btn-space {
     margin-left: 5px;
@@ -12,9 +13,12 @@ body {
 .entry {
     margin-top:75px;
     max-width:600px;
-    min-width:450px;
     margin-left:auto;
     margin-right:auto;
+}
+
+.entry .hi-mobile img {
+    width:50px;
 }
 
 #login , #register{
@@ -31,9 +35,19 @@ body {
 }
 
 .er {
+    font-family: 'Libre Baskerville', serif;
     font-size:18pt;
     text-align: center;
     padding-top:25px;
+    color:@er_accent;
+}
+
+.er-mobile {
+    font-family: 'Libre Baskerville', serif;
+    font-size:16pt;
+    text-align: left;
+    padding-top:10px;
+    color:@er_accent;
 }
 
 .form-control-static {

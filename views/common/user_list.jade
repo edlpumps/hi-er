@@ -3,11 +3,11 @@
 mixin userlist()
    .panel.panel-default
       .panel-heading
-        h3 Users
+        h3 
+         .pull-right
+           button(type="button", ng-click="app.showAddUser()").btn.btn-primary New user
+         | Users
       .panel-body
-         .row
-           .col.col-sm-12
-              button(type="button", ng-click="app.showAddUser()").btn.btn-primary New user
          .row
            .col.col-sm-12
              .table-responsive
@@ -15,15 +15,17 @@ mixin userlist()
                 thead
                     tr
                       th Name 
-                      th Email
-                      th Activation
+                      th.hidden-xs Email
+                      th.hidden-xs Activation
                       th 
                 tbody
                       tr(ng-repeat="user in app.users")
-                        td {{user.name.first}} {{user.name.last}}
-                        td 
+                        td.hidden-xs {{user.name.first}} {{user.name.last}}
+                        td.hidden-sm.hidden-md.hidden-lg 
+                           a(href="mailto:{{user.email}}") {{user.name.first}} {{user.name.last}}
+                        td.hidden-xs 
                            a(href="mailto:{{user.email}}") {{user.email}}
-                        td
+                        td.hidden-xs
                            span(ng-show="user.needsActivation") 
                              button(type="button", ng-click="app.activateInfo(user)").btn.btn-primary Needs Activation
                            span(ng-show="user.needsActivation==false") Active

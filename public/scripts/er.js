@@ -1,3 +1,4 @@
+"use strict";
 
 var make_base_url = function($location) {
   var url = $location.protocol() + "://" + $location.host();
