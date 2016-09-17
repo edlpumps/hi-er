@@ -34,7 +34,7 @@ var service = app.factory('service', function($http) {
 });
 
 
-const ERAdminController = function($scope, $location, service) {
+var ERAdminController = function($scope, $location, service) {
   var vm = this;
   
   vm.base_url = make_base_url($location);

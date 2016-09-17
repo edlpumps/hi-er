@@ -9,7 +9,7 @@ var service = app.factory('service', function($http) {
    };
 });
 
-const PEIController = function($scope, $location, service) {
+var PEIController = function($scope, $location, service) {
   var vm = this;
 
   vm.configurations = [

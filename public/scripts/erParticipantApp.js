@@ -35,7 +35,7 @@ var service = app.factory('service', function($http) {
    };
 });
 
-const ERParticipantController = function($scope, $location, service) {
+var ERParticipantController = function($scope, $location, service) {
   var vm = this;
   
   vm.base_url = make_base_url($location);
