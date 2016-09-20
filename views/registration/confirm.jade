@@ -76,10 +76,24 @@ block content
                     | then be able to enter payment information in order to list pumps within the system.
           .row
             .col.col-sm-12
+              
                 form(action="registration_confirm", method="post")
                     input.form-control(type="hidden", name="participant[name]" value=participant? participant.name : null)
                     input.form-control(type="hidden", name="user[name][first]" value=user && user.name ? user.name.first : null)
                     input.form-control(type="hidden", name="user[name][last]" value=user && user.name ? user.name.last : null)
                     input.form-control(type="hidden", name="user[email]" value=user ? user.email : null)
                     input.form-control(type="hidden", name="user[password]" value=user ? user.password : null)
+                    .well
+                        h3 Eligibility Requirements
+                        p Any organization which manufactures, sells, packages or distributes pump(s) within the scope of the Guiding Standards listed in section 40.5.1.7 is eligible to participate in the Program per the terms in the program application.
+                        p The following criteria shall be met by the Participant:
+                        ul
+                         li Supply HI with a basic model listing(s) and agree to abide by all requirements of the Guiding Standards, this document and all licensing and contractual documents
+                         li Have access to HI Energy Rated basic models listed in the HI database or have access to an HI approved test laboratory
+                        hr
+                        .checkbox
+                          label
+                            input(type="checkbox", name="eligibility", required)
+                            b Confirm eligibility
+
                     button.btn.btn-primary(type="submit") Confirm Registration

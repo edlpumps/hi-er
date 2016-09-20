@@ -124,6 +124,10 @@ var PEIController = function($scope, $location, service) {
           vm.go2MotorMethod();
           console.log("Initialized with a pump");
           console.log(vm.pump);
+          if (vm.participant) {
+              vm.pump.participant = vm.participant.name;
+              console.log(vm.participant);
+          }
       }
       else {
           console.log("Initialized without a pump");

@@ -17,10 +17,17 @@ mixin calculator(er)
             input(type="hidden", name="pump[_id]", ng-model="app.pump._id")
             input(id="pump_pei", type="hidden", name="pump[pei]", ng-model="app.pump.pei")
             input(id="pump_energy_rating", type="hidden", name="pump[energy_rating]", ng-model="app.pump.energy_rating")
+
             .row
               .col.col-xs-12
                 fieldset
-                  legend Configuration selection
+                  legend Pump listing data
+            .row 
+              .form-group
+                .col.col-xs-5
+                    label.text-primary Organization / Participant:
+                .col.col-xs-7
+                    input.form-control(type="text", name="pump[participant]", ng-model="app.pump.participant", ng-readonly="app.participant")
             .row 
               .form-group
                 .col.col-xs-5
@@ -31,10 +38,9 @@ mixin calculator(er)
             .row(ng-show="app.pump.configuration")
                 .form-group
                   .col.col-xs-5
-                    label Rating Load Type:
+                    label.text-primary Rating Load Type:
                   .col.col-xs-7
                     .form-control-static {{app.pump.configuration.value == 'bare' || app.pump.configuration.value == 'pump_motor' ? "Continuous Load (CL)" : "Variable Load (VL)"}}
-           
            
             .row
                
@@ -126,8 +132,9 @@ mixin calculator(er)
             hr
             .row
               .col.col-xs-10
-                button.btn.btn-primary(type="button", ng-click="app.go2Options()") Next
-                button.btn.btn-default.btn-space(type="button", ng-click="app.go2Configuration(true)") Back
+                button.btn.btn-default(type="button", ng-click="app.go2Configuration(true)") Back
+                button.btn.btn-primary.btn-space(type="button", ng-click="app.go2Options()") Next
+                
               .col.col-xs-2
                   a(href="#" ng-click="app.go2Configuration()") Start over
 
@@ -180,20 +187,7 @@ mixin calculator(er)
                   .col.col-xs-7
                     .form-control-static: strong {{app.section_label()}}
             hr 
-            .row
-                .form-group
-                  .col.col-xs-5
-                    label.text-primary Can the pump be tested at 120% of BEP flow?  
-                  .col.col-xs-7
-                    div.radio
-                      label
-                        input(type="radio" ng-model="app.pump.load120", value="true") 
-                        | Yes (75% / 100% / 110% load points)
-                    div.radio
-                      label.radio
-                        input(type="radio" ng-model="app.pump.load120", value="false") 
-                        | No (65% / 90% / 100% load points)
-            hr
+            
             
             
             .row
@@ -214,23 +208,21 @@ mixin calculator(er)
                   .col.col-xs-7
                     select.form-control(ng-model="app.pump.doe", data-width="auto", ng-options="opt as opt.label for opt in app.doe_opts track by opt.value")
                         option(value="")  
-                hr(ng-show="app.doe.value!='ST'") 
+               
             
-           
-            .row(ng-show="app.doe.value=='ST'")
+              
+            .row(ng-show="app.pump.doe.value=='ST'")
                 .form-group
                   .col.col-xs-5
                     label.text-primary Bowl diameter (inches)
                   .col.col-xs-7
                     select.form-control(ng-model="app.pump.bowl_diameter", data-width="auto", ng-options="val as (val+'\"') for val in [1, 2, 3, 4, 6] track by val")
                         option(value="")
-                hr(ng-show="app.doe.value=='ST'") 
-
+              
           
 
 
-            .row(ng-show="app.configuration.value != 'bare'")
-               
+            .row(ng-show="app.pump.configuration.value != 'bare' && app.pump.doe.value != 'ST'")
                 .form-group
                   .col.col-xs-5
                     label.text-primary Is motor regulated under 10CFR 431.25?
@@ -244,7 +236,7 @@ mixin calculator(er)
             
             
 
-            .row(ng-show="app.configuration.value != 'bare'")
+            .row(ng-show="app.pump.configuration.value != 'bare'")
                 .form-group
                   .col.col-xs-5
                     label.text-primary Rated Motor Power used for default losses or Nameplate Rated Motor Power 
@@ -263,8 +255,8 @@ mixin calculator(er)
             hr
             .row
               .col.col-xs-10
-                button.btn.btn-primary(type="button", ng-click="app.go2Data()") Next
-                button.btn.btn-default.btn-space(type="button", ng-click="app.go2MotorMethod(true)") Back
+                button.btn.btn-default(type="button", ng-click="app.go2MotorMethod(true)") Back
+                button.btn.btn-primary.btn-space(type="button", ng-click="app.go2Data()") Next
               .col.col-xs-2
                   a(href="#" ng-click="app.go2Configuration()") Start over
           
@@ -318,7 +310,20 @@ mixin calculator(er)
                     .form-control-static: strong {{app.section_label()}}
             hr 
 
-            
+            .row
+                .form-group
+                  .col.col-xs-5
+                    label.text-primary Can the pump be tested at 120% of BEP flow?  
+                  .col.col-xs-7
+                    div.radio
+                      label
+                        input(type="radio" ng-model="app.pump.load120", value="true") 
+                        | Yes (75% / 100% / 110% load points)
+                    div.radio
+                      label.radio
+                        input(type="radio" ng-model="app.pump.load120", value="false") 
+                        | No (65% / 90% / 100% load points)
+            hr
             .row
                .col.col-xs-12
                 .table-responsive
@@ -381,8 +386,9 @@ mixin calculator(er)
             hr
             .row
                .col.col-xs-10
-                  button(type="button", ng-click="app.go2Results()").btn.btn-danger Calculate PEI
-                  button(type="button", ng-click="app.go2Options(true)").btn.btn-default.btn-space Back
+                  button(type="button", ng-click="app.go2Options(true)").btn.btn-default Back
+                  button(type="button", ng-click="app.go2Results()").btn.btn-danger.btn-space Calculate PEI
+                  
                .col.col-xs-2
                   a(href="#" ng-click="app.go2Configuration()") Start over
 
