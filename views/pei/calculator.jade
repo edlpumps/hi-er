@@ -27,6 +27,15 @@ mixin calculator(er)
                     label.text-primary Configuration:
                 .col.col-xs-7
                     select.form-control(name="pump[configuration]", data-width="auto", ng-model="app.pump.configuration", ng-options="config as config.label for config in app.configurations track by config.value")
+            
+            .row(ng-show="app.pump.configuration")
+                .form-group
+                  .col.col-xs-5
+                    label Rating Load Type:
+                  .col.col-xs-7
+                    .form-control-static {{app.pump.configuration.value == 'bare' || app.pump.configuration.value == 'pump_motor' ? "Continuous Load (CL)" : "Variable Load (VL)"}}
+           
+           
             .row
                
                 .form-group
@@ -61,7 +70,7 @@ mixin calculator(er)
                   .col.col-xs-7.col-sm-4
                     input.form-control(ng-model="app.pump.laboratory", name="pump[laboratory]")     
             
-            hr           
+            hr
             .row
               .col.col-xs-12
                 button.btn.btn-primary(type="button", ng-disabled="!app.pump.configuration", ng-click="app.go2MotorMethod()") Next
@@ -82,6 +91,14 @@ mixin calculator(er)
                     label Configuration:
                   .col.col-xs-7
                     .form-control-static {{app.pump.configuration.label}}
+            .row(ng-show="app.pump.configuration")
+                .form-group
+                  .col.col-xs-5
+                    label Rating Load Type:
+                  .col.col-xs-7
+                    .form-control-static {{app.pump.configuration.value == 'bare' || app.pump.configuration.value == 'pump_motor' ? "Continuous Load (CL)" : "Variable Load (VL)"}}
+           
+           
             .row 
                 .form-group
                   .col.col-xs-5
@@ -129,7 +146,14 @@ mixin calculator(er)
                     label Configuration:
                   .col.col-xs-7
                     .form-control-static {{app.pump.configuration.label}}
-
+            .row(ng-show="app.pump.configuration")
+                .form-group
+                  .col.col-xs-5
+                    label Rating Load Type:
+                  .col.col-xs-7
+                    .form-control-static {{app.pump.configuration.value == 'bare' || app.pump.configuration.value == 'pump_motor' ? "Continuous Load (CL)" : "Variable Load (VL)"}}
+           
+           
             .row 
                 .form-group
                   .col.col-xs-5
@@ -169,7 +193,7 @@ mixin calculator(er)
                       label.radio
                         input(type="radio" ng-model="app.pump.load120", value="false") 
                         | No (65% / 90% / 100% load points)
-            hr 
+            hr
             
             
             .row
@@ -257,6 +281,14 @@ mixin calculator(er)
                   .col.col-xs-7
                     .form-control-static {{app.pump.configuration.label}}
 
+            .row(ng-show="app.pump.configuration")
+                .form-group
+                  .col.col-xs-5
+                    label Rating Load Type:
+                  .col.col-xs-7
+                    .form-control-static {{app.pump.configuration.value == 'bare' || app.pump.configuration.value == 'pump_motor' ? "Continuous Load (CL)" : "Variable Load (VL)"}}
+           
+           
             .row 
                 .form-group
                   .col.col-xs-5
