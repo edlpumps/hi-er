@@ -130,3 +130,51 @@ var ERParticipantController = function($scope, $location, service) {
 
 
 app.controller('ERParticipantController', ERParticipantController);
+
+
+var ERNewPumpController = function($scope, $location, service) {
+  var vm = this;
+
+  vm.configurations = [
+       { value: "bare", label: "Bare Pump"}, 
+       { value: "pump_motor", label: "Pump + Motor"}, 
+       { value: "pump_motor_cc", label: "Pump + Motor w/ Continuous Controls"}, 
+       { value: "pump_motor_nc", label: "Pump + Motor w/ Non-continuous Controls"}
+  ];
+
+  console.log("Initialized new pump controller");
+
+  vm.manual = function(){
+    console.log('manual'); 
+    var myEl = angular.element( document.querySelector( '#pei_type' ) );
+    myEl.val('manual');
+    new_pump.submit()
+  }
+
+  vm.calculate = function(){
+    console.log('calculate'); 
+    var myEl = angular.element( document.querySelector( '#pei_type' ) );
+    myEl.val('calculate');
+     
+    new_pump.submit()
+  }
+}
+
+
+app.controller('ERNewPumpController', ERNewPumpController);
+
+
+
+var ERNewManualPumpController = function($scope, $location, service) {
+  var vm = this;
+
+  vm.configurations = [
+       { value: "bare", label: "Bare Pump"}, 
+       { value: "pump_motor", label: "Pump + Motor"}, 
+       { value: "pump_motor_cc", label: "Pump + Motor w/ Continuous Controls"}, 
+       { value: "pump_motor_nc", label: "Pump + Motor w/ Non-continuous Controls"}
+  ];
+}
+
+
+app.controller('ERNewManualPumpController', ERNewManualPumpController);

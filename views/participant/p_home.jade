@@ -8,6 +8,7 @@ block nav
     +navigation("home")
     
 block content
+  div(ng-app='ERParticipantApp')
     .container(ng-controller="ERParticipantController as app",ng-init="app.user= #{JSON.stringify(user)}; app.participant= #{JSON.stringify(participant)}")
 
         form(name="settingsForm",ng-submit="app.saveParticipant(settingsForm.$valid)", novalidate)

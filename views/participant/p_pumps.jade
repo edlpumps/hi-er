@@ -1,15 +1,26 @@
 extends layout
-include ../common/user_list
+
 
 block nav
      +navigation("pumps")
 block content
+ div(ng-app='ERParticipantApp')
    .container
     .panel.panel-default
       .panel-heading 
-            h1 Pump listings
+          h1 Pump listings
       .panel-body
         .row
+          .col.col-xs-12
+            .btn-group
+             button(type="button", data-toggle="dropdown").btn.btn-primary.dropdown-toggle 
+               .glyphicon.glyphicon-plus 
+               span.btn-space New Pump 
+               span.btn-space.caret
+             us.dropdown-menu
+               li: a(href="pumps/new") Create single pump listing
+               li: a(href="pumps/upload") Upload many pumps
+        .row.solo
             .col.col-xs-12
                 .alert.alert-warning Pump listings not available yet.
         

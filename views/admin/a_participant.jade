@@ -40,7 +40,7 @@ block content
                   .col.col-xs-12
                     .form-group
                         label(style="margin-right:10px") Subcription level:  
-                        select.selectpicker(name="participant[pumpLimit]")
+                        select.form-control(name="participant[pumpLimit]")
                             option(value="0", selected=(participant.pumpLimit == 0)) Payment needed
                             option(value="50", selected=(participant.pumpLimit == 50)) Up to 50 pump listings
                             option(value="150", selected=(participant.pumpLimit == 150)) Up to 150 pump listings

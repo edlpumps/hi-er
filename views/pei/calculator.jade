@@ -4,14 +4,19 @@ mixin calculator(er)
   //- bring in required scripts and css for the calculator itself
 
   //- add angular controller here
-  .container(ng-controller="PEIController as app").pei
-    
-    .panel.panel-default.solo
+  .container(ng-controller="PEIController as app", ng-init="app.user= #{JSON.stringify(user)}; app.participant= #{JSON.stringify(participant)}; app.setup(#{JSON.stringify(pump)})").pei
+    form(action="submit", method="post", name="new_pump_pei")
+     .panel.panel-default.solo
         .panel-heading
             h1 Pump Energy Index Calculator
         
-        //- each panel body is shown at various times throughout the calculation
+        //---------------------------------------------------------------
+        //- Step 1 - Choosing Configuration
+        //---------------------------------------------------------------
         .panel-body(ng-show="app.step=='configuration'")
+            input(type="hidden", name="pump[_id]", ng-model="app.pump._id")
+            input(id="pump_pei", type="hidden", name="pump[pei]", ng-model="app.pump.pei")
+            input(id="pump_energy_rating", type="hidden", name="pump[energy_rating]", ng-model="app.pump.energy_rating")
             .row
               .col.col-xs-12
                 fieldset
@@ -21,26 +26,74 @@ mixin calculator(er)
                 .col.col-xs-5
                     label.text-primary Configuration:
                 .col.col-xs-7
-                    select.form-control(name="configuration", data-width="auto", ng-model="app.configuration", ng-options="config as config.label for config in app.configurations track by config.value")
-                     
+                    select.form-control(name="pump[configuration]", data-width="auto", ng-model="app.pump.configuration", ng-options="config as config.label for config in app.configurations track by config.value")
+            .row
+               
+                .form-group
+                  .col.col-xs-5
+                    label.text-primary Basic Model Designation
+                  .col.col-xs-7.col-sm-4
+                    input.form-control(type="text" ng-model="app.pump.basic_model" name="pump[basic_model]")
+            
+            .row
+                .form-group
+                  .col.col-xs-5
+                    label.text-primary Model Full Impeller Diameter (in)
+                  .col.col-xs-7.col-sm-4.col-md-2
+                    input.form-control(type="number" ng-model="app.pump.diameter", min="0", step=".0625", name="pump[diameter]")
+
+            .row
+                .form-group
+                  .col.col-xs-5
+                    label.text-primary Nominal speed of rotation
+                  .col.col-xs-7
+                    label.radio-inline
+                      input(type="radio" ng-model="app.pump.speed", value="3600", name="pump[speed]") 
+                      | 3600 rpm
+                    label.radio-inline
+                      input(type="radio" ng-model="app.pump.speed", value="1800", name="pump[speed]") 
+                      | 1800 rpm
+                        
+            .row
+                .form-group
+                  .col.col-xs-5
+                    label.text-primary HI Approved Laboratory Registration Number
+                  .col.col-xs-7.col-sm-4
+                    input.form-control(ng-model="app.pump.laboratory", name="pump[laboratory]")     
+            
             hr           
             .row
               .col.col-xs-12
-                button.btn.btn-primary(type="button", ng-disabled="!app.configuration", ng-click="app.go2MotorMethod()") Next
+                button.btn.btn-primary(type="button", ng-disabled="!app.pump.configuration", ng-click="app.go2MotorMethod()") Next
 
 
+        //---------------------------------------------------------------
+        //- Step 2 - Motor Performance method -> Calculation Section selected
+        //---------------------------------------------------------------
         .panel-body(ng-show="app.step=='motor_method'")
             .row
               .col.col-xs-12
                 fieldset
                   legend Motor performance method
+            
             .row 
-              
                 .form-group
                   .col.col-xs-5
                     label Configuration:
                   .col.col-xs-7
-                    .form-control-static {{app.configuration.label}}
+                    .form-control-static {{app.pump.configuration.label}}
+            .row 
+                .form-group
+                  .col.col-xs-5
+                    label Basic Model Designation:
+                  .col.col-xs-7
+                    .form-control-static {{app.pump.basic_model}}
+            .row 
+                .form-group
+                  .col.col-xs-5
+                    label Impeller diameter and Nominal Speed:
+                  .col.col-xs-7
+                    .form-control-static {{app.pump.diameter}} inches @ {{app.pump.speed}} rpm
             hr 
             .row
                 .form-group
@@ -48,10 +101,10 @@ mixin calculator(er)
                     label.text-primary How is motor performance determined?  
                   .col.col-xs-7
                     label.radio-inline
-                      input(type="radio" ng-model="app.motor_method", value="tested") 
+                      input(type="radio" ng-model="app.pump.motor_method", value="tested") 
                       | Tested
                     label.radio-inline
-                      input(type="radio" ng-model="app.motor_method", value="calculated") 
+                      input(type="radio" ng-model="app.pump.motor_method", value="calculated") 
                       | Calculated
             hr
             .row
@@ -61,6 +114,10 @@ mixin calculator(er)
               .col.col-xs-2
                   a(href="#" ng-click="app.go2Configuration()") Start over
 
+
+        //---------------------------------------------------------------
+        //- Step 3 - All additional options
+        //---------------------------------------------------------------
         .panel-body(ng-show="app.step=='options'")
             .row
               .col.col-xs-12
@@ -71,13 +128,27 @@ mixin calculator(er)
                   .col.col-xs-5
                     label Configuration:
                   .col.col-xs-7
-                    .form-control-static {{app.configuration.label}}
+                    .form-control-static {{app.pump.configuration.label}}
+
+            .row 
+                .form-group
+                  .col.col-xs-5
+                    label Basic Model Designation:
+                  .col.col-xs-7
+                    .form-control-static {{app.pump.basic_model}}
+            .row 
+                .form-group
+                  .col.col-xs-5
+                    label Impeller diameter and Nominal Speed:
+                  .col.col-xs-7
+                    .form-control-static {{app.pump.diameter}} inches @ {{app.pump.speed}} rpm
+
             .row(ng-show="app.motor_method_required()")
                 .form-group
                   .col.col-xs-5
                     label Motor performance method:
                   .col.col-xs-7
-                    .form-control-static {{app.motor_method == "tested" ? "Tested (water to wire)" : "Calculated"}}
+                    .form-control-static {{app.pump.motor_method == "tested" ? "Tested (water to wire)" : "Calculated"}}
             .row 
                 .form-group
                   .col.col-xs-5
@@ -92,32 +163,21 @@ mixin calculator(er)
                   .col.col-xs-7
                     div.radio
                       label
-                        input(type="radio" ng-model="app.load120", value="true") 
+                        input(type="radio" ng-model="app.pump.load120", value="true") 
                         | Yes (75% / 100% / 110% load points)
                     div.radio
                       label.radio
-                        input(type="radio" ng-model="app.load120", value="false") 
+                        input(type="radio" ng-model="app.pump.load120", value="false") 
                         | No (65% / 90% / 100% load points)
             hr 
-            .row
-                .form-group
-                  .col.col-xs-5
-                    label.text-primary Nominal speed of rotation
-                  .col.col-xs-7
-                    label.radio-inline
-                      input(type="radio" ng-model="app.speed", value="3600") 
-                      | 3600 rpm
-                    label.radio-inline
-                      input(type="radio" ng-model="app.speed", value="1800") 
-                      | 1800 rpm
-                        
+            
             
             .row
                 .form-group
                   .col.col-xs-5
                     label.text-primary Number of stages tested
                   .col.col-xs-7.col-sm-4.col-md-2
-                    input.form-control(type="number", min="1", name="stages")
+                    input.form-control(type="number", min="1", name="pump[stages]", ng-model="app.pump.stages")
 
             
                     
@@ -128,7 +188,7 @@ mixin calculator(er)
                   .col.col-xs-5
                     label.text-primary DOE Pump Category 
                   .col.col-xs-7
-                    select.form-control(ng-model="app.doe", data-width="auto", ng-options="opt as opt.label for opt in app.doe_opts track by opt.value")
+                    select.form-control(ng-model="app.pump.doe", data-width="auto", ng-options="opt as opt.label for opt in app.doe_opts track by opt.value")
                         option(value="")  
                 hr(ng-show="app.doe.value!='ST'") 
             
@@ -138,12 +198,11 @@ mixin calculator(er)
                   .col.col-xs-5
                     label.text-primary Bowl diameter (inches)
                   .col.col-xs-7
-                    select.form-control(ng-model="bowl_diameter", data-width="auto", ng-options="val as (val+'\"') for val in [1, 2, 3, 4, 6] track by val")
+                    select.form-control(ng-model="app.pump.bowl_diameter", data-width="auto", ng-options="val as (val+'\"') for val in [1, 2, 3, 4, 6] track by val")
                         option(value="")
                 hr(ng-show="app.doe.value=='ST'") 
 
-            
-
+          
 
 
             .row(ng-show="app.configuration.value != 'bare'")
@@ -153,10 +212,10 @@ mixin calculator(er)
                     label.text-primary Is motor regulated under 10CFR 431.25?
                   .col.col-xs-7
                     label.radio-inline
-                      input(type="radio" ng-model="app.motor_regulated", value="true") 
+                      input(type="radio" ng-model="app.pump.motor_regulated", value="true") 
                       | Yes
                     label.radio-inline
-                      input(type="radio" ng-model="app.motor_regulated", value="false") 
+                      input(type="radio" ng-model="app.pump.motor_regulated", value="false") 
                       | No
             
             
@@ -166,44 +225,16 @@ mixin calculator(er)
                   .col.col-xs-5
                     label.text-primary Rated Motor Power used for default losses or Nameplate Rated Motor Power 
                   .col.col-xs-7.col-sm-4.col-md-2
-                    input.form-control(type="number", min="0", name="motor_power_rated")
-                hr(ng-hide="app.doe.value != 'ST' && app.motor_regulated =='false'")
+                    input.form-control(type="number", min="0", name="pump[motor_power_rated]", ng-model="app.pump.motor_power_rated")
+                hr(ng-hide="app.pump.doe.value != 'ST' && app.pump.motor_regulated =='false'")
 
-            .row(ng-show="app.doe.value != 'ST' && app.motor_regulated =='false'")
+            .row(ng-show="app.pump.doe.value != 'ST' && app.pump.motor_regulated =='false'")
                 .form-group
                   .col.col-xs-5
                     label.text-primary  Nominal nameplate motor efficiency
                   .col.col-xs-7.col-sm-4.col-md-2
                     input.form-control(type="number", min="0", name="motor_power_rated")
-                hr
-            
-
-
-            
-            
-            .row
-               
-                .form-group
-                  .col.col-xs-5
-                    label.text-primary Basic Model Designation
-                  .col.col-xs-7.col-sm-4
-                    input.form-control(type="text", name="model")
-            
-            .row
-                .form-group
-                  .col.col-xs-5
-                    label.text-primary Model Full Impeller Diameter (in)
-                  .col.col-xs-7.col-sm-4.col-md-2
-                    input.form-control(type="number", min="0", step=".0625", name="modeldia")
-
-            .row
-                .form-group
-                  .col.col-xs-5
-                    label.text-primary HI Approved Laboratory Registration Number
-                  .col.col-xs-7.col-sm-4
-                    input.form-control(type="text", name="lab")
                 
-            
 
             hr
             .row
@@ -224,14 +255,29 @@ mixin calculator(er)
                   .col.col-xs-5
                     label Configuration:
                   .col.col-xs-7
-                    .form-control-static {{app.configuration.label}}
+                    .form-control-static {{app.pump.configuration.label}}
+
+            .row 
+                .form-group
+                  .col.col-xs-5
+                    label Basic Model Designation:
+                  .col.col-xs-7
+                    .form-control-static {{app.pump.basic_model}}
+            .row 
+                .form-group
+                  .col.col-xs-5
+                    label Impeller diameter and Nominal Speed:
+                  .col.col-xs-7
+                    .form-control-static {{app.pump.diameter}} inches @ {{app.pump.speed}} rpm
+
+
             .row(ng-show="app.motor_method_required()")
                 
                 .form-group
                   .col.col-xs-5
                     label Motor performance method:
                   .col.col-xs-7
-                    .form-control-static {{app.motor_method == "tested" ? "Tested (water to wire)" : "Calculated"}}
+                    .form-control-static {{app.pump.motor_method == "tested" ? "Tested (water to wire)" : "Calculated"}}
             .row 
                 .form-group
                   .col.col-xs-5
@@ -248,9 +294,9 @@ mixin calculator(er)
                    thead
                      tr
                        th.col-label Value at Nominal Speed of Rotation
-                       th {{app.load120 == "true" ? "@ 75% BEP" : "@ 60% BEP"}}
-                       th {{app.load120 == "true" ? "@ 100% BEP" : "@ 90% BEP"}}
-                       th {{app.load120 == "true" ? "@ @ 110% BEP" : "@ 100% BEP"}}
+                       th {{app.pump.load120 == "true" ? "@ 75% BEP" : "@ 60% BEP"}}
+                       th {{app.pump.load120 == "true" ? "@ 100% BEP" : "@ 90% BEP"}}
+                       th {{app.pump.load120 == "true" ? "@ @ 110% BEP" : "@ 100% BEP"}}
                     tbody
                       tr
                        td.col-label Rate of flow (gpm)
@@ -273,9 +319,9 @@ mixin calculator(er)
                .col.col-xs-5
                  label Pump Power Input @ 120% of BEP Rate of Flow (hp)
                .col.col-xs-7
-                    input.form-control(ng-model="app.power_at_120BEP", type="number")
+                    input.form-control(ng-model="app.pump.power_at_120BEP", type="number")
 
-            .row(ng-show="app.section=='6a' || app.section=='6b'")
+            .row(ng-show="app.pump.section=='6a' || app.pump.section=='6b'")
                .col.col-xs-12
                  table.table
                    thead
@@ -308,11 +354,23 @@ mixin calculator(er)
                .col.col-xs-2
                   a(href="#" ng-click="app.go2Configuration()") Start over
 
-
-        .panel-body(ng-show="app.step=='results'")
+        if (er)
+          .panel-body(ng-show="app.step=='results'")
             row
                .col.col-xs-12
-                .alert.alert-success Results will be coming soon...
+                 .alert.alert-success Since this is an Energy rating listing, PEI and Energy Rating will be listed here.  Clicking save will result in the pump being listed in the participant's pump listing
+
+            row
+               .col.col-xs-10
+                  button(type="button", ng-click="app.go2Data(true)").btn.btn-default.btn-space Back
+               .col.col-xs-2
+                  button(type="button", ng-click="app.submitListing()").btn.btn-danger.btn-space Save pump listing
+
+        else
+          .panel-body(ng-show="app.step=='results'")
+            row
+               .col.col-xs-12
+                .alert.alert-success PEI Results will be coming soon...
 
             row
                .col.col-xs-10

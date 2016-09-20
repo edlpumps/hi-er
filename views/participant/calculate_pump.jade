@@ -1,0 +1,10 @@
+extends layout
+
+include ../pei/calculator
+
+block nav
+     +navigation("new_manual")
+block content
+  div(ng-app='PEIApp')
+    +calculator(true)
+    

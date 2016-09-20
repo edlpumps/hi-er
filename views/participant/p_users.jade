@@ -4,6 +4,7 @@ include ../common/user_list
 block nav
      +navigation("users")
 block content
+  div(ng-app='ERParticipantApp')
     .container(ng-controller="ERParticipantController as app",ng-init="app.user= #{JSON.stringify(user)}")
 
         +userlist()

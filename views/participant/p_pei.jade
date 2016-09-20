@@ -1,0 +1,10 @@
+extends layout
+include ../pei/calculator
+
+block nav
+     +navigation("pei")
+
+
+block content
+ div(ng-app='ERParticipantApp')
+   +calculator(false)

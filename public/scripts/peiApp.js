@@ -11,6 +11,8 @@ var service = app.factory('service', function($http) {
 
 var PEIController = function($scope, $location, service) {
   var vm = this;
+  vm.pump = {};
+  
 
   vm.configurations = [
        { value: "bare", label: "Bare Pump"}, 
@@ -30,11 +32,13 @@ var PEIController = function($scope, $location, service) {
 
   vm.go2Configuration = function() {
       vm.step = "configuration";
+
+      console.log(vm.pump);
   }
 
   vm.motor_method_required = function() {
-      if ( !vm.configuration) return false;
-      return vm.configuration.value != "bare" && vm.configuration.value != "pump_motor_nc";
+      if ( !vm.pump.configuration) return false;
+      return vm.pump.configuration.value != "bare" && vm.pump.configuration.value != "pump_motor_nc";
   }
 
   vm.go2MotorMethod = function(back) {
@@ -45,11 +49,13 @@ var PEIController = function($scope, $location, service) {
       else {
         vm.step = "motor_method";
       }
+
+      console.log(vm.pump);
   }
 
   vm.section_label = function() {
-      if (!vm.section) return undefined;
-      switch(vm.section) {
+      if (!vm.pump.section) return undefined;
+      switch(vm.pump.section) {
           case "3":
             return "Section III";
           case "4":
@@ -69,42 +75,74 @@ var PEIController = function($scope, $location, service) {
 
   vm.go2Options = function() {
       let pass = false;
-      console.log(vm.configuration.value);
-      if ( vm.configuration.value == "bare") {
-          vm.section = "3";
+      console.log(vm.pump.configuration.value);
+      if ( vm.pump.configuration.value == "bare") {
+          vm.pump.section = "3";
           pass = true;
       }
-      else if (vm.configuration.value == "pump_motor_nc") {
-          vm.section = "6b";
+      else if (vm.pump.configuration.value == "pump_motor_nc") {
+          vm.pump.section = "6b";
           pass = true;
       } 
-      else if (vm.configuration.value == "pump_motor") {
-          if (vm.motor_method == "tested") vm.section="4";
-          else vm.section = "5"
-          pass = vm.motor_method;
+      else if (vm.pump.configuration.value == "pump_motor") {
+          if (vm.pump.motor_method == "tested") vm.pump.section="4";
+          else vm.pump.section = "5"
+          pass = vm.pump.motor_method;
       }
-      else if (vm.configuration.value == "pump_motor_cc") {
-          if (vm.motor_method == "tested") vm.section="6a";
-          else vm.section = "7";
-          pass = vm.motor_method;;
+      else if (vm.pump.configuration.value == "pump_motor_cc") {
+          if (vm.pump.motor_method == "tested") vm.pump.section="6a";
+          else vm.pump.section = "7";
+          pass = vm.pump.motor_method;;
       }
       else {
           vm.go2Configuration();
       }
-      console.log("Section selected -> " + vm.section);
+      console.log("Section selected -> " + vm.pump.section);
       console.log("Going to options -> " + pass);
 
-      if (pass) vm.step = "options";;
+      if (pass) vm.step = "options";
+
+      console.log(vm.pump);
   }
 
   vm.go2Data = function() {
       vm.step = "data";
+      console.log(vm.pump);
   }
 
   vm.go2Results = function() {
       vm.step = "results";
+      console.log(vm.pump);
   }
 
+
+  vm.setup = function(pump) {
+      if ( pump ) {
+          vm.pump = pump;
+          vm.pump.configuration = vm.configurations.filter(function(c) { return c.value == pump.configuration})[0];
+          vm.pump.diameter = parseFloat(pump.diameter);
+          vm.go2MotorMethod();
+          console.log("Initialized with a pump");
+          console.log(vm.pump);
+      }
+      else {
+          console.log("Initialized without a pump");
+      }
+  }
+
+  vm.submitListing = function() {
+      
+      // DEMO PURPOSES
+      console.log("DEMONSTRATION VALUES FOR PEI AND ENERGY RATINGS")
+      var e = angular.element( document.querySelector( '#pump_pei' ) );
+      e.val(42);
+      e = angular.element( document.querySelector( '#pump_energy_rating' ) );
+      e.val(109);
+
+
+      new_pump_pei.submit();
+  }
+  
   vm.go2Configuration();
 }
 

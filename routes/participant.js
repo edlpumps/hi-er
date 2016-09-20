@@ -59,6 +59,42 @@ router.get('/purchase', function(req, res) {
 });
 
 
+router.get("/pumps/new", function(req, res){
+    req.log.debug("Rendering participant new pump page");
+    res.render("participant/new_pump", {
+        user : req.user,
+        participant : req.participant
+    });
+})
+
+
+router.post("/pumps/new", function(req, res){
+    console.log(req.body);
+    var pump = req.body;
+    var view = pump.pei_input_type == 'calculate'  ? "participant/calculate_pump" : "participant/manual_pump";
+    res.render(view, {
+        user : req.user,
+        participant : req.participant, 
+        pump:pump
+    });
+});
+
+router.post("/pumps/submit", function(req, res){
+    console.log(req.body);
+    var pump = req.body;
+
+    res.redirect("/participant/pumps");
+});
+
+router.get("/pumps/upload", function(req, res){
+    req.log.debug("Rendering participant pump upload");
+    res.render("participant/upload", {
+        user : req.user,
+        participant : req.participant
+    });
+})
+
+
 router.post('/api/settings', function(req, res) {
     req.log.debug("Saving participant settings");
     req.Participants.findById(req.participant._id, function(err, participant) {

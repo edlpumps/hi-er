@@ -2,16 +2,16 @@ extends layout
 
 
 block nav
-     +navigation("purchase")
+     +navigation("upload")
 block content
   div(ng-app='ERParticipantApp')
 
     .container
       .panel.panel-default
         .panel-heading 
-            h1 Purchase / Subscribe
+            h1 Upload pump listings
 
         .panel-body
-            p Payments handled offline during MVP / beta
+            .alert.alert-warning Pump upload through spreadsheets not supported in MVP
       
         

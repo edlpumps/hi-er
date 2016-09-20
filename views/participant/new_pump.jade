@@ -1,0 +1,71 @@
+extends layout
+
+
+block nav
+     +navigation("new")
+block content
+  div(ng-app='ERParticipantApp')
+    .container.pei(ng-controller="ERNewPumpController as app",ng-init="app.user= #{JSON.stringify(user)}; app.participant= #{JSON.stringify(participant)}")
+      .panel.panel-default.solo
+        .panel-heading 
+            h1 Create pump listing
+
+        .panel-body
+          form(role='form', method="post", action="new", name='new_pump')
+            .row
+              .col.col-xs-12
+                fieldset
+                  legend Basic pump information
+            .row 
+              .form-group
+                .col.col-xs-5
+                    label.text-primary Configuration:
+                .col.col-xs-7
+                    select.form-control(name="configuration", data-width="auto", ng-model="app.pump.configuration", ng-options="config as config.label for config in app.configurations track by config.value")
+            .row
+               
+                .form-group
+                  .col.col-xs-5
+                    label.text-primary Basic Model Designation
+                  .col.col-xs-7.col-sm-4
+                    input.form-control(name="basic_model", type="text" ng-model="app.pump.basic_model")
+            
+            .row
+                .form-group
+                  .col.col-xs-5
+                    label.text-primary Model Full Impeller Diameter (in)
+                  .col.col-xs-7.col-sm-4.col-md-2
+                    input.form-control(name="diameter", type="number" ng-model="app.pump.diameter", min="0", step=".0625")
+
+            .row
+                .form-group
+                  .col.col-xs-5
+                    label.text-primary Nominal speed of rotation
+                  .col.col-xs-7
+                    label.radio-inline
+                      input(type="radio" name="speed", ng-model="app.pump.speed", value="3600") 
+                      | 3600 rpm
+                    label.radio-inline
+                      input(type="radio" name="speed", ng-model="app.pump.speed", value="1800") 
+                      | 1800 rpm
+                        
+            .row
+                .form-group
+                  .col.col-xs-5
+                    label.text-primary HI Approved Laboratory Registration Number
+                  .col.col-xs-7.col-sm-4
+                    input.form-control(name="laboratory", type="app.pump.laboratory")     
+            
+            hr           
+            .row
+               input(type="hidden" id="pei_type", ng-model="app.pump.pei", name="pei_input_type")
+               .form-group
+                  .col.col-xs-5
+                    label.text-primary Do you already have a PEI calculation ready for this pump?
+                  .col.col-xs-7.col-sm-4
+                    .row
+                     .col.col-lg-12
+                        button.btn.btn-primary(type="button", ng-click="app.manual()") Yes, I have a PEI calculation ready.
+                    .row(style="margin-top:5px")
+                     .col.col-lg-12
+                        button.btn.btn-warning(type="button", ng-click="app.calculate()") No, guide me through the PEI calculation.
