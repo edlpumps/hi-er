@@ -5,22 +5,49 @@ block nav
      +navigation("pumps")
 block content
  div(ng-app='ERParticipantApp')
-   .container
-    .panel.panel-default
-      .panel-heading 
-          h1 Pump listings
-      .panel-body
-        .row
-          .col.col-xs-12
-            .btn-group
-             button(type="button", data-toggle="dropdown").btn.btn-primary.dropdown-toggle 
-               .glyphicon.glyphicon-plus 
-               span.btn-space New Pump 
-               span.btn-space.caret
-             us.dropdown-menu
-               li: a(href="pumps/new") Create new pump listing using web form
-               li: a(href="pumps/upload") Upload new pump(s) with template
-        .row.solo
+    .container(ng-controller="ERParticipantController as app",ng-init="app.user= #{JSON.stringify(user)}; app.participant= #{JSON.stringify(participant)}")
+
+      .panel.panel-default
+        .panel-heading 
+            h1 Pump listings
+        .panel-body
+          .row
             .col.col-xs-12
-                .alert.alert-warning Pump listings not available yet.
-        
+              .btn-group
+              button(type="button", data-toggle="dropdown").btn.btn-primary.dropdown-toggle 
+                .glyphicon.glyphicon-plus 
+                span.btn-space New Pump 
+                span.btn-space.caret
+              us.dropdown-menu
+                li: a(href="pumps/new") Create new pump listing using web form
+                li: a(href="pumps/upload") Upload new pump(s) with template
+          .row.solo
+           .col.col-xs-12
+            .table-responsive
+              table.table.table-striped
+                thead
+                 tr 
+                  th
+                  th Basic Model Designation
+                  th Configuration
+                  th DOE Pump Category
+                  th Impeller (inches)
+                  th Nominal speed (rpm)
+                  th PEI
+                  th ER
+                  th
+                tbody
+                 tr(ng-repeat="pump in app.participant.pumps")
+                  td
+                    img(height="25" width="25" ng-src="/images/{{pump.listed && pump.active_admin ? 'active' : 'inactive'}}.png")
+                  td: a(href="pumps/{{pump._id}}") {{pump.basic_model}}
+                  td {{app.getConfigLabel(pump.configuration)}}
+                  td {{pump.doe}}
+                  td {{pump.diameter}}
+                  td {{pump.speed}}
+                  td {{pump.pei}}
+                  td {{pump.energy_rating}} 
+                  
+                  td 
+                     button(type="button", ng-click="app.removePump(pump)").btn.btn-danger.btn-xs Delete
+

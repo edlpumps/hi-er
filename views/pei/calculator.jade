@@ -14,9 +14,11 @@ mixin calculator(er)
         //- Step 1 - Choosing Configuration
         //---------------------------------------------------------------
         .panel-body(ng-show="app.step=='configuration'")
-            input(type="hidden", name="pump[_id]", ng-model="app.pump._id")
+            input(id="pump_id", type="hidden", name="pump[_id]", ng-model="app.pump._id")
+            input(id="pump_section", type="hidden", name="pump[section]", ng-model="app.pump.section")
             input(id="pump_pei", type="hidden", name="pump[pei]", ng-model="app.pump.pei")
             input(id="pump_energy_rating", type="hidden", name="pump[energy_rating]", ng-model="app.pump.energy_rating")
+            input(id="pump_energy_savings", type="hidden", name="pump[energy_savings]", ng-model="app.pump.energy_savings")
 
             .row
               .col.col-xs-12
@@ -206,7 +208,7 @@ mixin calculator(er)
                   .col.col-xs-5
                     label.text-primary DOE Pump Category 
                   .col.col-xs-7
-                    select.form-control(ng-model="app.pump.doe", data-width="auto", ng-options="opt as opt.label for opt in app.doe_opts track by opt.value")
+                    select.form-control(ng-model="app.pump.doe", name="pump[doe]", data-width="auto", ng-options="opt as opt.label for opt in app.doe_opts track by opt.value")
                         option(value="")  
                
             
@@ -216,7 +218,7 @@ mixin calculator(er)
                   .col.col-xs-5
                     label.text-primary Bowl diameter (inches)
                   .col.col-xs-7
-                    select.form-control(ng-model="app.pump.bowl_diameter", data-width="auto", ng-options="val as (val+'\"') for val in [1, 2, 3, 4, 6] track by val")
+                    select.form-control(ng-model="app.pump.bowl_diameter", name="pump[bowl_diameter]", data-width="auto", ng-options="val as (val+'\"') for val in [1, 2, 3, 4, 6] track by val")
                         option(value="")
               
           
@@ -228,10 +230,10 @@ mixin calculator(er)
                     label.text-primary Is motor regulated under 10CFR 431.25?
                   .col.col-xs-7
                     label.radio-inline
-                      input(type="radio" ng-model="app.pump.motor_regulated", value="true") 
+                      input(type="radio" name="pump[motor_regulated]", ng-model="app.pump.motor_regulated", value="true") 
                       | Yes
                     label.radio-inline
-                      input(type="radio" ng-model="app.pump.motor_regulated", value="false") 
+                      input(type="radio" name="pump[motor_regulated]", ng-model="app.pump.motor_regulated", value="false") 
                       | No
             
             
@@ -244,13 +246,13 @@ mixin calculator(er)
                     input.form-control(type="number", min="0", name="pump[motor_power_rated]", ng-model="app.pump.motor_power_rated")
                 hr(ng-hide="app.pump.doe.value != 'ST' && app.pump.motor_regulated =='false'")
 
+
             .row(ng-show="app.pump.doe.value != 'ST' && app.pump.motor_regulated =='false'")
                 .form-group
                   .col.col-xs-5
                     label.text-primary  Nominal nameplate motor efficiency
                   .col.col-xs-7.col-sm-4.col-md-2
-                    input.form-control(type="number", min="0", name="motor_power_rated")
-                
+                    input.form-control(type="number", min="0", name="pump[motor_efficiency]", ng-model="app.pump.motor_efficiency")
 
             hr
             .row

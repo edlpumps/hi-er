@@ -72,3 +72,24 @@ exports.addUser = function(req, res) {
         });
     })
 };
+
+exports.section_label = function(section) {
+      if (!section) return undefined;
+      switch(section) {
+          case "3":
+            return "Section III";
+          case "4":
+            return "Section IV";
+          case "5":
+            return "Section V";
+          case "6a":
+            return "Section VI-a";
+          case "6b":
+            return "Section VI-b";
+          case "7":
+            return "Section VII";
+          default:
+            return undefined;
+      }
+  }
+

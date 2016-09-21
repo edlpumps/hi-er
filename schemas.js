@@ -17,6 +17,33 @@ exports.init = function init(mongoose) {
 
   exports.Users = users;
 
+
+  var pumpSchema = new Schema({ 
+    participant: String,
+    configuration : String,
+    basic_model : String,
+    diameter: Number,
+    speed : Number,
+    laboratory : String,
+    motor_method : String,
+    section : String,
+    stages : Number,
+    doe : String,
+    bowl_diameter : Number,
+    motor_regulated : Boolean,
+    motor_power_rated : Number,
+    load120 : Boolean, 
+
+    pei : Number,
+    energy_rating : Number, 
+    energy_savings: Number,
+
+    listed : Boolean,
+    active_admin : {type:Boolean, default:true},
+    node_admin : String
+  });
+  
+
   var participants = mongoose.model('participants',  {
       name : String,
       address : {
@@ -36,7 +63,8 @@ exports.init = function init(mongoose) {
         email:String
       },
       active: Boolean,
-      pumpLimit : Number
+      pumpLimit : Number, 
+      pumps : [pumpSchema]
   }, "participants");
 
   exports.Participants = participants;

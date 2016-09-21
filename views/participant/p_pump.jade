@@ -1,0 +1,128 @@
+extends layout
+
+
+block nav
+     +navigation("pump")
+block content
+ div(ng-app='ERParticipantApp')
+    .container(ng-controller="ERParticipantController as app",ng-init="app.user= #{JSON.stringify(user)}; app.participant= #{JSON.stringify(participant)}")
+
+      .panel.panel-default
+        .panel-heading 
+            h2 Pump #{pump.basic_model} - #{pump.diameter} inches @ #{pump.speed} rpm
+        .panel-body
+          .row
+           .col.col-sm-5.text-center
+             img(src="/images/doe/#{pump_drawing}")
+             p.solo: button.btn.btn-danger Download full data
+           .col.col-sm-7
+                .row 
+                    .form-group
+                        .col.col-xs-5
+                            label Basic model designation:
+                        .col.col-xs-7
+                            .form-control-static #{pump.basic_model}
+                .row 
+                    .form-group
+                        .col.col-xs-5
+                            label DOE product category:
+                        .col.col-xs-7
+                            .form-control-static #{pump.doe}
+                .row 
+                    .form-group
+                        .col.col-xs-5
+                            label HI approved laboratory:
+                        .col.col-xs-7
+                            .form-control-static #{pump.laboratory}
+                .row 
+                    .form-group
+                        .col.col-xs-5
+                            label Testing method:
+                        .col.col-xs-7
+                            .form-control-static #{section_label(pump.section)} 
+                .row 
+                    .form-group
+                        .col.col-xs-5
+                            label Full impeller diameter (in):
+                        .col.col-xs-7
+                            .form-control-static #{pump.diameter}
+                .row 
+                    .form-group
+                        .col.col-xs-5
+                            label Nominal speed (rpm):
+                        .col.col-xs-7
+                            .form-control-static #{pump.speed}
+                .row 
+                    .form-group
+                        .col.col-xs-5
+                            label BEP flow rate (gpm):
+                        .col.col-xs-7
+                            .form-control-static #{pump.bep_flow}
+                .row 
+                    .form-group
+                        .col.col-xs-5
+                            label BEP head (feet):
+                        .col.col-xs-7
+                            .form-control-static #{pump.bep_head}
+
+                
+      
+      .panel.panel-default
+        .panel-heading 
+            h2 Energy Ratings
+        .panel-body
+           
+           .row
+            .col.col-lg-4.text-center
+              h4 Pump Energy Index
+              p.pei_display #{pump.pei}
+            .col.col-lg-4.text-center
+              h4 Energy Rating
+              p.er_display #{pump.energy_rating}
+            .col.col-lg-4.text-center
+              h4 Energy Savings
+              p.er_savings_display #{pump.energy_savings}
+           .row.solo
+            .col.col-xs-12
+             .alert.alert-info These calculations are samples only - actual results will appear when the PEI calculator is fully implemented and available
+          
+        
+
+      .panel.panel-default
+        .panel-heading 
+            h2 Downloadable Media
+        .panel-body
+          
+          .row.solo
+            .col.col-lg-7.text-center
+              img(src="/images/label-sample.png")
+              p.solo.text-center: button.btn.btn-danger Download
+            .col.col-lg-5.text-center
+              img(src="/images/qr-sample.jpg")
+              p.solo.text-center: button.btn.btn-danger Download
+
+          .row
+           .col.col-xs-12
+             .alert.alert-info These images are samples only - work will begin shortly to create actual labels and QR codes for this pump
+
+      .panel.panel-default
+        .panel-heading
+          h2 Administrative controls
+        .panel-body
+         form(action="/participant/pumps/#{pump._id}", method="post")
+          .row
+           .col.col-xs-12
+            
+              .form-group
+                label(style="margin-right:10px") Pump listing status:  
+                input.switchBox(type="checkbox", name="listed", checked=(pump.listed), data-on-text="Active", data-off-text="Disabled")
+                .help-block Disabled pumps listings are removed from the public energy rating registry, but can be re-activated at any time.
+
+          .row
+           .col.col-xs-12
+             if !pump.active_admin
+              .alert.alert-danger This pump has been de-listed by a Hydraulic Institute Program Manager. 
+              .text-danger #{pump.node_admin}
+          .row
+            .col.col-xs-12
+               button.btn.btn-danger(type="submit") Save changes

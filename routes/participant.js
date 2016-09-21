@@ -1,6 +1,7 @@
 const express = require('express');
 const passport = require('passport');
 const router = express.Router();
+const common = require('./common');
 
 // All resources served from here are restricted to participants.
 router.use(function(req, res, next){
@@ -34,6 +35,8 @@ router.get('/', function(req, res) {
 
 
 
+
+
 router.get('/users', function(req, res) {
     req.log.debug("Rendering participant portal (users)");
     res.render("participant/p_users", {
@@ -44,10 +47,54 @@ router.get('/users', function(req, res) {
 
 router.get('/pumps', function(req, res) {
     req.log.debug("Rendering participant portal (pumps)");
+    console.log(req.participant.pumps.map(function(p) {return p.listed}));
     res.render("participant/p_pumps", {
+        user : req.user,
+        participant : req.participant, 
+        section_label :common.section_label
+    });
+});
+
+router.get("/pumps/new", function(req, res){
+    req.log.debug("Rendering participant new pump page");
+    res.render("participant/new_pump", {
         user : req.user,
         participant : req.participant
     });
+})
+
+router.get('/pumps/:id', function(req, res) {
+    req.log.debug("Rendering participant portal (pump id = " + req.params.id);
+    var pump = req.participant.pumps.id(req.params.id);
+    res.render("participant/p_pump", {
+        user : req.user,
+        participant : req.participant, 
+        pump : pump, 
+        pump_drawing : pump.doe? pump.doe.toLowerCase() +  ".png" : ""   , 
+        section_label : common.section_label
+    });
+});
+
+router.post('/pumps/:id', function(req, res) {
+    var pump = req.participant.pumps.id(req.params.id);
+    console.log(pump);
+    if ( pump ) {
+        pump.listed = req.body.listed ? true : false;
+        console.log(pump);
+    }
+    req.participant.save(function(err){
+        if ( err ) {
+            req.log.error(err);
+        }
+        res.render("participant/p_pump", {
+            user : req.user,
+            participant : req.participant, 
+            pump : pump, 
+            pump_drawing : pump.doe? pump.doe.toLowerCase() +  ".png" : ""   , 
+            section_label : common.section_label
+        });
+    })
+    
 });
 
 router.get('/purchase', function(req, res) {
@@ -59,31 +106,68 @@ router.get('/purchase', function(req, res) {
 });
 
 
-router.get("/pumps/new", function(req, res){
-    req.log.debug("Rendering participant new pump page");
-    res.render("participant/new_pump", {
-        user : req.user,
-        participant : req.participant
-    });
-})
-
 
 router.post("/pumps/new", function(req, res){
     console.log(req.body);
     var pump = req.body;
     var view = pump.pei_input_type == 'calculate'  ? "participant/calculate_pump" : "participant/manual_pump";
-    res.render(view, {
-        user : req.user,
-        participant : req.participant, 
-        pump:pump
-    });
+
+    var toSave = req.participant.pumps.create(pump);
+    req.participant.pumps.push(toSave);
+    req.participant.save(function(err) {
+        res.render(view, {
+            user : req.user,
+            participant : req.participant, 
+            pump:toSave
+        });
+        console.log(toSave);
+    })
 });
 
 router.post("/pumps/submit", function(req, res){
     console.log(req.body);
-    var pump = req.body;
+    var pump = req.body.pump;
+    //console.log(req.participant.pumps);
+    console.log(pump._id);
+    console.log(pump);
+    var saved = req.participant.pumps.id(pump._id);
+    if (!saved) {
+        req.flash("errorTitle", "Internal application error");
+        req.flash("errorMessage", "Pump cannot be updated - it does not exist.");
+        res.redirect("/error");
+        return;
+    }
 
-    res.redirect("/participant/pumps");
+    // remove the one that is there, add this one back...
+    req.participant.pumps.id(pump._id).remove();
+    var toSave = req.participant.pumps.create(pump);
+    req.participant.pumps.push(toSave);
+    req.participant.save(function(err) {
+        res.redirect("/participant/pumps");
+        console.log(toSave);
+    })
+
+    
+});
+
+
+router.get("/api/pumps", function(req, res) {
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify({ pumps: req.participant.pumps}));
+});
+
+router.post("/api/pumps/delete/:id", function(req, res) {
+    req.participant.pumps.id(req.params.id).remove();
+    req.participant.save(function(err) {
+        if ( err ) {
+            req.log.debug("Error getting user to delete");
+            req.log.debug(err);
+            res.status(500).send({error:err});
+        }
+        else {
+            res.status(200).send("Pump removed");
+        }
+    });
 });
 
 router.get("/pumps/upload", function(req, res){
@@ -144,8 +228,11 @@ router.get("/api/users", function(req, res) {
     )
 });
 
-const common = require('./common');
+
 router.post("/api/users/delete/:id", common.deleteUser);
 router.post("/api/users/add", common.addUser)
+
+
+
 
 module.exports = router;

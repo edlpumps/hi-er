@@ -143,6 +143,16 @@ var PEIController = function($scope, $location, service) {
       e = angular.element( document.querySelector( '#pump_energy_rating' ) );
       e.val(109);
 
+      e = angular.element( document.querySelector( '#pump_energy_savings' ) );
+      e.val(150);
+
+      e = angular.element( document.querySelector( '#pump_id' ) );
+      e.val(vm.pump._id);
+
+      e = angular.element( document.querySelector( '#pump_section' ) );
+      e.val(vm.pump.section);
+      
+
 
       new_pump_pei.submit();
   }

@@ -1,5 +1,11 @@
 "use strict";
 
+var configurations = [
+       { value: "bare", label: "Bare Pump"}, 
+       { value: "pump_motor", label: "Pump + Motor"}, 
+       { value: "pump_motor_cc", label: "Pump + Motor w/ Continuous Controls"}, 
+       { value: "pump_motor_nc", label: "Pump + Motor w/ Non-continuous Controls"}
+  ];
 
 var app = angular.module('ERParticipantApp', []);
 
@@ -8,6 +14,12 @@ var service = app.factory('service', function($http) {
    return {
      getUsers : function () {
        return $http.get('/participant/api/users', {})
+           .then(function(docs) {
+                return docs.data;
+           });
+     },
+     getPumps : function () {
+       return $http.get('/participant/api/pumps', {})
            .then(function(docs) {
                 return docs.data;
            });
@@ -26,12 +38,20 @@ var service = app.factory('service', function($http) {
                 return data;
             });
      }, 
+     deletePump : function (pump) {
+        return $http.post('/participant/api/pumps/delete/'+pump._id, {})
+            .success(function(docs) { return docs.data; })
+            .error(function(data, status) {
+                return data;
+            });
+     }, 
      saveSettings : function (participant) {
        return $http.post('/participant/api/settings', {participant:participant})
            .then(function(docs) {
                 return docs.data;
            });
      }
+
    };
 });
 
@@ -50,6 +70,19 @@ var ERParticipantController = function($scope, $location, service) {
         }
       }).catch(function(error) {
         vm.users_error = true;
+        console.error(error);
+      });
+  }
+
+  vm.refreshPumps = function(callback) {
+      service.getPumps().then(function(results) {
+        vm.participant.pumps = results.pumps;
+        vm.pumps_error = false;
+        if ( callback ) {
+          callback();
+        }
+      }).catch(function(error) {
+        vm.pumps_error = true;
         console.error(error);
       });
   }
@@ -100,6 +133,19 @@ var ERParticipantController = function($scope, $location, service) {
      })
   }
 
+  vm.removePump = function(pump) {
+      service.deletePump(pump).then(function(saved) {
+        vm.refreshPumps();
+      }).catch(function(error) {
+        if (error.status == 403) {
+          window.location="/";
+        }
+        else {
+          console.log(error);
+        }
+     })
+  }
+
   vm.reload = function() {
     $route.reload();
   }
@@ -119,7 +165,34 @@ var ERParticipantController = function($scope, $location, service) {
 
 
 
+  vm.getConfigLabel = function(config) {
+    var retval = configurations.filter(function(c){
+      return config == c.value;
+    }).map(function (c){
+      return c.label;
+    })
+    return retval.length ? retval[0] : "Unknown";
+  }
 
+  vm.section_label = function() {
+      if (!vm.pump.section) return undefined;
+      switch(vm.pump.section) {
+          case "3":
+            return "Section III";
+          case "4":
+            return "Section IV";
+          case "5":
+            return "Section V";
+          case "6a":
+            return "Section VI-a";
+          case "6b":
+            return "Section VI-b";
+          case "7":
+            return "Section VII";
+          default:
+            return undefined;
+      }
+  }
 
 
   vm.refreshUsers();
@@ -128,19 +201,13 @@ var ERParticipantController = function($scope, $location, service) {
 }
 
 
-
 app.controller('ERParticipantController', ERParticipantController);
 
 
 var ERNewPumpController = function($scope, $location, service) {
   var vm = this;
 
-  vm.configurations = [
-       { value: "bare", label: "Bare Pump"}, 
-       { value: "pump_motor", label: "Pump + Motor"}, 
-       { value: "pump_motor_cc", label: "Pump + Motor w/ Continuous Controls"}, 
-       { value: "pump_motor_nc", label: "Pump + Motor w/ Non-continuous Controls"}
-  ];
+  vm.configurations = configurations;
 
   console.log("Initialized new pump controller");
 
