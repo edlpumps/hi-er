@@ -1,38 +1,7 @@
 extends layout
-
+include ../pei/calculator
 block nav
      +navigation("new_manual")
 block content
-  div(ng-app='ERParticipantApp')
-    .container.pei(ng-controller="ERNewManualPumpController as app",ng-init="app.pump= #{JSON.stringify(pump)}; app.user= #{JSON.stringify(user)}; app.participant= #{JSON.stringify(participant)}")
-      .panel.panel-default.solo
-        .panel-heading 
-            h1 Create pump listing
-
-        .panel-body
-          
-            p User will now be aske to enter PEI, along with additional required information in order to list the pump.
-
-            p This data will include what is listed below.
-            p.text-success Data in green will be read-only, it's either known or was already entered
-            ul
-              li.text-success Participant Company
-              li.text-success Basic model designation
-              li DOE product category
-              li.text-success Certificate number of the HI approved laboratory that performed the testing of the basic model
-              li PEICL or PEIVL as applicable and the PEI submitted shall be identical to any PEI reported to the DOE for certification of the basic model
-              li Number of stages tested
-              li.text-success Full impeller diameter (in)
-              li Whether the PEICL or PEIVL is calculated or tested and the specific method used as outlined in the Guiding Standards (Methods - A.1, B.1, B.2, C.1, or C.2)
-              li Rated driver power used for default loss calculations or the actual rated driver power.
-              li BEP flow rate in gallons per minute (gpm) and head in feet when operating at nominal speed of rotation
-              li Nominal speed of rotation in revolutions per minute (rpm), as defined in the guiding standards at 1800 rpm or 3600 rpm.
-              li For constant load ratings, power input to the driver at each required load point, corrected to nominal speed of rotation, in horsepower (hp); OR
-              li For variable load ratings, power input to the control at each required load point, corrected to the nominal speed of rotation, in horsepower (hp)
-              li.text-success The configuration in which the pump is being rated (i.e., bare pump, a pump sold with a motor, or a pump sold with a motor and continuous or non-continuous controls);
-              li For pumps sold with electric motors regulated by DOE's energy conservation standards for electric motors at § 431.25 (with or without controls): Motor horsepower (hp) and nominal motor efficiency, in percent (%);
-              li For pumps sold with submersible motors (with or without controls): Motor horsepower(hp); and
-              li For ST pumps, bowl diameter in inches (in.).
-              li.text-danger The HI Energy Rating will be automatically calculated by application, given the PEI above. 
-
-            
+  div(ng-app='PEIApp')
+    +calculator(true, "manual")

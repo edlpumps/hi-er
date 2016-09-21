@@ -61,55 +61,16 @@ router.get("/pumps/new", function(req, res){
         user : req.user,
         participant : req.participant
     });
-})
-
-router.get('/pumps/:id', function(req, res) {
-    req.log.debug("Rendering participant portal (pump id = " + req.params.id);
-    var pump = req.participant.pumps.id(req.params.id);
-    res.render("participant/p_pump", {
-        user : req.user,
-        participant : req.participant, 
-        pump : pump, 
-        pump_drawing : pump.doe? pump.doe.toLowerCase() +  ".png" : ""   , 
-        section_label : common.section_label
-    });
 });
-
-router.post('/pumps/:id', function(req, res) {
-    var pump = req.participant.pumps.id(req.params.id);
-    console.log(pump);
-    if ( pump ) {
-        pump.listed = req.body.listed ? true : false;
-        console.log(pump);
-    }
-    req.participant.save(function(err){
-        if ( err ) {
-            req.log.error(err);
-        }
-        res.render("participant/p_pump", {
-            user : req.user,
-            participant : req.participant, 
-            pump : pump, 
-            pump_drawing : pump.doe? pump.doe.toLowerCase() +  ".png" : ""   , 
-            section_label : common.section_label
-        });
-    })
-    
-});
-
-router.get('/purchase', function(req, res) {
-    req.log.debug("Rendering participant portal (purchase)");
-    res.render("participant/purchase", {
-        user : req.user,
-        participant : req.participant
-    });
-});
-
-
 
 router.post("/pumps/new", function(req, res){
-    console.log(req.body);
     var pump = req.body;
+    if ( !pump ) {
+        req.flash("errorTitle", "Internal application error");
+        req.flash("errorMessage", "Pump cannot be created - required information is missing.");
+        res.redirect("/error");
+        return;
+    }
     var view = pump.pei_input_type == 'calculate'  ? "participant/calculate_pump" : "participant/manual_pump";
 
     var toSave = req.participant.pumps.create(pump);
@@ -123,6 +84,32 @@ router.post("/pumps/new", function(req, res){
         console.log(toSave);
     })
 });
+
+router.get('/pumps/:id', function(req, res) {
+    req.log.debug("Rendering participant portal (pump id = " + req.params.id);
+    var pump = req.participant.pumps.id(req.params.id);
+    res.render("participant/p_pump", {
+        user : req.user,
+        participant : req.participant, 
+        pump : pump, 
+        pump_drawing : pump.doe? pump.doe.toLowerCase() +  ".png" : ""   , 
+        section_label : common.section_label
+    });
+});
+
+
+
+router.get('/purchase', function(req, res) {
+    req.log.debug("Rendering participant portal (purchase)");
+    res.render("participant/purchase", {
+        user : req.user,
+        participant : req.participant
+    });
+});
+
+
+
+
 
 router.post("/pumps/submit", function(req, res){
     console.log(req.body);
@@ -150,6 +137,28 @@ router.post("/pumps/submit", function(req, res){
     
 });
 
+
+
+router.post('/pumps/:id', function(req, res) {
+    var pump = req.participant.pumps.id(req.params.id);
+    console.log(pump);
+    if ( pump ) {
+        pump.listed = req.body.listed ? true : false;
+    }
+    req.participant.save(function(err){
+        if ( err ) {
+            req.log.error(err);
+        }
+        res.render("participant/p_pump", {
+            user : req.user,
+            participant : req.participant, 
+            pump : pump, 
+            pump_drawing : pump.doe? pump.doe.toLowerCase() +  ".png" : ""   , 
+            section_label : common.section_label
+        });
+    })
+    
+});
 
 router.get("/api/pumps", function(req, res) {
     res.setHeader('Content-Type', 'application/json');

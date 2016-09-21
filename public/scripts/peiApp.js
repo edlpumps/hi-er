@@ -112,18 +112,76 @@ var PEIController = function($scope, $location, service) {
 
   vm.go2Results = function() {
       vm.step = "results";
+      vm.pump.pei = 43;
+      vm.pump.energy_rating = 104;
+      vm.pump.energy_savings = 180;
       console.log(vm.pump);
   }
 
+  vm.measured_visible = function() {
+      if (!vm.pump) return false;
+      if (vm.pump.section =='6a' || vm.pump.section=='6b') {
+          return vm.mode == "calculator";
+      }
+  }
+  vm.driver_input_visible = function() {
+      if (!vm.pump) return false;
+      if ( vm.mode == "calculator"){
+          return vm.pump.section=='4';
+      }
+      else {
+          return vm.pump.section == '3' || vm.pump.section == '4' || vm.pump.section == '5';
+      }
+  }
+  vm.control_power_visible = function() {
+      if (!vm.pump) return false;
+      if ( vm.mode == "manual" ) {
+          return vm.pump.section =='6a' || vm.pump.section=='6b' || vm.pump.section=='7';
+      }
+      else return false;// never visible in calculator mode
+  }
 
-  vm.setup = function(pump) {
+  vm.pump_power_visible = function() {
+      if (!vm.pump) return false;
+      if ( vm.mode == "calculator" ) {
+          return vm.pump.section =='3' || vm.pump.section=='5' || vm.pump.section=='7';
+      }
+      else return false;// never visible in manual mode
+  }
+  vm.bep120_visible = function() {
+      if (!vm.pump) return false;
+      return vm.pump_power_visible() && vm.pump.section =='3';
+  }
+
+  vm.calculatorText = function() {
+      if ( vm.mode == "calculator") {
+          if ( vm.standalone) {
+              return "PEI"
+          }
+          else {
+              return "PEI & Energy Ratings";
+          }
+      }
+      else {
+          if ( vm.standalone) {
+              return "ERROR - Cannot use manual entry mode in standalone"
+          }
+          else {
+              return "Energy Ratings";
+          }
+      }
+  }
+
+
+
+  vm.setup = function(er, pump, mode) {
+      console.log("Setting up calculator");
       if ( pump ) {
           vm.pump = pump;
           vm.pump.configuration = vm.configurations.filter(function(c) { return c.value == pump.configuration})[0];
           vm.pump.diameter = parseFloat(pump.diameter);
           vm.go2MotorMethod();
           console.log("Initialized with a pump");
-          console.log(vm.pump);
           if (vm.participant) {
               vm.pump.participant = vm.participant.name;
               console.log(vm.participant);
@@ -132,27 +190,18 @@ var PEIController = function($scope, $location, service) {
       else {
           console.log("Initialized without a pump");
       }
+
+      vm.standalone = !er;
+      vm.mode = mode;
+      console.log("Calculator UI is in " + mode + " mode, " + (vm.standalone ? " standalone mode" : "embedded er mode"));
   }
 
   vm.submitListing = function() {
       
       // DEMO PURPOSES
       console.log("DEMONSTRATION VALUES FOR PEI AND ENERGY RATINGS")
-      var e = angular.element( document.querySelector( '#pump_pei' ) );
-      e.val(42);
-      e = angular.element( document.querySelector( '#pump_energy_rating' ) );
-      e.val(109);
-
-      e = angular.element( document.querySelector( '#pump_energy_savings' ) );
-      e.val(150);
-
-      e = angular.element( document.querySelector( '#pump_id' ) );
-      e.val(vm.pump._id);
-
-      e = angular.element( document.querySelector( '#pump_section' ) );
-      e.val(vm.pump.section);
       
-
+      
 
       new_pump_pei.submit();
   }

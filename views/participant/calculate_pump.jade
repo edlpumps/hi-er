@@ -3,8 +3,8 @@ extends layout
 include ../pei/calculator
 
 block nav
-     +navigation("new_manual")
+     +navigation("new_calculator")
 block content
   div(ng-app='PEIApp')
-    +calculator(true)
+    +calculator(true, "calculator")
     

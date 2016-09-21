@@ -48,7 +48,13 @@ block content
                     label.radio-inline
                       input(type="radio" name="speed", ng-model="app.pump.speed", value="1800") 
                       | 1800 rpm
-                        
+            .row
+               .form-group
+                  .col.col-xs-5
+                    label.text-primary Number of stages tested
+                  .col.col-xs-7.col-sm-4.col-md-2
+                    input.form-control(type="number", min="1", name="stages", ng-model="app.pump.stages")
+     
             .row
                 .form-group
                   .col.col-xs-5

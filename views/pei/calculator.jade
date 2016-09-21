@@ -1,24 +1,24 @@
 
-mixin calculator(er)
+mixin calculator(er, mode)
   
   //- bring in required scripts and css for the calculator itself
 
   //- add angular controller here
-  .container(ng-controller="PEIController as app", ng-init="app.user= #{JSON.stringify(user)}; app.participant= #{JSON.stringify(participant)}; app.setup(#{JSON.stringify(pump)})").pei
+  .container(ng-controller="PEIController as app", ng-init="app.user= #{JSON.stringify(user)}; app.participant= #{JSON.stringify(participant)}; app.setup(#{er}, #{JSON.stringify(pump)}, #{JSON.stringify(mode)})").pei
     form(action="submit", method="post", name="new_pump_pei")
      .panel.panel-default.solo
         .panel-heading
-            h1 Pump Energy Index Calculator
+            h1 Pump Energy Index {{app.mode=='calculator' ? 'Calculator' : 'Data Entry'}}
         
         //---------------------------------------------------------------
         //- Step 1 - Choosing Configuration
         //---------------------------------------------------------------
         .panel-body(ng-show="app.step=='configuration'")
-            input(id="pump_id", type="hidden", name="pump[_id]", ng-model="app.pump._id")
-            input(id="pump_section", type="hidden", name="pump[section]", ng-model="app.pump.section")
-            input(id="pump_pei", type="hidden", name="pump[pei]", ng-model="app.pump.pei")
-            input(id="pump_energy_rating", type="hidden", name="pump[energy_rating]", ng-model="app.pump.energy_rating")
-            input(id="pump_energy_savings", type="hidden", name="pump[energy_savings]", ng-model="app.pump.energy_savings")
+            input(type="hidden", name="pump[_id]", ng-value="app.pump._id")
+            input(type="hidden", name="pump[section]", ng-value="app.pump.section")
+            input(type="hidden", name="pump[pei]", ng-value="app.pump.pei")
+            input(type="hidden", name="pump[energy_rating]", ng-value="app.pump.energy_rating")
+            input(type="hidden", name="pump[energy_savings]", ng-value="app.pump.energy_savings")
 
             .row
               .col.col-xs-12
@@ -70,7 +70,18 @@ mixin calculator(er)
                     label.radio-inline
                       input(type="radio" ng-model="app.pump.speed", value="1800", name="pump[speed]") 
                       | 1800 rpm
-                        
+            
+                
+            .row
+                .form-group
+                  .col.col-xs-5
+                    label.text-primary Number of stages tested
+                  .col.col-xs-7.col-sm-4.col-md-2
+                    input.form-control(type="number", min="1", name="pump[stages]", ng-model="app.pump.stages")
+
+            
+                
+
             .row
                 .form-group
                   .col.col-xs-5
@@ -192,15 +203,6 @@ mixin calculator(er)
             
             
             
-            .row
-                .form-group
-                  .col.col-xs-5
-                    label.text-primary Number of stages tested
-                  .col.col-xs-7.col-sm-4.col-md-2
-                    input.form-control(type="number", min="1", name="pump[stages]", ng-model="app.pump.stages")
-
-            
-                    
                     
             .row
                 hr
@@ -335,10 +337,84 @@ mixin calculator(er)
                        th.col-label Value at Nominal Speed of Rotation
                        th {{app.pump.load120 == "true" ? "@ 75% BEP" : "@ 60% BEP"}}
                        th {{app.pump.load120 == "true" ? "@ 100% BEP" : "@ 90% BEP"}}
-                       th {{app.pump.load120 == "true" ? "@ @ 110% BEP" : "@ 100% BEP"}}
+                       th {{app.pump.load120 == "true" ? "@ 110% BEP" : "@ 100% BEP"}}
+                       th(ng-show="app.bep120_visible()") @ 120% BEP
                     tbody
                       tr
                        td.col-label Rate of flow (gpm)
+                       td: input.form-control(type="text")
+                       td: input.form-control(type="text")
+                       td: input.form-control(type="text")
+                       td(ng-show="app.bep120_visible()") 
+                      tr
+                       td.col-label Head (ft) 
+                       td: input.form-control(type="text")
+                       td: input.form-control(type="text")
+                       td: input.form-control(type="text")
+                       td(ng-show="app.bep120_visible()") 
+                     tr(ng-show="app.driver_input_visible()")
+                       td.col-label Driver Input Power (hp)
+                       td: input.form-control(type="text")
+                       td: input.form-control(type="text")
+                       td: input.form-control(type="text")
+                       td(ng-show="app.bep120_visible()") 
+                     tr(ng-show="app.pump_power_visible()")
+                       td.col-label Pump Input Power (hp)
+                       td: input.form-control(type="text")
+                       td: input.form-control(type="text")
+                       td: input.form-control(type="text")
+                       td(ng-show="app.bep120_visible()"): input.form-control(type="text")
+                    
+                     
+                
+        
+
+
+
+            .row(ng-show="app.control_power_visible()")
+              .table-responsive
+               .col.col-md-6
+                 table.table
+                   thead
+                     tr
+                       th.col-label @ %BEP target
+                       th Control power input (hp)
+                       
+                    tbody
+                     tr
+                       td 25% BEP
+                       td: input.form-control(type="text")
+                     tr
+                       td 50% BEP
+                       td: input.form-control(type="text")
+                     tr
+                       td 75% BEP
+                       td: input.form-control(type="text")
+                     tr
+                       td 100% BEP
+                       td: input.form-control(type="text")
+                      
+
+
+
+
+
+
+            .row(ng-show="app.measured_visible()")
+              .table-responsive
+               .col.col-xs-12
+                 table.table
+                   thead
+                     tr
+                       th.col-label Measured value @ variable load
+                       th @ 25% BEP target
+                       th @ 50% BEP target
+                       th @ 75% BEP target
+                       th @ 100% BEP target
+                    tbody
+                     tr
+                       td.col-label Flow rate (gpm)
+                       td: input.form-control(type="text")
                        td: input.form-control(type="text")
                        td: input.form-control(type="text")
                        td: input.form-control(type="text")
@@ -347,49 +423,28 @@ mixin calculator(er)
                        td: input.form-control(type="text")
                        td: input.form-control(type="text")
                        td: input.form-control(type="text")
+                       td: input.form-control(type="text")
                      tr
-                       td.col-label Control Power Input (hp)
+                       td.col-label Control Power input (hp)
                        td: input.form-control(type="text")
                        td: input.form-control(type="text")
                        td: input.form-control(type="text")
-                
-            .row(ng-show="app.section=='3'")
-              .form-group
-               .col.col-xs-5
-                 label Pump Power Input @ 120% of BEP Rate of Flow (hp)
-               .col.col-xs-7
-                    input.form-control(ng-model="app.pump.power_at_120BEP", type="number")
+                       td: input.form-control(type="text")
 
-            .row(ng-show="app.pump.section=='6a' || app.pump.section=='6b'")
-               .col.col-xs-12
-                 table.table
-                   thead
-                     tr
-                       th.col-label Measured value
-                       th @ 25% BEP target
-                       th @ 50% BEP target
-                       th @ 75% BEP target
-                    tbody
-                     tr
-                       td.col-label Load flow rate (gpm)
-                       td: input.form-control(type="text")
-                       td: input.form-control(type="text")
-                       td: input.form-control(type="text")
-                      tr
-                       td.col-label Load head (ft) 
-                       td: input.form-control(type="text")
-                       td: input.form-control(type="text")
-                       td: input.form-control(type="text")
-                     tr
-                       td.col-label Power input (hp)
-                       td: input.form-control(type="text")
-                       td: input.form-control(type="text")
-                       td: input.form-control(type="text")
+
+            .row(ng-show="app.mode=='manual'")
+              hr
+              .form-group
+               .col.col-xs-5.col-sm-3
+                 label.text-danger Please enter the PEI for the pump:  
+               .col.col-xs-7.col-sm-3
+                    input.form-control(ng-model="app.pump.pei", name="pump[pei]", type="number")
+           
             hr
             .row
                .col.col-xs-10
                   button(type="button", ng-click="app.go2Options(true)").btn.btn-default Back
-                  button(type="button", ng-click="app.go2Results()").btn.btn-danger.btn-space Calculate PEI
+                  button(type="button", ng-click="app.go2Results()").btn.btn-danger.btn-space Calculate {{app.calculatorText()}}
                   
                .col.col-xs-2
                   a(href="#" ng-click="app.go2Configuration()") Start over

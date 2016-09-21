@@ -32,11 +32,61 @@ exports.init = function init(mongoose) {
     bowl_diameter : Number,
     motor_regulated : Boolean,
     motor_power_rated : Number,
+    motor_efficiency : Number,
     load120 : Boolean, 
 
     pei : Number,
+    pei_method : String, // calculated or manual
     energy_rating : Number, 
     energy_savings: Number,
+
+    flow : {
+      bep75: Number,
+      bep100: Number,
+      bep110: Number
+    }, 
+    head : {
+      bep75:Number, 
+      bep100:Number,
+      bep110:Number
+    },
+    pump_input_power : {
+      bep75:Number, 
+      bep100:Number,
+      bep110:Number,
+      bep120:Number
+    },
+    driver_input_power :{
+      bep75:Number, 
+      bep100:Number,
+      bep110:Number
+    },
+    control_power_input : {
+      bep25:Number,
+      bep50:Number, 
+      bep75:Number,
+      bep100:Number
+    },
+    measured_control_power_input : {
+      bep25:Number,
+      bep50:Number, 
+      bep75:Number,
+      bep100:Number
+    },
+    measured_control_flow_input : {
+      bep25:Number,
+      bep50:Number, 
+      bep75:Number,
+      bep100:Number
+    },
+    measured_control_head_input : {
+      bep25:Number,
+      bep50:Number, 
+      bep75:Number,
+      bep100:Number
+    },
+
+
 
     listed : Boolean,
     active_admin : {type:Boolean, default:true},
