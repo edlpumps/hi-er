@@ -14,7 +14,7 @@ block content
           .row
            .col.col-sm-5.text-center
              img(src="/images/doe/#{pump_drawing}")
-             p.solo: button.btn.btn-danger Download full data
+             p.solo: a.btn.btn-danger(href="/participant/pumps/#{pump._id}/download") Download full data
            .col.col-sm-7
                 .row 
                     .form-group

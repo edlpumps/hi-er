@@ -106,11 +106,52 @@ router.get('/pumps/:id', function(req, res) {
 
 router.get('/pumps/:id/download', function(req, res) {
     var pump = req.participant.pumps.id(req.params.id);
-    var toxl = require('jsonexel');
+    pump= JSON.parse(JSON.stringify(pump));
+    var toxl = require('jsonexcel');
+
+    var filter = function(key) {
+        return  !( key == "_id" 
+            || key == "active_admin" 
+            || key == "listed"
+            || key == "load120") 
+    }
+
+    var headers = {
+        "section" : "Calculation Section", 
+        "energy_rating" : "Energy Rating",
+        "energy_savings" : "Energy Savings", 
+        "participant" : "Organization",
+        "configuration" : "Configuration", 
+        "basic_model" : "Basic Model Designation", 
+        "diameter" : "Impeller Diameters (inches)", 
+        "speed" : "Nominal Speed of Rotation (rpm)", 
+        "stages" : "Stages", 
+        "laboratory": "HI Approved testing laboratory", 
+        "doe" : "Department of Energy Category", 
+        "pei" : "Pump Energy Index", 
+        "pump_input_power.bep75": "Pump input power @ 75% BEP flow rate",
+        "pump_input_power.bep100": "Pump input power @ 100% BEP flow rate",
+        "pump_input_power.bep110": "Pump input power @ 110% BEP flow rate",
+        "pump_input_power.bep120": "Pump input power @ 120% BEP flow rate",
+        "head.bep75": "Head @ 75% BEP Flow (feet)",
+        "head.bep100": "Head @ 100% BEP Flow (feet)",
+        "head.bep110": "Head @ 110% BEP Flow (feet)",
+        "flow.bep75": "Flow @ 75% BEP Flow (gpm)",
+        "flow.bep100": "Flow @ 100% BEP Flow (gpm)",
+        "flow.bep110": "Flow @ 110% BEP Flow (gpm)"
+    }
+
     var opts = {
         sheetname : "Pump Energy Ratings",
-        delimiter : "."
+        pivot:true, 
+        filter : filter,
+        headings : headers
     }
+    var buffer = toxl(pump, opts);
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats');
+    res.setHeader("Content-Disposition", "attachment; filename=" + "Pump Energy Ratings.xlsx");
+    res.setHeader('Content-Length', buffer.length);
+    res.end(buffer);
 });
 
 

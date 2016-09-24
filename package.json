@@ -32,7 +32,7 @@
     "helmet": "2.1.3",
     "jade": "1.11.0",
     "jaro-winkler": "0.2.7",
-    "jsonexcel": "1.0.1",
+    "jsonexcel": "2.0.0",
     "less-middleware": "2.2.0",
     "mongoose": "4.6.0",
     "passport": "0.3.2",
