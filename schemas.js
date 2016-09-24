@@ -90,7 +90,7 @@ exports.init = function init(mongoose) {
 
     listed : Boolean,
     active_admin : {type:Boolean, default:true},
-    node_admin : String
+    note_admin : String
   });
   
 
