@@ -57,9 +57,15 @@ router.get('/pumps', function(req, res) {
 
 router.get("/pumps/new", function(req, res){
     req.log.debug("Rendering participant new pump page");
+    var pump = {
+        load120 : true, 
+        speed : 3600,
+        stages : 1
+    }
     res.render("participant/new_pump", {
         user : req.user,
-        participant : req.participant
+        participant : req.participant, 
+        pump : pump
     });
 });
 
@@ -98,6 +104,16 @@ router.get('/pumps/:id', function(req, res) {
 });
 
 
+router.get('/pumps/:id/download', function(req, res) {
+    var pump = req.participant.pumps.id(req.params.id);
+    var toxl = require('jsonexel');
+    var opts = {
+        sheetname : "Pump Energy Ratings",
+        delimiter : "."
+    }
+});
+
+
 
 router.get('/purchase', function(req, res) {
     req.log.debug("Rendering participant portal (purchase)");
@@ -112,11 +128,18 @@ router.get('/purchase', function(req, res) {
 
 
 router.post("/pumps/submit", function(req, res){
+    console.log("Raw Body\n---------------------------");
     console.log(req.body);
+    console.log("---------------------------");
     var pump = req.body.pump;
-    //console.log(req.participant.pumps);
+    console.log("Submitted pump\n---------------------------");
     console.log(pump._id);
     console.log(pump);
+    console.log("---------------------------");
+   
+    // automatically set to listed - user can change this later.
+    pump.listed = true;
+   
     var saved = req.participant.pumps.id(pump._id);
     if (!saved) {
         req.flash("errorTitle", "Internal application error");

@@ -16,9 +16,9 @@ mixin calculator(er, mode)
         .panel-body(ng-show="app.step=='configuration'")
             input(type="hidden", name="pump[_id]", ng-value="app.pump._id")
             input(type="hidden", name="pump[section]", ng-value="app.pump.section")
-            input(type="hidden", name="pump[pei]", ng-value="app.pump.pei")
             input(type="hidden", name="pump[energy_rating]", ng-value="app.pump.energy_rating")
             input(type="hidden", name="pump[energy_savings]", ng-value="app.pump.energy_savings")
+            
 
             .row
               .col.col-xs-12
@@ -240,7 +240,7 @@ mixin calculator(er, mode)
             
             
 
-            .row(ng-show="app.pump.configuration.value != 'bare'")
+            .row(ng-show="app.pump.configuration.value != 'bare' || app.mode == 'manual'")
                 .form-group
                   .col.col-xs-5
                     label.text-primary Rated Motor Power used for default losses or Nameplate Rated Motor Power 
@@ -317,16 +317,17 @@ mixin calculator(er, mode)
             .row
                 .form-group
                   .col.col-xs-5
-                    label.text-primary Can the pump be tested at 120% of BEP flow?  
+                    label.text-primary Can the pump be tested at 120% of BEP flow?
                   .col.col-xs-7
                     div.radio
-                      label
-                        input(type="radio" ng-model="app.pump.load120", value="true") 
+                      label.radio-inline
+                        input(type="radio", name="pump[load120]", ng-model="app.pump.load120", ng-value="true", value="true") 
                         | Yes (75% / 100% / 110% load points)
                     div.radio
-                      label.radio
-                        input(type="radio" ng-model="app.pump.load120", value="false") 
+                      label.radio-inline
+                        input(type="radio", name="pump[load120]", ng-model="app.pump.load120", ng-value="false", value="false") 
                         | No (65% / 90% / 100% load points)
+
             hr
             .row
                .col.col-xs-12
@@ -335,35 +336,35 @@ mixin calculator(er, mode)
                    thead
                      tr
                        th.col-label Value at Nominal Speed of Rotation
-                       th {{app.pump.load120 == "true" ? "@ 75% BEP" : "@ 60% BEP"}}
-                       th {{app.pump.load120 == "true" ? "@ 100% BEP" : "@ 90% BEP"}}
-                       th {{app.pump.load120 == "true" ? "@ 110% BEP" : "@ 100% BEP"}}
+                       th {{app.pump.load120 ? "@ 75% BEP" : "@ 60% BEP"}}
+                       th {{app.pump.load120 ? "@ 100% BEP" : "@ 90% BEP"}}
+                       th {{app.pump.load120 ? "@ 110% BEP" : "@ 100% BEP"}}
                        th(ng-show="app.bep120_visible()") @ 120% BEP
                     tbody
                       tr
                        td.col-label Rate of flow (gpm)
-                       td: input.form-control(type="text")
-                       td: input.form-control(type="text")
-                       td: input.form-control(type="text")
+                       td: input.form-control(type="text", ng-model="app.pump.flow.bep75", name="pump[flow][bep75]")
+                       td: input.form-control(type="text", ng-model="app.pump.flow.bep100", name="pump[flow][bep100]")
+                       td: input.form-control(type="text", ng-model="app.pump.flow.bep110", name="pump[flow][bep110]")
                        td(ng-show="app.bep120_visible()") 
                       tr
                        td.col-label Head (ft) 
-                       td: input.form-control(type="text")
-                       td: input.form-control(type="text")
-                       td: input.form-control(type="text")
+                       td: input.form-control(type="text", ng-model="app.pump.head.bep75", name="pump[head][bep75]")
+                       td: input.form-control(type="text", ng-model="app.pump.head.bep100", name="pump[head][bep100]")
+                       td: input.form-control(type="text", ng-model="app.pump.head.bep110", name="pump[head][bep110]")
                        td(ng-show="app.bep120_visible()") 
                      tr(ng-show="app.driver_input_visible()")
                        td.col-label Driver Input Power (hp)
-                       td: input.form-control(type="text")
-                       td: input.form-control(type="text")
-                       td: input.form-control(type="text")
+                       td: input.form-control(type="text", ng-model="app.pump.driver_input_power.bep75", name="pump[driver_input_power][bep75]")
+                       td: input.form-control(type="text", ng-model="app.pump.driver_input_power.bep100", name="pump[driver_input_power][bep100]")
+                       td: input.form-control(type="text", ng-model="app.pump.driver_input_power.bep110", name="pump[driver_input_power][bep110]")
                        td(ng-show="app.bep120_visible()") 
                      tr(ng-show="app.pump_power_visible()")
                        td.col-label Pump Input Power (hp)
-                       td: input.form-control(type="text")
-                       td: input.form-control(type="text")
-                       td: input.form-control(type="text")
-                       td(ng-show="app.bep120_visible()"): input.form-control(type="text")
+                       td: input.form-control(type="text", ng-model="app.pump.pump_input_power.bep75", name="pump[pump_input_power][bep75]")
+                       td: input.form-control(type="text", ng-model="app.pump.pump_input_power.bep100", name="pump[pump_input_power][bep100]")
+                       td: input.form-control(type="text", ng-model="app.pump.pump_input_power.bep110", name="pump[pump_input_power][bep110]")
+                       td(ng-show="app.bep120_visible()"): input.form-control(type="text", ng-model="app.pump.pump_input_power.bep120", name="pump[pump_input_power][bep120]")
                     
                      
                 
@@ -383,16 +384,16 @@ mixin calculator(er, mode)
                     tbody
                      tr
                        td 25% BEP
-                       td: input.form-control(type="text")
+                       td: input.form-control(type="text", ng-model="app.pump.control_power_input.bep25", name="pump[control_power_input][bep25]")
                      tr
                        td 50% BEP
-                       td: input.form-control(type="text")
+                       td: input.form-control(type="text", ng-model="app.pump.control_power_input.bep50", name="pump[control_power_input][bep50]")
                      tr
                        td 75% BEP
-                       td: input.form-control(type="text")
+                       td: input.form-control(type="text", ng-model="app.pump.control_power_input.bep75", name="pump[control_power_input][bep75]")
                      tr
                        td 100% BEP
-                       td: input.form-control(type="text")
+                       td: input.form-control(type="text", ng-model="app.pump.control_power_input.bep100", name="pump[control_power_input][bep100]")
                       
 
 
@@ -414,22 +415,22 @@ mixin calculator(er, mode)
                     tbody
                      tr
                        td.col-label Flow rate (gpm)
-                       td: input.form-control(type="text")
-                       td: input.form-control(type="text")
-                       td: input.form-control(type="text")
-                       td: input.form-control(type="text")
+                       td: input.form-control(type="text", ng-model="app.pump.measured_control_flow_input.bep25", name="pump[measured_control_flow_input][bep25]")
+                       td: input.form-control(type="text", ng-model="app.pump.measured_control_flow_input.bep50", name="pump[measured_control_flow_input][bep50]")
+                       td: input.form-control(type="text", ng-model="app.pump.measured_control_flow_input.bep75", name="pump[measured_control_flow_input][bep75]")
+                       td: input.form-control(type="text", ng-model="app.pump.measured_control_flow_input.bep100", name="pump[measured_control_flow_input][bep100]")
                       tr
                        td.col-label Head (ft) 
-                       td: input.form-control(type="text")
-                       td: input.form-control(type="text")
-                       td: input.form-control(type="text")
-                       td: input.form-control(type="text")
+                       td: input.form-control(type="text", ng-model="app.pump.measured_control_head_input.bep25", name="pump[measured_control_head_input][bep25]")
+                       td: input.form-control(type="text", ng-model="app.pump.measured_control_head_input.bep50", name="pump[measured_control_head_input][bep50]")
+                       td: input.form-control(type="text", ng-model="app.pump.measured_control_head_input.bep75", name="pump[measured_control_head_input][bep75]")
+                       td: input.form-control(type="text", ng-model="app.pump.measured_control_head_input.bep100", name="pump[measured_control_head_input][bep100]")
                      tr
                        td.col-label Control Power input (hp)
-                       td: input.form-control(type="text")
-                       td: input.form-control(type="text")
-                       td: input.form-control(type="text")
-                       td: input.form-control(type="text")
+                       td: input.form-control(type="text", ng-model="app.pump.measured_control_power_input.bep25", name="pump[measured_control_power_input][bep25]")
+                       td: input.form-control(type="text", ng-model="app.pump.measured_control_power_input.bep50", name="pump[measured_control_power_input][bep50]")
+                       td: input.form-control(type="text", ng-model="app.pump.measured_control_power_input.bep75", name="pump[measured_control_power_input][bep75]")
+                       td: input.form-control(type="text", ng-model="app.pump.measured_control_power_input.bep100", name="pump[measured_control_power_input][bep100]")
 
 
             .row(ng-show="app.mode=='manual'")

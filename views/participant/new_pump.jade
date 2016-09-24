@@ -5,7 +5,7 @@ block nav
      +navigation("new")
 block content
   div(ng-app='ERParticipantApp')
-    .container.pei(ng-controller="ERNewPumpController as app",ng-init="app.user= #{JSON.stringify(user)}; app.participant= #{JSON.stringify(participant)}")
+    .container.pei(ng-controller="ERNewPumpController as app",ng-init="app.pump = #{JSON.stringify(pump)}; app.user= #{JSON.stringify(user)}; app.participant= #{JSON.stringify(participant)}")
       .panel.panel-default.solo
         .panel-heading 
             h1 Create pump listing
@@ -68,10 +68,11 @@ block content
                .form-group
                   .col.col-xs-5
                     label.text-primary Do you already have a PEI calculation ready for this pump?
+                    p.help-block If not, you'll be asked to enter a few additional parameters to help calculate the PEI
                   .col.col-xs-7.col-sm-4
                     .row
                      .col.col-lg-12
-                        button.btn.btn-primary(type="button", ng-click="app.manual()") Yes, I have a PEI calculation ready.
+                        button.btn.btn-primary(type="button", ng-click="app.manual()") Yes, I have a PEI calculation already.
                     .row(style="margin-top:5px")
                      .col.col-lg-12
-                        button.btn.btn-warning(type="button", ng-click="app.calculate()") No, guide me through the PEI calculation.
+                        button.btn.btn-warning(type="button", ng-click="app.calculate()") No, use the HI PEI calculator to help.

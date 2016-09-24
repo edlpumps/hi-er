@@ -33,7 +33,7 @@ exports.init = function init(mongoose) {
     motor_regulated : Boolean,
     motor_power_rated : Number,
     motor_efficiency : Number,
-    load120 : Boolean, 
+    load120 : {type:Boolean, default:true}, 
 
     pei : Number,
     pei_method : String, // calculated or manual

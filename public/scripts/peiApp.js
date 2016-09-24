@@ -182,6 +182,7 @@ var PEIController = function($scope, $location, service) {
           vm.pump.diameter = parseFloat(pump.diameter);
           vm.go2MotorMethod();
           console.log("Initialized with a pump");
+          console.log(vm.pump);
           if (vm.participant) {
               vm.pump.participant = vm.participant.name;
               console.log(vm.participant);
@@ -189,17 +190,17 @@ var PEIController = function($scope, $location, service) {
       }
       else {
           console.log("Initialized without a pump");
+          
       }
-
       vm.standalone = !er;
       vm.mode = mode;
+      vm.pump.pei_method = mode;
       console.log("Calculator UI is in " + mode + " mode, " + (vm.standalone ? " standalone mode" : "embedded er mode"));
   }
 
   vm.submitListing = function() {
       
-      // DEMO PURPOSES
-      console.log("DEMONSTRATION VALUES FOR PEI AND ENERGY RATINGS")
+      
       
       
 
