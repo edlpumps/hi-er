@@ -28,7 +28,8 @@ block content
                   .col.col-xs-5
                     label.text-primary Basic Model Designation
                   .col.col-xs-7.col-sm-4
-                    input.form-control(name="basic_model", type="text" ng-model="app.pump.basic_model")
+                    input.form-control(name="basic_model", id="basic_model", type="text" ng-model="app.pump.basic_model")
+                    p.help-block(ng-hide="app.basic_model_valid()")  must be in the form xxx.xxx.xx 
             
             .row
                 .form-group

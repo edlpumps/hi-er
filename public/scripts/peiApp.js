@@ -111,6 +111,9 @@ var PEIController = function($scope, $location, service) {
   ];
 
 
+  vm.powers = [250, 200, 150, 125, 100, 75, 60, 50, 40, 30, 25, 20, 15, 10, 7.5, 5, 3, 2, 1.5, 1];
+
+
   vm.go2Configuration = function() {
       vm.step = "configuration";
 
@@ -197,6 +200,7 @@ var PEIController = function($scope, $location, service) {
       vm.pump.energy_rating = 104;
       vm.pump.energy_savings = 180;
       console.log(vm.pump);
+      console.log("RATINGS SHOULD BE VISIBLE!")
   }
 
   vm.measured_visible = function() {

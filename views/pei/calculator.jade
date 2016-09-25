@@ -245,7 +245,9 @@ mixin calculator(er, mode)
                   .col.col-xs-5
                     label.text-primary Rated Motor Power used for default losses or Nameplate Rated Motor Power 
                   .col.col-xs-7.col-sm-4.col-md-2
-                    input.form-control(type="number", min="0", name="pump[motor_power_rated]", ng-model="app.pump.motor_power_rated")
+                    select.form-control(ng-model="app.pump.motor_power_rated", name="pump[motor_power_rated]", data-width="auto", ng-options="val as (val+' HP') for val in app.powers track by val")
+                        option(value="")
+
                 hr(ng-hide="app.pump.doe.value != 'ST' && app.pump.motor_regulated =='false'")
 
 
@@ -452,11 +454,21 @@ mixin calculator(er, mode)
 
         if (er)
           .panel-body(ng-show="app.step=='results'")
-            row
-               .col.col-xs-12
-                 .alert.alert-success Since this is an Energy rating listing, PEI and Energy Rating will be listed here.  Clicking save will result in the pump being listed in the participant's pump listing
-
-            row
+            .row
+              .col.col-lg-4.text-center
+                h4 Pump Energy Index
+                p.pei_display {{app.pump.pei}}
+              .col.col-lg-4.text-center
+                h4 Energy Rating
+                p.er_display {{app.pump.energy_rating}}
+              .col.col-lg-4.text-center
+                h4 Energy Savings
+                p.er_savings_display {{app.pump.energy_savings}}
+            .row.solo
+             .col.col-xs-12
+              .alert.alert-info These calculations are samples only - actual results will appear when the PEI calculator is fully implemented and available
+          
+            .row
                .col.col-xs-10
                   button(type="button", ng-click="app.go2Data(true)").btn.btn-default.btn-space Back
                .col.col-xs-2
@@ -464,11 +476,22 @@ mixin calculator(er, mode)
 
         else
           .panel-body(ng-show="app.step=='results'")
-            row
-               .col.col-xs-12
-                .alert.alert-success PEI Results will be coming soon...
+            .row
+              .col.col-lg-4.text-center
+                h4 Pump Energy Index
+                p.pei_display {{app.pump.pei}}
+              .col.col-lg-4.text-center
+                h4 Energy Rating
+                p.er_display {{app.pump.energy_rating}}
+              .col.col-lg-4.text-center
+                h4 Energy Savings
+                p.er_savings_display {{app.pump.energy_savings}}
+            .row.solo
+             .col.col-xs-12
+              .alert.alert-info These calculations are samples only - actual results will appear when the PEI calculator is fully implemented and available
+          
 
-            row
+            .row
                .col.col-xs-10
                   button(type="button", ng-click="app.go2Data(true)").btn.btn-default.btn-space Back
                .col.col-xs-2
