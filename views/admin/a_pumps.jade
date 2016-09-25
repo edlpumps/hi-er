@@ -6,7 +6,32 @@ block nav
 block content
      .container
        .panel.panel-default
-         .panel-heading
-           h1 Pump listings
-         .panel-body
-            .alert.alert-warning Pump listings not available yet
+        .panel-heading 
+            h1 Pump listings for #{participant.name}
+        .panel-body
+          .row
+           .col.col-xs-12
+            .table-responsive
+              table.table.table-striped
+                thead
+                 tr 
+                  th
+                  th Basic Model Designation
+                  th Configuration
+                  th DOE Pump Category
+                  th Impeller (inches)
+                  th Nominal speed (rpm)
+                  th PEI
+                  th ER
+                tbody
+                 each pump in pumps
+                  tr
+                   td
+                    img(height="25" width="25" ng-src="/images/#{pump.listed && pump.active_admin ? 'active' : 'inactive'}.png")
+                   td: a(href="pumps/#{pump._id}") #{pump.basic_model}
+                   td #{getConfigLabel(pump.configuration)}
+                   td #{pump.doe}
+                   td #{pump.diameter}
+                   td #{pump.speed}
+                   td #{pump.pei}
+                   td #{pump.energy_rating} 

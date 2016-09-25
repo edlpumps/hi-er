@@ -52,10 +52,59 @@ router.get('/participant/:id', function(req, res) {
 
 router.get('/participant/:id/pumps', function(req, res) {
     req.log.debug("Rendering participant pumps page for administrative portal");
-    res.render("admin/a_pumps", {
-        user : req.user
+    req.Participants.findById(req.params.id, function(err, participant){
+        res.render("admin/a_pumps", {
+            user : req.user, 
+            pumps : participant.pumps, 
+            participant: participant,
+            getConfigLabel : function(config) {
+                switch (config ) {
+                    case "bare": return "Bare Pump";
+                    case "pump_motor": return "Pump + Motor"; 
+                    case "pump_motor_cc": return "Pump + Motor w/ Continuous Controls"; 
+                    case "pump_motor_nc": return "Pump + Motor w/ Non-continuous Controls";
+                    default:"N/A";
+                }
+            }
+        });
     });
 })
+
+router.get('/participant/:id/pumps/:pump_id', function(req, res) {
+    req.Participants.findById(req.params.id, function(err, participant){
+        var pump = participant.pumps.id(req.params.pump_id);
+        res.render("admin/a_pump", {
+            user : req.user,
+            participant : participant, 
+            pump : pump, 
+            pump_drawing : pump.doe? pump.doe.toLowerCase() +  ".png" : ""   , 
+            section_label : common.section_label
+        });
+    });
+})
+
+router.post('/participant/:id/pumps/:pump_id', function(req, res) {
+    req.Participants.findById(req.params.id, function(err, participant){
+        var pump = participant.pumps.id(req.params.pump_id);
+        if ( pump ) {
+            pump.active_admin = req.body.active_admin ? true : false;
+            pump.note_admin = req.body.note_admin;
+        }
+        participant.save(function(err){
+            if ( err ) {
+                req.log.error(err);
+            }
+            res.render("admin/a_pump", {
+                user : req.user,
+                participant : participant, 
+                pump : pump, 
+                pump_drawing : pump.doe? pump.doe.toLowerCase() +  ".png" : ""   , 
+                section_label : common.section_label
+            });
+        })
+    });
+    
+});
 
 router.post("/participant/:id", function(req, res) {
     req.log.debug("Saving participant info administrative portal");

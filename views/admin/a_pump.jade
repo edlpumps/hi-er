@@ -1,11 +1,10 @@
 extends layout
 
-
 block nav
-     +navigation("pump")
+    +navigation("participant_pumps")
+    
 block content
- div(ng-app='ERParticipantApp')
-    .container(ng-controller="ERParticipantController as app",ng-init="app.user= #{JSON.stringify(user)}; app.participant= #{JSON.stringify(participant)}")
+ .container(ng-controller="ERAdminController as app",ng-init="app.user= #{JSON.stringify(user)}; app.participant= #{JSON.stringify(participant)}")
 
       .panel.panel-default
         .panel-heading 
@@ -16,6 +15,12 @@ block content
              img(src="/images/doe/#{pump_drawing}")
              p.solo: a.btn.btn-danger(href="/participant/pumps/#{pump._id}/download") Download full data
            .col.col-sm-7
+                .row 
+                    .form-group
+                        .col.col-xs-5
+                            label Organization:
+                        .col.col-xs-7
+                            .form-control-static #{pump.participant}
                 .row 
                     .form-group
                         .col.col-xs-5
@@ -109,23 +114,28 @@ block content
         .panel-heading
           h2 Administrative controls
         .panel-body
-         form(action="/participant/pumps/#{pump._id}", method="post")
+         form(action="/admin/participant/#{participant._id}/pumps/#{pump._id}", method="post")
           .row
            .col.col-xs-12
             
               .form-group
-                label(style="margin-right:10px") Pump listing status:  
-                input.switchBox(type="checkbox", name="listed", checked=(pump.listed), data-on-text="Active", data-off-text="Disabled")
-                .help-block Disabled pumps listings are removed from the public energy rating registry, but can be re-activated at any time.
-
+                label(style="margin-right:10px") Pump listing status:   
+                img(height="25" width="25" ng-src="/images/#{pump.listed ? 'active' : 'inactive'}.png")
+                .help-block This setting is controlled by #{pump.participant}.  
+          hr
           .row
-           .col.col-xs-12
-             if !pump.active_admin
-              .alert.alert-danger
-                h3 This pump has been de-listed by a Hydraulic Institute Program Manager. 
-                .form-group
-                  label(style="margin-right:10px") Program manager note:  
-                  p.form-static-control #{pump.note_admin}
+            .col.col-xs-12
+              .form-group
+                label(style="margin-right:10px").text-danger Program Manager listing status override:  
+                input.switchBox(type="checkbox", name="active_admin", checked=(pump.active_admin), data-on-text="Enabled", data-off-text="Disabled")
+                .help-block Program managers may remove pump listings if neeeded.  Marking this pump as disabled will remove the pump from public listings.  You should consider leaving a note below to explain to the participant why this pump is being de-listed.
+              .form-group
+                label(style="margin-right:10px").text-danger Program manager notes  
+                textarea.form-control(name="note_admin", rows="5")
+                  | #{pump.note_admin}
+                .help-block These notes are only visible to the participant, they are never publically seen.
+
+         
           .row
             .col.col-xs-12
                button.btn.btn-danger(type="submit") Save changes

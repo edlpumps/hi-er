@@ -60,7 +60,7 @@ block content
                   .col.col-xs-5
                     label.text-primary HI Approved Laboratory Registration Number
                   .col.col-xs-7.col-sm-4
-                    input.form-control(name="laboratory", type="app.pump.laboratory")     
+                    input.form-control(name="laboratory", type="text", ng-model="app.pump.laboratory")     
             
             hr           
             .row
@@ -72,7 +72,7 @@ block content
                   .col.col-xs-7.col-sm-4
                     .row
                      .col.col-lg-12
-                        button.btn.btn-primary(type="button", ng-click="app.manual()") Yes, I have a PEI calculation already.
+                        button.btn.btn-primary(type="button", ng-disabled = "app.new_missing()", ng-click="app.manual()") Yes, I have a PEI calculation already.
                     .row(style="margin-top:5px")
                      .col.col-lg-12
-                        button.btn.btn-warning(type="button", ng-click="app.calculate()") No, use the HI PEI calculator to help.
+                        button.btn.btn-warning(type="button", ng-disabled = "app.new_missing()", ng-click="app.calculate()") No, use the HI PEI calculator to help.

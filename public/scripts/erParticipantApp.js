@@ -209,8 +209,7 @@ var ERNewPumpController = function($scope, $location, service) {
 
   vm.configurations = configurations;
 
-  console.log("Initialized new pump controller");
-
+  
   vm.manual = function(){
     console.log('manual'); 
     var myEl = angular.element( document.querySelector( '#pei_type' ) );
@@ -224,6 +223,18 @@ var ERNewPumpController = function($scope, $location, service) {
     myEl.val('calculate');
      
     new_pump.submit()
+  }
+
+  vm.new_missing = function (){
+    if (!vm.pump) return true;
+    if (!vm.pump.configuration || !vm.pump.configuration.value ) return true;
+    if (!vm.pump.basic_model) return true;
+    if (!vm.pump.diameter) return true;
+    if (!vm.pump.speed) return true;
+    if (!vm.pump.stages) return true;
+    if (!vm.pump.laboratory) return true;
+
+    return false;
   }
 }
 
@@ -241,6 +252,9 @@ var ERNewManualPumpController = function($scope, $location, service) {
        { value: "pump_motor_cc", label: "Pump + Motor w/ Continuous Controls"}, 
        { value: "pump_motor_nc", label: "Pump + Motor w/ Non-continuous Controls"}
   ];
+
+
+  
 }
 
 

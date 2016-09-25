@@ -13,6 +13,87 @@ var PEIController = function($scope, $location, service) {
   var vm = this;
   vm.pump = {};
   
+  vm.missing_options = function() {
+      if (!vm.pump || !vm.pump.doe ) return true;
+      if (!vm.pump.doe.value) return true;
+      if (vm.pump.doe.value=='ST' && !vm.pump.bowl_diameter) return true;
+      if (vm.show_motor_regulated() && (vm.pump.motor_regulated === undefined || vm.pump.motor_regulated === "")) {
+          return true;
+      }
+      if (vm.show_motor_power() && !vm.pump.motor_power_rated) return true;
+      if (vm.show_motor_efficiency() && !vm.pump.motor_efficiency) return true;
+      return false;
+  }
+
+  vm.data_missing = function() {
+      if (!vm.pump ) return true;
+      if (!vm.pump.flow) return true;
+      if (!vm.pump.flow.bep75) return true;
+      if (!vm.pump.flow.bep100) return true;
+      if (!vm.pump.flow.bep110) return true;
+      if (!vm.pump.head) return true;
+      if (!vm.pump.head.bep75) return true;
+      if (!vm.pump.head.bep100) return true;
+      if (!vm.pump.head.bep110) return true;
+
+      if ( vm.pump_power_visible() ) {
+          if (!vm.pump.pump_input_power) return true;
+          if (!vm.pump.pump_input_power.bep75) return true;
+          if (!vm.pump.pump_input_power.bep100) return true;
+          if (!vm.pump.pump_input_power.bep110) return true;
+          if (vm.bep120_visible() && !vm.pump.pump_input_power.bep120) return true;
+      }
+      if (vm.driver_input_visible()) {
+          if (!vm.pump.driver_input_power) return true;
+          if (!vm.pump.driver_input_power.bep75) return true;
+          if (!vm.pump.driver_input_power.bep100) return true;
+          if (!vm.pump.driver_input_power.bep110) return true;
+      }
+      if (vm.control_power_visible()) {
+          if (!vm.pump.control_power_input) return true;
+          if (!vm.pump.control_power_input.bep25) return true;
+          if (!vm.pump.control_power_input.bep50) return true;
+          if (!vm.pump.control_power_input.bep75) return true;
+          if (!vm.pump.control_power_input.bep100) return true;
+      }
+      if (vm.measured_visible()){
+          if (!vm.pump.measured_control_flow_input) return true;
+          if (!vm.pump.measured_control_head_input) return true;
+          if (!vm.pump.measured_control_power_input) return true;
+
+          if (!vm.pump.measured_control_flow_input.bep25) return true;
+          if (!vm.pump.measured_control_flow_input.bep50) return true;
+          if (!vm.pump.measured_control_flow_input.bep75) return true;
+          if (!vm.pump.measured_control_flow_input.bep100) return true;
+
+          if (!vm.pump.measured_control_head_input.bep25) return true;
+          if (!vm.pump.measured_control_head_input.bep50) return true;
+          if (!vm.pump.measured_control_head_input.bep75) return true;
+          if (!vm.pump.measured_control_head_input.bep100) return true;
+
+          if (!vm.pump.measured_control_power_input.bep25) return true;
+          if (!vm.pump.measured_control_power_input.bep50) return true;
+          if (!vm.pump.measured_control_power_input.bep75) return true;
+          if (!vm.pump.measured_control_power_input.bep100) return true;
+      }
+      if (vm.mode=='manual' && !vm.pump.pei) return true;
+  }
+
+  vm.show_motor_regulated = function() {
+      if ( !vm.pump || !vm.pump.configuration || !vm.pump.doe ) return false;
+      return vm.pump.configuration.value != 'bare' && vm.pump.doe.value != 'ST';
+  }
+
+  vm.show_motor_power = function() {
+      if (!vm.pump ) return false;
+      if (!vm.pump.configuration) return false;
+      return vm.pump.configuration.value != 'bare' || vm.mode == 'manual';
+  }
+
+  vm.show_motor_efficiency = function() {
+      if (!vm.pump || !vm.pump.doe ) return false;
+      return vm.pump.doe.value != 'ST' && vm.show_motor_regulated() && (vm.pump.motor_regulated =='false' || vm.pump.motor_regulated === false);
+  }
 
   vm.configurations = [
        { value: "bare", label: "Bare Pump"}, 
@@ -181,6 +262,7 @@ var PEIController = function($scope, $location, service) {
           vm.pump.configuration = vm.configurations.filter(function(c) { return c.value == pump.configuration})[0];
           vm.pump.diameter = parseFloat(pump.diameter);
           vm.go2MotorMethod();
+          if ( vm.pump.motor_regulated === undefined ) vm.pump.motor_regulated = true;
           console.log("Initialized with a pump");
           console.log(vm.pump);
           if (vm.participant) {
@@ -190,7 +272,7 @@ var PEIController = function($scope, $location, service) {
       }
       else {
           console.log("Initialized without a pump");
-          
+          vm.pump.motor_regulated = true;
       }
       vm.standalone = !er;
       vm.mode = mode;
