@@ -23,8 +23,16 @@ var service = app.factory('service', function($http) {
                 return data;
             });
      },
+     
      deleteUser : function (user) {
         return $http.post('/admin/api/users/delete/'+user._id, {})
+            .success(function(docs) { return docs.data; })
+            .error(function(data, status) {
+                return data;
+            });
+     },
+     saveLabels : function (labels) {
+        return $http.post('/admin/api/labels', {labels:labels})
             .success(function(docs) { return docs.data; })
             .error(function(data, status) {
                 return data;
@@ -113,6 +121,26 @@ var ERAdminController = function($scope, $location, service) {
      })
   }
 
+  vm.save_labels = function() {
+    console.log("Saving labels");
+    console.log(vm.labels);
+    service.saveLabels(vm.labels).then(function(result) {
+        vm.labels_changed = false;
+        vm.labels_editing = false;
+        vm.original_labels = result.data.labels;
+        console.log(vm.original_labels);
+        console.log("Saved labels successfully");
+      }).catch(function(error) {
+        if (error.status == 403) {
+          window.location="/";
+        }
+        else {
+          
+        }
+     })
+     ;
+    
+  }
 
   vm.refreshUsers();
   vm.refreshParticipants();

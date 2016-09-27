@@ -67,7 +67,8 @@ var conn = mongoose.connect(data_connection_str, {auto_reconnect:true}, function
     schemas.init(mongoose);
     app.locals.db = {
       Users: schemas.Users,
-      Participants: schemas.Participants
+      Participants: schemas.Participants,
+      Labels : schemas.Labels
     };
     // Startup the http server once the database is connected.
     startup();
@@ -130,6 +131,7 @@ app.locals.passport = passport;
 app.use(function(req, res, next){
     req.Participants = req.app.locals.db.Participants;
     req.Users = req.app.locals.db.Users;
+    req.Labels = req.app.locals.db.Labels;
     next();
 })
 

@@ -30,7 +30,11 @@ html(ng-app='ERAdminApp')
                .navbar-text HI Energy Ratings Program
                ul.nav.navbar-nav
                   li(class=(active == 'home' ? 'active' : ''))
-                    a(href="/") Home
+                    a(href="/") Administrators
+                  li(class=(active == 'participants' ? 'active' : ''))
+                    a(href="/admin/participants") Participants
+                  li(class=(active == 'labels' ? 'active' : ''))
+                    a(href="/admin/labels") Label Configuration
                 ul.nav.navbar-nav.navbar-right
                   li
                     .navbar-text #{user.name.first} #{user.name.last}

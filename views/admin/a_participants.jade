@@ -1,0 +1,36 @@
+extends layout
+include ../common/user_list
+
+block nav
+   +navigation("participants")
+block content
+    
+    .container(ng-controller="ERAdminController as app",ng-init="app.user= #{JSON.stringify(user)}")
+        
+
+        .panel.panel-default
+            .panel-heading
+                h3 Participants
+            .panel-body
+                .row
+                  .col.col-sm-12
+                   .table-responsive
+                    table.table.table-striped
+                        thead
+                            tr
+                                th Name 
+                                th.hidden-xs Status
+                                th.hidden-xs Subscription Level
+                                th Pumps Listings
+                        tbody
+                            tr(ng-repeat="participant in app.participants")
+                                td: a(href="/admin/participant/{{participant._id}}") {{participant.name}}
+                                td.hidden-xs {{participant.active ? "Active" : "Disabled"}} 
+                                td.hidden-xs
+                                  span(ng-show="participant.pumpLimit === 0") Cannot list - payment needed
+                                  span(ng-show="participant.pumpLimit") Up to {{participant.pumpLimit + " Listings"}}
+                                  span(ng-show="participant.pumpLimit == Infinity") Unlimited listings
+                                td 
+                                  a(href="admin/participant/{{participant._id}}/pumps") View {{participant.pumps ? participant.pumps.length : 0}} listings
+                                
+     

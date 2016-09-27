@@ -22,6 +22,24 @@ router.get('/', function(req, res) {
     });
 });
 
+router.get('/labels', function(req, res) {
+    req.log.debug("Rendering administration portal - label page");
+    req.Labels.find({}, function(err, labels) {
+        res.render("admin/a_labels", {
+            user : req.user,
+            labels : labels
+        });
+    });
+    
+});
+
+router.get('/participants', function(req, res) {
+    req.log.debug("Rendering administration portal - participants page");
+    res.render("admin/a_participants", {
+        user : req.user,
+    });
+});
+
 router.get('/participant/:id', function(req, res) {
     req.log.debug("Rendering participant info page for administrative portal");
     req.Participants.findById(req.params.id, function(err, participant){
@@ -136,6 +154,20 @@ router.post("/participant/:id", function(req, res) {
         }
         
     })
+})
+
+router.post("/api/labels/", function(req, res) {
+    req.log.debug("Saving labels - administrative portal");
+    
+    req.Labels.remove({}, function() {
+       req.Labels.insertMany(req.body.labels, function(err, documents) {
+           console.log(documents);
+           console.log(err);
+           res.setHeader('Content-Type', 'application/json');
+           res.end(JSON.stringify({ labels: documents}));
+       });
+        
+    });
 })
 
 

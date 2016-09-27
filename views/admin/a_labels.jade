@@ -1,0 +1,46 @@
+extends layout
+
+block nav
+    +navigation("labels")
+    
+block content
+ .container(ng-controller="ERAdminController as app",ng-init="app.user= #{JSON.stringify(user)}; app.labels = #{JSON.stringify(labels)}; app.original_labels = #{JSON.stringify(labels)}")
+      .panel.panel-default
+        .panel-heading 
+            h2 Energy Rating Label Configuration
+        .panel-body
+          .row
+           .col.col-sm-12
+             .alert.alert-warning
+               | Changing the scales shown below have an 
+               b immediate 
+               | effect on all Energy Rating Labels available to program participants.  While each label downloaded is timestamped with the month and year it was generated, frequent changes to these scales may cause confusion among end-users and should be avoided.
+               
+          .row
+            .col.col-xs-12
+               button.btn.btn-danger(type="button", ng-click="app.labels_editing=true;", ng-hide="app.labels_editing") Edit scales
+               button.btn.btn-default.btn-space(type="button", ng-click="app.labels_editing=false; app.labels = app.original_labels; app.labels_changed = false", ng-show="app.labels_editing") Cancel editing
+               button.btn.btn-danger.btn-space(type="button", ng-click="app.save_labels();", ng-show="app.labels_changed") Save changes
+
+          .row
+            .col.col-sm-12
+              
+                .table-responsive
+                  table.table.table-striped
+                    thead
+                     tr
+                      th DOE Designation 
+                      th Nominal Speed
+                      th Load
+                      th Maximum Energy Rating
+                    tbody
+                     tr(ng-repeat="label in app.labels")
+                      td {{label.doe}}
+                      td {{label.speed}} 
+                      td {{label.load}}
+                      td(ng-show="app.labels_editing")
+                        input.form-control.input-sm(type="number", min="0", step="1", ng-model="label.max", ng-change="app.labels_changed = true")
+                      td(ng-hide="app.labels_editing") {{label.max}}
+                        
+                               
+          

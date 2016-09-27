@@ -118,4 +118,37 @@ exports.init = function init(mongoose) {
   }, "participants");
 
   exports.Participants = participants;
+
+
+  var label = mongoose.model('labels', {
+    load:String,
+    speed : Number,
+    doe : String,
+    max : Number
+  }, "labels");
+
+  exports.Labels = label;
+
+
+  label.count({}, function(err, count) {
+    if (count == 0 ) {
+      console.log("Bootstrapping labels...");
+      var loads = ["CL", "VL"];
+      var does = ["ESCC", "ESFM", "IL", "RSV", "ST"];
+      var speeds = [1800, 3600];
+      loads.forEach(function(load){
+        does.forEach(function(doe){
+          speeds.forEach(function(speed){
+            var lab = new label();
+            lab.load = load;
+            lab.doe = doe;
+            lab.speed = speed;
+            lab.max = 100;
+            lab.save();
+          })
+        })
+      })
+    }
+
+  })
 }
