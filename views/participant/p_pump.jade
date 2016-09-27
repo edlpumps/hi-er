@@ -95,15 +95,18 @@ block content
           
           .row.solo
             .col.col-lg-7.text-center
-              img(src="/images/label-sample.png")
-              p.solo.text-center: button.btn.btn-danger Download
+             
+              object(id="label_svg", data="/labels/#{participant._id}/#{pump._id}/svg", type="image/svg+xml")
+                
+              p.solo.text-center: a.btn.btn-primary(href="/labels/#{participant._id}/#{pump._id}/svg", target="_blank") Download as SVG
+            
             .col.col-lg-5.text-center
               img(src="/images/qr-sample.jpg")
               p.solo.text-center: button.btn.btn-danger Download
 
           .row
            .col.col-xs-12
-             .alert.alert-info These images are samples only - work will begin shortly to create actual labels and QR codes for this pump
+             .alert.alert-info Label image is in SVG format.  PNG
 
       .panel.panel-default
         .panel-heading

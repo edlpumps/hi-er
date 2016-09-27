@@ -122,8 +122,6 @@ var ERAdminController = function($scope, $location, service) {
   }
 
   vm.save_labels = function() {
-    console.log("Saving labels");
-    console.log(vm.labels);
     service.saveLabels(vm.labels).then(function(result) {
         vm.labels_changed = false;
         vm.labels_editing = false;
