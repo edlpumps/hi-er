@@ -83,7 +83,7 @@ router.get('/:participant_id/:id/svg', function(req, res) {
 
 router.get('/:participant_id/:id/qr', function(req, res) {
     var port = req.app.settings.port || cfg.port;
-    var base = req.protocol + '://' + req.host  + ( port == 80 || port == 443 ? '' : ':'+port ) ;
+    var base = req.protocol + '://' + req.host;
     var url = base;// + "/" + req.params.participant_id + "/" + req.params.id;
 
     var qr = require('qr-image');  
