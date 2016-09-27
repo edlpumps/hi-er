@@ -31,6 +31,6 @@ block content
                                   span(ng-show="participant.pumpLimit") Up to {{participant.pumpLimit + " Listings"}}
                                   span(ng-show="participant.pumpLimit == Infinity") Unlimited listings
                                 td 
-                                  a(href="admin/participant/{{participant._id}}/pumps") View {{participant.pumps ? participant.pumps.length : 0}} listings
+                                  a(href="/admin/participant/{{participant._id}}/pumps") View {{participant.pumps ? participant.pumps.length : 0}} listings
                                 
      

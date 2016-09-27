@@ -99,16 +99,16 @@ block content
         .panel-body
           
           .row.solo
-            .col.col-lg-7.text-center
-              img(src="/images/label-sample.png")
-              p.solo.text-center: button.btn.btn-danger Download
-            .col.col-lg-5.text-center
-              img(src="/images/qr-sample.jpg")
-              p.solo.text-center: button.btn.btn-danger Download
+            .col.col-lg-8.text-center
+             
+              object(id="label_svg", data="/labels/#{participant._id}/#{pump._id}/svg", type="image/svg+xml")
+                
+              p.solo.text-center: a.btn.btn-primary(href="/labels/#{participant._id}/#{pump._id}/svg", target="_blank") Download
+            
+            .col.col-lg-4.text-center
+              img(src="/labels/#{participant._id}/#{pump._id}/qr")
+              p.solo.text-center: a.btn.btn-primary(href="/labels/#{participant._id}/#{pump._id}/qr", target="_blank") Download
 
-          .row
-           .col.col-xs-12
-             .alert.alert-info These images are samples only - work will begin shortly to create actual labels and QR codes for this pump
 
       .panel.panel-default
         .panel-heading

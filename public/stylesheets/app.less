@@ -1,5 +1,6 @@
 
-@hi_blue: #0460ab;
+@hi_blue: #465b79;
+@hi_light: #028da8;
 @er_accent: #E6AF2E;
 
 .btn-space {
@@ -8,6 +9,7 @@
 
 body {
     background-color:  @hi_blue;
+    font-family: 'Oxygen', sans-serif;
 }
 
 .entry {
@@ -25,17 +27,10 @@ body {
     padding-top:25px;
     padding-bottom:25px;
 }
-
 .hi {
-    font-family: 'Times New Roman', Times, serif;
-    font-style: italic;
-    font-size:24pt;
-    text-align: center;
-    
+    text-align:center;
 }
-
 .er {
-    font-family: 'Libre Baskerville', serif;
     font-size:18pt;
     text-align: center;
     padding-top:25px;
@@ -43,8 +38,7 @@ body {
 }
 
 .er-mobile {
-    font-family: 'Libre Baskerville', serif;
-    font-size:16pt;
+     font-size:16pt;
     text-align: left;
     padding-top:10px;
     color:@er_accent;
@@ -79,3 +73,19 @@ body {
     color: green;
 }
 
+
+.btn-primary,
+.btn-primary:visited,
+.btn-primary:focus {
+    background-color: @hi_light;
+    border-color: @hi_light;
+}
+.btn-primary:hover,
+.btn-primary:active {
+    background-color: spin(@hi_light, -3);
+    border-color:spin(@hi_light,-3);
+}
+
+a {
+    color:@hi_light;
+}
