@@ -8,12 +8,16 @@ block content
 
       .panel.panel-default
         .panel-heading 
+            .pull-right.solo
+               a(href="/admin/participant/#{participant._id}/pumps") Back to pump list
+            
+            
             h2 Pump #{pump.basic_model} - #{pump.diameter} inches @ #{pump.speed} rpm
         .panel-body
           .row
            .col.col-sm-5.text-center
              img(src="/images/doe/#{pump_drawing}")
-             p.solo: a.btn.btn-danger(href="/participant/pumps/#{pump._id}/download") Download full data
+             p.solo: a.btn.btn-danger(href="/admin/participant/#{participant._id}/pumps/#{pump._id}/download") Download full data
            .col.col-sm-7
                 .row 
                     .form-group

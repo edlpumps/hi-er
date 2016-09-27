@@ -2,6 +2,7 @@ const express = require('express');
 const passport = require('passport');
 const router = express.Router();
 
+const common = require('./common');
 module.exports = router;
 
 // All resources served from here are restricted to administrators.
@@ -100,6 +101,19 @@ router.get('/participant/:id/pumps/:pump_id', function(req, res) {
         });
     });
 })
+
+router.get('/participant/:id/pumps/:pump_id/download', function(req, res) {
+    req.Participants.findById(req.params.id, function(err, participant){
+        var pump = participant.pumps.id(req.params.pump_id);
+        pump= JSON.parse(JSON.stringify(pump));
+        var buffer = common.build_pump_spreadsheet(pump);
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats');
+        res.setHeader("Content-Disposition", "attachment; filename=" + "Pump Energy Ratings.xlsx");
+        res.setHeader('Content-Length', buffer.length);
+        res.end(buffer);
+    });
+});
+
 
 router.post('/participant/:id/pumps/:pump_id', function(req, res) {
     req.Participants.findById(req.params.id, function(err, participant){
@@ -205,6 +219,5 @@ router.get("/api/participants", function(req, res) {
 });
 
 
-const common = require('./common');
 router.post("/api/users/delete/:id", common.deleteUser);
 router.post("/api/users/add", common.addUser)
