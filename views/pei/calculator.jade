@@ -465,13 +465,12 @@ mixin calculator(er, mode)
                 h4 Energy Savings
                 p.er_savings_display {{app.pump.energy_savings}}
             .row.solo
-             .col.col-xs-12
-              .alert.alert-info These calculations are samples only - actual results will appear when the PEI calculator is fully implemented and available
-          
+              .col.col-xs-12
+               .alert.alert-info These calculations are samples only - actual results will appear when the PEI calculator is fully implemented and available
             .row
-               .col.col-xs-10
+              .col.col-xs-9
                   button(type="button", ng-click="app.go2Data(true)").btn.btn-default.btn-space Back
-               .col.col-xs-2
+              .col.col-xs-3
                   button(type="button", ng-click="app.submitListing()").btn.btn-danger.btn-space Save pump listing
 
         else

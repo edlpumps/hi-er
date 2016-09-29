@@ -76,6 +76,12 @@ exports.addUser = function(req, res) {
 exports.build_pump_spreadsheet = function(pump) {
     var toxl = require('jsonexcel');
 
+
+    // Cleanup the pump schema
+    if (pump.configuration === "bare"){
+        pump.motor_regulated = undefined;
+    }
+
     var filter = function(key) {
         return  !( key == "_id" 
             || key == "active_admin" 

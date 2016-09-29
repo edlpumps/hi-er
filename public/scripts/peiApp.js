@@ -5,7 +5,12 @@ var app = angular.module('PEIApp', []);
 
 var service = app.factory('service', function($http) {
    return {
-     
+     calculate : function (pump) {
+       return $http.post('/pei/api/calculate', {pump:pump})
+           .then(function(docs) {
+                return docs.data;
+           });
+     },
    };
 });
 
@@ -195,12 +200,26 @@ var PEIController = function($scope, $location, service) {
   }
 
   vm.go2Results = function() {
-      vm.step = "results";
-      vm.pump.pei = 43;
-      vm.pump.energy_rating = 104;
-      vm.pump.energy_savings = 180;
-      console.log(vm.pump);
-      console.log("RATINGS SHOULD BE VISIBLE!")
+      if ( vm.mode == "calculator"){
+          service.calculate(vm.pump).then(function(result) {
+              console.log(result);
+            vm.step = "results";
+            vm.pump.pei = result.pei;
+            vm.pump.energy_rating = result.energy_rating;
+            vm.pump.energy_savings = result.energy_savings;
+            console.log(vm.pump);
+        }).catch(function(error) {
+            if (error.status == 403) {
+            window.location="/";
+            }
+            else {
+            console.log(error);
+            }
+        })
+      }
+      else {
+          vm.step = "results";
+      }
   }
 
   vm.measured_visible = function() {

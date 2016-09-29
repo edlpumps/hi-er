@@ -51,12 +51,19 @@ router.get('/pumps', function(req, res) {
     res.render("participant/p_pumps", {
         user : req.user,
         participant : req.participant, 
-        section_label :common.section_label
+        section_label :common.section_label, 
+        subcription_limit :req.participant.pumps.length >= req.participant.pumpLimit
     });
 });
 
 router.get("/pumps/new", function(req, res){
     req.log.debug("Rendering participant new pump page");
+    if ( req.participant.pumps.length >= req.participant.pumpLimit){
+        req.flash("errorTitle", "Subscription limit");
+        req.flash("errorMessage", "You cannot list additional pumps until you've updated your subscription level.");
+        res.redirect("/error");
+        return;
+    }
     var pump = {
         load120 : true, 
         speed : 3600,
@@ -91,6 +98,22 @@ router.post("/pumps/new", function(req, res){
     })
 });
 
+router.get("/pumps/upload", function(req, res){
+    req.log.debug("Rendering participant pump upload");
+    res.render("participant/upload", {
+        user : req.user,
+        participant : req.participant
+    });
+})
+router.get('/pumps/download', function(req, res) {
+    var pumps= JSON.parse(JSON.stringify(req.participant.pumps));
+    var buffer = common.build_pump_spreadsheet(pumps);
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats');
+    res.setHeader("Content-Disposition", "attachment; filename=" + "Pump Energy Ratings - All.xlsx");
+    res.setHeader('Content-Length', buffer.length);
+    res.end(buffer);
+});
+
 router.get('/pumps/:id', function(req, res) {
     req.log.debug("Rendering participant portal (pump id = " + req.params.id);
     var pump = req.participant.pumps.id(req.params.id);
@@ -113,6 +136,8 @@ router.get('/pumps/:id/download', function(req, res) {
     res.setHeader('Content-Length', buffer.length);
     res.end(buffer);
 });
+
+
 
 
 
@@ -190,7 +215,8 @@ router.get("/api/pumps", function(req, res) {
 });
 
 router.post("/api/pumps/delete/:id", function(req, res) {
-    req.participant.pumps.id(req.params.id).remove();
+    var pump = req.participant.pumps.id(req.params.id);
+    if (pump) pump.remove();
     req.participant.save(function(err) {
         if ( err ) {
             req.log.debug("Error getting user to delete");
@@ -203,13 +229,7 @@ router.post("/api/pumps/delete/:id", function(req, res) {
     });
 });
 
-router.get("/pumps/upload", function(req, res){
-    req.log.debug("Rendering participant pump upload");
-    res.render("participant/upload", {
-        user : req.user,
-        participant : req.participant
-    });
-})
+
 
 
 router.post('/api/settings', function(req, res) {

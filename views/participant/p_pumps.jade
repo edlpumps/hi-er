@@ -12,15 +12,21 @@ block content
             h1 Pump listings
         .panel-body
           .row
-            .col.col-xs-12
-              .btn-group
-              button(type="button", data-toggle="dropdown").btn.btn-primary.dropdown-toggle 
-                .glyphicon.glyphicon-plus 
-                span.btn-space New Pump 
-                span.btn-space.caret
-              us.dropdown-menu
-                li: a(href="pumps/new") Create new pump listing using web form
-                li: a(href="pumps/upload") Upload new pump(s) with template
+            
+            if subcription_limit
+              .col.col-xs-12
+               .alert.alert-warning You have reached the maximum number of pump listings your account subscription allows.
+            else 
+              .col.col-xs-12
+               .btn-group
+                button(type="button", data-toggle="dropdown").btn.btn-primary.dropdown-toggle 
+                  .glyphicon.glyphicon-plus 
+                  span.btn-space New Pump 
+                  span.btn-space.caret
+                us.dropdown-menu
+                  li: a(href="pumps/new") Create new pump listing using web form
+                  li: a(href="pumps/upload") Upload new pump(s) with template
+               a.btn.btn-default.btn-space(href="/participant/pumps/download") Download pumps
           .row.solo
            .col.col-xs-12
             .table-responsive
