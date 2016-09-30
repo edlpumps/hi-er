@@ -200,26 +200,19 @@ var PEIController = function($scope, $location, service) {
   }
 
   vm.go2Results = function() {
-      if ( vm.mode == "calculator"){
-          service.calculate(vm.pump).then(function(result) {
-              console.log(result);
+     service.calculate(vm.pump).then(function(result) {
             vm.step = "results";
             vm.pump.pei = result.pei;
             vm.pump.energy_rating = result.energy_rating;
             vm.pump.energy_savings = result.energy_savings;
-            console.log(vm.pump);
-        }).catch(function(error) {
+     }).catch(function(error) {
             if (error.status == 403) {
             window.location="/";
             }
             else {
             console.log(error);
             }
-        })
-      }
-      else {
-          vm.step = "results";
-      }
+     })
   }
 
   vm.measured_visible = function() {

@@ -464,9 +464,6 @@ mixin calculator(er, mode)
               .col.col-lg-4.text-center
                 h4 Energy Savings
                 p.er_savings_display {{app.pump.energy_savings}}
-            .row.solo
-              .col.col-xs-12
-               .alert.alert-info These calculations are samples only - actual results will appear when the PEI calculator is fully implemented and available
             .row
               .col.col-xs-9
                   button(type="button", ng-click="app.go2Data(true)").btn.btn-default.btn-space Back
@@ -484,7 +481,7 @@ mixin calculator(er, mode)
                 p.er_display {{app.pump.energy_rating}}
               .col.col-lg-4.text-center
                 h4 Energy Savings
-                p.er_savings_display {{app.pump.energy_savings}}
+                p.er_savings_display {{app.pump.energy_savings}} HP
             .row.solo
              .col.col-xs-12
               .alert.alert-info These calculations are samples only - actual results will appear when the PEI calculator is fully implemented and available
