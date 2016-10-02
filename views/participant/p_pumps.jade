@@ -34,6 +34,7 @@ block content
                 thead
                  tr 
                   th
+                  th ID
                   th Basic Model Designation
                   th Configuration
                   th DOE Pump Category
@@ -46,6 +47,7 @@ block content
                  tr(ng-repeat="pump in app.participant.pumps")
                   td
                     img(height="25" width="25" ng-src="/images/{{pump.listed && pump.active_admin ? 'active' : 'inactive'}}.png")
+                  td {{pump.rating_id}}
                   td: a(href="pumps/{{pump._id}}") {{pump.basic_model}}
                   td {{app.getConfigLabel(pump.configuration)}}
                   td {{pump.doe}}

@@ -30,6 +30,7 @@ var getSVG = function(pump, label, callback) {
         data = data.replace("%%LOAD%%", load);
         data = data.replace("%%ER%%", pump.energy_rating);
         data = data.replace("%%DATE%%", date);
+        data = data.replace("%%RID%%", pump.rating_id);
 
         data = data.replace("%%ERPOS%%", pos);
         data = data.replace("%%CPOS%%", pos);

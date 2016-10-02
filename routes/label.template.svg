@@ -24,6 +24,6 @@
     <line x1="525" y1="290" x2="525" y2="235" stroke-width="2" stroke="#0460ab"/>
     <line x1="525" y1="290" x2="525" y2="235" stroke-width="2" stroke="#0460ab"/>
 
-
+    <text x="65" y="360" font-family="Arial" font-size="12" text-anchor="start" fill="#E6AF2E">Rating ID:  %%RID%%</text>
     <text x="535" y="360" font-family="Arial" font-size="14" text-anchor="end" fill="#E6AF2E">%%DATE%%</text>
 </svg>

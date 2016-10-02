@@ -18,6 +18,7 @@ mixin calculator(er, mode)
             input(type="hidden", name="pump[section]", ng-value="app.pump.section")
             input(type="hidden", name="pump[energy_rating]", ng-value="app.pump.energy_rating")
             input(type="hidden", name="pump[energy_savings]", ng-value="app.pump.energy_savings")
+            input(type="hidden", name="pump[rating_id]", ng-value="app.pump.rating_id")
             
 
             .row
@@ -137,10 +138,10 @@ mixin calculator(er, mode)
                     label.text-primary How is motor performance determined?  
                   .col.col-xs-7
                     label.radio-inline
-                      input(type="radio" ng-model="app.pump.motor_method", value="tested") 
+                      input(type="radio", name="pump[motor_method]", ng-model="app.pump.motor_method", value="tested") 
                       | Tested
                     label.radio-inline
-                      input(type="radio" ng-model="app.pump.motor_method", value="calculated") 
+                      input(type="radio", name="pump[motor_method]", ng-model="app.pump.motor_method", value="calculated") 
                       | Calculated
             hr
             .row

@@ -1,6 +1,25 @@
 var Schema = require('mongoose').Schema;
 
 exports.init = function init(mongoose) {
+
+  var counters = mongoose.model('counters', {
+    name : String,
+    seq : Number
+  }, "counters");
+
+  exports.Counters = counters;
+
+  exports.nextRatingsId = function(callback) {
+    var ret = counters.collection.findAndModify(
+          { name: "ratings" },
+          {},
+          {$inc: { seq: 1 } }, 
+          {},
+          callback
+    );
+  }
+
+
   var users = mongoose.model('users', {
     name: {
         first: String, 
@@ -19,6 +38,7 @@ exports.init = function init(mongoose) {
 
 
   var pumpSchema = new Schema({ 
+    rating_id : String,
     participant: String,
     configuration : String,
     basic_model : String,
@@ -129,6 +149,15 @@ exports.init = function init(mongoose) {
 
   exports.Labels = label;
 
+  counters.count({}, function(err, count) {
+    if ( count == 0  ){
+      var counter = new counters();
+      counter.name = "ratings";
+      counter.seq = 0;
+      counter.save();
+      console.log("Boostrapping counters");
+    }
+  })
 
   label.count({}, function(err, count) {
     if (count == 0 ) {

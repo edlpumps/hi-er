@@ -297,8 +297,8 @@ var PEIController = function($scope, $location, service) {
   }
 
   vm.submitListing = function() {
-      
-      
+    console.log("SUBMITTING PUMP");  
+    console.log(vm.pump);
       
       
 

@@ -3,6 +3,9 @@ const passport = require('passport');
 const router = express.Router();
 const common = require('./common');
 
+var Hashids = require('hashids');
+var hashids = new Hashids("hydraulic institute", 6, 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789');
+
 // All resources served from here are restricted to participants.
 router.use(function(req, res, next){
     if ( req.user && req.user.participant) {
@@ -57,7 +60,6 @@ router.get('/pumps', function(req, res) {
 });
 
 router.get("/pumps/new", function(req, res){
-    req.log.debug("Rendering participant new pump page");
     if ( req.participant.pumps.length >= req.participant.pumpLimit){
         req.flash("errorTitle", "Subscription limit");
         req.flash("errorMessage", "You cannot list additional pumps until you've updated your subscription level.");
@@ -87,15 +89,18 @@ router.post("/pumps/new", function(req, res){
     var view = pump.pei_input_type == 'calculate'  ? "participant/calculate_pump" : "participant/manual_pump";
 
     var toSave = req.participant.pumps.create(pump);
-    req.participant.pumps.push(toSave);
-    req.participant.save(function(err) {
-        res.render(view, {
-            user : req.user,
-            participant : req.participant, 
-            pump:toSave
-        });
-        console.log(toSave);
-    })
+    toSave.rating_id = req.nextRatingsId(function(err, doc) {
+        toSave.rating_id = hashids.encode(doc.value.seq);
+        console.log("Saving rating id = " + toSave.rating_id);
+        req.participant.pumps.push(toSave);
+        req.participant.save(function(err) {
+            res.render(view, {
+                user : req.user,
+                participant : req.participant, 
+                pump:toSave
+            });
+        })
+    });
 });
 
 router.get("/pumps/upload", function(req, res){
