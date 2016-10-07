@@ -86,13 +86,35 @@ router.get('/:participant_id/:id/svg', function(req, res) {
 router.get('/:participant_id/:id/qr', function(req, res) {
     var port = req.app.settings.port || cfg.port;
     var base = req.protocol + '://' + req.host;
-    var url = base;// + "/" + req.params.participant_id + "/" + req.params.id;
 
-    var qr = require('qr-image');  
-    var code = qr.image(url, { type: 'png' });
+    req.Participants.findById(req.params.participant_id, function(err, participant) {
+        if ( err ) {
+            re.log.error(err);
+            res.status(500).send({ error: err });
+        }
+        else if (!participant) {
+            res.status(401).send({ error: err });
+        }
+        else {
+            var pump = participant.pumps.id(req.params.id);
+            if ( !pump) {
+                res.status(401).send({ error: err });
+            }
+            else {
+                var url = base + "/ratings/" + pump.rating_id;
 
-    res.type('png');
-    code.pipe(res);
+                var qr = require('qr-image');  
+                var code = qr.image(url, { type: 'png' });
+
+                res.type('png');
+                code.pipe(res);
+
+            }
+        }
+    });
+
+
+    
 })
 
 
