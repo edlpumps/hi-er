@@ -24,7 +24,6 @@ router.get('/', function(req, res) {
 });
 
 router.get('/labels', function(req, res) {
-    req.log.debug("Rendering administration portal - label page");
     req.Labels.find({}, function(err, labels) {
         res.render("admin/a_labels", {
             user : req.user,
@@ -172,11 +171,13 @@ router.post("/participant/:id", function(req, res) {
 
 router.post("/api/labels/", function(req, res) {
     req.log.debug("Saving labels - administrative portal");
-    
+    req.body.labels.filter(l => l.modified).forEach(function(label){
+        label.date = Date.now();
+        console.log("Modified date");
+    })
     req.Labels.remove({}, function() {
        req.Labels.insertMany(req.body.labels, function(err, documents) {
            console.log(documents);
-           console.log(err);
            res.setHeader('Content-Type', 'application/json');
            res.end(JSON.stringify({ labels: documents}));
        });

@@ -56,6 +56,7 @@ exports.init = function init(mongoose) {
     load120 : {type:Boolean, default:true}, 
 
     pei : Number,
+    pei_baseline : Number,
     pei_method : String, // calculated or manual
     energy_rating : Number, 
     energy_savings: Number,
@@ -144,7 +145,9 @@ exports.init = function init(mongoose) {
     load:String,
     speed : Number,
     doe : String,
-    max : Number
+    max : Number, 
+    min : Number,
+    date : Date
   }, "labels");
 
   exports.Labels = label;
@@ -173,6 +176,8 @@ exports.init = function init(mongoose) {
             lab.doe = doe;
             lab.speed = speed;
             lab.max = 100;
+            lab.min = 0;
+            lab.date = new Date(2016, 8);
             lab.save();
           })
         })

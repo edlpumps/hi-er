@@ -39,7 +39,11 @@
     "passport-local": "1.0.0",
     "qr-image": "3.1.0",
     "serve-favicon": "2.3.0",
-    "uuid": "2.0.2", 
+    "uuid": "2.0.2",
     "hashids": "1.0.0"
+  },
+  "devDependencies": {
+    "chai": "3.5.0",
+    "mocha": "3.1.0"
   }
 }

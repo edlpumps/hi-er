@@ -2,14 +2,77 @@
 @hi_blue: #465b79;
 @hi_light: #028da8;
 @er_accent: #E6AF2E;
+@er_super_light:#eceef1;
 
 .btn-space {
     margin-left: 5px;
 }
 
+.panel.panel-hi-primary .panel-heading {
+    background-color:@hi_blue;
+    color :white;
+}
+.panel.panel-hi-primary .panel-heading h1 {
+    color:white;
+}
+
 body {
     background-color:  @hi_blue;
     font-family: 'Oxygen', sans-serif;
+}
+body.ratings {
+    background-color: white;
+    
+   
+}
+.ratings li.list-group-item {
+    padding-top:0px;
+    padding-bottom:0px;
+}
+.ratings .panel-heading {
+    text-align:center;
+}
+.ratings .heading {
+  text-align:center;
+  margin-top:50px;
+}
+
+.ratings .back_to_search {
+    position:absolute;
+    width:100%;
+    background-color:@er_super_light;
+    x : 0px;
+    y : 0px;
+    padding:5px;
+    margin-top:0px;
+}
+
+.ratings h1 {
+    color: black;
+}
+.ratings h2 {
+    color: @er_accent;
+}
+.ratings .title {
+    font-size:16pt;
+    color: @hi_light;
+}
+.ratings .panel {
+    margin-top:20px;
+}
+
+.energy_badge{
+    text-align:center;
+}
+.energy_badge .small {
+    padding-top:20px; 
+    margin-bottom:0px
+}
+.energy_badge h2 {
+    margin-top:5px
+}
+.rating_listing:hover {
+    background-color:@er_super_light;
 }
 
 .entry {
@@ -72,6 +135,10 @@ body {
 .er_savings_display{
     color: green;
 }
+.pei_baseline {
+    color: #a5172b;
+    font-size:9pt;
+}
 
 
 .btn-primary,
@@ -89,3 +156,4 @@ body {
 a {
     color:@hi_light;
 }
+

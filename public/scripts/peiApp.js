@@ -205,6 +205,7 @@ var PEIController = function($scope, $location, service) {
             vm.pump.pei = result.pei;
             vm.pump.energy_rating = result.energy_rating;
             vm.pump.energy_savings = result.energy_savings;
+            vm.pump.pei_baseline = result.pei_baseline;
      }).catch(function(error) {
             if (error.status == 403) {
             window.location="/";

@@ -13,12 +13,13 @@ var getSVG = function(pump, label, callback) {
             ? "- Drive &amp; Continuous Controls" 
             : "- Drive &amp; Non-Continuous Controls")
     var load = pump.configuration =="bare" || pump.configuration=="pump_motor" ? "CONSTANT LOAD" : "VARIABLE LOAD";
-    var datetime = new Date();
+    var datetime = label.date;
     var locale = "en-us";
     var er = Math.min(pump.energy_rating, label.max);
     var date = datetime.toLocaleString(locale, { month: "short" });
-    var pos = Math.round((er / label.max)*450 + 75) ;
-    console.log(pos);
+    var span = label.max - label.min;
+    var distance = (er - label.min)/span;
+    var pos = Math.round(distance*450 + 75) ;
     date += " " + datetime.getFullYear()
     fs.readFile(path.join(__dirname, "label.template.svg"), 'utf8', (err, data) => {
         data = data.replace("%%DOE%%", pump.doe);

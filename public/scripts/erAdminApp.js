@@ -125,9 +125,9 @@ var ERAdminController = function($scope, $location, service) {
     service.saveLabels(vm.labels).then(function(result) {
         vm.labels_changed = false;
         vm.labels_editing = false;
-        vm.original_labels = result.data.labels;
-        console.log(vm.original_labels);
-        console.log("Saved labels successfully");
+        vm.original_labels = JSON.parse(JSON.stringify(result.data.labels));
+        vm.labels = result.data.labels;
+        result.data.labels.forEach(function (label) {label.modified = false;});
       }).catch(function(error) {
         if (error.status == 403) {
           window.location="/";

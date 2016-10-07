@@ -1,27 +1,42 @@
 extends layout
 
 
-block nav
-     +navigation("pump")
 block content
- div(ng-app='ERParticipantApp')
-    .container(ng-controller="ERParticipantController as app",ng-init="app.user= #{JSON.stringify(user)}; app.participant= #{JSON.stringify(participant)}")
-
-      .panel.panel-default
+    .back_to_search
+        a(href="/ratings") back to search
+    .container
+      
+      .row
+       
+       .col.col-sm-12
+         
+         .heading
+           
+           img(src="/images/hydraulic-institute-logo.png", width="500").hidden-xs
+           img(src="/images/hydraulic-institute-logo.png", width="300").hidden-md.hidden-lg.hidden-sm
+           
+      .panel.panel-default.solo
         .panel-heading 
-            h2 Pump #{pump.basic_model} - #{pump.diameter} inches @ #{pump.speed} rpm
+             
+            h1 Pump #{pump.basic_model} - #{pump.diameter} inches @ #{pump.speed} rpm
+            
         .panel-body
           .row
            .col.col-sm-5.text-center
              img(src="/images/doe/#{pump_drawing}")
-             p.solo: a.btn.btn-danger(href="/participant/pumps/#{pump._id}/download") Download full data
            .col.col-sm-7
+                .row 
+                    .form-group
+                        .col.col-xs-5
+                            label Vendor / Rater:
+                        .col.col-xs-7
+                            .form-control-static #{pump.participant}
                 .row 
                     .form-group
                         .col.col-xs-5
                             label HI Rating ID:
                         .col.col-xs-7
-                            .form-control-static: a(href="/ratings/#{pump.rating_id}") #{pump.rating_id}
+                            .form-control-static #{pump.rating_id}
                 .row 
                     .form-group
                         .col.col-xs-5
@@ -40,12 +55,6 @@ block content
                             label HI approved laboratory:
                         .col.col-xs-7
                             .form-control-static #{pump.laboratory}
-                .row 
-                    .form-group
-                        .col.col-xs-5
-                            label Testing method:
-                        .col.col-xs-7
-                            .form-control-static #{section_label(pump.section)} 
                 .row 
                     .form-group
                         .col.col-xs-5
@@ -82,7 +91,7 @@ block content
       
       .panel.panel-default
         .panel-heading 
-            h2 Energy Ratings
+            h1 Energy Ratings
         .panel-body
            
            .row
@@ -97,50 +106,10 @@ block content
               h4 Energy Savings
               p.er_savings_display #{pump.energy_savings} HP
            .row.solo
+            .col.col-lg-12.text-center
+              object(id="label_svg", data="/labels/#{participant._id}/#{pump._id}/svg", type="image/svg+xml")
+           .row.solo
             .col.col-xs-12
              .alert.alert-info These calculations are samples only - actual results will appear when the PEI calculator is fully implemented and available
           
-        
-
-      .panel.panel-default
-        .panel-heading 
-            h2 Downloadable Media
-        .panel-body
-          
-          .row.solo
-            .col.col-lg-8.text-center
-             
-              object(id="label_svg", data="/labels/#{participant._id}/#{pump._id}/svg", type="image/svg+xml")
-                
-              p.solo.text-center: a.btn.btn-primary(href="/labels/#{participant._id}/#{pump._id}/svg", target="_blank") Download
-            
-            .col.col-lg-4.text-center
-              img(src="/labels/#{participant._id}/#{pump._id}/qr")
-              p.solo.text-center: a.btn.btn-primary(href="/labels/#{participant._id}/#{pump._id}/qr", target="_blank") Download
-
-             
-
-      .panel.panel-default
-        .panel-heading
-          h2 Administrative controls
-        .panel-body
-         form(action="/participant/pumps/#{pump._id}", method="post")
-          .row
-           .col.col-xs-12
-            
-              .form-group
-                label(style="margin-right:10px") Pump listing status:  
-                input.switchBox(type="checkbox", name="listed", checked=(pump.listed), data-on-text="Active", data-off-text="Disabled")
-                .help-block Disabled pumps listings are removed from the public energy rating registry, but can be re-activated at any time.
-
-          .row
-           .col.col-xs-12
-             if !pump.active_admin
-              .alert.alert-danger
-                h3 This pump has been de-listed by a Hydraulic Institute Program Manager. 
-                .form-group
-                  label(style="margin-right:10px") Program manager note:  
-                  p.form-static-control #{pump.note_admin}
-          .row
-            .col.col-xs-12
-               button.btn.btn-danger(type="submit") Save changes
+   

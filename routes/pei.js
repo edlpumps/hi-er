@@ -21,14 +21,18 @@ router.post('/api/calculate', function(req, res){
     var pei = req.body.pump.pei || 1.23;
     var baseline = pei_baselines[req.body.pump.doe.value][req.body.pump.speed/1800-1];
     console.log("BASELINE = " + baseline);
-    var er = Math.round((pei - baseline) * 100);
+    var er = ((pei - baseline) * 100);
+    console.log("RAW ER" + er);
     var power = req.body.pump.motor_power_rated || 200;
-    var es = Math.round(er / 100 * power, 2);
+    var es = (er / 100 * power).toFixed(0);
+    er = er.toFixed(0);
+
 
     res.end(JSON.stringify({ 
         pei: pei,
         energy_rating: er, 
-        energy_savings: es
+        energy_savings: es, 
+        pei_baseline : baseline
     }));
 })
 

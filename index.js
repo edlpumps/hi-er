@@ -142,11 +142,13 @@ const participant = require("./routes/participant");
 const admin = require("./routes/admin");
 const pei = require("./routes/pei");
 const labels = require("./routes/labels");
+const ratings = require("./routes/ratings");
 app.use("/", registration);
 app.use("/participant", participant);
 app.use("/admin", admin);
 app.use("/pei", pei);
 app.use("/labels", labels);
+app.use("/ratings", ratings);
 
 registration.post('/login', 
   passport.authenticate('local', { failureRedirect: '/' }),

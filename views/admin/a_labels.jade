@@ -32,15 +32,21 @@ block content
                       th DOE Designation 
                       th Nominal Speed
                       th Load
+                      th Minimum Energy Rating
                       th Maximum Energy Rating
+                      th Effective Date
                     tbody
                      tr(ng-repeat="label in app.labels")
                       td {{label.doe}}
                       td {{label.speed}} 
                       td {{label.load}}
                       td(ng-show="app.labels_editing")
-                        input.form-control.input-sm(type="number", min="0", step="1", ng-model="label.max", ng-change="app.labels_changed = true")
+                        input.form-control.input-sm(type="number", min="0", step="1", ng-model="label.min", ng-change="app.labels_changed = true; label.modified = true")
+                      td(ng-hide="app.labels_editing") {{label.min}}
+                      td(ng-show="app.labels_editing")
+                        input.form-control.input-sm(type="number", min="0", step="1", ng-model="label.max", ng-change="app.labels_changed = true; label.modified = true")
                       td(ng-hide="app.labels_editing") {{label.max}}
+                      td {{label.date | date: 'MMMM yyyy'}}
                         
                                
           
