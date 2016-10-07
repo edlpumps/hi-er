@@ -5,6 +5,7 @@ const path = require('path');
 
 
 var getSVG = function(pump, label, callback) {
+    console.log("SVG 1");
     var pm = pump.configuration =="bare"  ? "- Bare Pump" : "- Motor";
     var config = 
         pump.configuration =="bare" || pump.configuration=="pump_motor"  
@@ -12,15 +13,18 @@ var getSVG = function(pump, label, callback) {
         : (pump.configuration=="pump_motor_cc" 
             ? "- Drive &amp; Continuous Controls" 
             : "- Drive &amp; Non-Continuous Controls")
+    console.log("SVG 2");
     var load = pump.configuration =="bare" || pump.configuration=="pump_motor" ? "CONSTANT LOAD" : "VARIABLE LOAD";
     var datetime = label.date;
     var locale = "en-us";
+
     var er = Math.min(pump.energy_rating, label.max);
     var date = datetime.toLocaleString(locale, { month: "short" });
     var span = label.max - label.min;
     var distance = (er - label.min)/span;
     var pos = Math.round(distance*450 + 75) ;
     date += " " + datetime.getFullYear()
+    console.log("SVG 3");
     var filename = path.join(__dirname, "label.template.svg");
     console.log("Getting svg template from " + filename);
     fs.readFile(filename, 'utf8', (err, data) => {
@@ -69,6 +73,7 @@ var getit = function(req,res, callback){
                     {load: load}
                 ]).exec(function(err, label) {
                     console.log(label);
+                    console.log("Calling svg template");
                         getSVG(pump, label, function(err, svg) {
                             console.log("getSvg returned");
                             console.log(err);
