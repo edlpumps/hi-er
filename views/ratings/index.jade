@@ -94,9 +94,9 @@ block content
                 a(href="#", ng-click="app.show_more = !app.show_more", ng-show="!app.show_more") more filters
                
               .col.col-sm-5
-               button.btn.btn-primary(type="button", ng-click="app.getPumps()") Search for Rated Pumps
+               button.btn.btn-primary(type="button", ng-click="app.getPumps(); app.searched = true") Search for Rated Pumps
 
-         .panel.panel-default.panel-hi-primary(ng-show="app.pumps.length > 0")
+         .panel.panel-default.panel-hi-primary(ng-show="app.pumps.length > 0 || app.searched")
            .panel-heading
              h1 Results ({{app.pumps.length}})
            ul.list-group

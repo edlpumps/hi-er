@@ -184,6 +184,8 @@ router.post("/search", function(req, res) {
     req.session.search.fresh = false;
     var operators = default_search_operators(req.session.search);
     req.Participants.aggregate(operators).exec(function(err, docs) {
+        console.log(docs);
+        console.log(err);
         res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify({ pumps: docs}));
     });
