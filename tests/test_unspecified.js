@@ -33,7 +33,7 @@ describe('Underspecified pumps', function() {
       
     }); 
     it('should return error w/ missing pump', function() {
-      let result = calculator.manual(pumpA)
+      let result = calculator.manual()
       assert.isNotTrue(result.success, "result was true");;
     });
     it('should return error w/ missing speed', function() {

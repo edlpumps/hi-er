@@ -148,7 +148,7 @@ var section3_manual = function(pump) {
     
     result.pei_baseline = result.per_baseline_calculated / result.per_std_calculated;
     result.pei = pump.pei;
-    
+
     var per_diff = result.per_std /result.per_std_calculated;
     if ( per_diff > 1.01 || per_diff < 0.99){
         result.success = false;
@@ -165,6 +165,9 @@ var section3_manual = function(pump) {
 }
 
 exports.manual = function(pump) {
+    if ( !pump ) {
+        return build_error("Pump object must be specified");
+    }
     return calculators[pump.section](pump);
 }
 
@@ -174,9 +177,7 @@ var calculators = {
 
         // likely common
         // --------------------
-        if ( !pump ) {
-            return build_error("Pump object must be specified");
-        }
+        
         if (!pump.doe) missing.push("Pump DOE designation must be specified");
         if (!pump.speed) missing.push("Pump speed must be specified");
         if (!pump.motor_power_rated) missing.push("Pump rated motor power / nameplate rated motor power must be specified")

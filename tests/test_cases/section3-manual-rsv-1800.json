@@ -15,7 +15,7 @@
             "bep100":424.429761562769,
             "bep110":383.476012640046
           },
-          "pump_input_power" :{
+          "driver_input_power" :{
             "bep75":52.812, 
             "bep100":55.203,
             "bep110":55.620
@@ -24,6 +24,7 @@
           "pei" : 1.07
         }, 
         "expected" : {
+          "pei" : {"value":1.07, "threshold" : 0.01},
           "success" :{"value":true},
           "section" :{"value":"3"},
           "per_cl" : {"value": 54.540, "threshold": 0.001},
