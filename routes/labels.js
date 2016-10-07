@@ -15,14 +15,21 @@ var getSVG = function(pump, label, callback) {
             : "- Drive &amp; Non-Continuous Controls")
     console.log("SVG 2");
     var load = pump.configuration =="bare" || pump.configuration=="pump_motor" ? "CONSTANT LOAD" : "VARIABLE LOAD";
+    console.log("SVG 2a");
     var datetime = label.date;
+    console.log("SVG 2b");
     var locale = "en-us";
 
     var er = Math.min(pump.energy_rating, label.max);
+    console.log("SVG 2c");
     var date = datetime.toLocaleString(locale, { month: "short" });
+    console.log("SVG 2d");
     var span = label.max - label.min;
+    console.log("SVG 2e");
     var distance = (er - label.min)/span;
+    console.log("SVG 2f");
     var pos = Math.round(distance*450 + 75) ;
+    console.log("SVG 2g");
     date += " " + datetime.getFullYear()
     console.log("SVG 3");
     var filename = path.join(__dirname, "label.template.svg");
