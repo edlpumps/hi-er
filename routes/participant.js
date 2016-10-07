@@ -115,14 +115,15 @@ router.post("/pumps/new", function(req, res){
     toSave.rating_id = req.nextRatingsId(function(err, doc) {
         toSave.rating_id = hashids.encode(doc.value.seq);
         console.log("Saving rating id = " + toSave.rating_id);
-        req.participant.pumps.push(toSave);
-        req.participant.save(function(err) {
-            res.render(view, {
+        //req.participant.pumps.push(toSave);
+        res.render(view, {
                 user : req.user,
                 participant : req.participant, 
                 pump:toSave
             });
-        })
+        //req.participant.save(function(err) {
+            
+        //})
     });
 });
 
@@ -192,16 +193,6 @@ router.post("/pumps/submit", function(req, res){
         pump.results = JSON.parse(pump.results);
     }
    
-    var saved = req.participant.pumps.id(pump._id);
-    if (!saved) {
-        req.flash("errorTitle", "Internal application error");
-        req.flash("errorMessage", "Pump cannot be updated - it does not exist.");
-        res.redirect("/error");
-        return;
-    }
-
-    // remove the one that is there, add this one back...
-    req.participant.pumps.id(pump._id).remove();
     var toSave = req.participant.pumps.create(pump);
     req.participant.pumps.push(toSave);
     req.participant.save(function(err) {

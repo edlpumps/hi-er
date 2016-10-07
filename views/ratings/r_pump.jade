@@ -2,23 +2,22 @@ extends layout
 
 
 block content
-    .back_to_search
+    .ratings-bar
+      .pull-left
         a(href="/ratings") back to search
+      .pull-right
+        a(href="/portal") Energy Rating Program Portal
     .container
       
-      .row
-       
-       .col.col-sm-12
-         
-         .heading
+      .panel.panel-default.rating_panel
+        .panel-heading 
+          .heading
            
            img(src="/images/hydraulic-institute-logo.png", width="500").hidden-xs
            img(src="/images/hydraulic-institute-logo.png", width="300").hidden-md.hidden-lg.hidden-sm
-           
-      .panel.panel-default.solo
-        .panel-heading 
              
-            h1 Pump #{pump.basic_model} - #{pump.diameter} inches @ #{pump.speed} rpm
+           h2 #{pump.basic_model}
+           h4 #{pump.participant}
             
         .panel-body
           .row

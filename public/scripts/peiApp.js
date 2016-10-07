@@ -310,6 +310,7 @@ var PEIController = function($scope, $location, service) {
 
 
   vm.go2Results = function() {
+     vm.calc_errors = null;
      service.calculate(vm.pump).then(function(result) {
             vm.step = "results";
             vm.pump.pei = result.pei;
@@ -317,6 +318,12 @@ var PEIController = function($scope, $location, service) {
             vm.pump.energy_savings = result.energy_savings;
             vm.pump.pei_baseline = result.pei_baseline;
             vm.pump.results = JSON.stringify(result);
+
+            console.log(result);
+            if (!result.success) {
+                vm.calc_errors = result.reasons;
+            }
+            console.log(vm.calc_errors);
             
      }).catch(function(error) {
             if (error.status == 403) {

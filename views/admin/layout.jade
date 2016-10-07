@@ -35,6 +35,8 @@ html(ng-app='ERAdminApp')
                     a(href="/admin/participants") Participants
                   li(class=(active == 'labels' ? 'active' : ''))
                     a(href="/admin/labels") Label Configuration
+                  li(class=(active == 'ratings' ? 'active' : ''))
+                    a(href="/ratings") Public ER Ratings
                 ul.nav.navbar-nav.navbar-right
                   li
                     .navbar-text #{user.name.first} #{user.name.last}

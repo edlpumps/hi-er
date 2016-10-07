@@ -6,7 +6,7 @@ mixin calculator(er, mode)
   //- add angular controller here
   .container(ng-controller="PEIController as app", ng-init="app.user= #{JSON.stringify(user)}; app.participant= #{JSON.stringify(participant)}; app.setup(#{er}, #{JSON.stringify(pump)}, #{JSON.stringify(mode)})").pei
     form(action="submit", method="post", name="new_pump_pei")
-     .panel.panel-default.solo
+     .panel.panel-default.rating_panel
         .panel-heading
             h1 Pump Energy Index {{app.mode=='calculator' ? 'Calculator' : 'Data Entry'}}
         
@@ -457,7 +457,11 @@ mixin calculator(er, mode)
 
         if (er)
           .panel-body(ng-show="app.step=='results'")
-            .row
+            .row(ng-show="app.calc_errors")
+              .col.col-xs-12
+                p(ng-repeat="erro in app.calc_errors").alert.alert-danger
+                   {{erro}}
+            .row(ng-hide="app.calc_errors")
               .col.col-lg-4.text-center
                 h4 Pump Energy Index
                 p.pei_display {{app.pump.pei}}
@@ -471,11 +475,16 @@ mixin calculator(er, mode)
               .col.col-xs-9
                   button(type="button", ng-click="app.go2Data(true)").btn.btn-default.btn-space Back
               .col.col-xs-3
-                  button(type="button", ng-click="app.submitListing()").btn.btn-danger.btn-space Save pump listing
+                  button(type="button", ng-hide="app.calc_errors", ng-click="app.submitListing()").btn.btn-danger.btn-space Save pump listing
 
         else
           .panel-body(ng-show="app.step=='results'")
-            .row
+            .row(ng-show="app.calc_errors")
+              .col.col-xs-12
+                ul
+                 li(ng-repeat="erro in app.calc_errors").alert.alert-error
+                   {{erro}}
+            .row(ng-hide="app.calc_errors")
               .col.col-lg-4.text-center
                 h4 Pump Energy Index
                 p.pei_display {{app.pump.pei}}

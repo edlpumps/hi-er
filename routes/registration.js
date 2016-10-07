@@ -2,7 +2,7 @@ const express = require('express');
 const passport = require('passport');
 const router = express.Router();
 
-router.get('/', function(req, res) {
+router.get('/portal', function(req, res) {
     // Check if a user is logged in, if so, redirect to the correct landing page - 
     // either participant portal or admin portal.
     // If not logged in, the landing page is the signin/signup page.
@@ -20,6 +20,21 @@ router.get('/', function(req, res) {
         res.render("landing", {
             email: email
         });
+    }
+});
+
+router.get('/', function(req, res) {
+    if ( req.user && req.user.participant ) {
+        req.log.debug("Participant logged in, redirecting to portal home");
+        res.redirect("/participant");
+    }
+    else if ( req.user && req.user.admin) {
+        req.log.debug("Admin logged in, redirecting to admin portal home");
+        res.redirect("/admin");
+    }
+    else {
+        req.log.debug("No user is logged in, rendering landing page");
+        res.redirect("/ratings");
     }
 });
 
@@ -102,7 +117,7 @@ router.post("/activate/:key", function(req, res) {
             req.body.email = req.body.user.email;
             req.body.password = req.body.user.password;
             req.app.locals.passport.authenticate('local', { failureRedirect: '/' })(req, res, function () {
-                res.redirect('/');
+                res.redirect('/portal');
             })
         })
     });

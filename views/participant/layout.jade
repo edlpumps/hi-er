@@ -36,6 +36,8 @@ html
                     a(href="/participant/users") User Management
                   li(class=(active == 'pumps' ? 'active' : ''))
                     a(href="/participant/pumps") Pump Listings
+                  li(class=(active == 'ratings' ? 'active' : ''))
+                    a(href="/ratings") Public ER Ratings
                 ul.nav.navbar-nav.navbar-right
                   li
                     .navbar-text #{user.name.first} #{user.name.last}

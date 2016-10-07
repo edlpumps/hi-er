@@ -43,7 +43,8 @@ router.post('/api/calculate', function(req, res){
         pei: pei,
         energy_rating: er, 
         energy_savings: es, 
-        pei_baseline : baseline
+        pei_baseline : baseline,
+        success : true
     }));
 })
 

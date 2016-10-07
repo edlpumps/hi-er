@@ -153,7 +153,7 @@ var section3_manual = function(pump) {
     if ( per_diff > 1.01 || per_diff < 0.99){
         result.success = false;
         result.reasons = [];
-        result.reasons.push("Error, the difference between PER standard and PER standard calculated must be within 1%");
+        result.reasons.push("Error, the calculated PER standard value (" + result.per_std_calculated.toFixed(2) + ") must be within 1% of the PER value derived from your inputs")
         result.pump = pump;
     }
     else {

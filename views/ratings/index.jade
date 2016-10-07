@@ -2,16 +2,22 @@ extends layout
 
 block content
   div(ng-app='ERRatingsApp')
+    .ratings-bar
+      .pull-left
+        a(href="/pei") PEI Calculator
+      .pull-right
+        a(href="/portal") Energy Rating Program Portal
     .container(ng-controller="ERRatingsController as app",ng-init="app.search= #{JSON.stringify(search)}; app.load_search()")
         form.form-horizontal
-         .heading
-            img(src="/images/hydraulic-institute-logo.png", width="500").hidden-xs
-            img(src="/images/hydraulic-institute-logo.png", width="300").hidden-md.hidden-lg.hidden-sm
+        
          
 
-         .panel.panel-default.hi-panel-search
+         .panel.panel-default.hi-panel-search.rating_panel
           .panel-heading
-             h1 Search criteria
+              .heading
+                img(src="/images/hydraulic-institute-logo.png", width="500").hidden-xs
+                img(src="/images/hydraulic-institute-logo.png", width="300").hidden-md.hidden-lg.hidden-
+                h3 ENERGY RATINGS PROGRAM
           .panel-body
              
            
@@ -96,13 +102,13 @@ block content
               .col.col-sm-5
                button.btn.btn-primary(type="button", ng-click="app.getPumps(); app.searched = true") Search for Rated Pumps
 
-         .panel.panel-default.panel-hi-primary(ng-show="app.pumps.length > 0 || app.searched")
+         .panel.panel-default(ng-show="app.pumps.length > 0 || app.searched")
            .panel-heading
              h1 Results ({{app.pumps.length}})
            ul.list-group
            
               li(ng-repeat="pump in app.pumps").list-group-item.rating_listing
-                a(href="/ratings/{{pump.rating_id}}")
+                a(href="/ratings/{{pump.rating_id}}").listing
                     .row
                         .col.col-xs-8.col-sm-6
                            h3 {{pump.basic_model}}

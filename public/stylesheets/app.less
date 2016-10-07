@@ -20,11 +20,7 @@ body {
     background-color:  @hi_blue;
     font-family: 'Oxygen', sans-serif;
 }
-body.ratings {
-    background-color: white;
-    
-   
-}
+
 .ratings li.list-group-item {
     padding-top:0px;
     padding-bottom:0px;
@@ -34,32 +30,51 @@ body.ratings {
 }
 .ratings .heading {
   text-align:center;
-  margin-top:50px;
+  
 }
 
-.ratings .back_to_search {
+.ratings-bar {
     position:absolute;
     width:100%;
     background-color:@er_super_light;
-    x : 0px;
-    y : 0px;
+    left : 0px;
+    top : 0px;
     padding:5px;
     margin-top:0px;
 }
+.ratings-bar  .pull-right {
+    margin-right:10px;
+}
+.ratings-bar  .pull-left {
+    margin-left:10px;
+}
 
+.ratings .listing {
+    color:black;
+}
+.ratings .listing h3 {
+    color:@hi_blue;
+}
+
+.rating_panel {
+    margin-top:50px;
+}
 .ratings h1 {
     color: black;
 }
 .ratings h2 {
-    color: @er_accent;
+    color: @hi_light;
 }
+.ratings h3 {
+    color: @hi_light;
+    font-size:14pt;
+}
+.ratings h4 {color:black}
 .ratings .title {
     font-size:16pt;
     color: @hi_light;
 }
-.ratings .panel {
-    margin-top:20px;
-}
+
 
 .energy_badge{
     text-align:center;

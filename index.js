@@ -159,7 +159,7 @@ registration.post('/login',
 });
 registration.get('/logout', function (req, res){
   req.logOut() ;
-  res.redirect('/')
+  res.redirect('/portal')
 });
 
 app.use("/error", function(req, res) {
