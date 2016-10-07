@@ -21,7 +21,10 @@ var getSVG = function(pump, label, callback) {
     var distance = (er - label.min)/span;
     var pos = Math.round(distance*450 + 75) ;
     date += " " + datetime.getFullYear()
-    fs.readFile(path.join(__dirname, "label.template.svg"), 'utf8', (err, data) => {
+    var filename = path.join(__dirname, "label.template.svg");
+    console.log("Getting svg template from " + filename);
+    fs.readFile(filename, 'utf8', (err, data) => {
+        console.log("Replacing tags for SVG");
         data = data.replace("%%DOE%%", pump.doe);
         data = data.replace("%%PM%%", pm);
         data = data.replace("%%CONFIG%%", config);
