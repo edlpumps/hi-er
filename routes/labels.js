@@ -67,6 +67,9 @@ var getit = function(req,res, callback){
                 ]).exec(function(err, label) {
                     console.log(label);
                         getSVG(pump, label, function(err, svg) {
+                            console.log("getSvg returned");
+                            console.log(err);
+                            console.log(svg);
                             callback(svg);
                         })
                 });
