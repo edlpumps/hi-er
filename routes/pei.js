@@ -16,17 +16,28 @@ var pei_baselines = {
 }
 
 router.post('/api/calculate', function(req, res){
+
+    // limited support - only section 3, manual entry.
+    if (req.body.pump.pei && req.body.pump.section=="3") {
+        var pump = req.body.pump;
+        pump.doe = pump.doe.value;
+        var calculator = require("../calculator");
+        var results = calculator.manual(pump);
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify(results));
+        return;
+    }
+
     res.setHeader('Content-Type', 'application/json');
-    console.log(req.body.pump);
     var pei = req.body.pump.pei || 1.23;
     var baseline = pei_baselines[req.body.pump.doe.value][req.body.pump.speed/1800-1];
-    console.log("BASELINE = " + baseline);
-    var er = ((pei - baseline) * 100);
-    console.log("RAW ER" + er);
+    var er = ((baseline - pei) * 100);
     var power = req.body.pump.motor_power_rated || 200;
     var es = (er / 100 * power).toFixed(0);
     er = er.toFixed(0);
 
+
+    
 
     res.end(JSON.stringify({ 
         pei: pei,

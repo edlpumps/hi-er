@@ -30,15 +30,24 @@ fs.readdir(dir, function(err, items) {
 
 var test_runner = function(tests) {
   tests.forEach(function(test) {
-    test.result = calculator.manual.section3(test.pump);
+    test.result = calculator.manual(test.pump);
   })
 
   tests.forEach(function(test) {
     describe(test.name + ' - full calculation testing', function() {
+      it("calculates outcome matches (success or fail)", function() {
+        assert(test.result.success === test.expected.success.value, "calculation failed with reason " + JSON.stringify(test.result.reasons));
+      })
       for (var value in test.expected) {
-        it(value, function() {
-          var target = test.expected[value];
-          expect(test.result[value]).to.be.closeTo( target.value, target.threshold, " Value of " + value + " is " + test.result[value]);
+        let value_to_test = value;
+        it(value_to_test + " - value matches", function() {
+          var target = test.expected[value_to_test];
+          if (typeof target.value == "number") {
+            expect(test.result[value_to_test]).to.be.closeTo( target.value, target.threshold, " Value of " + value_to_test + " is " + test.result[value_to_test]);
+          }
+          else {
+            assert(test.result[value_to_test] == target.value, " Value of " + value_to_test + " is " + test.result[value_to_test]);
+          }
         });
       }
     });

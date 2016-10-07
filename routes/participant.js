@@ -71,6 +71,29 @@ router.get("/pumps/new", function(req, res){
         speed : 3600,
         stages : 1
     }
+
+    
+    pump.configuration = {value:"bare"};
+    pump.diameter = 10;
+    pump.laboratory = "TEST LAB"
+    pump.basic_model = "PRE.SET.00";
+    pump.doe = {value:"RSV"};
+    pump.stages = 9
+    pump.flow = {
+            "bep75": 262.372881355932,
+            "bep100": 349.830508474576,
+            "bep110": 384.813559322034
+    }
+    pump.head = {
+       "bep75":498.891123240448, 
+       "bep100":424.429761562769,
+       "bep110":383.476012640046
+    }
+    pump.driver_input_power ={
+            "bep75":52.812, 
+            "bep100":55.203,
+            "bep110":55.620
+          }
     res.render("participant/new_pump", {
         user : req.user,
         participant : req.participant, 
@@ -112,6 +135,7 @@ router.get("/pumps/upload", function(req, res){
 })
 router.get('/pumps/download', function(req, res) {
     var pumps= JSON.parse(JSON.stringify(req.participant.pumps));
+
     var buffer = common.build_pump_spreadsheet(pumps);
     res.setHeader('Content-Type', 'application/vnd.openxmlformats');
     res.setHeader("Content-Disposition", "attachment; filename=" + "Pump Energy Ratings - All.xlsx");
@@ -134,6 +158,7 @@ router.get('/pumps/:id', function(req, res) {
 
 router.get('/pumps/:id/download', function(req, res) {
     var pump = req.participant.pumps.id(req.params.id);
+    console.log(pump);
     pump= JSON.parse(JSON.stringify(pump));
     var buffer = common.build_pump_spreadsheet(pump);
     res.setHeader('Content-Type', 'application/vnd.openxmlformats');
@@ -159,17 +184,13 @@ router.get('/purchase', function(req, res) {
 
 
 router.post("/pumps/submit", function(req, res){
-    console.log("Raw Body\n---------------------------");
-    console.log(req.body);
-    console.log("---------------------------");
     var pump = req.body.pump;
-    console.log("Submitted pump\n---------------------------");
-    console.log(pump._id);
-    console.log(pump);
-    console.log("---------------------------");
-   
     // automatically set to listed - user can change this later.
     pump.listed = true;
+
+    if (pump.results ) {
+        pump.results = JSON.parse(pump.results);
+    }
    
     var saved = req.participant.pumps.id(pump._id);
     if (!saved) {
@@ -185,7 +206,6 @@ router.post("/pumps/submit", function(req, res){
     req.participant.pumps.push(toSave);
     req.participant.save(function(err) {
         res.redirect("/participant/pumps");
-        console.log(toSave);
     })
 
     

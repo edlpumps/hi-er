@@ -111,7 +111,9 @@ exports.init = function init(mongoose) {
 
     listed : Boolean,
     active_admin : {type:Boolean, default:true},
-    note_admin : String
+    note_admin : String,
+
+    results : Schema.Types.Mixed
   });
   
 

@@ -147,7 +147,8 @@ var section3_manual = function(pump) {
                                  +  result.baseline_driver_power_input_bep110 ) * 0.3333;
     
     result.pei_baseline = result.per_baseline_calculated / result.per_std_calculated;
-
+    result.pei = pump.pei;
+    
     var per_diff = result.per_std /result.per_std_calculated;
     if ( per_diff > 1.01 || per_diff < 0.99){
         result.success = false;
@@ -156,13 +157,19 @@ var section3_manual = function(pump) {
         result.pump = pump;
     }
     else {
-        result.er = Math.round((result.pei_baseline - pump.pei) * 100);
+        result.section = "3";
+        result.energy_rating = Math.round((result.pei_baseline - pump.pei) * 100);
+        result.energy_savings = (result.energy_rating / 100 * pump.motor_power_rated).toFixed(0);
     }
     return result;
 }
 
-exports.manual = {
-    section3 : function(pump) {
+exports.manual = function(pump) {
+    return calculators[pump.section](pump);
+}
+
+var calculators = {
+    "3" : function(pump) {
         var missing = [];
 
         // likely common
@@ -194,13 +201,13 @@ exports.manual = {
         // --------------------
 
 
-        // Specific to section 3
+        // Specific to section 3, manual
         // --------------------
-        if (!pump.driver_input_power) missing.push("Driver input power @ 75%, 100%, and 110% BEP must be specified for Section 3 calculations");
+        if (!pump.driver_input_power) missing.push("Pump input power @ 75%, 100%, and 110% BEP must be specified for Section 3 calculations");
         if ( pump.driver_input_power ) {
-            if (!pump.driver_input_power.bep75 ) missing.push("Driver input power @ 75% BEP must be specified");
-            if (!pump.driver_input_power.bep100 ) missing.push("Driver input power @ 100% BEP must be specified");
-            if (!pump.driver_input_power.bep110 ) missing.push("Driver input power @ 110% BEP must be specified");
+            if (!pump.driver_input_power.bep75 ) missing.push("Pump input power @ 75% BEP must be specified");
+            if (!pump.driver_input_power.bep100 ) missing.push("Pump input power @ 100% BEP must be specified");
+            if (!pump.driver_input_power.bep110 ) missing.push("Pump input power @ 110% BEP must be specified");
         }
 
         // --------------------

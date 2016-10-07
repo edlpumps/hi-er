@@ -199,23 +199,7 @@ var PEIController = function($scope, $location, service) {
       console.log(vm.pump);
   }
 
-  vm.go2Results = function() {
-     service.calculate(vm.pump).then(function(result) {
-            vm.step = "results";
-            vm.pump.pei = result.pei;
-            vm.pump.energy_rating = result.energy_rating;
-            vm.pump.energy_savings = result.energy_savings;
-            vm.pump.pei_baseline = result.pei_baseline;
-     }).catch(function(error) {
-            if (error.status == 403) {
-            window.location="/";
-            }
-            else {
-            console.log(error);
-            }
-     })
-  }
-
+  
   vm.measured_visible = function() {
       if (!vm.pump) return false;
       if (vm.pump.section =='6a' || vm.pump.section=='6b') {
@@ -275,9 +259,32 @@ var PEIController = function($scope, $location, service) {
   vm.setup = function(er, pump, mode) {
       console.log("Setting up calculator");
       if ( pump ) {
+         
           vm.pump = pump;
           vm.pump.configuration = vm.configurations.filter(function(c) { return c.value == pump.configuration})[0];
           vm.pump.diameter = parseFloat(pump.diameter);
+
+
+          vm.pump.doe = {value:"RSV"};
+          vm.pump.stages = 9
+          vm.pump.flow = {
+            "bep75": 262.372881355932,
+            "bep100": 349.830508474576,
+            "bep110": 384.813559322034
+          }
+          vm.pump.head = {
+            "bep75":498.891123240448, 
+            "bep100":424.429761562769,
+            "bep110":383.476012640046
+          }
+          vm.pump.driver_input_power ={
+            "bep75":52.812, 
+            "bep100":55.203,
+            "bep110":55.620
+          }
+
+
+
           vm.go2MotorMethod();
           if ( vm.pump.motor_regulated === undefined ) vm.pump.motor_regulated = true;
           console.log("Initialized with a pump");
@@ -286,20 +293,44 @@ var PEIController = function($scope, $location, service) {
               vm.pump.participant = vm.participant.name;
               console.log(vm.participant);
           }
+
+        
       }
       else {
           console.log("Initialized without a pump");
           vm.pump.motor_regulated = true;
+          
       }
       vm.standalone = !er;
       vm.mode = mode;
       vm.pump.pei_method = mode;
+
       console.log("Calculator UI is in " + mode + " mode, " + (vm.standalone ? " standalone mode" : "embedded er mode"));
+  }
+
+
+  vm.go2Results = function() {
+     service.calculate(vm.pump).then(function(result) {
+            vm.step = "results";
+            vm.pump.pei = result.pei;
+            vm.pump.energy_rating = result.energy_rating;
+            vm.pump.energy_savings = result.energy_savings;
+            vm.pump.pei_baseline = result.pei_baseline;
+            vm.pump.results = JSON.stringify(result);
+            
+     }).catch(function(error) {
+            if (error.status == 403) {
+            window.location="/";
+            }
+            else {
+            console.log(error);
+            }
+     })
   }
 
   vm.submitListing = function() {
     console.log("SUBMITTING PUMP");  
-    console.log(vm.pump);
+    console.log(vm.pump.results);
       
       
 

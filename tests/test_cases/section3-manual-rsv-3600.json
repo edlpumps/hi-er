@@ -1,8 +1,9 @@
 { 
-        "name" : "Section 3, manual, RSV",
+        "name" : "Section 3, manual, RSV - 3600 rpm",
         "pump": {
           "doe": "RSV",
           "speed" : 3600,
+          "section" : "3",
           "motor_power_rated" : 60,
           "flow": {
             "bep75": 262.372881355932,
@@ -23,6 +24,9 @@
           "pei" : 0.97
         }, 
         "expected" : {
+          "pei" : {"value":0.97, "threshold" : 0.01},
+          "success" :{"value":true},
+          "section" :{"value":"3"},
           "per_cl" : {"value": 54.540, "threshold": 0.001},
           "per_std" : {"value": 56.226, "threshold": 0.001},
           "ns" : {"value": 3741.61, "threshold": 0.01},
@@ -68,7 +72,7 @@
           "baseline_part_load_loss_factor_bep110" : {"value": 0.93, "threshold": 0.01},
 
           "baseline_part_load_loss_bep75" :  {"value": 3.61, "threshold": 0.01},
-          "baseline_part_load_loss_bep100" : {"value": 6.79, "threshold": 0.01},
+          "baseline_part_load_loss_bep100" : {"value": 3.79, "threshold": 0.01},
           "baseline_part_load_loss_bep110" : {"value": 3.81, "threshold": 0.01},
 
           "baseline_driver_power_input_bep75" :  {"value": 53.39, "threshold": 0.01},
@@ -80,7 +84,7 @@
           "baseline_pump_efficiency" : {"value": 70.19, "threshold": 0.01},
           "per_baseline_calculated" :  {"value": 56.13, "threshold": 0.01},
           "pei_baseline" : {"value": 1.00, "threshold": 0.01},
-          "er" : {"value": 3, "threshold": 0.01}
+          "energy_rating" : {"value": 3, "threshold": 0.01}
 
         }
 }

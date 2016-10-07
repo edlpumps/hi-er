@@ -86,7 +86,8 @@ exports.build_pump_spreadsheet = function(pump) {
         return  !( key == "_id" 
             || key == "active_admin" 
             || key == "listed"
-            || key == "load120") 
+            || key == "load120"
+            || key.startsWith("results")) 
     }
 
     var headers = {

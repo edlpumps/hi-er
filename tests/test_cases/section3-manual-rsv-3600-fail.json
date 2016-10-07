@@ -1,0 +1,29 @@
+{ 
+        "name" : "Section 3, manual, RSV - 3600 rpm",
+        "pump": {
+          "doe": "RSV",
+          "speed" : 3600,
+          "section" : "3",
+          "motor_power_rated" : 60,
+          "flow": {
+            "bep75": 262.372881355932,
+            "bep100": 349.830508474576,
+            "bep110": 384.813559322034
+          }, 
+          "head" : {
+            "bep75":498.891123240448, 
+            "bep100":424.429761562769,
+            "bep110":383.476012640046
+          },
+          "pump_input_power" :{
+            "bep75":52.812, 
+            "bep100":55.203,
+            "bep110":55.620
+          },
+          "stages" : 9, 
+          "pei" : 0.93
+        }, 
+        "expected" : {
+          "success" :{"value":false}
+        }
+}
