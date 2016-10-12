@@ -31,16 +31,18 @@ var PEIController = function($scope, $location, service) {
   }
 
   vm.data_missing = function() {
+      console.log("Missing?");
+      console.log(vm.pump);
       if (!vm.pump ) return true;
       if (!vm.pump.flow) return true;
-      if (!vm.pump.flow.bep75) return true;
+      //if (!vm.pump.flow.bep75) return true;
       if (!vm.pump.flow.bep100) return true;
-      if (!vm.pump.flow.bep110) return true;
+      //if (!vm.pump.flow.bep110) return true;
       if (!vm.pump.head) return true;
       if (!vm.pump.head.bep75) return true;
       if (!vm.pump.head.bep100) return true;
       if (!vm.pump.head.bep110) return true;
-
+      console.log("Missing A");
       if ( vm.pump_power_visible() ) {
           if (!vm.pump.pump_input_power) return true;
           if (!vm.pump.pump_input_power.bep75) return true;
@@ -48,12 +50,14 @@ var PEIController = function($scope, $location, service) {
           if (!vm.pump.pump_input_power.bep110) return true;
           if (vm.bep120_visible() && !vm.pump.pump_input_power.bep120) return true;
       }
+      console.log("Missing B");
       if (vm.driver_input_visible()) {
           if (!vm.pump.driver_input_power) return true;
           if (!vm.pump.driver_input_power.bep75) return true;
           if (!vm.pump.driver_input_power.bep100) return true;
           if (!vm.pump.driver_input_power.bep110) return true;
       }
+      console.log("Missing C");
       if (vm.control_power_visible()) {
           if (!vm.pump.control_power_input) return true;
           if (!vm.pump.control_power_input.bep25) return true;
@@ -61,6 +65,7 @@ var PEIController = function($scope, $location, service) {
           if (!vm.pump.control_power_input.bep75) return true;
           if (!vm.pump.control_power_input.bep100) return true;
       }
+      console.log("Missing D");
       if (vm.measured_visible()){
           if (!vm.pump.measured_control_flow_input) return true;
           if (!vm.pump.measured_control_head_input) return true;
@@ -81,6 +86,7 @@ var PEIController = function($scope, $location, service) {
           if (!vm.pump.measured_control_power_input.bep75) return true;
           if (!vm.pump.measured_control_power_input.bep100) return true;
       }
+      console.log("Manual -=> " + vm.mode=='manual' && !vm.pump.pei);
       if (vm.mode=='manual' && !vm.pump.pei) return true;
   }
 
