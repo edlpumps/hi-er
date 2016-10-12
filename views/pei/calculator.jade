@@ -462,15 +462,12 @@ mixin calculator(er, mode)
                 p(ng-repeat="erro in app.calc_errors").alert.alert-danger
                    {{erro}}
             .row(ng-hide="app.calc_errors")
-              .col.col-lg-4.text-center
+              .col.col-sm-6.text-center
                 h4 Pump Energy Index
                 p.pei_display {{app.pump.pei}}
-              .col.col-lg-4.text-center
+              .col.col-sm-6.text-center
                 h4 Energy Rating
                 p.er_display {{app.pump.energy_rating}}
-              .col.col-lg-4.text-center
-                h4 Energy Savings
-                p.er_savings_display {{app.pump.energy_savings}} HP
             .row
               .col.col-xs-9
                   button(type="button", ng-click="app.go2Data(true)").btn.btn-default.btn-space Back
@@ -485,15 +482,12 @@ mixin calculator(er, mode)
                  li(ng-repeat="erro in app.calc_errors").alert.alert-error
                    {{erro}}
             .row(ng-hide="app.calc_errors")
-              .col.col-lg-4.text-center
+              .col.col-sm-6.text-center
                 h4 Pump Energy Index
                 p.pei_display {{app.pump.pei}}
-              .col.col-lg-4.text-center
+              .col.col-sm-6.text-center
                 h4 Energy Rating
                 p.er_display {{app.pump.energy_rating}}
-              .col.col-lg-4.text-center
-                h4 Energy Savings
-                p.er_savings_display {{app.pump.energy_savings}} HP
             .row.solo
              .col.col-xs-12
               .alert.alert-info These calculations are samples only - actual results will appear when the PEI calculator is fully implemented and available

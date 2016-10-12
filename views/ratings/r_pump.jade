@@ -94,16 +94,13 @@ block content
         .panel-body
            
            .row
-            .col.col-lg-4.text-center
+            .col.col-sm-6.text-center
               h4 Pump Energy Index
               p.pei_display #{pump.pei}
               p.pei_baseline Baseline - #{pump.pei_baseline}
-            .col.col-lg-4.text-center
+            .col.col-sm-6.text-center
               h4 Energy Rating
               p.er_display #{pump.energy_rating}
-            .col.col-lg-4.text-center
-              h4 Energy Savings
-              p.er_savings_display #{pump.energy_savings} HP
            .row.solo
             .col.col-lg-12.text-center
               object(id="label_svg", data="/labels/#{participant._id}/#{pump._id}/svg", type="image/svg+xml")
