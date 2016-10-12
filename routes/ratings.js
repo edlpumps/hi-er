@@ -8,6 +8,7 @@ var default_search_operators = function (search_parameters) {
     var operators = [];
     operators.push({"$unwind" : "$pumps"});
     
+    console.log(search);
     operators.push(
      { $group : { 
         _id : "$pumps._id",  
@@ -62,7 +63,18 @@ var default_search_operators = function (search_parameters) {
     }
     if ( search ) {
         var configs = [];
+        if ( search.cl ) {
+            console.log("Searching for CL");
+            configs.push({configuration : "bare"});
+            configs.push({configuration : "pump_motor"});
+        }
+        if ( search.vl ) {
+            console.log("Searching for VL");
+            configs.push({configuration : "pump_motor_cc"});
+            configs.push({configuration : "pump_motor_nc"});
+        }
         if ( search.bare ) {
+            console.log("Searching for bare");
             configs.push({configuration : "bare"});
         }
         if ( search.pump_motor ) {
@@ -75,6 +87,7 @@ var default_search_operators = function (search_parameters) {
             configs.push({configuration : "pump_motor_nc"});
         }
         if ( configs.length > 0 ) {
+            console.log("Searching for " + JSON.stringify(configs));
             operators.push({$match: {$or : configs}});
         }
 
@@ -95,6 +108,7 @@ var default_search_operators = function (search_parameters) {
             does.push({doe : "ST"});
         }
         if ( does.length > 0 ) {
+            console.log("Searching for " + JSON.stringify(does));
             operators.push({$match: {$or : does}});
         }
 
@@ -104,21 +118,43 @@ var default_search_operators = function (search_parameters) {
     }
     return operators;
 }
-router.get('/', function(req, res) {
+router.get('/search', function(req, res) {
     var operators = default_search_operators();
-    req.Participants.aggregate(operators).exec(function(err, docs) {
-        console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
-        console.log(docs);
-        console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+    var search_params = req.session.search;
+    if (!search_params ) {
+        search_params = {};
+        search_params.fresh = true;
+    }
+    search_params.bare = true;
+    search_params.pump_motor = true;
+    search_params.pump_motor_cc = true;
+    search_params.pump_motor_nc = true;
+    search_params.min_er = 0;
+    search_params.max_er = 100;
+
+    search_params.esfm = true;
+    search_params.escc = true;
+    search_params.il = true;
+    search_params.rsv = true;
+    search_params.st = true;
+    search_params.min_er = 10;
+    search_params.max_er = 100;
+    search_params.cl = false;
+    search_params.vl = false;
+   
+    res.render("ratings/index", {
+        search : search_params
     });
+});
+
+router.get('/utilities', function(req, res) {
+    var operators = default_search_operators();
 
     var search_params = req.session.search;
     if (!search_params ) {
         search_params = {};
-        search_params.bare = true;
-        search_params.pump_motor = true;
-        search_params.pump_motor_cc = true;
-        search_params.pump_motor_nc = true;
+        search_params.cl = true;
+        search_params.vl = true;
         search_params.min_er = 0;
         search_params.max_er = 100;
 
@@ -132,10 +168,14 @@ router.get('/', function(req, res) {
         search_params.max_er = 100;
         search_params.fresh = true;
     }
+    search_params.bare = false;
+    search_params.pump_motor = false;
+    search_params.pump_motor_cc = false;
+    search_params.pump_motor_nc = false;
 
    
 
-    res.render("ratings/index", {
+    res.render("ratings/utilities", {
         search : search_params
     });
 });
@@ -170,22 +210,36 @@ router.get("/:id", function(req, res) {
 
 
 router.post("/count", function(req, res) {
-    var operators = default_search_operators();
-    req.Participants.aggregate(operators).exec(function(err, docs) {
-        console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
-        console.log(docs);
-        console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
-    });
-});
-
-router.post("/search", function(req, res) {
-    console.log(req.body.search);
     req.session.search = req.body.search;
     req.session.search.fresh = false;
     var operators = default_search_operators(req.session.search);
     req.Participants.aggregate(operators).exec(function(err, docs) {
-        console.log(docs);
-        console.log(err);
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({ pumps: docs.length}));
+    });
+});
+
+router.post("/search", function(req, res) {
+    req.session.search = req.body.search;
+    
+    // Per HI request, you cannot search unless participant, basic_model or rating_id is specified.
+    if ( !req.session.search.rating_id && !req.session.search.participant && !req.session.search.basic_model) {
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({ pumps: []}));
+        return;
+    }
+   
+    req.session.search.fresh = false;
+
+    //prevent any other search parameters from being applied.
+    var search_params = {
+        rating_id : req.session.search.rating_id, 
+        participant : req.session.search.participant, 
+        basic_model : req.session.search.basic_model
+    }
+    
+    var operators = default_search_operators(search_params);
+    req.Participants.aggregate(operators).exec(function(err, docs) {
         res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify({ pumps: docs}));
     });

@@ -1,0 +1,84 @@
+extends layout
+
+block content
+  div(ng-app='ERRatingsApp')
+    .ratings-bar
+      .pull-left
+        a(href="/pei") PEI Calculator
+      .pull-right
+        a(href="/portal") Energy Rating Program Portal
+    .container(ng-controller="ERRatingsController as app",ng-init="app.search= #{JSON.stringify(search)}; app.load_count()")
+        form.form-horizontal
+        
+         
+
+         .panel.panel-default.hi-panel-search.rating_panel
+          .panel-heading
+              .heading
+                img(src="/images/hydraulic-institute-logo.png", width="500").hidden-xs
+                img(src="/images/hydraulic-institute-logo.png", width="300").hidden-md.hidden-lg.hidden-
+                h3 ENERGY RATINGS PROGRAM
+          .panel-body
+             
+           
+             .form-group
+               label.col-sm-3.control-label  DOE Designation
+               .col.col-sm-6
+                
+                ul.list-group
+                 li.list-group-item
+                   .checkbox
+                    label
+                        input(type="checkbox", ng-model="app.search.esfm", ng-change="app.countPumps()") 
+                        | End Suction Frame Mount
+                 li.list-group-item
+                   .checkbox
+                    label
+                        input(type="checkbox", ng-model="app.search.escc", ng-change="app.countPumps()") 
+                        | End Suction Close Coupled
+                 li.list-group-item
+                   .checkbox
+                    label
+                        input(type="checkbox", ng-model="app.search.il", ng-change="app.countPumps()") 
+                        | In-line
+                 li.list-group-item
+                   .checkbox
+                    label
+                        input(type="checkbox", ng-model="app.search.rsv", ng-change="app.countPumps()") 
+                        | Radial Split multistage vertical in-line diffuser casing
+                 li.list-group-item
+                   .checkbox
+                    label
+                        input(type="checkbox", ng-model="app.search.st", ng-change="app.countPumps()") 
+                        | Submersible Turbine
+             .form-group
+               label.col-sm-3.control-label Load
+               .col.col-sm-6
+                 ul.list-group
+                    li.list-group-item
+                      .checkbox
+                        label
+                            input(type="checkbox", ng-model="app.search.cl", ng-change="app.countPumps()") 
+                            | Constant Load
+                    li.list-group-item
+                      .checkbox
+                        label
+                            input(type="checkbox", ng-model="app.search.vl", ng-change="app.countPumps()") 
+                            | Variable Load
+             .form-group
+               label.col-sm-3.control-label Energy rating range
+               .col.col-sm-5(style="padding-top:5px")
+                 rzslider(data-rz-slider-model="app.search.min_er", data-rz-slider-high="app.search.max_er", data-rz-slider-options="app.erSlider.options", on-end="console.log('dsafsda')")
+             hr
+             .form-group
+              label.col-sm-3.control-label 
+              .col.col-sm-6(ng-hide="app.fresh || app.counting || app.search_error")
+               h2.utility_search_count {{app.num_pumps}} pumps found
+               p.text-info(ng-show="app.num_pumps == 1") There is {{app.num_pumps}} pump in listed in the HI Energy Ratings program that fit the criteria you've specified above.
+               p.text-info(ng-show="app.num_pumps != 1") There are {{app.num_pumps}} pumps in listed in the HI Energy Ratings program that fit the criteria you've specified above.
+              .col.col-sm-6(ng-show="app.counting")
+               p: img(src="/images/loading-bar.gif")
+              .col.col-sm-6(ng-show="app.search_error")
+               p.text-danger {{app.search_error}}
+
+        

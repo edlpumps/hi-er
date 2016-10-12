@@ -19,90 +19,26 @@ block content
                 img(src="/images/hydraulic-institute-logo.png", width="300").hidden-md.hidden-lg.hidden-
                 h3 ENERGY RATINGS PROGRAM
           .panel-body
-             
-           
              .form-group
-               label.col-sm-3.control-label  DOE Designation
-               .col.col-sm-6
-                
-                ul.list-group
-                 li.list-group-item
-                   .checkbox
-                    label
-                        input(type="checkbox", ng-model="app.search.esfm") 
-                        | End Suction Frame Mount
-                 li.list-group-item
-                   .checkbox
-                    label
-                        input(type="checkbox", ng-model="app.search.escc") 
-                        | End Suction Close Coupled
-                 li.list-group-item
-                   .checkbox
-                    label
-                        input(type="checkbox", ng-model="app.search.il") 
-                        | In-line
-                 li.list-group-item
-                   .checkbox
-                    label
-                        input(type="checkbox", ng-model="app.search.rsv") 
-                        | Radial Split multistage vertical in-line diffuser casing
-                 li.list-group-item
-                   .checkbox
-                    label
-                        input(type="checkbox", ng-model="app.search.st") 
-                        | Submersible Turbine
-             .form-group
-               label.col-sm-3.control-label Configuration
-               .col.col-sm-6
-                 ul.list-group
-                    li.list-group-item
-                      .checkbox
-                        label
-                            input(type="checkbox", ng-model="app.search.bare") 
-                            | Bare pumps (constant load)
-                    li.list-group-item
-                      .checkbox
-                        label
-                            input(type="checkbox", ng-model="app.search.pump_motor") 
-                            | Pumps w/ motors (constant load)
-                    li.list-group-item
-                      .checkbox
-                        label
-                            input(type="checkbox", ng-model="app.search.pump_motor_cc") 
-                            | Pumps w/ continuous controls (variable load)
-                    li.list-group-item
-                      .checkbox
-                        label
-                            input(type="checkbox", ng-model="app.search.pump_motor_nc") 
-                            | Pumps w/ non-continuous controls (variable load)
-             .form-group
-               label.col-sm-3.control-label Energy rating range
-               .col.col-sm-5(style="padding-top:5px")
-                 rzslider(data-rz-slider-model="app.search.min_er", data-rz-slider-high="app.search.max_er", data-rz-slider-options="app.erSlider.options")
-                 
-             .form-group
-               label.col-sm-4.control-label 
-                a(href="#", ng-click="app.show_more = !app.show_more", ng-show="app.show_more") less filters
-             .form-group(ng-show="app.show_more")
                label.col-sm-3.control-label Rating ID
-               .col.col-sm-6(ng-show="app.show_more")
+               .col.col-sm-6
                  input.form-control(ng-model="app.search.rating_id", type="text")
-             .form-group(ng-show="app.show_more")
+             .form-group
                label.col-sm-3.control-label Basic Model Number
                .col.col-sm-6
                  input.form-control(ng-model="app.search.basic_model", type="text")
-             .form-group(ng-show="app.show_more")
+             .form-group
                label.col-sm-3.control-label Participating Organization
                .col.col-sm-6
                  input.form-control(ng-model="app.search.participant", type="text")
              .form-group()
               label.col-sm-3.control-label 
-                a(href="#", ng-click="app.show_more = !app.show_more", ng-show="!app.show_more") more filters
                
               .col.col-sm-5
                button.btn.btn-primary(type="button", ng-click="app.getPumps(); app.searched = true") Search for Rated Pumps
 
-         .panel.panel-default(ng-show="app.pumps.length > 0 || app.searched")
+         p.alert.alert-warning(ng-show="app.pumps_error") {{app.pumps_error}}
+         .panel.panel-default(ng-show="(app.pumps.length > 0 || app.searched) && !app.pumps_error")
            .panel-heading
              h1 Results ({{app.pumps.length}})
            ul.list-group

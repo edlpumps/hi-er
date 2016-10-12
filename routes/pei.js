@@ -29,7 +29,7 @@ router.post('/api/calculate', function(req, res){
     }
 
     res.setHeader('Content-Type', 'application/json');
-    var pei = req.body.pump.pei || 1.23;
+    var pei = req.body.pump.pei || 0.86;
     var baseline = pei_baselines[req.body.pump.doe.value][req.body.pump.speed/1800-1];
     var er = ((baseline - pei) * 100);
     var power = req.body.pump.motor_power_rated || 200;
