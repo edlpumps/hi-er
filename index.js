@@ -151,7 +151,7 @@ app.use("/labels", labels);
 app.use("/ratings", ratings);
 
 registration.post('/login', 
-  passport.authenticate('local', { failureRedirect: '/' }),
+  passport.authenticate('local', { failureRedirect: '/portal' }),
   function(req, res) {
     res.cookie('email', req.body.email);
     req.log.debug("User authenticated, redirecting to landing page");
