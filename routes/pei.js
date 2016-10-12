@@ -3,7 +3,7 @@ const router = express.Router();
 
 router.get('/', function(req, res) {
     req.log.debug("Rendering PEI calculator in standalone mode");
-    res.render("pei/standalone", {
+    res.render("ratings/standalone", {
     });
 });
 

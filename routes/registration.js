@@ -34,7 +34,7 @@ router.get('/', function(req, res) {
     }
     else {
         req.log.debug("No user is logged in, rendering landing page");
-        res.redirect("/ratings");
+        res.redirect("/ratings/home");
     }
 });
 

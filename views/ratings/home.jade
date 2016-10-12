@@ -1,0 +1,42 @@
+extends layout
+block nav
+     +navigation("home")
+block content
+  div(ng-app='ERRatingsApp')
+    .container(ng-controller="ERRatingsController as app",ng-init="app.search= #{JSON.stringify(search)}; app.load_search()")
+        form.form-horizontal
+         .panel.panel-default.hi-panel-search.rating_panel
+          .panel-heading
+              .heading
+                img(src="/images/hydraulic-institute-logo.png", width="500").hidden-xs
+                img(src="/images/hydraulic-institute-logo.png", width="300").hidden-md.hidden-lg.hidden-
+                h3 ENERGY RATINGS PROGRAM
+
+          .panel-body
+            .row
+              .col.col-sm-12
+                p HI has developed the standard, HI 40.6, for testing pumps and determining their efficiency.   HI 40.6 covers testing of rotodynamic pumps, up to 150 kW (200 hp), establishing minimum testing protocols for verification of pump efficiency conforming to US Department of Energy (DOE) regulations.
+                p HI also manages a Pump Test Lab Approval Program (HI 40.7), which enables manufacturers to establish through a third party that they have the knowledge, tools and processes in place, and are testing according to the HI Standard 40.6.
+                p The HI Energy Rating Program is based on these two programs. However it converts the test results required by the DOE into an HI Energy Rating. 
+
+                p As part of the program, this website allows the public to calculate Pump Energy Index values for their own equipment, search for pump energy rating listings, and analyze the distribution of pumps in the program.
+            .row.ratings_home
+              .col.col-sm-4
+                a(href="/pei")
+                    h1 
+                        .glyphicon.glyphicon-scale.margin-right
+                        | ER Calculator
+                    p Calculate the Pump Energy Index and HI Energy Rating for a pump based on a set of parameters and performance measurements.
+              .col.col-sm-4
+                a(href="/ratings/search")
+                    h1 
+                        .glyphicon.glyphicon-search.margin-right
+                        | Search Pumps
+                    p Search for pumps by Basic Model Number, Manufacturer, and Rating ID - which can be found on the Hydraulic Energy Rating label distributed with the pump.
+              .col.col-sm-4
+                a(href="/ratings/utilities")
+                    h1 
+                        .glyphicon.glyphicon-stats.margin-right
+                        | Utility Search
+                    p Analyze the Energy Ratings database to see how many pumps achieve a given Energy Rating range.  This is especially helpful for utilities.
+          

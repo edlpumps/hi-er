@@ -27,18 +27,38 @@ html
                 
               
            .collapse.navbar-collapse#navcollapse
-               .navbar-text HI Energy Ratings Program
+               .navbar-text HI Energy Ratings Portal
                
                ul.nav.navbar-nav
                   li(class=(active == 'home' ? 'active' : ''))
-                    a(href="/participant") Home
+                    a(href="/participant") 
+                      .glyphicon.glyphicon-home.margin-right
+                      | Home
                   li(class=(active == 'users' ? 'active' : ''))
-                    a(href="/participant/users") User Management
+                    a(href="/participant/users") 
+                      .glyphicon.glyphicon-user.margin-right
+                      | User Management
                   li(class=(active == 'pumps' ? 'active' : ''))
-                    a(href="/participant/pumps") Pump Listings
-                  li(class=(active == 'ratings' ? 'active' : ''))
-                    a(href="/ratings") Public ER Ratings
+                    
+                    a(href="/participant/pumps") 
+                      .glyphicon.glyphicon-th-list.margin-right
+                      | Pump Listings
+                  
                 ul.nav.navbar-nav.navbar-right
+                  li.dropdown
+                    a(href="#", data-toggle="dropdown", role="button") 
+                      | Public ER Listings
+                      span.caret
+                    ul.dropdown-menu
+                      li: a(href="/pei") 
+                        .glyphicon.glyphicon-scale.margin-right
+                        | ER Calculator
+                      li: a(href="/ratings/search") 
+                        .glyphicon.glyphicon-search.margin-right
+                        | Pump Search
+                      li: a(href="/ratings/utilities") 
+                        .glyphicon.glyphicon-stats.margin-right
+                        | Utility Search
                   li
                     .navbar-text #{user.name.first} #{user.name.last}
                   li

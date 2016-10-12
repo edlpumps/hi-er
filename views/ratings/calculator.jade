@@ -7,8 +7,13 @@ mixin calculator(er, mode)
   .container(ng-controller="PEIController as app", ng-init="app.user= #{JSON.stringify(user)}; app.participant= #{JSON.stringify(participant)}; app.setup(#{er}, #{JSON.stringify(pump)}, #{JSON.stringify(mode)})").pei
     form(action="submit", method="post", name="new_pump_pei")
      .panel.panel-default.rating_panel
-        .panel-heading
-            h1 Pump Energy Index {{app.mode=='calculator' ? 'Calculator' : 'Data Entry'}}
+        .panel-heading(ng-show="app.standalone")
+            .heading
+                img(src="/images/hydraulic-institute-logo.png", width="500").hidden-xs
+                img(src="/images/hydraulic-institute-logo.png", width="300").hidden-md.hidden-lg.hidden-
+                h3 ENERGY RATINGS PROGRAM
+        .panel-heading(ng-hide="app.standalone")
+            h1 Pump Energy Rating - Data entry
         
         //---------------------------------------------------------------
         //- Step 1 - Choosing Configuration

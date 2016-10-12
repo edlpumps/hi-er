@@ -16,9 +16,21 @@
     color:white;
 }
 
+.margin-right {
+    margin-right:10px;
+}
+
 body {
     background-color:  @hi_blue;
     font-family: 'Oxygen', sans-serif;
+}
+
+.ratings_home a:hover {
+    text-decoration: none;
+    color:#028da8;
+}
+.ratings_home a {
+    color:#465b79;
 }
 
 .ratings li.list-group-item {
@@ -175,5 +187,34 @@ body {
 
 a {
     color:@hi_light;
+}
+
+.navbar-custom {
+	background-color:@er_accent;
+    color:#ffffff;
+  	border-radius:0;
+}
+  
+.navbar-custom .navbar-nav > li > a {
+  	color:#fff;
+}
+.navbar-custom .navbar-nav > .active > a, .navbar-nav > .active > a:hover, .navbar-nav > .active > a:focus {
+    color: #ffffff;
+	background-color:transparent;
+}
+      
+.navbar-custom .navbar-nav > li > a:hover, .nav > li > a:focus {
+    text-decoration: none;
+    background-color: lighten(@er_accent, 10%);
+}
+      
+.navbar-custom .navbar-brand {
+  	color:#eeeeee;
+}
+.navbar-custom .navbar-toggle {
+  	background-color:#eeeeee;
+}
+.navbar-custom .icon-bar {
+  	background-color:lighten(@er_accent, 10%);
 }
 

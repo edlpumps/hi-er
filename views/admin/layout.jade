@@ -14,7 +14,7 @@ html(ng-app='ERAdminApp')
   body
 
      mixin navigation(active)
-       .navbar.navbar-default
+       .navbar.navbar-custom
         .container-fluid
            .navbar-header
               button.navbar-toggle.collapsed(type="button", data-toggle="collapse", data-target="#navcollapse",aria-expanded="false")
@@ -23,21 +23,28 @@ html(ng-app='ERAdminApp')
                 .icon-bar 
                 .icon-bar 
               a.navbar-brand(href="/") 
-                img(style="max-width:27px; margin-top: -7px;", src="/images/logo-big.png")
+                img(style="max-width:27px; margin-top: -7px;", src="/images/white-brand.png")
                
               
            .collapse.navbar-collapse#navcollapse
                .navbar-text HI Energy Ratings Program
                ul.nav.navbar-nav
                   li(class=(active == 'home' ? 'active' : ''))
-                    a(href="/") Administrators
+                    a(href="/") 
+                     .glyphicon.glyphicon-cog.margin-right
+                     | Administrators
                   li(class=(active == 'participants' ? 'active' : ''))
-                    a(href="/admin/participants") Participants
+                    a(href="/admin/participants") 
+                     .glyphicon.glyphicon-user.margin-right
+                     | Participants
                   li(class=(active == 'labels' ? 'active' : ''))
-                    a(href="/admin/labels") Label Configuration
-                  li(class=(active == 'ratings' ? 'active' : ''))
-                    a(href="/ratings") Public ER Ratings
+                    a(href="/admin/labels") 
+                     .glyphicon.glyphicon-wrench.margin-right
+                     | ER Settings
                 ul.nav.navbar-nav.navbar-right
+                  li: a(href="/ratings/home") 
+                        .glyphicon.glyphicon-eye-open.margin-right
+                        | Public site
                   li
                     .navbar-text #{user.name.first} #{user.name.last}
                   li

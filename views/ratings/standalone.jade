@@ -1,0 +1,15 @@
+extends layout
+
+doctype html
+
+include calculator
+
+block nav
+     +navigation("pei")
+
+block content
+    
+   div(ng-app="PEIApp")
+    +calculator(false, "calculator")
+     
+     

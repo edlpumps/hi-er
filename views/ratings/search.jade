@@ -1,12 +1,10 @@
 extends layout
 
+block nav
+     +navigation("search")
+
 block content
   div(ng-app='ERRatingsApp')
-    .ratings-bar
-      .pull-left
-        a(href="/pei") PEI Calculator
-      .pull-right
-        a(href="/portal") Energy Rating Program Portal
     .container(ng-controller="ERRatingsController as app",ng-init="app.search= #{JSON.stringify(search)}; app.load_search()")
         form.form-horizontal
         

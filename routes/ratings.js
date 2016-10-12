@@ -73,19 +73,6 @@ var default_search_operators = function (search_parameters) {
             configs.push({configuration : "pump_motor_cc"});
             configs.push({configuration : "pump_motor_nc"});
         }
-        if ( search.bare ) {
-            console.log("Searching for bare");
-            configs.push({configuration : "bare"});
-        }
-        if ( search.pump_motor ) {
-            configs.push({configuration : "pump_motor"});
-        }
-        if ( search.pump_motor_cc) {
-            configs.push({configuration : "pump_motor_cc"});
-        }
-        if (search.pump_motor_nc) {
-            configs.push({configuration : "pump_motor_nc"});
-        }
         if ( configs.length > 0 ) {
             console.log("Searching for " + JSON.stringify(configs));
             operators.push({$match: {$or : configs}});
@@ -125,26 +112,16 @@ router.get('/search', function(req, res) {
         search_params = {};
         search_params.fresh = true;
     }
-    search_params.bare = true;
-    search_params.pump_motor = true;
-    search_params.pump_motor_cc = true;
-    search_params.pump_motor_nc = true;
-    search_params.min_er = 0;
-    search_params.max_er = 100;
-
-    search_params.esfm = true;
-    search_params.escc = true;
-    search_params.il = true;
-    search_params.rsv = true;
-    search_params.st = true;
-    search_params.min_er = 10;
-    search_params.max_er = 100;
-    search_params.cl = false;
-    search_params.vl = false;
    
-    res.render("ratings/index", {
+    res.render("ratings/search", {
         search : search_params
     });
+});
+
+router.get('/home', function(req, res) {
+   
+   
+    res.render("ratings/home", {});
 });
 
 router.get('/utilities', function(req, res) {
@@ -168,11 +145,7 @@ router.get('/utilities', function(req, res) {
         search_params.max_er = 100;
         search_params.fresh = true;
     }
-    search_params.bare = false;
-    search_params.pump_motor = false;
-    search_params.pump_motor_cc = false;
-    search_params.pump_motor_nc = false;
-
+    
    
 
     res.render("ratings/utilities", {
@@ -212,7 +185,21 @@ router.get("/:id", function(req, res) {
 router.post("/count", function(req, res) {
     req.session.search = req.body.search;
     req.session.search.fresh = false;
-    var operators = default_search_operators(req.session.search);
+
+    // limit search parameters
+    var search_params = {
+        esfm : req.session.search.esfm,
+        escc : req.session.search.escc,
+        il : req.session.search.il,
+        rsv : req.session.search.rsv,
+        st : req.session.search.st,
+        cl : req.session.search.cl,
+        vl : req.session.search.vl,
+        max_er : req.session.search.max_er,
+        min_er : req.session.search.min_er
+    }
+
+    var operators = default_search_operators(search_params);
     req.Participants.aggregate(operators).exec(function(err, docs) {
         res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify({ pumps: docs.length}));
