@@ -98,7 +98,7 @@ var PEIController = function($scope, $location, service) {
   vm.show_motor_power = function() {
       if (!vm.pump ) return false;
       if (!vm.pump.configuration) return false;
-      return vm.pump.configuration.value != 'bare' || vm.mode == 'manual';
+      return vm.pump.configuration.value != 'bare' || !vm.pump.auto;
   }
 
   vm.show_motor_efficiency = function() {
@@ -267,52 +267,48 @@ var PEIController = function($scope, $location, service) {
       if ( pump ) {
           vm.pump = pump;
           vm.pump.auto = mode == "calculator";
-
           vm.pump.configuration = vm.configurations.filter(function(c) { return c.value == pump.configuration})[0];
           vm.pump.diameter = parseFloat(pump.diameter);
 
-
-          vm.pump.doe = {value:"RSV"};
-          vm.pump.stages = 9
-          vm.pump.flow = {
-            "bep75": 262.372881355932,
-            "bep100": 349.830508474576,
-            "bep110": 384.813559322034
-          }
-          vm.pump.head = {
-            "bep75":498.891123240448, 
-            "bep100":424.429761562769,
-            "bep110":383.476012640046
-          }
-          vm.pump.driver_input_power ={
-            "bep75":52.812, 
-            "bep100":55.203,
-            "bep110":55.620
-          }
-          vm.pump.pump_input_power ={
-            "bep75":49.2013, 
-            "bep100":51.41435215,
-            "bep110":51.8084,
-            "bep120":53.00
-          }
-
-
           vm.go2MotorMethod();
           if ( vm.pump.motor_regulated === undefined ) vm.pump.motor_regulated = true;
-          console.log("Initialized with a pump");
-          console.log(vm.pump);
           if (vm.participant) {
               vm.pump.participant = vm.participant.name;
               console.log(vm.participant);
           }
-
-        
       }
       else {
           console.log("Initialized without a pump");
           vm.pump.motor_regulated = true;
-          
+          vm.pump.auto = true;
       }
+
+      vm.pump.load120 = true; 
+      vm.pump.speed = 3600;
+      vm.pump.doe = {value:"RSV"};
+      vm.pump.stages = 9
+      vm.pump.flow = {
+        "bep75": 262.372881355932,
+        "bep100": 349.830508474576,
+        "bep110": 384.813559322034
+      }
+      vm.pump.head = {
+        "bep75":498.891123240448, 
+        "bep100":424.429761562769,
+        "bep110":383.476012640046
+      }
+      vm.pump.driver_input_power ={
+        "bep75":52.812, 
+        "bep100":55.203,
+        "bep110":55.620
+      }
+      vm.pump.pump_input_power ={
+        "bep75":49.2013, 
+        "bep100":51.41435215,
+        "bep110":51.8084,
+        "bep120":53.00
+      }
+
       vm.standalone = !er;
       vm.mode = mode;
       vm.pump.pei_method = mode;
@@ -323,6 +319,7 @@ var PEIController = function($scope, $location, service) {
 
   vm.go2Results = function() {
      vm.calc_errors = null;
+     console.log("Submitting pump -> auto mode ?" + vm.pump.auto)
      service.calculate(vm.pump).then(function(result) {
             vm.step = "results";
             vm.pump.pei = result.pei;

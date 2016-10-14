@@ -77,7 +77,8 @@ var ERRatingsController = function($scope, $location, service) {
   }
 
   vm.load_search = function() {
-      if (!vm.search.fresh) {
+      
+      if (vm.search && !vm.search.fresh) {
           vm.getPumps();
       }
   }

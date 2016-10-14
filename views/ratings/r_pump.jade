@@ -1,12 +1,9 @@
 extends layout
 
+block nav
+     +navigation("pump")
 
 block content
-    .ratings-bar
-      .pull-left
-        a(href="/ratings") back to search
-      .pull-right
-        a(href="/portal") Energy Rating Program Portal
     .container
       
       .panel.panel-default.rating_panel
@@ -96,8 +93,8 @@ block content
            .row
             .col.col-sm-6.text-center
               h4 Pump Energy Index
-              p.pei_display #{pump.pei}
-              p.pei_baseline Baseline - #{pump.pei_baseline}
+              p.pei_display #{pump.pei.toFixed(4)}
+              p.pei_baseline Baseline:  #{pump.pei_baseline.toFixed(4)}
             .col.col-sm-6.text-center
               h4 Energy Rating
               p.er_display #{pump.energy_rating}

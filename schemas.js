@@ -38,6 +38,7 @@ exports.init = function init(mongoose) {
 
 
   var pumpSchema = new Schema({ 
+    auto : Boolean,
     rating_id : String,
     participant: String,
     configuration : String,
