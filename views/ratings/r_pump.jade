@@ -11,7 +11,7 @@ block content
           .heading
            
            img(src="/images/hydraulic-institute-logo.png", width="500").hidden-xs
-           img(src="/images/hydraulic-institute-logo.png", width="300").hidden-md.hidden-lg.hidden-sm
+           img(src="/images/hydraulic-institute-logo.png", style="width:80%").hidden-md.hidden-lg.hidden-sm
              
            h2 #{pump.basic_model}
            h4 #{pump.participant}
@@ -19,7 +19,8 @@ block content
         .panel-body
           .row
            .col.col-sm-5.text-center
-             img(src="/images/doe/#{pump_drawing}")
+             img(src="/images/doe/#{pump_drawing}").hidden-xs
+             img(src="/images/doe/#{pump_drawing}", style="width:95%").hidden-md.hidden-lg.hidden-sm
            .col.col-sm-7
                 .row 
                     .form-group
@@ -98,7 +99,7 @@ block content
             .col.col-sm-6.text-center
               h4 Energy Rating
               p.er_display #{pump.energy_rating}
-           .row.solo
+           .row.solo.hidden-xs
             .col.col-lg-12.text-center
               object(id="label_svg", data="/labels/#{participant._id}/#{pump._id}/svg", type="image/svg+xml")
            .row.solo
