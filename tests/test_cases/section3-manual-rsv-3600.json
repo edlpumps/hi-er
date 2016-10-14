@@ -2,6 +2,7 @@
         "name" : "Section 3, manual, RSV - 3600 rpm",
         "pump": {
           "doe": "RSV",
+          "auto":false,
           "speed" : 3600,
           "section" : "3",
           "motor_power_rated" : 60,

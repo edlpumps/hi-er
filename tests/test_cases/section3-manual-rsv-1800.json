@@ -1,6 +1,7 @@
 { 
         "name" : "Section 3, manual, RSV - 1800 rpm",
         "pump": {
+          "auto":false,
           "doe": "RSV",
           "speed" : 1800,
           "section" : "3",

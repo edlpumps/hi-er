@@ -8,6 +8,7 @@ describe('Underspecified pumps - section 3 - manual', function() {
     var pumpA;
     beforeEach(function() {
       pumpA = {
+        auto : false,
         doe: "RSV",
         speed : 3600,
         section: "3",
@@ -150,6 +151,7 @@ describe('Underspecified pumps - section 3 - manual', function() {
     var pumpA;
     beforeEach(function() {
       pumpA = {
+        auto : true,
         doe: "RSV",
         speed : 3600,
         section: "3",

@@ -31,6 +31,7 @@ fs.readdir(dir, function(err, items) {
 
 var test_runner = function(tests) {
   tests.forEach(function(test) {
+    console.log(test.pump.auto);
     test.result = calculator.calculate(test.pump);
   })
 

@@ -265,8 +265,9 @@ var PEIController = function($scope, $location, service) {
   vm.setup = function(er, pump, mode) {
       console.log("Setting up calculator");
       if ( pump ) {
-         
           vm.pump = pump;
+          vm.pump.auto = mode == "calculator";
+
           vm.pump.configuration = vm.configurations.filter(function(c) { return c.value == pump.configuration})[0];
           vm.pump.diameter = parseFloat(pump.diameter);
 
@@ -288,7 +289,12 @@ var PEIController = function($scope, $location, service) {
             "bep100":55.203,
             "bep110":55.620
           }
-
+          vm.pump.pump_input_power ={
+            "bep75":49.2013, 
+            "bep100":51.41435215,
+            "bep110":51.8084,
+            "bep120":53.00
+          }
 
 
           vm.go2MotorMethod();

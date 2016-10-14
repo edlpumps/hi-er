@@ -1,6 +1,7 @@
 { 
         "name" : "Section 3, manual, RSV - 3600 rpm - failure",
         "pump": {
+          "auto":false,
           "doe": "RSV",
           "speed" : 3600,
           "section" : "3",

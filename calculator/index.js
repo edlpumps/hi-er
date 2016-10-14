@@ -254,11 +254,11 @@ exports.calculate = function(pump) {
     if ( !pump ) {
         return build_error("Pump object must be specified");
     }
-    if (pump.pei ) {
-        return manual_calculators[pump.section](pump);
+    if (pump.auto ) {
+        return auto_calculators[pump.section](pump);
     }
     else {
-        return auto_calculators[pump.section](pump);
+        return manual_calculators[pump.section](pump);
     }
 }
 

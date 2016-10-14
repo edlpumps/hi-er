@@ -17,12 +17,12 @@ var pei_baselines = {
 
 router.post('/api/calculate', function(req, res){
 
-    // limited support - only section 3, manual entry.
-    if (req.body.pump.pei && req.body.pump.section=="3") {
+    // limited support - only section 3.
+    if (req.body.pump.section=="3") {
         var pump = req.body.pump;
         pump.doe = pump.doe.value;
         var calculator = require("../calculator");
-        var results = calculator.manual(pump);
+        var results = calculator.calculate(pump);
         res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify(results));
         return;
