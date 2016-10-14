@@ -31,12 +31,7 @@ fs.readdir(dir, function(err, items) {
 
 var test_runner = function(tests) {
   tests.forEach(function(test) {
-    if (test.pump.pei) {
-      test.result = calculator.manual(test.pump);
-    }
-    else {
-      test.result = calculator.auto(test.pump);
-    }
+    test.result = calculator.calculate(test.pump);
   })
 
   tests.forEach(function(test) {

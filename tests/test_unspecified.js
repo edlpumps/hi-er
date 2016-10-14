@@ -35,112 +35,112 @@ describe('Underspecified pumps - section 3 - manual', function() {
       
     }); 
     it('should return error w/ missing pump', function() {
-      let result = calculator.manual()
+      let result = calculator.calculate()
       assert.isNotTrue(result.success, "result was true");;
     });
     it('should return error w/ missing speed', function() {
       delete pumpA.speed;
-      let result = calculator.manual(pumpA)
+      let result = calculator.calculate(pumpA)
       assert.isNotTrue(result.success, "result was true");;
     });
     it('should return error w/ missing doe', function() {
       delete pumpA.doe;
-      let result = calculator.manual(pumpA)
+      let result = calculator.calculate(pumpA)
       assert.isNotTrue(result.success, "result was true");;
     });
     it('should return error w/ missing rated motor power', function() {
       delete pumpA.motor_power_rated;
-      let result = calculator.manual(pumpA)
+      let result = calculator.calculate(pumpA)
       assert.isNotTrue(result.success, "result was true");;
     });
     it('should return error w/ missing flow', function() {
       delete pumpA.flow;
-      let result = calculator.manual(pumpA)
+      let result = calculator.calculate(pumpA)
       assert.isNotTrue(result.success, "result was true");;
     });
     it('should return error w/ missing head', function() {
       delete pumpA.head;
-      let result = calculator.manual(pumpA)
+      let result = calculator.calculate(pumpA)
       assert.isNotTrue(result.success, "result was true");;
     });
     it('should return error w/ missing flow 75 BEP', function() {
       delete pumpA.flow.bep75;
-      let result = calculator.manual(pumpA)
+      let result = calculator.calculate(pumpA)
       assert.isNotTrue(result.success, "result was true");;
     });
     it('should return error w/ missing head 75 BEP', function() {
       delete pumpA.head.bep75;
-      let result = calculator.manual(pumpA)
+      let result = calculator.calculate(pumpA)
       assert.isNotTrue(result.success, "result was true");;
     });
     it('should return error w/ missing flow 100 BEP', function() {
       delete pumpA.flow.bep100;
-      let result = calculator.manual(pumpA)
+      let result = calculator.calculate(pumpA)
       assert.isNotTrue(result.success, "result was true");;
     });
     it('should return error w/ missing head 100 BEP', function() {
       delete pumpA.head.bep100
-      let result = calculator.manual(pumpA)
+      let result = calculator.calculate(pumpA)
       assert.isNotTrue(result.success, "result was true");;
     });
     it('should return error w/ missing flow 110 BEP', function() {
       delete pumpA.flow.bep110;
-      let result = calculator.manual(pumpA)
+      let result = calculator.calculate(pumpA)
       assert.isNotTrue(result.success, "result was true");;
     });
     it('should return error w/ missing head 110 BEP', function() {
       delete pumpA.head.bep110;
-      let result = calculator.manual(pumpA)
+      let result = calculator.calculate(pumpA)
       assert.isNotTrue(result.success, "result was true");;
     });
     it('should return error w/ missing impeller diameter', function() {
       delete pumpA.diameter;
-      let result = calculator.manual(pumpA)
+      let result = calculator.calculate(pumpA)
       assert.isNotTrue(result.success, "result was true");;
     });
 
     it('should return error w/ missing bowl diameter', function() {
       delete pumpA.bowl_diameter;
       pumpA.doe = "ST";
-      let result = calculator.manual(pumpA)
+      let result = calculator.calculate(pumpA)
       assert.isNotTrue(result.success, "result was true");;
     });
     it('should return no error w/ missing bowl diameter for non-ST', function() {
       delete pumpA.bowl_diameter;
-      let result = calculator.manual(pumpA)
+      let result = calculator.calculate(pumpA)
       assert.isTrue(result.success, "result was true");;
     });
     
     it('should return error w/ missing stages', function() {
       delete pumpA.stages;
-      let result = calculator.manual(pumpA)
+      let result = calculator.calculate(pumpA)
       assert.isNotTrue(result.success, "result was true");;
     });
 
     it('should return error w/ missing pei', function() {
       delete pumpA.pei;
-      let result = calculator.manual(pumpA)
+      let result = calculator.calculate(pumpA)
       assert.isNotTrue(result.success, "result was true");;
     });
 
     it('should return error w/ missing driver input power', function() {
       delete pumpA.driver_input_power;
-      let result = calculator.manual(pumpA)
+      let result = calculator.calculate(pumpA)
       assert.isNotTrue(result.success, "result was true");;
     });
     it('should return error w/ missing driver input power @ 75% BEP', function() {
       delete pumpA.driver_input_power.bep75;
-      let result = calculator.manual(pumpA)
+      let result = calculator.calculate(pumpA)
       assert.isNotTrue(result.success, "result was true");;
     });
     it('should return error w/ missing driver input power @ 100% BEP', function() {
       delete pumpA.driver_input_power.bep100;
-      let result = calculator.manual(pumpA)
+      let result = calculator.calculate(pumpA)
       assert.isNotTrue(result.success, "result was true");;
     });
     it('should return error w/ missing driver input power @ 110% BEP', function() {
       delete pumpA.driver_input_power.bep110;
-      let result = calculator.manual(pumpA)
+      let result = calculator.calculate(pumpA)
       assert.isNotTrue(result.success, "result was true");;
     });
   })
@@ -172,37 +172,36 @@ describe('Underspecified pumps - section 3 - manual', function() {
           bep120:55.90
         },
         stages : 9, 
-        pei : 0.97
       };
       
     }); 
     it('should return error w/ missing pump', function() {
-      let result = calculator.auto()
+      let result = calculator.calculate()
       assert.isNotTrue(result.success, "result was true");;
     });
     it('should return error w/ missing pump_input_power', function() {
       delete pumpA.pump_input_power;
-      let result = calculator.auto(pumpA)
+      let result = calculator.calculate(pumpA)
       assert.isNotTrue(result.success, "result was true");
     });
     it('should return error w/ missing pump input power @ 75% BEP', function() {
       delete pumpA.pump_input_power.bep75;
-      let result = calculator.auto(pumpA)
+      let result = calculator.calculate(pumpA)
       assert.isNotTrue(result.success, "result was true");;
     });
     it('should return error w/ missing pump input power @ 100% BEP', function() {
       delete pumpA.pump_input_power.bep100;
-      let result = calculator.auto(pumpA)
+      let result = calculator.calculate(pumpA)
       assert.isNotTrue(result.success, "result was true");;
     });
     it('should return error w/ missing pump input power @ 110% BEP', function() {
       delete pumpA.pump_input_power.bep110;
-      let result = calculator.auto(pumpA)
+      let result = calculator.calculate(pumpA)
       assert.isNotTrue(result.success, "result was true");;
     });
     it('should return error w/ missing pump input power @ 120% BEP', function() {
       delete pumpA.pump_input_power.bep120;
-      let result = calculator.auto(pumpA)
+      let result = calculator.calculate(pumpA)
       assert.isNotTrue(result.success, "result was true");;
     });
     

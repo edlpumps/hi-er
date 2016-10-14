@@ -250,18 +250,16 @@ var section3_manual = function(pump) {
     return result;
 }
 
-exports.manual = function(pump) {
+exports.calculate = function(pump) {
     if ( !pump ) {
         return build_error("Pump object must be specified");
     }
-    return manual_calculators[pump.section](pump);
-}
-
-exports.auto = function(pump) {
-    if ( !pump ) {
-        return build_error("Pump object must be specified");
+    if (pump.pei ) {
+        return manual_calculators[pump.section](pump);
     }
-    return auto_calculators[pump.section](pump);
+    else {
+        return auto_calculators[pump.section](pump);
+    }
 }
 
 
