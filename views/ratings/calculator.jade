@@ -493,8 +493,7 @@ mixin calculator(er, mode)
           .panel-body(ng-show="app.step=='results'")
             .row(ng-show="app.calc_errors")
               .col.col-xs-12
-                ul
-                 li(ng-repeat="erro in app.calc_errors").alert.alert-error
+                p(ng-repeat="erro in app.calc_errors").alert.alert-danger
                    {{erro}}
             .row(ng-hide="app.calc_errors")
               .col.col-sm-6.text-center

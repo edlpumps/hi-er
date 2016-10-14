@@ -50,7 +50,6 @@ router.get('/users', function(req, res) {
 
 router.get('/pumps', function(req, res) {
     req.log.debug("Rendering participant portal (pumps)");
-    console.log(req.participant.pumps.map(function(p) {return p.listed}));
     res.render("participant/p_pumps", {
         user : req.user,
         participant : req.participant, 
@@ -114,16 +113,11 @@ router.post("/pumps/new", function(req, res){
     var toSave = req.participant.pumps.create(pump);
     toSave.rating_id = req.nextRatingsId(function(err, doc) {
         toSave.rating_id = hashids.encode(doc.value.seq);
-        console.log("Saving rating id = " + toSave.rating_id);
-        //req.participant.pumps.push(toSave);
         res.render(view, {
                 user : req.user,
                 participant : req.participant, 
                 pump:toSave
             });
-        //req.participant.save(function(err) {
-            
-        //})
     });
 });
 
@@ -159,7 +153,6 @@ router.get('/pumps/:id', function(req, res) {
 
 router.get('/pumps/:id/download', function(req, res) {
     var pump = req.participant.pumps.id(req.params.id);
-    console.log(pump);
     pump= JSON.parse(JSON.stringify(pump));
     var buffer = common.build_pump_spreadsheet(pump);
     res.setHeader('Content-Type', 'application/vnd.openxmlformats');
@@ -206,7 +199,6 @@ router.post("/pumps/submit", function(req, res){
 
 router.post('/pumps/:id', function(req, res) {
     var pump = req.participant.pumps.id(req.params.id);
-    console.log(pump);
     if ( pump ) {
         pump.listed = req.body.listed ? true : false;
     }

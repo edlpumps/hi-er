@@ -237,11 +237,14 @@ var section3_manual = function(pump) {
     
     // In manual mode, double-check the user's input
     result.per_std = result.per_cl / pump.pei;
-    var per_diff = result.per_std /result.per_std_calculated;
+    var per_diff = result.per_std / result.per_std_calculated;
     if ( per_diff > 1.01 || per_diff < 0.99){
+
+        var target_pei = result.per_cl / result.per_std_calculated;
+
         result.success = false;
         result.reasons = [];
-        result.reasons.push("Error, the calculated PER standard value (" + result.per_std_calculated.toFixed(2) + ") must be within 1% of the PER value derived from your inputs")
+        result.reasons.push("Error, the calculated PER standard value (" + result.per_std_calculated.toFixed(2) + ") must be within 1% of the PER value derived from your inputs.  A PEI of " + target_pei.toFixed(4) + " would have been expected, given your inputs.")
         result.pump = pump;
         return result;
     }

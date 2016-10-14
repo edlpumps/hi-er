@@ -28,7 +28,7 @@ block content
              .form-group
                label.col-sm-3.control-label Participating Organization
                .col.col-sm-6
-                 input.form-control(ng-model="app.search.participant", type="text")
+                 select.form-control(ng-model="app.search.participant", ng-options="p for p in app.participants")
              .form-group()
               label.col-sm-3.control-label 
                

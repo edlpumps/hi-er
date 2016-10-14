@@ -31,18 +31,13 @@ var PEIController = function($scope, $location, service) {
   }
 
   vm.data_missing = function() {
-      console.log("Missing?");
-      console.log(vm.pump);
       if (!vm.pump ) return true;
       if (!vm.pump.flow) return true;
-      //if (!vm.pump.flow.bep75) return true;
       if (!vm.pump.flow.bep100) return true;
-      //if (!vm.pump.flow.bep110) return true;
       if (!vm.pump.head) return true;
       if (!vm.pump.head.bep75) return true;
       if (!vm.pump.head.bep100) return true;
       if (!vm.pump.head.bep110) return true;
-      console.log("Missing A");
       if ( vm.pump_power_visible() ) {
           if (!vm.pump.pump_input_power) return true;
           if (!vm.pump.pump_input_power.bep75) return true;
@@ -50,14 +45,12 @@ var PEIController = function($scope, $location, service) {
           if (!vm.pump.pump_input_power.bep110) return true;
           if (vm.bep120_visible() && !vm.pump.pump_input_power.bep120) return true;
       }
-      console.log("Missing B");
       if (vm.driver_input_visible()) {
           if (!vm.pump.driver_input_power) return true;
           if (!vm.pump.driver_input_power.bep75) return true;
           if (!vm.pump.driver_input_power.bep100) return true;
           if (!vm.pump.driver_input_power.bep110) return true;
       }
-      console.log("Missing C");
       if (vm.control_power_visible()) {
           if (!vm.pump.control_power_input) return true;
           if (!vm.pump.control_power_input.bep25) return true;
@@ -65,7 +58,6 @@ var PEIController = function($scope, $location, service) {
           if (!vm.pump.control_power_input.bep75) return true;
           if (!vm.pump.control_power_input.bep100) return true;
       }
-      console.log("Missing D");
       if (vm.measured_visible()){
           if (!vm.pump.measured_control_flow_input) return true;
           if (!vm.pump.measured_control_head_input) return true;
@@ -86,8 +78,7 @@ var PEIController = function($scope, $location, service) {
           if (!vm.pump.measured_control_power_input.bep75) return true;
           if (!vm.pump.measured_control_power_input.bep100) return true;
       }
-      console.log("Manual -=> " + vm.mode=='manual' && !vm.pump.pei);
-      if (vm.mode=='manual' && !vm.pump.pei) return true;
+      if (!vm.pump.auto && !vm.pump.pei) return true;
   }
 
   vm.show_motor_regulated = function() {
@@ -127,8 +118,6 @@ var PEIController = function($scope, $location, service) {
 
   vm.go2Configuration = function() {
       vm.step = "configuration";
-
-      console.log(vm.pump);
   }
 
   vm.motor_method_required = function() {
@@ -144,8 +133,6 @@ var PEIController = function($scope, $location, service) {
       else {
         vm.step = "motor_method";
       }
-
-      console.log(vm.pump);
   }
 
   vm.section_label = function() {
@@ -170,7 +157,6 @@ var PEIController = function($scope, $location, service) {
 
   vm.go2Options = function() {
       let pass = false;
-      console.log(vm.pump.configuration.value);
       if ( vm.pump.configuration.value == "bare") {
           vm.pump.section = "3";
           pass = true;
@@ -192,17 +178,12 @@ var PEIController = function($scope, $location, service) {
       else {
           vm.go2Configuration();
       }
-      console.log("Section selected -> " + vm.pump.section);
-      console.log("Going to options -> " + pass);
 
       if (pass) vm.step = "options";
-
-      console.log(vm.pump);
   }
 
   vm.go2Data = function() {
       vm.step = "data";
-      console.log(vm.pump);
   }
 
   
@@ -263,7 +244,6 @@ var PEIController = function($scope, $location, service) {
 
 
   vm.setup = function(er, pump, mode) {
-      console.log("Setting up calculator");
       if ( pump ) {
           vm.pump = pump;
           vm.pump.auto = mode == "calculator";
@@ -274,11 +254,9 @@ var PEIController = function($scope, $location, service) {
           if ( vm.pump.motor_regulated === undefined ) vm.pump.motor_regulated = true;
           if (vm.participant) {
               vm.pump.participant = vm.participant.name;
-              console.log(vm.participant);
           }
       }
       else {
-          console.log("Initialized without a pump");
           vm.pump.motor_regulated = true;
           vm.pump.auto = true;
       }
@@ -313,13 +291,11 @@ var PEIController = function($scope, $location, service) {
       vm.mode = mode;
       vm.pump.pei_method = mode;
 
-      console.log("Calculator UI is in " + mode + " mode, " + (vm.standalone ? " standalone mode" : "embedded er mode"));
   }
 
 
   vm.go2Results = function() {
      vm.calc_errors = null;
-     console.log("Submitting pump -> auto mode ?" + vm.pump.auto)
      service.calculate(vm.pump).then(function(result) {
             vm.step = "results";
             vm.pump.pei = result.pei;
@@ -327,29 +303,20 @@ var PEIController = function($scope, $location, service) {
             vm.pump.energy_savings = result.energy_savings;
             vm.pump.pei_baseline = result.pei_baseline;
             vm.pump.results = JSON.stringify(result);
-
-            console.log(result);
             if (!result.success) {
                 vm.calc_errors = result.reasons;
             }
-            console.log(vm.calc_errors);
-            
      }).catch(function(error) {
             if (error.status == 403) {
-            window.location="/";
+                window.location="/";
             }
             else {
-            console.log(error);
+                console.log(error);
             }
      })
   }
 
   vm.submitListing = function() {
-    console.log("SUBMITTING PUMP");  
-    console.log(vm.pump.results);
-      
-      
-
       new_pump_pei.submit();
   }
   

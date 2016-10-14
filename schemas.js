@@ -161,7 +161,7 @@ exports.init = function init(mongoose) {
       counter.name = "ratings";
       counter.seq = 0;
       counter.save();
-      console.log("Boostrapping counters");
+      console.log("Bootstrapping counters");
     }
   })
 

@@ -1,3 +1,5 @@
+"use strict";
+
 const express = require('express');
 const passport = require('passport');
 const router = express.Router();
@@ -8,7 +10,6 @@ var default_search_operators = function (search_parameters) {
     var operators = [];
     operators.push({"$unwind" : "$pumps"});
     
-    console.log(search);
     operators.push(
      { $group : { 
         _id : "$pumps._id",  
@@ -51,30 +52,25 @@ var default_search_operators = function (search_parameters) {
         }}
     );
     if ( search.rating_id) {
-        console.log("Filtering for ratings ID = " + search.rating_id);
         operators.push({ $match : {rating_id : search.rating_id}});
     }
     if ( search.participant) {
         operators.push({ $match : {participant : search.participant}});
     }
     if ( search.basic_model) {
-        console.log("Filtering for basic model = " + search.basic_model);
         operators.push({ $match : {basic_model : search.basic_model}});
     }
     if ( search ) {
         var configs = [];
         if ( search.cl ) {
-            console.log("Searching for CL");
             configs.push({configuration : "bare"});
             configs.push({configuration : "pump_motor"});
         }
         if ( search.vl ) {
-            console.log("Searching for VL");
             configs.push({configuration : "pump_motor_cc"});
             configs.push({configuration : "pump_motor_nc"});
         }
         if ( configs.length > 0 ) {
-            console.log("Searching for " + JSON.stringify(configs));
             operators.push({$match: {$or : configs}});
         }
 
@@ -95,7 +91,6 @@ var default_search_operators = function (search_parameters) {
             does.push({doe : "ST"});
         }
         if ( does.length > 0 ) {
-            console.log("Searching for " + JSON.stringify(does));
             operators.push({$match: {$or : does}});
         }
 
@@ -115,6 +110,12 @@ router.get('/search', function(req, res) {
    
     res.render("ratings/search", {
         search : search_params
+    });
+});
+router.get('/api/participants', function(req, res) {
+    req.Participants.find({}, function(err, docs) {
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({ participants: docs.map(p => p.name)}));
     });
 });
 
@@ -158,7 +159,6 @@ router.get("/:id", function(req, res) {
         if ( !err && participant ) {
 
             var pump = participant.pumps.filter(p => p.rating_id == req.params.id)[0];
-            console.log(pump);
             if (!pump || !participant.active || !pump.listed || !pump.active_admin) {
                 req.flash("errorTitle", "Not Available");
                 req.flash("errorMessage", "This pump is no longer listed in the Hydraulic Institute Energy Ratings Program");

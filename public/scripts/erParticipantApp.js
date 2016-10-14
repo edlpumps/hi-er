@@ -211,14 +211,12 @@ var ERNewPumpController = function($scope, $location, service) {
 
   
   vm.manual = function(){
-    console.log('manual'); 
     var myEl = angular.element( document.querySelector( '#pei_type' ) );
     myEl.val('manual');
     new_pump.submit()
   }
 
   vm.calculate = function(){
-    console.log('calculate'); 
     var myEl = angular.element( document.querySelector( '#pei_type' ) );
     myEl.val('calculate');
      

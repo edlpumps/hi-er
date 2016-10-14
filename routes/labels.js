@@ -5,7 +5,6 @@ const path = require('path');
 
 
 var getSVG = function(pump, label, callback) {
-    console.log("SVG 1");
     var pm = pump.configuration =="bare"  ? "- Bare Pump" : "- Motor";
     var config = 
         pump.configuration =="bare" || pump.configuration=="pump_motor"  
@@ -13,29 +12,18 @@ var getSVG = function(pump, label, callback) {
         : (pump.configuration=="pump_motor_cc" 
             ? "- Drive &amp; Continuous Controls" 
             : "- Drive &amp; Non-Continuous Controls")
-    console.log("SVG 2");
     var load = pump.configuration =="bare" || pump.configuration=="pump_motor" ? "CONSTANT LOAD" : "VARIABLE LOAD";
-    console.log("SVG 2a");
     var datetime = label.date;
-    console.log("SVG 2b");
     var locale = "en-us";
 
     var er = Math.min(pump.energy_rating, label.max);
-    console.log("SVG 2c");
     var date = datetime.toLocaleString(locale, { month: "short" });
-    console.log("SVG 2d");
     var span = label.max - label.min;
-    console.log("SVG 2e");
     var distance = (er - label.min)/span;
-    console.log("SVG 2f");
     var pos = Math.round(distance*450 + 75) ;
-    console.log("SVG 2g");
     date += " " + datetime.getFullYear()
-    console.log("SVG 3");
     var filename = path.join(__dirname, "label.template.svg");
-    console.log("Getting svg template from " + filename);
     fs.readFile(filename, 'utf8', (err, data) => {
-        console.log("Replacing tags for SVG");
         data = data.replace("%%DOE%%", pump.doe);
         data = data.replace("%%PM%%", pm);
         data = data.replace("%%CONFIG%%", config);
@@ -79,12 +67,7 @@ var getit = function(req,res, callback){
                     {doe : pump.doe}, 
                     {load: load}
                 ]).exec(function(err, label) {
-                    console.log(label);
-                    console.log("Calling svg template");
                         getSVG(pump, label, function(err, svg) {
-                            console.log("getSvg returned");
-                            console.log(err);
-                            console.log(svg);
                             callback(svg);
                         })
                 });

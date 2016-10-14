@@ -25,6 +25,13 @@ var service = app.factory('service', function($http) {
             .error(function(data, status) {
                 return data;
             });
+     },
+     participants : function (params) {
+        return $http.get('/ratings/api/participants', {})
+            .success(function(docs) { return docs.data; })
+            .error(function(data, status) {
+                return data;
+            });
      }
 
    };
@@ -34,7 +41,9 @@ var service = app.factory('service', function($http) {
 var ERRatingsController = function($scope, $location, service) {
   var vm = this;
   
-
+  service.participants().then(function(results) {
+    vm.participants = results.data.participants;
+  })
   
   vm.getPumps = function() {
       if ( !vm.search.rating_id && !vm.search.participant && !vm.search.basic_model) {
@@ -54,7 +63,6 @@ var ERRatingsController = function($scope, $location, service) {
 
 
   vm.countPumps = function() {
-      console.log("Counting");
       vm.search_error = "";
 
       if (!vm.search.cl && !vm.search.vl) {

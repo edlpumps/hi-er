@@ -25,8 +25,6 @@ router.post('/api/calculate', function(req, res){
         var results = calculator.calculate(pump);
         res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify(results));
-
-        console.log("LIVE CALCULATION -> " + results.energy_rating);
         return;
     }
 
