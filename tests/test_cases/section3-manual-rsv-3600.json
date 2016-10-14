@@ -21,7 +21,9 @@
             "bep110":55.620
           },
           "stages" : 9, 
-          "pei" : 0.97
+          "pei" : 0.97,
+          "diameter":10,
+          "bowl_diameter" : 20
         }, 
         "expected" : {
           "pei" : {"value":0.97, "threshold" : 0.01},

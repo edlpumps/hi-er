@@ -1,5 +1,5 @@
 { 
-        "name" : "Section 3, manual, RSV - 3600 rpm",
+        "name" : "Section 3, manual, RSV - 3600 rpm - failure",
         "pump": {
           "doe": "RSV",
           "speed" : 3600,
@@ -21,7 +21,9 @@
             "bep110":55.620
           },
           "stages" : 9, 
-          "pei" : 0.93
+          "pei" : 0.93,
+          "diameter":10,
+          "bowl_diameter" : 20
         }, 
         "expected" : {
           "success" :{"value":false}

@@ -21,7 +21,8 @@ var tests = [];
 var dir = path.join(__dirname, "test_cases");
 fs.readdir(dir, function(err, items) {
   for (var i=0; i<items.length; i++) {
-    tests.push(require(path.join(dir, items[i])));
+    var test = require(path.join(dir, items[i]));
+    tests.push(test);
   }
   test_runner(tests);
 });
@@ -30,7 +31,12 @@ fs.readdir(dir, function(err, items) {
 
 var test_runner = function(tests) {
   tests.forEach(function(test) {
-    test.result = calculator.manual(test.pump);
+    if (test.pump.pei) {
+      test.result = calculator.manual(test.pump);
+    }
+    else {
+      test.result = calculator.auto(test.pump);
+    }
   })
 
   tests.forEach(function(test) {
