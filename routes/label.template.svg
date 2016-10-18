@@ -1,4 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="600" height="400">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="600" height="400" preserveAspectRatio="xMinYMin meet"
+viewBox="0 0 600 400">
     <rect x="0" y="0" rx="0" ry="0" width="600" height="400" style="fill:#0460ab;;stroke: #0460ab;;stroke-width:1;" />
 
     <text x="300" y="50" font-family="Arial" font-size="24" text-anchor="middle" fill="white">HYDRAULIC INSTITUTE ENERGY RATING</text>

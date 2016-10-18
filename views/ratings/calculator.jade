@@ -97,16 +97,6 @@ mixin calculator(er, mode)
                   .col.col-xs-7.col-sm-4
                     input.form-control(ng-model="app.pump.laboratory", name="pump[laboratory]")     
             
-            if (!er)
-              hr
-              .form-group
-                .checkbox
-                  label(style="margin-right:10px")
-                    input(type="checkbox", ng-model="app.pump.auto") 
-                    | Calculate PEI Automatically  
-
-                .help-block A PEI value is required to calculate the Energy Rating of the pump.  If you don't have one calculated, this tool will calculate it.  If you already have a PEI, you may uncheck this and you will be asked to enter it later.
-                
             hr
             .row
               .col.col-xs-12

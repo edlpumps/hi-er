@@ -94,14 +94,18 @@ block content
            .row
             .col.col-sm-6.text-center
               h4 Pump Energy Index
-              p.pei_display #{pump.pei.toFixed(4)}
-              p.pei_baseline Baseline:  #{pump.pei_baseline.toFixed(4)}
+              p.pei_display #{pump.pei.toFixed(2)}
+              p.pei_baseline Baseline:  #{pump.pei_baseline.toFixed(2)}
             .col.col-sm-6.text-center
               h4 Energy Rating
               p.er_display #{pump.energy_rating}
            .row.solo.hidden-xs
             .col.col-lg-12.text-center
               object(id="label_svg", data="/labels/#{participant._id}/#{pump._id}/svg", type="image/svg+xml")
+           .row.solo.hidden-sm.hidden-md.hidden-lg
+            .col.col-lg-12.text-center
+              object(id="label_svg", style="width:90%", data="/labels/#{participant._id}/#{pump._id}/svg", type="image/svg+xml")
+           
            .row.solo
             .col.col-xs-12
              .alert.alert-info These calculations are samples only - actual results will appear when the PEI calculator is fully implemented and available
