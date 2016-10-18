@@ -94,7 +94,7 @@ var PEIController = function($scope, $location, service) {
 
   vm.show_motor_efficiency = function() {
       if (!vm.pump || !vm.pump.doe ) return false;
-      return vm.pump.doe.value != 'ST' && vm.show_motor_regulated() && (vm.pump.motor_regulated =='false' || vm.pump.motor_regulated === false);
+      return vm.pump.doe.value != 'ST' && vm.show_motor_regulated() && (vm.pump.motor_regulated =='true' || vm.pump.motor_regulated === true);
   }
 
   vm.configurations = [
@@ -225,7 +225,7 @@ var PEIController = function($scope, $location, service) {
   vm.calculatorText = function() {
       if ( vm.mode == "calculator") {
           if ( vm.standalone) {
-              return "PEI"
+              return "PEI & Energy Ratings"
           }
           else {
               return "PEI & Energy Ratings";
