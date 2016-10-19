@@ -114,7 +114,7 @@ block content
                             input(type="checkbox", ng-model="app.confirm3", required)
                             b.strong The participant agrees to the terms of the application
 
-                    //- , ng-disabled="!app.confirm1 || !app.confirm2 || !app.confirm3"
-                    button.btn.btn-primary(type="submit") Confirm Registration
+                    
+                    button.btn.btn-primary(type="submit", ng-disabled="!app.confirm1 || !app.confirm2 || !app.confirm3") Confirm Registration
                     
               
