@@ -3,8 +3,8 @@ extends ../layout
 
 
 block content
- .container
-  .panel.panel-default.solo
+ .container(ng-app='RegistrationApp')
+  .panel.panel-default.solo(ng-controller="RegistrationController as app")
     .panel-heading
       h1 Confirm registration information
     .panel-body
@@ -85,15 +85,37 @@ block content
                     input.form-control(type="hidden", name="user[password]" value=user ? user.password : null)
                     .well
                         h3 Eligibility Requirements
-                        p Any organization which manufactures, sells, packages or distributes pump(s) within the scope of the Guiding Standards listed in section 40.5.1.7 is eligible to participate in the Program per the terms in the program application.
-                        p The following criteria shall be met by the Participant:
-                        ul
-                         li Supply HI with a basic model listing(s) and agree to abide by all requirements of the Guiding Standards, this document and all licensing and contractual documents
-                         li Have access to HI Energy Rated basic models listed in the HI database or have access to an HI approved test laboratory
+                        p The HI 40.5-2016 Program Guide for Pump Energy Rating Program, outlines the scope of products and Participation requirements of the Energy Rating Program.
                         hr
                         .checkbox
                           label
-                            input(type="checkbox", name="eligibility", required)
-                            b Confirm eligibility
+                            input(type="checkbox", ng-model="app.confirm1")
+                            b.strong The Participant has reviewed and understands the scope and requirements of the Program as outlined in HI 40.5-2016 and agrees to the terms of participation as outlined in HI 40.5-2016.
+                        hr
+                        p Section 40.5.2.1 of HI 40.5-2016 outlines the requirements for eligibility to participate. This section states that any organization which manufactures, sells, packages or distributes pump(s) within the scope of the Guiding Standards listed in section 40.5.1.7 is eligible to participate in the Program per the terms outlined in this application.
+                        p The following criteria shall also be met to Participate:
+                        ul
+                         li Supply HI with a basic model listing(s) as described in section 40.5.4.3 and agree to abide by all requirements of the Guiding Standards, this document and all licensing and contractual documents.
+                         li 
+                          | Have access to HI Energy Rated basic models listed in the HI database or have access to an HI approved test laboratory 
+                          a(href="http://www.pumps.org/40.7") www.pumps.org/40.7
+                        
+                        hr
+                        .checkbox
+                          label
+                            input(type="checkbox", ng-model="app.confirm2")
+                            b.strong The Participant has reviewed section 40.5.2.1 and meets the eligibility requirements
+                        
+                   .well
+                        h3 Application Terms:
+                        p The Program Manager may request from the Participant their calculation of the PEI consistent with 10 CFR 429.59, 10 CFR 429.110 and 10 CFR 429.134 along with the stamped certified raw test data by the HI Approved Laboratory representative for all samples used in the determination of PEI as submitted in the ER listing. The participant shall provide this data to the satisfaction of the program manager or be subject to section 40.5.5.3 Violations.
+                        hr
+                        .checkbox
+                          label
+                            input(type="checkbox", ng-model="app.confirm3", required)
+                            b.strong The participant agrees to the terms of the application
 
-                    button.btn.btn-primary(type="submit") Confirm Registration
+                    
+                    button.btn.btn-primary(type="submit", ng-disabled="!app.confirm1 || !app.confirm2 || !app.confirm3") Confirm Registration
+                    
+              

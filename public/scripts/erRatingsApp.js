@@ -64,7 +64,25 @@ var ERRatingsController = function($scope, $location, service) {
 
   vm.countPumps = function() {
       vm.search_error = "";
-
+      if (!vm.search ) {
+        vm.search = {
+          min_er : 0,
+          max_er :100,
+          cl : true,
+          vl : true,
+          esfm : true,
+          escc : true, 
+          il : true,
+          rsv : true, 
+          st : true
+        }
+      }
+      if (!vm.search.min_er) {
+        vm.search.min_er = 0;
+      }
+      if (vm.search.max_er === undefined ){
+        vm.search.max_er = 100;
+      }
       if (!vm.search.cl && !vm.search.vl) {
         vm.search_error = "At least one load type must be specified (CL, VL, or both)";
         return;

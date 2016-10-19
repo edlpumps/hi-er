@@ -31,10 +31,10 @@ html
                     a(href="/ratings/home") 
                      .glyphicon.glyphicon-home.margin-right
                      | HI Energy Ratings Home
-                  li(class=(active == 'pei' ? 'active' : ''))
-                    a(href="/pei") 
-                     .glyphicon.glyphicon-scale.margin-right
-                     | Energy Rating Calculator
+                  li(class=(active == 'portal' ? 'active' : ''))
+                    a(href="/portal") 
+                     .glyphicon.glyphicon-log-in.margin-right
+                     | Energy Rating Portal
                   li(class=(active == 'search' ? 'active' : ''))
                     a(href="/ratings/search")
                      .glyphicon.glyphicon-search.margin-right
@@ -44,11 +44,7 @@ html
                      .glyphicon.glyphicon-stats.margin-right
                      | Utility search
                   
-                ul.nav.navbar-nav.navbar-right
-                  li
-                    a(href="/portal") 
-                     .glyphicon.glyphicon-log-in.margin-right
-                     | Energy Rating Portal
+               
      block nav
      block content
      
