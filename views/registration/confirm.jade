@@ -76,8 +76,7 @@ block content
                     | then be able to enter payment information in order to list pumps within the system.
           .row
             .col.col-sm-12
-              
-                form(action="registration_confirm", method="post")
+             form(action="registration_confirm", method="post")
                     input.form-control(type="hidden", name="participant[name]" value=participant? participant.name : null)
                     input.form-control(type="hidden", name="user[name][first]" value=user && user.name ? user.name.first : null)
                     input.form-control(type="hidden", name="user[name][last]" value=user && user.name ? user.name.last : null)
@@ -106,7 +105,7 @@ block content
                             input(type="checkbox", ng-model="app.confirm2")
                             b.strong The Participant has reviewed section 40.5.2.1 and meets the eligibility requirements
                         
-                   .well
+                    .well
                         h3 Application Terms:
                         p The Program Manager may request from the Participant their calculation of the PEI consistent with 10 CFR 429.59, 10 CFR 429.110 and 10 CFR 429.134 along with the stamped certified raw test data by the HI Approved Laboratory representative for all samples used in the determination of PEI as submitted in the ER listing. The participant shall provide this data to the satisfaction of the program manager or be subject to section 40.5.5.3 Violations.
                         hr
@@ -115,7 +114,7 @@ block content
                             input(type="checkbox", ng-model="app.confirm3", required)
                             b.strong The participant agrees to the terms of the application
 
-                    
-                    button.btn.btn-primary(type="submit", ng-disabled="!app.confirm1 || !app.confirm2 || !app.confirm3") Confirm Registration
+                    //- , ng-disabled="!app.confirm1 || !app.confirm2 || !app.confirm3"
+                    button.btn.btn-primary(type="submit") Confirm Registration
                     
               
