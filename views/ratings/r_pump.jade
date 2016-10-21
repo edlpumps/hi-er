@@ -1,5 +1,7 @@
 extends layout
 
+include ../common/pump_page
+
 block nav
      +navigation("pump")
 
@@ -22,67 +24,7 @@ block content
              img(src="/images/doe/#{pump_drawing}").hidden-xs
              img(src="/images/doe/#{pump_drawing}", style="width:95%").hidden-md.hidden-lg.hidden-sm
            .col.col-sm-7
-                .row 
-                    .form-group
-                        .col.col-xs-5
-                            label Vendor / Rater:
-                        .col.col-xs-7
-                            .form-control-static #{pump.participant}
-                .row 
-                    .form-group
-                        .col.col-xs-5
-                            label HI Rating ID:
-                        .col.col-xs-7
-                            .form-control-static #{pump.rating_id}
-                .row 
-                    .form-group
-                        .col.col-xs-5
-                            label Basic model designation:
-                        .col.col-xs-7
-                            .form-control-static #{pump.basic_model}
-                .row 
-                    .form-group
-                        .col.col-xs-5
-                            label DOE product category:
-                        .col.col-xs-7
-                            .form-control-static #{pump.doe}
-                .row 
-                    .form-group
-                        .col.col-xs-5
-                            label HI approved laboratory:
-                        .col.col-xs-7
-                            .form-control-static #{pump.laboratory}
-                .row 
-                    .form-group
-                        .col.col-xs-5
-                            label Full impeller diameter (in):
-                        .col.col-xs-7
-                            .form-control-static #{pump.diameter}
-                .row 
-                    .form-group
-                        .col.col-xs-5
-                            label Nominal speed (rpm):
-                        .col.col-xs-7
-                            .form-control-static #{pump.speed}
-                .row 
-                    .form-group
-                        .col.col-xs-5
-                            label BEP flow rate (gpm):
-                        .col.col-xs-7
-                            .form-control-static #{pump.flow.bep100}
-                .row 
-                    .form-group
-                        .col.col-xs-5
-                            label BEP head (feet):
-                        .col.col-xs-7
-                            .form-control-static #{pump.head.bep100}
-
-                .row 
-                    .form-group
-                        .col.col-xs-5
-                            label Rated motor power (hp):
-                        .col.col-xs-7
-                            .form-control-static #{pump.motor_power_rated}
+             +pump_page_info(pump)
 
                 
       

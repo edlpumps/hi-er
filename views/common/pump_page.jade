@@ -1,0 +1,84 @@
+mixin pump_page_info(pump)
+    .row 
+        .form-group
+            .col.col-xs-5
+                label HI Rating ID:
+            .col.col-xs-7
+                .form-control-static: a(href="/ratings/#{pump.rating_id}") #{pump.rating_id}
+    .row 
+        .form-group
+            .col.col-xs-5
+                label Basic model designation:
+            .col.col-xs-7
+                .form-control-static #{pump.basic_model}
+    .row 
+        .form-group
+            .col.col-xs-5
+                label DOE product category:
+            .col.col-xs-7
+                .form-control-static #{pump.doe}
+    .row 
+        .form-group
+            .col.col-xs-5
+                label HI approved laboratory:
+            .col.col-xs-7
+                .form-control-static #{pump.laboratory}
+    .row 
+        .form-group
+            .col.col-xs-5
+                label Testing method:
+            .col.col-xs-7
+                .form-control-static #{section_label(pump.section)} 
+    .row 
+        .form-group
+            .col.col-xs-5
+                label Full impeller diameter (in):
+            .col.col-xs-7
+                .form-control-static #{pump.diameter.toFixed(3)}
+    .row 
+        .form-group
+            .col.col-xs-5
+                label Nominal speed (rpm):
+            .col.col-xs-7
+                .form-control-static #{pump.speed}
+    .row 
+        .form-group
+            .col.col-xs-5
+                label BEP flow rate (gpm):
+            .col.col-xs-7
+                .form-control-static #{pump.flow.bep100.toFixed(2)}
+    .row 
+        .form-group
+            .col.col-xs-5
+                label BEP head (feet):
+            .col.col-xs-7
+                .form-control-static #{pump.head.bep100.toFixed(2)}
+
+    if pump.section == '3' || pump.section == '4' || pump.section == '5'
+        .row 
+            .form-group
+                .col.col-xs-5
+                    label BEP Driver input power (hp):
+                .col.col-xs-7
+                    if pump.driver_input_power.bep100
+                        .form-control-static #{pump.driver_input_power.bep100.toFixed(2)}
+                    else
+                        .form-control-static Unavailble (MVP)
+    else 
+        .row 
+            .form-group
+                .col.col-xs-5
+                    abel BEP Control input power (hp):
+                .col.col-xs-7
+                    if pump.control_power_input.bep100
+                        .form-control-static #{pump.control_power_input.bep100.toFixed(2)}
+                    else
+                        .form-control-static Unavailble (MVP)
+    .row 
+        .form-group
+            .col.col-xs-5
+                label Rated motor power (hp):
+            .col.col-xs-7
+                - var mpr = pump.motor_power_rated ? pump.motor_power_rated : pump.results.motor_power_rated
+                - var mpr_display = mpr ? mpr.toFixed(0) : ""
+                .form-control-static #{mpr_display}
