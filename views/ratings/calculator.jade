@@ -157,7 +157,7 @@ mixin calculator(er, mode)
                 button.btn.btn-primary.btn-space(type="button", ng-disabled="!app.pump.motor_method", ng-click="app.go2Options()") Next
                 
               .col.col-xs-2
-                  a(href="#" ng-click="app.go2Configuration()") Start over
+                  a(href="#" ng-click="app.go2Configuration(true)") Start over
 
 
         //---------------------------------------------------------------
@@ -272,7 +272,7 @@ mixin calculator(er, mode)
                 button.btn.btn-default(type="button", ng-click="app.go2MotorMethod(true)") Back
                 button.btn.btn-primary.btn-space(type="button", ng-disabled="app.missing_options()", ng-click="app.go2Data()") Next
               .col.col-xs-2
-                  a(href="#" ng-click="app.go2Configuration()") Start over
+                  a(href="#" ng-click="app.go2Configuration(true)") Start over
           
 
         .panel-body(ng-show="app.step=='data'")
@@ -458,7 +458,7 @@ mixin calculator(er, mode)
                   button(type="button", ng-disabled="app.data_missing()", ng-click="app.go2Results()").btn.btn-danger.btn-space Calculate {{app.calculatorText()}}
                   
                .col.col-xs-2
-                  a(href="#" ng-click="app.go2Configuration()") Start over
+                  a(href="#" ng-click="app.go2Configuration(true)") Start over
 
         if (er)
           .panel-body(ng-show="app.step=='results'")
@@ -507,7 +507,7 @@ mixin calculator(er, mode)
                     us.dropdown-menu
                       li: a(href="#") Download in DOE format
                       li: a(href="#") Download for HI Energy Rating Program
-                  a(href="#" ng-click="app.go2Configuration()", style="margin-left:10px;") Start over
+                  a(href="#" ng-click="app.go2Configuration(true)", style="margin-left:10px;") Start over
                
             .row
               .col.col-xs-12

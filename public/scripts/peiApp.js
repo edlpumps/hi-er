@@ -14,7 +14,7 @@ var service = app.factory('service', function($http) {
    };
 });
 
-var PEIController = function($scope, $location, service) {
+var PEIController = function($scope, $location, $window, service) {
   var vm = this;
   vm.pump = {};
   
@@ -116,8 +116,13 @@ var PEIController = function($scope, $location, service) {
   vm.powers = [250, 200, 150, 125, 100, 75, 60, 50, 40, 30, 25, 20, 15, 10, 7.5, 5, 3, 2, 1.5, 1];
 
 
-  vm.go2Configuration = function() {
-      vm.step = "configuration";
+  vm.go2Configuration = function(back) {
+      if ( back && !vm.standalone) {
+        $window.location = "/participant/pumps/new";
+      }
+      else {
+          vm.step = "configuration";
+      }
   }
 
   vm.motor_method_required = function() {
@@ -127,7 +132,9 @@ var PEIController = function($scope, $location, service) {
 
   vm.go2MotorMethod = function(back) {
       if ( !vm.motor_method_required() ) {
-          if ( back ) vm.go2Configuration();
+          if ( back ) {
+              vm.go2Configuration(back);
+          }
           else vm.go2Options();
       }
       else {
@@ -176,7 +183,7 @@ var PEIController = function($scope, $location, service) {
           pass = vm.pump.motor_method;;
       }
       else {
-          vm.go2Configuration();
+          vm.go2Configuration(true);
       }
 
       if (pass) vm.step = "options";
