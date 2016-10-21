@@ -126,7 +126,7 @@ var section3_baseline_common = function(pump, result) {
     result.baseline_motor_power_ratio_bep75 = Math.min(1, result.baseline_pump_power_input_bep75/pump.motor_power_rated)
     result.baseline_motor_power_ratio_bep100 = Math.min(1, result.baseline_pump_power_input_bep100/pump.motor_power_rated)
     result.baseline_motor_power_ratio_bep110 = Math.min(1, result.baseline_pump_power_input_bep110/pump.motor_power_rated)
-    
+
     result.baseline_part_load_loss_factor_bep75 = part_load_loss(result.baseline_motor_power_ratio_bep75)
     result.baseline_part_load_loss_factor_bep100 = part_load_loss(result.baseline_motor_power_ratio_bep100)
     result.baseline_part_load_loss_factor_bep110 = part_load_loss(result.baseline_motor_power_ratio_bep110)

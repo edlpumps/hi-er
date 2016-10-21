@@ -20,6 +20,7 @@ var path = require('path');
 var tests = [];
 var dir = path.join(__dirname, "test_cases");
 fs.readdir(dir, function(err, items) {
+  items = items.filter(i => i.indexOf(".DS_Store") < 0);
   for (var i=0; i<items.length; i++) {
     var test = require(path.join(dir, items[i]));
     tests.push(test);

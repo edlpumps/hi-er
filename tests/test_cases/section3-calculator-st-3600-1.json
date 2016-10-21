@@ -1,5 +1,5 @@
 { 
-        "name" : "Section 3, calculator, ST - 3600 rpm",
+        "name" : "Section 3, calculator, ST - 3600 rpm - 1",
         "pump": {
           "auto":true,
           "doe": "ST",

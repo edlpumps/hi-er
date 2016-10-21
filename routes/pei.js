@@ -16,15 +16,30 @@ var pei_baselines = {
 }
 
 router.post('/api/calculate', function(req, res){
+    var pump = req.body.pump;
+    pump.doe = pump.doe.value;
 
+    if ( pump.flow ) {
+        if ( pump.load120) {
+            pump.flow.bep75 = pump.flow.bep100 * 0.75;
+            pump.flow.bep110 = pump.flow.bep100 * 1.1;
+        }
+        else {
+            pump.flow.bep75 = pump.flow.bep100 /0.9 * 0.6;
+            pump.flow.bep110 = pump.flow.bep100 /0.9;
+        }
+    }
     // limited support - only section 3.
     if (req.body.pump.section=="3") {
-        var pump = req.body.pump;
-        pump.doe = pump.doe.value;
+        
         var calculator = require("../calculator");
         var results = calculator.calculate(pump);
         res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify(results));
+        console.log(pump.flow);
+        console.log(pump.head);
+        console.log(results);
+        
         return;
     }
 
