@@ -23,7 +23,8 @@ mixin pump_page_info(pump)
                 label HI approved laboratory:
             .col.col-xs-7
                 .form-control-static #{pump.laboratory}
-    .row 
+    if section_label
+     .row 
         .form-group
             .col.col-xs-5
                 label Testing method:
