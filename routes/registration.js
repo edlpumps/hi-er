@@ -17,7 +17,7 @@ router.get('/portal', function(req, res) {
     else {
         req.log.debug("No user is logged in, rendering landing page");
         var email = req.cookies.email;
-        res.render("landing", {
+        res.render("ratings/landing", {
             email: email
         });
     }
@@ -273,7 +273,7 @@ router.post("/register", function(req, res) {
         }
         req.flash('registrationMessage', message)
         req.log.debug("Registration cannot be completed - missing/invalid information");
-        res.render("landing", {
+        res.render("ratings/landing", {
             user : user, 
             participant: participant, 
             target : "register"
@@ -292,7 +292,7 @@ router.post("/register", function(req, res) {
         if ( result.user_exists ) {
             req.log.debug("User already exists, cannot register");
             req.flash("registrationMessage", "A user with this email address has already registered for this program");
-            res.render("landing", {
+            res.render("ratings/landing", {
                 user : req.body.user,
                 participant: req.body.participant, 
                 target : "register"
