@@ -45,20 +45,9 @@ html
                       | Pump Listings
                   
                 ul.nav.navbar-nav.navbar-right
-                  li.dropdown
-                    a(href="#", data-toggle="dropdown", role="button") 
-                      | Public ER Listings
-                      span.caret
-                    ul.dropdown-menu
-                      li: a(href="/pei") 
-                        .glyphicon.glyphicon-scale.margin-right
-                        | ER Calculator
-                      li: a(href="/ratings/search") 
-                        .glyphicon.glyphicon-search.margin-right
-                        | Pump Search
-                      li: a(href="/ratings/utilities") 
-                        .glyphicon.glyphicon-stats.margin-right
-                        | Utility Search
+                  li: a(href="/ratings/home") 
+                    .glyphicon.glyphicon-eye-open.margin-right
+                    | Public site
                   li
                     .navbar-text #{user.name.first} #{user.name.last}
                   li
