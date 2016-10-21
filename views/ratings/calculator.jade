@@ -469,7 +469,7 @@ mixin calculator(er, mode)
             .row(ng-hide="app.calc_errors")
               .col.col-sm-6.text-center
                 h4 Pump Energy Index
-                p.pei_display {{app.pump.pei | number:4}}
+                p.pei_display {{app.pump.pei | number:2}}
               .col.col-sm-6.text-center
                 h4 Energy Rating
                 p.er_display {{app.pump.energy_rating}}
@@ -488,7 +488,7 @@ mixin calculator(er, mode)
             .row(ng-hide="app.calc_errors")
               .col.col-sm-6.text-center
                 h4 Pump Energy Index
-                p.pei_display {{app.pump.pei | number:4}}
+                p.pei_display {{app.pump.pei | number:2}}
               .col.col-sm-6.text-center
                 h4 Energy Rating
                 p.er_display {{app.pump.energy_rating}}
