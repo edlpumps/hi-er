@@ -494,7 +494,21 @@ mixin calculator(er, mode)
                 p.er_display {{app.pump.energy_rating}}
             
             .row
-               .col.col-xs-10
+               .col.col-xs-6
                   button(type="button", ng-click="app.go2Data(true)").btn.btn-default.btn-space Back
-               .col.col-xs-2
-                  a(href="#" ng-click="app.go2Configuration()") Start over
+                  
+               .col.col-xs-6
+                .pull-right
+                  .btn-group
+                    button(type="button", data-toggle="dropdown").btn.btn-primary.dropdown-toggle 
+                      .glyphicon.glyphicon-download-alt 
+                      span.btn-space Download
+                      span.btn-space.caret
+                    us.dropdown-menu
+                      li: a(href="#") Download in DOE format
+                      li: a(href="#") Download for HI Energy Rating Program
+                  a(href="#" ng-click="app.go2Configuration()", style="margin-left:10px;") Start over
+               
+            .row
+              .col.col-xs-12
+                .help-block.pull-right Download buttons not operational in MVP...
