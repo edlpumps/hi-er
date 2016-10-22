@@ -1,0 +1,33 @@
+  { 
+        "name" : "Section 4, calculator, RSV - 3600 rpm - 4",
+        "pump": {
+          "auto":false,
+          "doe": "RSV",
+          "speed" : 3600,
+          "section" : "4",
+          "flow": {
+            "bep75": 262.3728814,
+            "bep100": 349.8305085,
+            "bep110": 384.8135593
+          }, 
+          "head" : {
+            "bep75":498.8911232, 
+            "bep100":424.4297616,
+            "bep110":383.4760126
+          },
+          "driver_input_power" :{
+            "bep75":49.2013, 
+            "bep100":51.414,
+            "bep110":51.808
+          },
+          "stages" : 9, 
+          "diameter":10,
+          "pei" : 0.98,
+          "motor_regulated" : false,
+          "motor_power_rated" : 60
+    
+        }, 
+        "expected" : {
+          "success" :{"value":false}
+        }
+}

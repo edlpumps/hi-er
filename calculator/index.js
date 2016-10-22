@@ -220,28 +220,23 @@ var section3_auto = function(pump) {
     return result;
 }
 
-
-
-var section3_manual = function(pump) {
-    var result = {section:"3", success:true};
+var section345_manual = function(pump) {
+    var result = {section:pump.section, success:true};
     
     result.ns = calc_ns(pump);
     result.default_motor_efficiency = lookup_default_motor_efficiency(pump, pump.motor_power_rated);
     result.full_load_motor_losses = calc_full_load_motor_losses(pump, result);
     
     result.per_cl = calc_per_cl(pump);
-    section3_standard_common(pump, result);
-    section3_baseline_common(pump, result)
-
+    result.per_std = result.per_cl / pump.pei;
     result.pei = pump.pei;  // was given by the user
     
-    // In manual mode, double-check the user's input
-    result.per_std = result.per_cl / pump.pei;
+    section3_standard_common(pump, result);
+    section3_baseline_common(pump, result);
+    
     var per_diff = result.per_std / result.per_std_calculated;
     if ( per_diff > 1.01 || per_diff < 0.99){
-
         var target_pei = result.per_cl / result.per_std_calculated;
-
         result.success = false;
         result.reasons = [];
         result.reasons.push("Error, the calculated PER standard value (" + result.per_std_calculated.toFixed(2) + ") must be within 1% of the PER value derived from your inputs.  A PEI of " + target_pei.toFixed(2) + " would have been expected, given your inputs.")
@@ -252,6 +247,8 @@ var section3_manual = function(pump) {
     calc_energy_rating(pump, result);
     return result;
 }
+
+
 
 exports.calculate = function(pump) {
     if ( !pump ) {
@@ -296,27 +293,62 @@ var common_checks = function(pump, manual){
     return missing
 }
 
+var manual_345_checks = function(pump, missing) {
+    if (!pump.motor_power_rated) missing.push("Pump rated motor power / nameplate rated motor power must be specified")
+    if (!pump.driver_input_power) missing.push("Driver input power @ 75%, 100%, and 110% BEP must be specified for Section 3 manual calculations");
+    if ( pump.driver_input_power ) {
+        if (!pump.driver_input_power.bep75 ) missing.push("Driver input power @ 75% BEP must be specified");
+        if (!pump.driver_input_power.bep100 ) missing.push("Driver input power @ 100% BEP must be specified");
+        if (!pump.driver_input_power.bep110 ) missing.push("Driver input power @ 110% BEP must be specified");
+    }
+}
+
+var check_regulated_motor = function(pump, missing) {
+    if (pump.motor_regulated === undefined) {
+        missing.push("Pump specification must include true/false if motor is regulated.")
+    }
+    if ( pump.motor_regulated ) {
+        if ( !pump.motor_efficiency) {
+            missing.push("Pumps with regulated motors must contain Nominal Motor Efficiency in their specifications")
+        }
+    }
+}
 
 var manual_calculators = {
     "3" : function(pump) {
         var missing = common_checks(pump, true);
 
-        // Specific to section 3, manual
-        // --------------------
-        if (!pump.motor_power_rated) missing.push("Pump rated motor power / nameplate rated motor power must be specified")
-        if (!pump.driver_input_power) missing.push("Driver input power @ 75%, 100%, and 110% BEP must be specified for Section 3 manual calculations");
-        if ( pump.driver_input_power ) {
-            if (!pump.driver_input_power.bep75 ) missing.push("Driver input power @ 75% BEP must be specified");
-            if (!pump.driver_input_power.bep100 ) missing.push("Driver input power @ 100% BEP must be specified");
-            if (!pump.driver_input_power.bep110 ) missing.push("Driver input power @ 110% BEP must be specified");
-        }
-        // --------------------
+        manual_345_checks(pump, missing);
 
         if ( missing.length > 0 ) {
             return build_error(missing, pump);
         }
 
-        return section3_manual(pump);
+        return section345_manual(pump);
+    },
+    "4" : function(pump) {
+        var missing = common_checks(pump, true);
+
+        manual_345_checks(pump, missing);
+        check_regulated_motor(pump, missing);
+
+        if ( missing.length > 0 ) {
+            return build_error(missing, pump);
+        }
+
+        return section345_manual(pump);
+    }, 
+    "5" : function(pump) {
+        var missing = common_checks(pump, true);
+
+        manual_345_checks(pump, missing);
+        check_regulated_motor(pump, missing);
+
+        if ( missing.length > 0 ) {
+            return build_error(missing, pump);
+        }
+
+        return section345_manual(pump);
     }
 }
 

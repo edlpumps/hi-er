@@ -208,3 +208,95 @@ describe('Underspecified pumps - section 3 - manual', function() {
     });
     
   });
+
+
+describe('Underspecified pumps - section 4 - manual', function() {
+    var pumpA;
+    beforeEach(function() {
+      pumpA = {
+        auto : false,
+        doe: "RSV",
+        speed : 3600,
+        section: "4",
+        diameter:10,
+        motor_regulated: true,
+        motor_power_rated : 60,
+        motor_efficiency : 90,
+        bowl_diameter : 20,
+        flow : {
+          bep75: 262.372881355932,
+          bep100: 349.830508474576,
+          bep110: 384.813559322034
+        }, 
+        head : {
+          bep75:498.891123240448, 
+          bep100:424.429761562769,
+          bep110:383.476012640046
+        },
+        driver_input_power :{
+          bep75:52.812, 
+          bep100:55.203,
+          bep110:55.620
+        },
+        stages : 9, 
+        pei : 0.97
+      };
+      
+    }); 
+    it('should return error w/ missing pump', function() {
+      let result = calculator.calculate()
+      assert.isNotTrue(result.success, "result was true");;
+    });
+    it('should return error w/ missing rated motor power', function() {
+      delete pumpA.motor_power_rated;
+      let result = calculator.calculate(pumpA)
+      assert.isNotTrue(result.success, "result was true");;
+    });
+    
+    it('should return error w/ missing pei', function() {
+      delete pumpA.pei;
+      let result = calculator.calculate(pumpA)
+      assert.isNotTrue(result.success, "result was true");;
+    });
+
+    it('should return error w/ missing driver input power', function() {
+      delete pumpA.driver_input_power;
+      let result = calculator.calculate(pumpA)
+      assert.isNotTrue(result.success, "result was true");;
+    });
+    it('should return error w/ missing driver input power @ 75% BEP', function() {
+      delete pumpA.driver_input_power.bep75;
+      let result = calculator.calculate(pumpA)
+      assert.isNotTrue(result.success, "result was true");;
+    });
+    it('should return error w/ missing driver input power @ 100% BEP', function() {
+      delete pumpA.driver_input_power.bep100;
+      let result = calculator.calculate(pumpA)
+      assert.isNotTrue(result.success, "result was true");;
+    });
+    it('should return error w/ missing driver input power @ 110% BEP', function() {
+      delete pumpA.driver_input_power.bep110;
+      let result = calculator.calculate(pumpA)
+      assert.isNotTrue(result.success, "result was true");;
+    });
+
+    it('should return error w/ missing motor regulated', function() {
+      delete pumpA.motor_regulated;
+      let result = calculator.calculate(pumpA)
+      assert.isNotTrue(result.success, "result was true");;
+    });
+
+    it('should return error w/ missing nominal efficiency when pump is regulated', function() {
+      pumpA.motor_regulated = true;
+      delete pumpA.motor_efficiency;
+      let result = calculator.calculate(pumpA)
+      assert.isNotTrue(result.success, "result was true");;
+    });
+
+    it('should return ok w/ missing nominal efficiency when pump is not regulated', function() {
+      pumpA.motor_regulated = false;
+      delete pumpA.motor_efficiency;
+      let result = calculator.calculate(pumpA)
+      assert.isTrue(result.success, "result was false");;
+    });
+  })
