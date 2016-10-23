@@ -43,7 +43,8 @@ var lookup_baseline_c_value = function(pump) {
 var lookup_default_motor_efficiency = function(pump, power) {
     var label = pump.doe.toUpperCase() + "-" + power + "-" + pump.speed;
     var table = require("./default_motor_efficiencies.json");
-    return table[label];
+    var retval = table[label];
+    return retval;
 }
 
 
@@ -220,6 +221,23 @@ var section3_auto = function(pump) {
     return result;
 }
 
+var section4_auto = function(pump) {
+    var result = {section:"4", success:true};
+
+    result.ns = calc_ns(pump);
+    result.default_motor_efficiency = lookup_default_motor_efficiency(pump, pump.motor_power_rated);
+    result.full_load_motor_losses = calc_full_load_motor_losses(pump, result);
+    
+    result.per_cl = calc_per_cl(pump);
+    section3_standard_common(pump, result);
+    section3_baseline_common(pump, result);
+
+    result.pei = pump.pei = result.per_cl / result.per_std_calculated;
+
+    calc_energy_rating(pump, result);
+    return result;
+}
+
 var section345_manual = function(pump) {
     var result = {section:pump.section, success:true};
     
@@ -303,6 +321,15 @@ var manual_345_checks = function(pump, missing) {
     }
 }
 
+var check_driver_input_power = function(pump, missing) {
+    if (!pump.driver_input_power) missing.push("Driver input power @ 75%, 100%, and 110% BEP must be specified.");
+        if ( pump.driver_input_power ) {
+            if (!pump.driver_input_power.bep75 ) missing.push("Driver input power @ 75% BEP must be specified");
+            if (!pump.driver_input_power.bep100 ) missing.push("Driver input power @ 100% BEP must be specified");
+            if (!pump.driver_input_power.bep110 ) missing.push("Driver input power @ 110% BEP must be specified");
+        }
+}
+
 var check_regulated_motor = function(pump, missing) {
     if (pump.motor_regulated === undefined) {
         missing.push("Pump specification must include true/false if motor is regulated.")
@@ -372,5 +399,15 @@ var auto_calculators = {
         }
 
         return section3_auto(pump);
+    }, 
+    "4" : function(pump) {
+        var missing = common_checks(pump);
+
+        check_driver_input_power(pump, missing)
+        if ( missing.length > 0 ) {
+            return build_error(missing, pump);
+        }
+
+        return section4_auto(pump);
     }
 }
