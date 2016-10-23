@@ -163,9 +163,10 @@ var calc_driver_input_powers = function(pump, result) {
     result.part_load_loss_factor_bep100 = part_load_loss(result.pump_power_input_motor_power_ratio_bep100)
     result.part_load_loss_factor_bep110 = part_load_loss(result.pump_power_input_motor_power_ratio_bep110)
     
-    result.part_load_loss_bep75 = result.part_load_loss_factor_bep75 * result.full_load_motor_losses;
-    result.part_load_loss_bep100 = result.part_load_loss_factor_bep100 * result.full_load_motor_losses;
-    result.part_load_loss_bep110 = result.part_load_loss_factor_bep110 * result.full_load_motor_losses;
+    var loss = result.nameplate_full_load_motor_losses === undefined ? result.full_load_motor_losses : result.nameplate_full_load_motor_losses;
+    result.part_load_loss_bep75 = result.part_load_loss_factor_bep75 * loss;
+    result.part_load_loss_bep100 = result.part_load_loss_factor_bep100 * loss;
+    result.part_load_loss_bep110 = result.part_load_loss_factor_bep110 * loss;
 
     pump.driver_input_power = {
         bep75 : pump.pump_input_power.bep75 + result.part_load_loss_bep75,
@@ -237,6 +238,32 @@ var section4_auto = function(pump) {
     calc_energy_rating(pump, result);
     return result;
 }
+
+var section5_auto = function(pump) {
+    var result = {section:"5", success:true};
+    
+    result.ns = calc_ns(pump);
+    result.default_motor_efficiency = lookup_default_motor_efficiency(pump, pump.motor_power_rated);
+    result.full_load_motor_losses = calc_full_load_motor_losses(pump, result);
+    
+    if ( pump.motor_efficiency ) {
+        result.nameplate_full_load_motor_losses = pump.motor_power_rated / (pump.motor_efficiency/100) - pump.motor_power_rated;
+    }
+    
+    calc_driver_input_powers(pump, result);
+
+    result.standard_c_value = lookup_standard_c_value(pump);
+    result.per_cl = calc_per_cl(pump);
+    section3_standard_common(pump, result);
+    section3_baseline_common(pump, result);
+
+    result.pei = pump.pei = result.per_cl / result.per_std_calculated;
+
+    calc_energy_rating(pump, result);
+    
+    return result;
+}
+
 
 var section345_manual = function(pump) {
     var result = {section:pump.section, success:true};
@@ -330,6 +357,16 @@ var check_driver_input_power = function(pump, missing) {
         }
 }
 
+var check_pump_input_power = function(pump, missing, test_120) {
+    if (!pump.pump_input_power) missing.push("Pump input power @ 75%, 100%, 110%, and 120% BEP must be specified.");
+    if ( pump.pump_input_power ) {
+        if (!pump.pump_input_power.bep75 ) missing.push("Pump input power @ 75% BEP must be specified");
+        if (!pump.pump_input_power.bep100 ) missing.push("Pump input power @ 100% BEP must be specified");
+        if (!pump.pump_input_power.bep110 ) missing.push("Pump input power @ 110% BEP must be specified");
+        if (test_120 && !pump.pump_input_power.bep120 ) missing.push("Pump input power @ 120% BEP must be specified");
+    }
+}
+
 var check_regulated_motor = function(pump, missing) {
     if (pump.motor_regulated === undefined) {
         missing.push("Pump specification must include true/false if motor is regulated.")
@@ -383,17 +420,8 @@ var auto_calculators = {
     "3" : function(pump) {
         var missing = common_checks(pump);
 
-        // Specific to section 3, auto
-        // --------------------
-        if (!pump.pump_input_power) missing.push("Pump input power @ 75%, 100%, 110%, and 120% BEP must be specified for Section 3 auto calculations");
-        if ( pump.pump_input_power ) {
-            if (!pump.pump_input_power.bep75 ) missing.push("Pump input power @ 75% BEP must be specified");
-            if (!pump.pump_input_power.bep100 ) missing.push("Pump input power @ 100% BEP must be specified");
-            if (!pump.pump_input_power.bep110 ) missing.push("Pump input power @ 110% BEP must be specified");
-            if (!pump.pump_input_power.bep120 ) missing.push("Pump input power @ 120% BEP must be specified");
-        }
-        // --------------------
-
+        check_pump_input_power(pump, missing, true);
+        
         if ( missing.length > 0 ) {
             return build_error(missing, pump);
         }
@@ -409,5 +437,16 @@ var auto_calculators = {
         }
 
         return section4_auto(pump);
-    }
+    },
+    "5" : function(pump) {
+        var missing = common_checks(pump);
+
+        check_pump_input_power(pump, missing, false);
+        
+        if ( missing.length > 0 ) {
+            return build_error(missing, pump);
+        }
+
+        return section5_auto(pump);
+    }, 
 }

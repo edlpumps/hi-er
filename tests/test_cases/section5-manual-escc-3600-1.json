@@ -1,5 +1,5 @@
   { 
-        "name" : "Section 5, calculator, ESCC - 3600 rpm - 1",
+        "name" : "Section 5, manual, ESCC - 3600 rpm - 1",
         "pump": {
           "auto":false,
           "doe": "ESCC",

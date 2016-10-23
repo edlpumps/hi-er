@@ -1,5 +1,5 @@
 { 
-        "name" : "Section 4, calculator, STRSV - 3600 rpm - 1",
+        "name" : "Section 4, calculator, RSV - 3600 rpm - 1",
         "pump": {
           "auto":true,
           "doe": "RSV",
