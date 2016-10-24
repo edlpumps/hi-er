@@ -1,0 +1,87 @@
+{ 
+        "name" : "Section 7, calculator, ESCC - 3600 rpm - 1",
+        "pump": {
+          "auto":true,
+          "doe": "ESCC",
+          "speed" : 3600,
+          "section" : "7",
+          "flow": {
+            "bep75": 262.3729,
+            "bep100": 349.8305,
+            "bep110": 384.8136
+          }, 
+          "head" : {
+            "bep75":498.8911, 
+            "bep100":424.4298,
+            "bep110":383.4760
+          },
+          "pump_input_power" :{
+            "bep75":49.2013, 
+            "bep100":51.4144,
+            "bep110":51.8084
+          },
+          "stages" : 1, 
+          "diameter":10,
+          "motor_power_rated" : 60, 
+          "motor_regulated" : true,
+          "motor_efficiency" : 97.0
+        }, 
+        "expected" : {
+          
+          "section" :{"value":"7"},
+          "ns" : {"value": 720.0737, "threshold": 0.0001},
+          "default_motor_efficiency" : {"value": 93.6, "threshold": 0.1},
+          "full_load_motor_losses" : {"value": 4.10, "threshold": 0.1},
+          "nameplate_full_load_motor_losses" : {"value":1.86, "threshold":0.01},
+          "standard_c_value" : {"value": 130.48, "threshold": 0.1},
+          "std_pump_efficiency" : {"value": 60.4576, "threshold": 0.001},
+          
+          "hyd_power_bep75" :  {"value": 33.0878, "threshold": 0.0001},
+          "hyd_power_bep100" : {"value": 37.5325, "threshold": 0.0001},
+          "hyd_power_bep110" : {"value": 37.3020, "threshold": 0.0001},
+
+          "std_pump_power_input_bep75" :  {"value": 57.7920, "threshold": 0.0001},
+          "std_pump_power_input_bep100" : {"value": 62.0807, "threshold": 0.0001},
+          "std_pump_power_input_bep110" : {"value": 62.6391, "threshold": 0.0001},
+
+          "std_motor_power_ratio_bep75" :  {"value": 0.9632, "threshold": 0.01},
+          "std_motor_power_ratio_bep100" : {"value": 1.0000, "threshold": 0.01},
+          "std_motor_power_ratio_bep110" : {"value": 1.0000, "threshold": 0.01},
+
+          "std_part_load_loss_factor_bep75" :  {"value": 0.9742, "threshold": 0.01},
+          "std_part_load_loss_factor_bep100" : {"value": 1.0000, "threshold": 0.01},
+          "std_part_load_loss_factor_bep110" : {"value": 1.0000, "threshold": 0.01},
+
+          "std_part_load_loss_bep75" :  {"value": 3.9968, "threshold": 0.01},
+          "std_part_load_loss_bep100" : {"value": 4.1026, "threshold": 0.01},
+          "std_part_load_loss_bep110" : {"value": 4.1026, "threshold": 0.01},
+
+          "std_driver_power_input_bep75" :  {"value": 61.7888, "threshold": 0.0001},
+          "std_driver_power_input_bep100" : {"value": 66.1833, "threshold": 0.0001},
+          "std_driver_power_input_bep110" : {"value": 66.7416, "threshold": 0.0001},
+
+          "per_std_calculated" : {"value": 64.8981, "threshold": 0.0001},
+
+
+          "vl_pump_power_input_bep25" :  {"value": 3.2134, "threshold": 0.0001},
+          "vl_pump_power_input_bep50" :  {"value": 10.2829, "threshold": 0.0001},
+          "vl_pump_power_input_bep75" :  {"value": 25.0645, "threshold": 0.0001},
+
+          "pump_power_input_motor_power_ratio_bep100" : {"value": 0.8569, "threshold": 0.01},
+
+          "vl_pump_power_input_motor_power_ratio_bep25" : {"value": 0.0536, "threshold": 0.0001},
+          "vl_pump_power_input_motor_power_ratio_bep50" : {"value": 0.1714, "threshold": 0.0001},
+          "vl_pump_power_input_motor_power_ratio_bep75" : {"value": 0.4177, "threshold": 0.0001},
+
+          "mc_loss_coef_a": {"value": -0.8914, "threshold": 0.0001},
+          "mc_loss_coef_b": {"value": 2.8846, "threshold": 0.0001},
+          "mc_loss_coef_c": {"value": 0.2625, "threshold": 0.0001},
+
+          "mc_part_load_loss_factor_bep25" :  {"value": 0.4144, "threshold": 0.0001},
+          "mc_part_load_loss_factor_bep50" : {"value": 0.7307, "threshold": 0.01},
+          "mc_part_load_loss_factor_bep75" : {"value": 1.3120, "threshold": 0.01},
+          "mc_part_load_loss_factor_bep100" : {"value": 2.0798, "threshold": 0.01},
+          
+          "success" :{"value":true}
+        }
+}

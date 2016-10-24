@@ -31,7 +31,20 @@ var baseline_c_values = {
 
 var default_motors_powers = [1, 1.5, 2, 3, 5, 7.5, 10, 15, 20, 25, 30, 40, 50, 60, 75, 100, 125, 150, 200, 250];
 
+var motor_control_losses = [
+    {min:0, max:5, a : -0.4658, b:1.4965, c:0.5303},
+    {min:5, max:20, a :-1.3198, b:2.9551, c:0.1052}, 
+    {min:20, max:50, a : -1.5122, b:3.0777, c:0.1847}, 
+    {min:50, max:Infinity, a : -0.8914, b:2.8846, c:0.2625},  
+]
+ 
+
 /////////////////////////////////////////////////////////////////////
+var lookup_motor_control_losses = function (pump) {
+    return motor_control_losses.filter(
+        cat => cat.min < pump.motor_power_rated && cat.max >= pump.motor_power_rated)[0];
+
+}
 var lookup_standard_c_value = function(pump) {
     var label = pump.doe.toUpperCase() + "-" + pump.speed;
     return standard_c_values[label];
@@ -47,6 +60,9 @@ var lookup_default_motor_efficiency = function(pump, power) {
     return retval;
 }
 
+var poly3 = function(c, x) {
+    return c.a * Math.pow(x, 2) + c.b * x + c.c;
+}
 
 var build_error = function(error, pump) {
     return {
@@ -81,7 +97,7 @@ var calc_full_load_motor_losses = function(pump, result) {
     return pump.motor_power_rated / (result.default_motor_efficiency/100) - pump.motor_power_rated;
 }
 
-var section3_standard_common = function(pump, result) {
+var section345_standard_common = function(pump, result) {
     result.standard_c_value = lookup_standard_c_value(pump);
     result.std_pump_efficiency = calculate_efficiency(pump, result, result.standard_c_value, [-0.85, -0.38, -11.48, 17.8, 179.8, 555.6]);
     
@@ -116,7 +132,7 @@ var section3_standard_common = function(pump, result) {
 
 }
 
-var section3_baseline_common = function(pump, result) {
+var section345_baseline_common = function(pump, result) {
     result.baseline_c_value = lookup_baseline_c_value(pump);
     result.baseline_pump_efficiency = calculate_efficiency(pump, result, result.baseline_c_value, [-0.85, -0.38, -11.48, 17.8, 179.8, 555.6]);
     
@@ -213,8 +229,8 @@ var section3_auto = function(pump) {
     calc_driver_input_powers(pump, result);
 
     result.per_cl = calc_per_cl(pump);
-    section3_standard_common(pump, result);
-    section3_baseline_common(pump, result)
+    section345_standard_common(pump, result);
+    section345_baseline_common(pump, result)
 
     result.pei = pump.pei = result.per_cl / result.per_std_calculated;
     
@@ -230,8 +246,8 @@ var section4_auto = function(pump) {
     result.full_load_motor_losses = calc_full_load_motor_losses(pump, result);
     
     result.per_cl = calc_per_cl(pump);
-    section3_standard_common(pump, result);
-    section3_baseline_common(pump, result);
+    section345_standard_common(pump, result);
+    section345_baseline_common(pump, result);
 
     result.pei = pump.pei = result.per_cl / result.per_std_calculated;
 
@@ -254,12 +270,77 @@ var section5_auto = function(pump) {
 
     result.standard_c_value = lookup_standard_c_value(pump);
     result.per_cl = calc_per_cl(pump);
-    section3_standard_common(pump, result);
-    section3_baseline_common(pump, result);
+    section345_standard_common(pump, result);
+    section345_baseline_common(pump, result);
 
     result.pei = pump.pei = result.per_cl / result.per_std_calculated;
 
     calc_energy_rating(pump, result);
+    
+    return result;
+}
+
+var section7_auto = function(pump) {
+    var result = {section:"7", success:true};
+    
+    result.ns = calc_ns(pump);
+    result.default_motor_efficiency = lookup_default_motor_efficiency(pump, pump.motor_power_rated);
+    result.full_load_motor_losses = calc_full_load_motor_losses(pump, result);
+    
+    if ( pump.motor_efficiency ) {
+        result.nameplate_full_load_motor_losses = pump.motor_power_rated / (pump.motor_efficiency/100) - pump.motor_power_rated;
+    }
+    
+    calc_driver_input_powers(pump, result);
+   
+    /////////////////////////////////////////////////////////
+    // variable load pump input power calculations
+    /////////////////////////////////////////////////////////
+    let flow = pump.flow.bep100;
+    let power = pump.pump_input_power.bep100;
+    let ppi = function (flow, power, p) {
+        return (0.8*(Math.pow(p*flow, 3))/(Math.pow(flow,3))+0.2*((p*flow)/flow))*power
+    }
+
+    result.vl_pump_power_input_bep25 = ppi(flow, power, 0.25);
+    result.vl_pump_power_input_bep50 = ppi(flow, power, 0.50);
+    result.vl_pump_power_input_bep75 = ppi(flow, power, 0.75);
+    /////////////////////////////////////////////////////////
+
+    /////////////////////////////////////////////////////////
+    // pump power input to motor power ratio
+    /////////////////////////////////////////////////////////
+    result.vl_pump_power_input_motor_power_ratio_bep25 = Math.min(1, result.vl_pump_power_input_bep25/pump.motor_power_rated);
+    result.vl_pump_power_input_motor_power_ratio_bep50 = Math.min(1, result.vl_pump_power_input_bep50/pump.motor_power_rated);
+    result.vl_pump_power_input_motor_power_ratio_bep75 = Math.min(1, result.vl_pump_power_input_bep75/pump.motor_power_rated);
+    /////////////////////////////////////////////////////////
+
+    /////////////////////////////////////////////////////////
+    // Motor & Control Loss Coefficients
+    /////////////////////////////////////////////////////////
+    var loss_coeffs = lookup_motor_control_losses(pump);
+    result.mc_loss_coef_a = loss_coeffs.a;
+    result.mc_loss_coef_b = loss_coeffs.b;
+    result.mc_loss_coef_c = loss_coeffs.c;
+    /////////////////////////////////////////////////////////
+
+    
+    result.mc_part_load_loss_factor_bep100 = poly3(loss_coeffs, result.pump_power_input_motor_power_ratio_bep100);
+    result.mc_part_load_loss_factor_bep25 = poly3(loss_coeffs, result.vl_pump_power_input_motor_power_ratio_bep25);
+    result.mc_part_load_loss_factor_bep50 = poly3(loss_coeffs, result.vl_pump_power_input_motor_power_ratio_bep50);
+    result.mc_part_load_loss_factor_bep75 = poly3(loss_coeffs, result.vl_pump_power_input_motor_power_ratio_bep75);
+
+    
+    
+    result.standard_c_value = lookup_standard_c_value(pump);
+    result.per_cl = calc_per_cl(pump);
+    section345_standard_common(pump, result);
+    section345_baseline_common(pump, result);
+
+    result.pei = pump.pei = result.per_cl / result.per_std_calculated;
+
+    calc_energy_rating(pump, result);
+   
     
     return result;
 }
@@ -276,8 +357,8 @@ var section345_manual = function(pump) {
     result.per_std = result.per_cl / pump.pei;
     result.pei = pump.pei;  // was given by the user
     
-    section3_standard_common(pump, result);
-    section3_baseline_common(pump, result);
+    section345_standard_common(pump, result);
+    section345_baseline_common(pump, result);
     
     var per_diff = result.per_std / result.per_std_calculated;
     if ( per_diff > 1.01 || per_diff < 0.99){
@@ -449,4 +530,15 @@ var auto_calculators = {
 
         return section5_auto(pump);
     }, 
+    "7" : function(pump) {
+        var missing = common_checks(pump);
+
+        check_pump_input_power(pump, missing, false);
+        
+        if ( missing.length > 0 ) {
+            return build_error(missing, pump);
+        }
+
+        return section7_auto(pump);
+    },
 }
