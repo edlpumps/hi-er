@@ -33,7 +33,7 @@
           "default_motor_efficiency" : {"value": 93.6, "threshold": 0.1},
           "full_load_motor_losses" : {"value": 4.10, "threshold": 0.1},
           "nameplate_full_load_motor_losses" : {"value":1.86, "threshold":0.01},
-          "standard_c_value" : {"value": 130.48, "threshold": 0.1},
+          "standard_c_value" : {"value": 130.42, "threshold": 0.1},
           "std_pump_efficiency" : {"value": 60.4576, "threshold": 0.001},
 
           "hyd_power_bep75" :  {"value": 33.0878, "threshold": 0.0001},

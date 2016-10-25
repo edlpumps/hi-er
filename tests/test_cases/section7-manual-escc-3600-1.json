@@ -1,10 +1,10 @@
   { 
-        "name" : "Section 5, manual, ESCC - 3600 rpm - 1",
+        "name" : "Section 7, manual, ESCC - 3600 rpm - 1",
         "pump": {
           "auto":false,
           "doe": "ESCC",
           "speed" : 3600,
-          "section" : "5",
+          "section" : "7",
           "flow": {
             "bep75": 262.3728814,
             "bep100": 349.8305085,
@@ -15,14 +15,15 @@
             "bep100":424.4297616,
             "bep110":383.4760126
           },
-          "driver_input_power" :{
-            "bep75":49.2013, 
-            "bep100":51.414,
-            "bep110":51.808
+          "control_input_power" :{
+            "bep25":10.000,
+            "bep50":20, 
+            "bep75":42,
+            "bep100":51.414
           },
           "stages" : 1, 
           "diameter":10,
-          "pei" : 0.78,
+          "pei" : 0.47,
           "motor_regulated" : true,
           "motor_efficiency" : 97,
           "motor_power_rated" : 60
@@ -31,15 +32,17 @@
         "expected" : {
 
           "ns" : {"value": 720.0737, "threshold": 0.0001},
-          "standard_c_value" : {"value": 130.48, "threshold": 0.1},
-          
+          "standard_c_value" : {"value": 130.42, "threshold": 0.1},
           "default_motor_efficiency" : {"value": 93.6, "threshold": 0.1},
           "full_load_motor_losses" : {"value": 4.103, "threshold": 0.001},
           "std_pump_efficiency" : {"value": 60.458, "threshold": 0.01},
 
+
+
           "hyd_power_bep75" :  {"value": 33.09, "threshold": 0.01},
           "hyd_power_bep100" : {"value": 37.53, "threshold": 0.01},
           "hyd_power_bep110" : {"value": 37.30, "threshold": 0.01},
+
 
           "std_pump_power_input_bep75" :  {"value": 57.79, "threshold": 0.01},
           "std_pump_power_input_bep100" : {"value": 62.08, "threshold": 0.01},
@@ -91,10 +94,13 @@
 
           "pei_baseline" : {"value": 1.09, "threshold": 0.01},
 
-          "energy_rating" : {"value": 31, "threshold": 0.01},
+          "per_cl" : {"value": 30.854, "threshold": 0.001},
+          "per_std" : {"value": 65.646, "threshold": 0.001},
+
+          "energy_rating" : {"value": 62, "threshold": 0.01},
 
           "success" :{"value":true},
-          "section" :{"value":"5"}
+          "section" :{"value":"7"}
           
         }
 }

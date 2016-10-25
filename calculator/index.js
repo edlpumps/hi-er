@@ -209,11 +209,20 @@ var calc_motor_powers = function(pump, result) {
 }
 
 var calc_per_cl = function(pump) {
-    // Department of Energy standard specifies 0.3333 instead of full precision 1/3.
-    // The calculator must comply, even though this seems sub-optimal.
-    return ( pump.driver_input_power.bep75 
-                    + pump.driver_input_power.bep100        
-                    + pump.driver_input_power.bep110 ) * 0.3333;
+    if ( pump.control_input_power) {
+        return (    pump.control_input_power.bep25 + 
+                    pump.control_input_power.bep50 + 
+                    pump.control_input_power.bep75 + 
+                    pump.control_input_power.bep100 ) / 4;
+    }
+    else {
+        // Department of Energy standard specifies 0.3333 instead of full precision 1/3.
+        // The calculator must comply, even though this seems sub-optimal.
+        return ( pump.driver_input_power.bep75 
+                        + pump.driver_input_power.bep100        
+                        + pump.driver_input_power.bep110 ) * 0.3333;
+    }
+    
 }
 
 var section3_auto = function(pump) {
@@ -350,7 +359,7 @@ var section7_auto = function(pump) {
     section345_standard_common(pump, result);
     section345_baseline_common(pump, result);
 
-    
+
     result.per_vl = (result.control_input_power_bep25 + 
                      result.control_input_power_bep50 + 
                      result.control_input_power_bep75 +
@@ -369,7 +378,9 @@ var section7_auto = function(pump) {
 }
 
 
-var section345_manual = function(pump) {
+var manual_calculation = function(pump, set_point_threshold) {
+    var spt = set_point_threshold || 0.01;
+
     var result = {section:pump.section, success:true};
     
     result.ns = calc_ns(pump);
@@ -384,7 +395,7 @@ var section345_manual = function(pump) {
     section345_baseline_common(pump, result);
     
     var per_diff = result.per_std / result.per_std_calculated;
-    if ( per_diff > 1.01 || per_diff < 0.99){
+    if ( per_diff > (1+spt) || per_diff < (1-spt)){
         var target_pei = result.per_cl / result.per_std_calculated;
         result.success = false;
         result.reasons = [];
@@ -396,6 +407,8 @@ var section345_manual = function(pump) {
     calc_energy_rating(pump, result);
     return result;
 }
+
+
 
 
 
@@ -442,16 +455,16 @@ var common_checks = function(pump, manual){
     return missing
 }
 
-var manual_345_checks = function(pump, missing) {
-    if (!pump.motor_power_rated) missing.push("Pump rated motor power / nameplate rated motor power must be specified")
-    if (!pump.driver_input_power) missing.push("Driver input power @ 75%, 100%, and 110% BEP must be specified for Section 3 manual calculations");
-    if ( pump.driver_input_power ) {
-        if (!pump.driver_input_power.bep75 ) missing.push("Driver input power @ 75% BEP must be specified");
-        if (!pump.driver_input_power.bep100 ) missing.push("Driver input power @ 100% BEP must be specified");
-        if (!pump.driver_input_power.bep110 ) missing.push("Driver input power @ 110% BEP must be specified");
-    }
-}
 
+var check_control_input_power = function(pump, missing) {
+    if (!pump.control_input_power) missing.push("Control input power @ 25%, 50%, 75%, and 1000% BEP must be specified.");
+        if ( pump.control_input_power ) {
+            if (!pump.control_input_power.bep25 ) missing.push("Control input power @ 25% BEP must be specified");
+            if (!pump.control_input_power.bep50 ) missing.push("Control input power @ 50% BEP must be specified");
+            if (!pump.control_input_power.bep75 ) missing.push("Control input power @ 75% BEP must be specified");
+            if (!pump.control_input_power.bep100 ) missing.push("Control input power @ 100% BEP must be specified");
+        }
+}
 var check_driver_input_power = function(pump, missing) {
     if (!pump.driver_input_power) missing.push("Driver input power @ 75%, 100%, and 110% BEP must be specified.");
         if ( pump.driver_input_power ) {
@@ -486,37 +499,53 @@ var manual_calculators = {
     "3" : function(pump) {
         var missing = common_checks(pump, true);
 
-        manual_345_checks(pump, missing);
+        if (!pump.motor_power_rated) missing.push("Pump rated motor power / nameplate rated motor power must be specified")
+        check_driver_input_power(pump, missing);
 
         if ( missing.length > 0 ) {
             return build_error(missing, pump);
         }
 
-        return section345_manual(pump);
+        return manual_calculation(pump);
     },
     "4" : function(pump) {
         var missing = common_checks(pump, true);
 
-        manual_345_checks(pump, missing);
+        if (!pump.motor_power_rated) missing.push("Pump rated motor power / nameplate rated motor power must be specified")
+        check_driver_input_power(pump, missing);
         check_regulated_motor(pump, missing);
 
         if ( missing.length > 0 ) {
             return build_error(missing, pump);
         }
 
-        return section345_manual(pump);
+        return manual_calculation(pump);
     }, 
     "5" : function(pump) {
         var missing = common_checks(pump, true);
 
-        manual_345_checks(pump, missing);
+        if (!pump.motor_power_rated) missing.push("Pump rated motor power / nameplate rated motor power must be specified")
+        check_driver_input_power(pump, missing);
         check_regulated_motor(pump, missing);
 
         if ( missing.length > 0 ) {
             return build_error(missing, pump);
         }
 
-        return section345_manual(pump);
+        return manual_calculation(pump);
+    },
+    "7" : function(pump) {
+        var missing = common_checks(pump, true);
+
+        if (!pump.motor_power_rated) missing.push("Pump rated motor power / nameplate rated motor power must be specified")
+        check_control_input_power(pump, missing);
+        check_regulated_motor(pump, missing);
+
+        if ( missing.length > 0 ) {
+            return build_error(missing, pump);
+        }
+
+        return manual_calculation(pump, 0.02);
     }
 }
 
