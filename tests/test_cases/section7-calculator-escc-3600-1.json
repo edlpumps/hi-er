@@ -81,7 +81,49 @@
           "mc_part_load_loss_factor_bep50" : {"value": 0.7307, "threshold": 0.01},
           "mc_part_load_loss_factor_bep75" : {"value": 1.3120, "threshold": 0.01},
           "mc_part_load_loss_factor_bep100" : {"value": 2.0798, "threshold": 0.01},
+
+          "mc_part_load_loss_bep25" : {"value": 0.7691, "threshold": 0.01},
+          "mc_part_load_loss_bep50" : {"value": 1.3559, "threshold": 0.01},
+          "mc_part_load_loss_bep75" : {"value": 2.4346, "threshold": 0.01},
+          "mc_part_load_loss_bep100" : {"value": 3.8594, "threshold": 0.01},
+
+          "control_input_power_bep25" :{"value": 3.9824, "threshold": 0.01},
+          "control_input_power_bep50" :{"value": 11.6388, "threshold": 0.01},
+          "control_input_power_bep75" :{"value": 27.4991, "threshold": 0.01},
+          "control_input_power_bep100" :{"value": 55.2738, "threshold": 0.01},
           
+          "per_vl" : {"value": 24.5985, "threshold": 0.001},
+          "pei" : {"value":0.3790, "threshold" : 0.0001},
+
+
+          "baseline_c_value" : {"value": 135.94, "threshold": 0.01},
+          "baseline_pump_efficiency" : {"value": 54.9376, "threshold": 0.0001},
+
+          "baseline_pump_power_input_bep75" :  {"value": 63.5988, "threshold": 0.0001},
+          "baseline_pump_power_input_bep100" : {"value": 68.3184, "threshold": 0.0001},
+          "baseline_pump_power_input_bep110" : {"value": 68.9329, "threshold": 0.0001},
+
+          "baseline_motor_power_ratio_bep75" :  {"value": 1.0000, "threshold": 0.0001},
+          "baseline_motor_power_ratio_bep100" : {"value": 1.0000, "threshold": 0.0001},
+          "baseline_motor_power_ratio_bep110" : {"value": 1.0000, "threshold": 0.0001},
+
+          "baseline_part_load_loss_factor_bep75" :  {"value": 1.0000, "threshold": 0.0001},
+          "baseline_part_load_loss_factor_bep100" : {"value": 1.0000, "threshold": 0.0001},
+          "baseline_part_load_loss_factor_bep110" : {"value": 1.0000, "threshold": 0.0001},
+
+          "baseline_part_load_loss_bep75" :  {"value": 4.1026, "threshold": 0.0001},
+          "baseline_part_load_loss_bep100" : {"value": 4.1026, "threshold": 0.0001},
+          "baseline_part_load_loss_bep110" : {"value": 4.1026, "threshold": 0.0001},
+
+          "baseline_driver_power_input_bep75" :  {"value": 67.7014, "threshold": 0.01},
+          "baseline_driver_power_input_bep100" : {"value": 72.4210, "threshold": 0.01},
+          "baseline_driver_power_input_bep110" : {"value": 73.0355, "threshold": 0.01},
+
+          "per_baseline_calculated" :  {"value": 71.0455, "threshold": 0.0001},
+          "pei_baseline" : {"value": 1.0947, "threshold": 0.0001},
+
+          "energy_rating" : {"value": 72, "threshold": 0.01},
+
           "success" :{"value":true}
         }
 }

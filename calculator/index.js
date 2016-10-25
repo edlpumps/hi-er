@@ -305,6 +305,7 @@ var section7_auto = function(pump) {
     result.vl_pump_power_input_bep25 = ppi(flow, power, 0.25);
     result.vl_pump_power_input_bep50 = ppi(flow, power, 0.50);
     result.vl_pump_power_input_bep75 = ppi(flow, power, 0.75);
+    result.vl_pump_power_input_bep100 = pump.pump_input_power.bep100;
     /////////////////////////////////////////////////////////
 
     /////////////////////////////////////////////////////////
@@ -324,20 +325,42 @@ var section7_auto = function(pump) {
     result.mc_loss_coef_c = loss_coeffs.c;
     /////////////////////////////////////////////////////////
 
-    
-    result.mc_part_load_loss_factor_bep100 = poly3(loss_coeffs, result.pump_power_input_motor_power_ratio_bep100);
+
     result.mc_part_load_loss_factor_bep25 = poly3(loss_coeffs, result.vl_pump_power_input_motor_power_ratio_bep25);
     result.mc_part_load_loss_factor_bep50 = poly3(loss_coeffs, result.vl_pump_power_input_motor_power_ratio_bep50);
     result.mc_part_load_loss_factor_bep75 = poly3(loss_coeffs, result.vl_pump_power_input_motor_power_ratio_bep75);
+    result.mc_part_load_loss_factor_bep100 = poly3(loss_coeffs, result.pump_power_input_motor_power_ratio_bep100);
+    
+    var loss = result.full_load_motor_losses;
+    if ( pump.motor_efficiency ) {
+      loss = result.nameplate_full_load_motor_losses;
+    }
+   
+    result.mc_part_load_loss_bep25 = result.mc_part_load_loss_factor_bep25 * loss;
+    result.mc_part_load_loss_bep50 = result.mc_part_load_loss_factor_bep50 * loss;
+    result.mc_part_load_loss_bep75 = result.mc_part_load_loss_factor_bep75 * loss;
+    result.mc_part_load_loss_bep100 = result.mc_part_load_loss_factor_bep100 * loss;
 
-    
-    
+    result.control_input_power_bep25 = result.mc_part_load_loss_bep25 + result.vl_pump_power_input_bep25;
+    result.control_input_power_bep50 = result.mc_part_load_loss_bep50 + result.vl_pump_power_input_bep50;
+    result.control_input_power_bep75 = result.mc_part_load_loss_bep75 + result.vl_pump_power_input_bep75;
+    result.control_input_power_bep100 = result.mc_part_load_loss_bep100 + result.vl_pump_power_input_bep100;
+
     result.standard_c_value = lookup_standard_c_value(pump);
-    result.per_cl = calc_per_cl(pump);
     section345_standard_common(pump, result);
     section345_baseline_common(pump, result);
 
-    result.pei = pump.pei = result.per_cl / result.per_std_calculated;
+    
+    result.per_vl = (result.control_input_power_bep25 + 
+                     result.control_input_power_bep50 + 
+                     result.control_input_power_bep75 +
+                     result.control_input_power_bep100) / 4.0
+   
+    result.pei = pump.pei = result.per_vl / result.per_std_calculated;
+    
+    
+
+    
 
     calc_energy_rating(pump, result);
    
