@@ -102,6 +102,10 @@ router.get("/pumps/new", function(req, res){
 
 router.post("/pumps/new", function(req, res){
     var pump = req.body;
+    console.log("------------------");
+    console.log("Getting pump from New Form");
+    console.log(pump);
+    console.log("------------------");
     if ( !pump ) {
         req.flash("errorTitle", "Internal application error");
         req.flash("errorMessage", "Pump cannot be created - required information is missing.");

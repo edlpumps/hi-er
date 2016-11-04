@@ -269,9 +269,7 @@ var PEIController = function($scope, $location, $window, service) {
       }
 
       vm.pump.load120 = true; 
-      vm.pump.speed = 3600;
       vm.pump.doe = {value:"RSV"};
-      vm.pump.stages = 9
       vm.pump.flow = {
         "bep75": 262.3,//72881355932,
         "bep100": 349.8,//30508474576,

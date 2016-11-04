@@ -18,7 +18,9 @@ var pei_baselines = {
 router.post('/api/calculate', function(req, res){
     var pump = req.body.pump;
     pump.doe = pump.doe.value;
-
+    console.log("--------------");
+    console.log(pump.stages);
+    console.log("==============");
     if ( pump.flow ) {
         if ( pump.load120) {
             pump.flow.bep75 = pump.flow.bep100 * 0.75;
@@ -29,38 +31,13 @@ router.post('/api/calculate', function(req, res){
             pump.flow.bep110 = pump.flow.bep100 /0.9;
         }
     }
-    // limited support - only section 3.
-    if (req.body.pump.section=="3") {
-        
-        var calculator = require("../calculator");
-        var results = calculator.calculate(pump);
-        res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify(results));
-        console.log(pump.flow);
-        console.log(pump.head);
-        console.log(results);
-        
-        return;
-    }
-
+      
+    var calculator = require("../calculator");
+    var results = calculator.calculate(pump);
     res.setHeader('Content-Type', 'application/json');
-    var pei = req.body.pump.pei || 0.86;
-    var baseline = pei_baselines[pump.doe][req.body.pump.speed/1800-1];
-    var er = ((baseline - pei) * 100);
-    var power = req.body.pump.motor_power_rated || 200;
-    var es = (er / 100 * power).toFixed(0);
-    er = er.toFixed(0);
-
-
-    
-
-    res.end(JSON.stringify({ 
-        pei: pei,
-        energy_rating: er, 
-        energy_savings: es, 
-        pei_baseline : baseline,
-        success : true
-    }));
+    res.end(JSON.stringify(results));
+    console.log(JSON.stringify(pump, null, '\t'));
+    console.log(results);
 })
 
 module.exports = router;
