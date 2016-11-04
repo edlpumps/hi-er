@@ -89,10 +89,10 @@
 
           "per_std_calculated" : {"value": 66.2620, "threshold": 0.0001},
 
-          "control_input_power_bep25" :{"value": 10.0869, "threshold": 0.01},
-          "control_input_power_bep50" :{"value": 20.5783, "threshold": 0.01},
-          "control_input_power_bep75" :{"value": 45.8536, "threshold": 0.01},
-          "control_input_power_bep100" :{"value": 51.4144, "threshold": 0.01},
+          "control_power_input_bep25" :{"value": 10.0869, "threshold": 0.01},
+          "control_power_input_bep50" :{"value": 20.5783, "threshold": 0.01},
+          "control_power_input_bep75" :{"value": 45.8536, "threshold": 0.01},
+          "control_power_input_bep100" :{"value": 51.4144, "threshold": 0.01},
 
           "per_vl" : {"value": 31.9833, "threshold": 0.001},
           "pei" : {"value":0.4827, "threshold" : 0.0001},

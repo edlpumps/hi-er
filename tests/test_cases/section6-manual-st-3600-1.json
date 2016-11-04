@@ -15,7 +15,7 @@
             "bep100":424.4297616,
             "bep110":383.4760126
           },
-          "control_input_power" :{
+          "control_power_input" :{
             "bep25":10.000,
             "bep50":20, 
             "bep75":42,

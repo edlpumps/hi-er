@@ -86,10 +86,10 @@
           "mc_part_load_loss_bep75" : {"value": 16.8440, "threshold": 0.01},
           "mc_part_load_loss_bep100" : {"value": 21.8775, "threshold": 0.01},
 
-          "control_input_power_bep25" :{"value": 7.9165, "threshold": 0.01},
-          "control_input_power_bep50" :{"value": 19.7040, "threshold": 0.01},
-          "control_input_power_bep75" :{"value": 41.9085, "threshold": 0.01},
-          "control_input_power_bep100" :{"value": 73.2919, "threshold": 0.01},
+          "control_power_input_bep25" :{"value": 7.9165, "threshold": 0.01},
+          "control_power_input_bep50" :{"value": 19.7040, "threshold": 0.01},
+          "control_power_input_bep75" :{"value": 41.9085, "threshold": 0.01},
+          "control_power_input_bep100" :{"value": 73.2919, "threshold": 0.01},
           
           "per_vl" : {"value": 35.7052, "threshold": 0.001},
           "pei" : {"value":0.5397, "threshold" : 0.0001},

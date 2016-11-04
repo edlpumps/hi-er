@@ -209,11 +209,11 @@ var calc_motor_powers = function(pump, result) {
 }
 
 var calc_per_cl = function(pump) {
-    if ( pump.control_input_power) {
-        return (    pump.control_input_power.bep25 + 
-                    pump.control_input_power.bep50 + 
-                    pump.control_input_power.bep75 + 
-                    pump.control_input_power.bep100 ) / 4;
+    if ( pump.control_power_input) {
+        return (    pump.control_power_input.bep25 + 
+                    pump.control_power_input.bep50 + 
+                    pump.control_power_input.bep75 + 
+                    pump.control_power_input.bep100 ) / 4;
     }
     else {
         // Department of Energy standard specifies 0.3333 instead of full precision 1/3.
@@ -303,15 +303,15 @@ var section6a_auto = function(pump) {
 
     var targets = calc_target_inputs(pump);
     
-    result.control_input_power_bep25 = (targets.head_25 / pump.measured_control_head_input.bep25) * (targets.flow_25 / pump.measured_control_flow_input.bep25) * pump.measured_control_power_input.bep25;
-    result.control_input_power_bep50 = (targets.head_50 / pump.measured_control_head_input.bep50) * (targets.flow_50 / pump.measured_control_flow_input.bep50) * pump.measured_control_power_input.bep50;
-    result.control_input_power_bep75 = (targets.head_75 / pump.measured_control_head_input.bep75) * (targets.flow_75 / pump.measured_control_flow_input.bep75) * pump.measured_control_power_input.bep75;
-    result.control_input_power_bep100 = pump.measured_control_power_input.bep100;
+    result.control_power_input_bep25 = (targets.head_25 / pump.measured_control_head_input.bep25) * (targets.flow_25 / pump.measured_control_flow_input.bep25) * pump.measured_control_power_input.bep25;
+    result.control_power_input_bep50 = (targets.head_50 / pump.measured_control_head_input.bep50) * (targets.flow_50 / pump.measured_control_flow_input.bep50) * pump.measured_control_power_input.bep50;
+    result.control_power_input_bep75 = (targets.head_75 / pump.measured_control_head_input.bep75) * (targets.flow_75 / pump.measured_control_flow_input.bep75) * pump.measured_control_power_input.bep75;
+    result.control_power_input_bep100 = pump.measured_control_power_input.bep100;
 
-    result.per_vl = (result.control_input_power_bep25 + 
-                     result.control_input_power_bep50 + 
-                     result.control_input_power_bep75 +
-                     result.control_input_power_bep100) / 4.0
+    result.per_vl = (result.control_power_input_bep25 + 
+                     result.control_power_input_bep50 + 
+                     result.control_power_input_bep75 +
+                     result.control_power_input_bep100) / 4.0
    
     result.pei = pump.pei = result.per_vl / result.per_std_calculated;
     calc_energy_rating(pump, result);
@@ -333,21 +333,21 @@ var section6b_auto = function(pump) {
     var targets = calc_target_inputs(pump);
     //,IF(W6>0,(1*(S6/R6)*X6),(V6/U6)*(S6/R6)*X6)))
     if (pump.measured_control_head_input.bep25 - targets.head_25 > 0 ) {
-        result.control_input_power_bep25 = (targets.flow_25/pump.measured_control_flow_input.bep25) * pump.measured_control_power_input.bep25;
+        result.control_power_input_bep25 = (targets.flow_25/pump.measured_control_flow_input.bep25) * pump.measured_control_power_input.bep25;
     }
     else {
-        result.control_input_power_bep25 = (targets.head_25 / pump.measured_control_head_input.bep25)*(targets.flow_25/pump.measured_control_flow_input.bep25)* pump.measured_control_power_input.bep25;
+        result.control_power_input_bep25 = (targets.head_25 / pump.measured_control_head_input.bep25)*(targets.flow_25/pump.measured_control_flow_input.bep25)* pump.measured_control_power_input.bep25;
     }
 
     if (pump.measured_control_head_input.bep50 - targets.head_50 > 0 ) {
-        result.control_input_power_bep50 = (targets.flow_50/pump.measured_control_flow_input.bep50) * pump.measured_control_power_input.bep50;
+        result.control_power_input_bep50 = (targets.flow_50/pump.measured_control_flow_input.bep50) * pump.measured_control_power_input.bep50;
     }
     else {
-        result.control_input_power_bep50 = (targets.head_50 / pump.measured_control_head_input.bep50)*(targets.flow_50/pump.measured_control_flow_input.bep50)* pump.measured_control_power_input.bep50;
+        result.control_power_input_bep50 = (targets.head_50 / pump.measured_control_head_input.bep50)*(targets.flow_50/pump.measured_control_flow_input.bep50)* pump.measured_control_power_input.bep50;
     }
     //,IF(AK6>0,(1*(AG6/AF6)*AL6),   (AJ6/AI6)*(AG6/AF6)*AL6)))
     if (pump.measured_control_head_input.bep75 - targets.head_75 > 0 ) {
-        result.control_input_power_bep75 = (targets.flow_75/pump.measured_control_flow_input.bep75) * pump.measured_control_power_input.bep75;
+        result.control_power_input_bep75 = (targets.flow_75/pump.measured_control_flow_input.bep75) * pump.measured_control_power_input.bep75;
     }
     else {
         console.log(targets.head_75);
@@ -355,16 +355,16 @@ var section6b_auto = function(pump) {
         console.log(targets.flow_75);
         console.log(pump.measured_control_flow_input.bep75);
         console.log(pump.measured_control_power_input.bep75);
-        result.control_input_power_bep75 = (targets.head_75 / pump.measured_control_head_input.bep75)*(targets.flow_75/pump.measured_control_flow_input.bep75)* pump.measured_control_power_input.bep75;
-        console.log(result.control_input_power_bep75);
+        result.control_power_input_bep75 = (targets.head_75 / pump.measured_control_head_input.bep75)*(targets.flow_75/pump.measured_control_flow_input.bep75)* pump.measured_control_power_input.bep75;
+        console.log(result.control_power_input_bep75);
         
     }
-    result.control_input_power_bep100 = pump.measured_control_power_input.bep100;
+    result.control_power_input_bep100 = pump.measured_control_power_input.bep100;
 
-    result.per_vl = (result.control_input_power_bep25 + 
-                     result.control_input_power_bep50 + 
-                     result.control_input_power_bep75 +
-                     result.control_input_power_bep100) / 4.0
+    result.per_vl = (result.control_power_input_bep25 + 
+                     result.control_power_input_bep50 + 
+                     result.control_power_input_bep75 +
+                     result.control_power_input_bep100) / 4.0
    
     result.pei = pump.pei = result.per_vl / result.per_std_calculated;
     calc_energy_rating(pump, result);
@@ -434,20 +434,20 @@ var section7_auto = function(pump) {
     result.mc_part_load_loss_bep75 = result.mc_part_load_loss_factor_bep75 * loss;
     result.mc_part_load_loss_bep100 = result.mc_part_load_loss_factor_bep100 * loss;
 
-    result.control_input_power_bep25 = result.mc_part_load_loss_bep25 + result.vl_pump_power_input_bep25;
-    result.control_input_power_bep50 = result.mc_part_load_loss_bep50 + result.vl_pump_power_input_bep50;
-    result.control_input_power_bep75 = result.mc_part_load_loss_bep75 + result.vl_pump_power_input_bep75;
-    result.control_input_power_bep100 = result.mc_part_load_loss_bep100 + result.vl_pump_power_input_bep100;
+    result.control_power_input_bep25 = result.mc_part_load_loss_bep25 + result.vl_pump_power_input_bep25;
+    result.control_power_input_bep50 = result.mc_part_load_loss_bep50 + result.vl_pump_power_input_bep50;
+    result.control_power_input_bep75 = result.mc_part_load_loss_bep75 + result.vl_pump_power_input_bep75;
+    result.control_power_input_bep100 = result.mc_part_load_loss_bep100 + result.vl_pump_power_input_bep100;
 
     result.standard_c_value = lookup_standard_c_value(pump);
     section345_standard_common(pump, result);
     section345_baseline_common(pump, result);
 
 
-    result.per_vl = (result.control_input_power_bep25 + 
-                     result.control_input_power_bep50 + 
-                     result.control_input_power_bep75 +
-                     result.control_input_power_bep100) / 4.0
+    result.per_vl = (result.control_power_input_bep25 + 
+                     result.control_power_input_bep50 + 
+                     result.control_power_input_bep75 +
+                     result.control_power_input_bep100) / 4.0
    
     result.pei = pump.pei = result.per_vl / result.per_std_calculated;
     
@@ -542,13 +542,13 @@ var common_checks = function(pump, manual){
 }
 
 
-var check_control_input_power = function(pump, missing) {
-    if (!pump.control_input_power) missing.push("Control input power @ 25%, 50%, 75%, and 1000% BEP must be specified.");
-        if ( pump.control_input_power ) {
-            if (!pump.control_input_power.bep25 ) missing.push("Control input power @ 25% BEP must be specified");
-            if (!pump.control_input_power.bep50 ) missing.push("Control input power @ 50% BEP must be specified");
-            if (!pump.control_input_power.bep75 ) missing.push("Control input power @ 75% BEP must be specified");
-            if (!pump.control_input_power.bep100 ) missing.push("Control input power @ 100% BEP must be specified");
+var check_control_power_input = function(pump, missing) {
+    if (!pump.control_power_input) missing.push("Control input power @ 25%, 50%, 75%, and 100% BEP must be specified.");
+        if ( pump.control_power_input ) {
+            if (!pump.control_power_input.bep25 ) missing.push("Control input power @ 25% BEP must be specified");
+            if (!pump.control_power_input.bep50 ) missing.push("Control input power @ 50% BEP must be specified");
+            if (!pump.control_power_input.bep75 ) missing.push("Control input power @ 75% BEP must be specified");
+            if (!pump.control_power_input.bep100 ) missing.push("Control input power @ 100% BEP must be specified");
         }
 }
 var check_driver_input_power = function(pump, missing) {
@@ -667,6 +667,10 @@ var check_measured_inputs = function(pump, missing) {
 }
 
 var check_regulated_motor = function(pump, missing) {
+    if ( pump.doe == "ST") {
+        pump.motor_regulated = undefined;
+        return;
+    }
     if (pump.motor_regulated === undefined) {
         missing.push("Pump specification must include true/false if motor is regulated.")
     }
@@ -681,7 +685,7 @@ var section_6_manual_entry = function(pump){
     var missing = common_checks(pump, true);
 
     if (!pump.motor_power_rated) missing.push("Pump rated motor power / nameplate rated motor power must be specified")
-    check_control_input_power(pump, missing);
+    check_control_power_input(pump, missing);
     check_regulated_motor(pump, missing);
 
     if ( missing.length > 0 ) {
@@ -737,7 +741,7 @@ var manual_calculators = {
         var missing = common_checks(pump, true);
 
         if (!pump.motor_power_rated) missing.push("Pump rated motor power / nameplate rated motor power must be specified")
-        check_control_input_power(pump, missing);
+        check_control_power_input(pump, missing);
         check_regulated_motor(pump, missing);
 
         if ( missing.length > 0 ) {

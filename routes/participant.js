@@ -73,11 +73,9 @@ router.get("/pumps/new", function(req, res){
 
     
     pump.configuration = {value:"bare"};
-    pump.diameter = 10;
     pump.laboratory = "TEST LAB"
     pump.basic_model = "PRE.SET.00";
     pump.doe = {value:"RSV"};
-    pump.stages = 9
     pump.flow = {
             "bep75": 262.3,//72881355932,
             "bep100": 349.8,//30508474576,
