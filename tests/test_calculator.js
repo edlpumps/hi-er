@@ -48,7 +48,7 @@ var test_runner = function(tests) {
             expect(test.result[value_to_test]).to.be.closeTo( target.value, target.threshold, " Value of " + value_to_test + " is " + test.result[value_to_test]);
           }
           else {
-            assert(test.result[value_to_test] == target.value, " Value of " + value_to_test + " is " + test.result[value_to_test]);
+            assert(test.result[value_to_test] === target.value, " Value of " + value_to_test + " is " + test.result[value_to_test]);
           }
         });
       }

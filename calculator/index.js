@@ -289,6 +289,37 @@ var section5_auto = function(pump) {
     return result;
 }
 
+var section6a_auto = function(pump) {
+    var result = {section:"6a", success:true};
+    
+    result.ns = calc_ns(pump);
+    result.default_motor_efficiency = lookup_default_motor_efficiency(pump, pump.motor_power_rated);
+    result.full_load_motor_losses = calc_full_load_motor_losses(pump, result);
+    
+    result.standard_c_value = lookup_standard_c_value(pump);
+    
+    section345_standard_common(pump, result);
+    section345_baseline_common(pump, result);
+
+    var targets = calc_target_inputs(pump);
+    
+    result.control_input_power_bep25 = (targets.head_25 / pump.measured_control_head_input.bep25) * (targets.flow_25 / pump.measured_control_flow_input.bep25) * pump.measured_control_power_input.bep25;
+    result.control_input_power_bep50 = (targets.head_50 / pump.measured_control_head_input.bep50) * (targets.flow_50 / pump.measured_control_flow_input.bep50) * pump.measured_control_power_input.bep50;
+    result.control_input_power_bep75 = (targets.head_75 / pump.measured_control_head_input.bep75) * (targets.flow_75 / pump.measured_control_flow_input.bep75) * pump.measured_control_power_input.bep75;
+    result.control_input_power_bep100 = pump.measured_control_power_input.bep100;
+
+    result.per_vl = (result.control_input_power_bep25 + 
+                     result.control_input_power_bep50 + 
+                     result.control_input_power_bep75 +
+                     result.control_input_power_bep100) / 4.0
+   
+    result.pei = pump.pei = result.per_vl / result.per_std_calculated;
+    calc_energy_rating(pump, result);
+    return result;
+}
+
+
+
 var section7_auto = function(pump) {
     var result = {section:"7", success:true};
     
@@ -486,6 +517,94 @@ var check_pump_input_power = function(pump, missing, test_120) {
     }
 }
 
+
+
+var calc_target_inputs = function(pump) {
+    return  {
+        flow_25 : pump.flow.bep100 * 0.25, 
+        flow_50 : pump.flow.bep100 * 0.50,
+        flow_75 : pump.flow.bep100 * 0.75,
+        head_25 : (0.8 * Math.pow(pump.flow.bep100 * 0.25, 2) / Math.pow(pump.flow.bep100, 2) + 0.2) * pump.head.bep100,
+        head_50 : (0.8 * Math.pow(pump.flow.bep100 * 0.50, 2) / Math.pow(pump.flow.bep100, 2) + 0.2) * pump.head.bep100,
+        head_75 : (0.8 * Math.pow(pump.flow.bep100 * 0.75, 2) / Math.pow(pump.flow.bep100, 2) + 0.2) * pump.head.bep100        
+    }
+}
+var check_measured_inputs = function(pump, missing) {
+    if (!pump.measured_control_power_input) missing.push("Measured control power input @ 25%, 50%, 75%, and 100% BEP must be specified.");
+    if ( pump.measured_control_power_input ) {
+        if (!pump.measured_control_power_input.bep25 ) missing.push("Measured control power input @ 25% BEP must be specified");
+        if (!pump.measured_control_power_input.bep50 ) missing.push("Measured control power input @ 50% BEP must be specified");
+        if (!pump.measured_control_power_input.bep75 ) missing.push("Measured control power input @ 75%BEP must be specified");
+        if (!pump.measured_control_power_input.bep100 ) missing.push("Measured control power input @ 100%BEP must be specified");
+    }
+
+    if (!pump.measured_control_flow_input) missing.push("Measured control flow input @ 25%, 50%, 75%, and 100% BEP must be specified.");
+    if ( pump.measured_control_flow_input ) {
+        if (!pump.measured_control_flow_input.bep25 ) missing.push("Measured control flow input @ 25% BEP must be specified");
+        if (!pump.measured_control_flow_input.bep50 ) missing.push("Measured control flow input @ 50% BEP must be specified");
+        if (!pump.measured_control_flow_input.bep75 ) missing.push("Measured control flow input @ 75%BEP must be specified");
+        if (!pump.measured_control_flow_input.bep100 ) missing.push("Measured control flow input @ 100%BEP must be specified");
+    }
+
+    if (!pump.measured_control_head_input) missing.push("Measured control head input @ 25%, 50%, 75%, and 100% BEP must be specified.");
+    if ( pump.measured_control_head_input ) {
+        if (!pump.measured_control_head_input.bep25 ) missing.push("Measured control head input @ 25% BEP must be specified");
+        if (!pump.measured_control_head_input.bep50 ) missing.push("Measured control head input @ 50% BEP must be specified");
+        if (!pump.measured_control_head_input.bep75 ) missing.push("Measured control head input @ 75%BEP must be specified");
+        if (!pump.measured_control_head_input.bep100 ) missing.push("Measured control head input @ 100%BEP must be specified");
+    }
+
+    if ( missing.length > 0 ) return;
+
+    var checks = [];
+    var targets = calc_target_inputs(pump);
+    checks.push ({
+       target:  targets.flow_25,
+       value : pump.measured_control_flow_input.bep25, 
+       message : "Measured flow @25% BEP must be within 10% of calculated flow based on 100% BEP"
+    });
+    checks.push ({
+       target:  targets.flow_50,
+       value : pump.measured_control_flow_input.bep50, 
+       message : "Measured flow @50% BEP must be within 10% of calculated flow based on 100% BEP"
+    });
+    checks.push ({
+       target:  targets.flow_75,
+       value : pump.measured_control_flow_input.bep75, 
+       message : "Measured flow @75% BEP must be within 10% of calculated flow based on 100% BEP"
+    });
+
+    //////////////////////////////////////////
+    checks.push ({
+       target:  targets.head_25,
+       value : pump.measured_control_head_input.bep25, 
+       message : "Measured head @25% BEP must be within 10% of calculated flow based on 100% BEP"
+    });
+    checks.push ({
+       target:  targets.head_50,
+       value : pump.measured_control_head_input.bep50, 
+       message : "Measured head @50% BEP must be within 10% of calculated flow based on 100% BEP"
+    });
+    checks.push ({
+       target:  targets.head_75,
+       value : pump.measured_control_head_input.bep75, 
+       message : "Measured head @75% BEP must be within 10% of calculated flow based on 100% BEP"
+    });
+
+   
+
+    checks.forEach(function(check) {
+        if (Math.abs(check.target - check.value)/check.target > 0.1) {
+            console.log(check);
+            
+            missing.push(check.message);
+            return;
+        }
+    });
+
+    
+}
+
 var check_regulated_motor = function(pump, missing) {
     if (pump.motor_regulated === undefined) {
         missing.push("Pump specification must include true/false if motor is regulated.")
@@ -604,6 +723,17 @@ var auto_calculators = {
 
         return section5_auto(pump);
     }, 
+    "6a" : function(pump) {
+        var missing = common_checks(pump);
+
+        check_measured_inputs(pump, missing, false);
+        
+        if ( missing.length > 0 ) {
+            return build_error(missing, pump);
+        }
+
+        return section6a_auto(pump);
+    },
     "7" : function(pump) {
         var missing = common_checks(pump);
 
