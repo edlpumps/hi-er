@@ -1,10 +1,10 @@
 { 
-        "name" : "Section 6a, calculator, SY - 3600 rpm - 1",
+        "name" : "Section 6b, calculator, ST - 3600 rpm - 1",
         "pump": {
           "auto":true,
           "doe": "ST",
           "speed" : 3600,
-          "section" : "6a",
+          "section" : "6b",
           "flow": {
             "bep75": 262.3729,
             "bep100": 349.8305,
@@ -30,7 +30,7 @@
           "measured_control_head_input" : {
             "bep25":100,
             "bep50":175, 
-            "bep75":280,
+            "bep75":260,
             "bep100":424.4298
           },
           "stages" : 9, 
@@ -42,7 +42,7 @@
         }, 
         "expected" : {
           
-          "section" :{"value":"6a"},
+          "section" :{"value":"6b"},
           
           "set_point_error_flow_25": false,
           "set_point_error_flow_50": false,
@@ -90,12 +90,12 @@
           "per_std_calculated" : {"value": 66.2620, "threshold": 0.0001},
 
           "control_input_power_bep25" :{"value": 10.0869, "threshold": 0.01},
-          "control_input_power_bep50" :{"value": 19.9635, "threshold": 0.01},
-          "control_input_power_bep75" :{"value": 42.5784, "threshold": 0.01},
+          "control_input_power_bep50" :{"value": 20.5783, "threshold": 0.01},
+          "control_input_power_bep75" :{"value": 45.8536, "threshold": 0.01},
           "control_input_power_bep100" :{"value": 51.4144, "threshold": 0.01},
 
-          "per_vl" : {"value": 31.0108, "threshold": 0.001},
-          "pei" : {"value":0.4680, "threshold" : 0.0001},
+          "per_vl" : {"value": 31.9833, "threshold": 0.001},
+          "pei" : {"value":0.4827, "threshold" : 0.0001},
 
 
           "baseline_c_value" : {"value": 138.78, "threshold": 0.01},
@@ -124,7 +124,7 @@
           "per_baseline_calculated" :  {"value": 70.0478, "threshold": 0.0001},
           "pei_baseline" : {"value": 1.0571, "threshold": 0.0001},
 
-          "energy_rating" : {"value": 59, "threshold": 0.01},
+          "energy_rating" : {"value": 57, "threshold": 0.01},
 
 
           "success" :{"value":true}

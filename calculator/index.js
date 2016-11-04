@@ -318,6 +318,59 @@ var section6a_auto = function(pump) {
     return result;
 }
 
+var section6b_auto = function(pump) {
+    var result = {section:"6b", success:true};
+    
+    result.ns = calc_ns(pump);
+    result.default_motor_efficiency = lookup_default_motor_efficiency(pump, pump.motor_power_rated);
+    result.full_load_motor_losses = calc_full_load_motor_losses(pump, result);
+    
+    result.standard_c_value = lookup_standard_c_value(pump);
+    
+    section345_standard_common(pump, result);
+    section345_baseline_common(pump, result);
+
+    var targets = calc_target_inputs(pump);
+    //,IF(W6>0,(1*(S6/R6)*X6),(V6/U6)*(S6/R6)*X6)))
+    if (pump.measured_control_head_input.bep25 - targets.head_25 > 0 ) {
+        result.control_input_power_bep25 = (targets.flow_25/pump.measured_control_flow_input.bep25) * pump.measured_control_power_input.bep25;
+    }
+    else {
+        result.control_input_power_bep25 = (targets.head_25 / pump.measured_control_head_input.bep25)*(targets.flow_25/pump.measured_control_flow_input.bep25)* pump.measured_control_power_input.bep25;
+    }
+
+    if (pump.measured_control_head_input.bep50 - targets.head_50 > 0 ) {
+        result.control_input_power_bep50 = (targets.flow_50/pump.measured_control_flow_input.bep50) * pump.measured_control_power_input.bep50;
+    }
+    else {
+        result.control_input_power_bep50 = (targets.head_50 / pump.measured_control_head_input.bep50)*(targets.flow_50/pump.measured_control_flow_input.bep50)* pump.measured_control_power_input.bep50;
+    }
+    //,IF(AK6>0,(1*(AG6/AF6)*AL6),   (AJ6/AI6)*(AG6/AF6)*AL6)))
+    if (pump.measured_control_head_input.bep75 - targets.head_75 > 0 ) {
+        result.control_input_power_bep75 = (targets.flow_75/pump.measured_control_flow_input.bep75) * pump.measured_control_power_input.bep75;
+    }
+    else {
+        console.log(targets.head_75);
+        console.log(pump.measured_control_head_input.bep75)
+        console.log(targets.flow_75);
+        console.log(pump.measured_control_flow_input.bep75);
+        console.log(pump.measured_control_power_input.bep75);
+        result.control_input_power_bep75 = (targets.head_75 / pump.measured_control_head_input.bep75)*(targets.flow_75/pump.measured_control_flow_input.bep75)* pump.measured_control_power_input.bep75;
+        console.log(result.control_input_power_bep75);
+        
+    }
+    result.control_input_power_bep100 = pump.measured_control_power_input.bep100;
+
+    result.per_vl = (result.control_input_power_bep25 + 
+                     result.control_input_power_bep50 + 
+                     result.control_input_power_bep75 +
+                     result.control_input_power_bep100) / 4.0
+   
+    result.pei = pump.pei = result.per_vl / result.per_std_calculated;
+    calc_energy_rating(pump, result);
+    return result;
+}
+
 
 
 var section7_auto = function(pump) {
@@ -592,15 +645,23 @@ var check_measured_inputs = function(pump, missing) {
     });
 
    
-
-    checks.forEach(function(check) {
-        if (Math.abs(check.target - check.value)/check.target > 0.1) {
-            console.log(check);
-            
-            missing.push(check.message);
-            return;
-        }
-    });
+    if ( pump.section=="6a") {
+        checks.forEach(function(check) {
+            if (Math.abs(check.value - check.target)/check.target > 0.1) {
+                missing.push(check.message);
+                return checks;
+            }
+        });
+    }
+    else if ( pump.section=="6b"){
+        checks.forEach(function(check) {
+            console.log(check.target);
+            if ((check.value - check.target)/check.target < -0.1) {
+                missing.push(check.message);
+                return checks;
+            }
+        });
+    }
 
     
 }
@@ -733,6 +794,17 @@ var auto_calculators = {
         }
 
         return section6a_auto(pump);
+    },
+    "6b" : function(pump) {
+        var missing = common_checks(pump);
+
+        check_measured_inputs(pump, missing, false);
+        
+        if ( missing.length > 0 ) {
+            return build_error(missing, pump);
+        }
+
+        return section6b_auto(pump);
     },
     "7" : function(pump) {
         var missing = common_checks(pump);
