@@ -409,9 +409,6 @@ var manual_calculation = function(pump, set_point_threshold) {
 }
 
 
-
-
-
 exports.calculate = function(pump) {
     if ( !pump ) {
         return build_error("Pump object must be specified");
@@ -420,6 +417,11 @@ exports.calculate = function(pump) {
         return auto_calculators[pump.section](pump);
     }
     else {
+        if (!manual_calculators[pump.section]) {
+            console.log("Failed to locate calculator for section " + pump.section);
+            console.log(manual_calculators);
+            return {};
+        }
         return manual_calculators[pump.section](pump);
     }
 }
@@ -495,6 +497,20 @@ var check_regulated_motor = function(pump, missing) {
     }
 }
 
+var section_6_manual_entry = function(pump){
+    var missing = common_checks(pump, true);
+
+    if (!pump.motor_power_rated) missing.push("Pump rated motor power / nameplate rated motor power must be specified")
+    check_control_input_power(pump, missing);
+    check_regulated_motor(pump, missing);
+
+    if ( missing.length > 0 ) {
+        return build_error(missing, pump);
+    }
+
+    return manual_calculation(pump, 0.02);
+}
+
 var manual_calculators = {
     "3" : function(pump) {
         var missing = common_checks(pump, true);
@@ -534,6 +550,9 @@ var manual_calculators = {
 
         return manual_calculation(pump);
     },
+    "6" : section_6_manual_entry,
+    "6a": section_6_manual_entry,
+    "6b": section_6_manual_entry,
     "7" : function(pump) {
         var missing = common_checks(pump, true);
 
@@ -548,6 +567,9 @@ var manual_calculators = {
         return manual_calculation(pump, 0.02);
     }
 }
+
+
+
 
 var auto_calculators = {
     "3" : function(pump) {

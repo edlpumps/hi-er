@@ -1,0 +1,105 @@
+  { 
+        "name" : "Section 6, manual, ST - 3600 rpm - 1",
+        "pump": {
+          "auto":false,
+          "doe": "ST",
+          "speed" : 3600,
+          "section" : "6",
+          "flow": {
+            "bep75": 262.3728814,
+            "bep100": 349.8305085,
+            "bep110": 384.8135593
+          }, 
+          "head" : {
+            "bep75":498.8911232, 
+            "bep100":424.4297616,
+            "bep110":383.4760126
+          },
+          "control_input_power" :{
+            "bep25":10.000,
+            "bep50":20, 
+            "bep75":42,
+            "bep100":51.414
+          },
+          "stages" : 9, 
+          "diameter":10,
+          "bowl_diameter":4,
+          "pei" : 0.47,
+          "motor_efficiency" : 97,
+          "motor_power_rated" : 60,
+          "motor_regulated" : false
+        }, 
+        "expected" : {
+
+          "ns" : {"value": 3741.61, "threshold": 0.01},
+          "standard_c_value" : {"value": 134.85, "threshold": 0.1},
+
+          "default_motor_efficiency" : {"value": 81.5, "threshold": 0.1},
+          "full_load_motor_losses" : {"value": 13.62, "threshold": 0.001},
+          "std_pump_efficiency" : {"value": 68.54, "threshold": 0.01},
+
+          "hyd_power_bep75" :  {"value": 33.09, "threshold": 0.01},
+          "hyd_power_bep100" : {"value": 37.53, "threshold": 0.01},
+          "hyd_power_bep110" : {"value": 37.30, "threshold": 0.01},
+
+          "std_pump_power_input_bep75" :  {"value": 50.98, "threshold": 0.01},
+          "std_pump_power_input_bep100" : {"value": 54.76, "threshold": 0.01},
+          "std_pump_power_input_bep110" : {"value": 55.25, "threshold": 0.01},
+
+          "std_motor_power_ratio_bep75" :  {"value": 0.85, "threshold": 0.01},
+          "std_motor_power_ratio_bep100" : {"value": 0.91, "threshold": 0.01},
+          "std_motor_power_ratio_bep110" : {"value": 0.92, "threshold": 0.01},
+
+          "std_part_load_loss_factor_bep75" :  {"value": 0.89, "threshold": 0.01},
+          "std_part_load_loss_factor_bep100" : {"value": 0.94, "threshold": 0.01},
+          "std_part_load_loss_factor_bep110" : {"value": 0.94, "threshold": 0.01},
+
+          "std_part_load_loss_bep75" :  {"value": 12.18, "threshold": 0.01},
+          "std_part_load_loss_bep100" : {"value": 12.78, "threshold": 0.01},
+          "std_part_load_loss_bep110" : {"value": 12.86, "threshold": 0.01},
+
+          "std_driver_power_input_bep75" :  {"value": 63.15, "threshold": 0.01},
+          "std_driver_power_input_bep100" : {"value": 67.54, "threshold": 0.01},
+          "std_driver_power_input_bep110" : {"value": 68.11, "threshold": 0.01},
+
+          "per_std_calculated" : {"value": 66.26, "threshold": 0.01},
+
+          "baseline_c_value" : {"value": 138.78, "threshold": 0.1},
+
+          "baseline_pump_efficiency" : {"value": 64.61, "threshold": 0.01},
+
+          "baseline_pump_power_input_bep75" :  {"value": 54.08, "threshold": 0.01},
+          "baseline_pump_power_input_bep100" : {"value": 58.09, "threshold": 0.01},
+          "baseline_pump_power_input_bep110" : {"value": 58.61, "threshold": 0.01},
+
+          "baseline_motor_power_ratio_bep75" :  {"value": 0.90, "threshold": 0.01},
+          "baseline_motor_power_ratio_bep100" : {"value": 0.97, "threshold": 0.01},
+          "baseline_motor_power_ratio_bep110" : {"value": 0.98, "threshold": 0.01},
+
+          "baseline_part_load_loss_factor_bep75" :  {"value": 0.93, "threshold": 0.01},
+          "baseline_part_load_loss_factor_bep100" : {"value": 0.98, "threshold": 0.01},
+          "baseline_part_load_loss_factor_bep110" : {"value": 0.98, "threshold": 0.01},
+
+          "baseline_part_load_loss_bep75" :  {"value": 12.67, "threshold": 0.01},
+          "baseline_part_load_loss_bep100" : {"value": 13.32, "threshold": 0.01},
+          "baseline_part_load_loss_bep110" : {"value": 13.40, "threshold": 0.01},
+
+          "baseline_driver_power_input_bep75" :  {"value": 66.75, "threshold": 0.01},
+          "baseline_driver_power_input_bep100" : {"value": 71.40, "threshold": 0.01},
+          "baseline_driver_power_input_bep110" : {"value": 72.01, "threshold": 0.01},
+
+          "per_baseline_calculated" :  {"value": 70.05, "threshold": 0.01},
+
+          "pei_baseline" : {"value": 1.06, "threshold": 0.01},
+
+          "per_cl" : {"value": 30.854, "threshold": 0.001},
+          "per_std" : {"value": 65.646, "threshold": 0.001},
+
+          "energy_rating" : {"value": 59, "threshold": 0.01},
+
+
+          "success" :{"value":true},
+          "section" :{"value":"6"}
+          
+        }
+}
