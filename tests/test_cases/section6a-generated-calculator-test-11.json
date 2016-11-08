@@ -1,0 +1,56 @@
+{
+	"name": "section6a-generated-calculator-test-11",
+	"pump": {
+		"auto": true,
+		"doe": "ST",
+		"bowl_diameter": 4,
+		"speed": 1800,
+		"section": "6a",
+		"stages": 9,
+		"motor_power_rated": 150,
+		"motor_regulated": false,
+		"motor_efficiency": "N/A",
+		"diameter": 10,
+		"flow": {
+			"bep75": 262.3729,
+			"bep100": 349.8305084745763,
+			"bep110": 384.8135593220339
+		},
+		"head": {
+			"bep75": 498.8911232404481,
+			"bep100": 424.4297615627693,
+			"bep110": 383.47601264004595
+		},
+		"measured_control_power_input": {
+			"bep25": 10,
+			"bep50": 20,
+			"bep75": 42,
+			"bep100": 51.4144
+		},
+		"measured_control_flow_input": {
+			"bep25": 92,
+			"bep50": 170,
+			"bep75": 255,
+			"bep100": 349.8305
+		},
+		"measured_control_head_input": {
+			"bep25": 100,
+			"bep50": 175,
+			"bep75": 260,
+			"bep100": 424.4298
+		}
+	},
+	"expected": {
+		"pei": {
+			"value": 0.43736277769540066,
+			"threshold": 0.001
+		},
+		"energy_rating": {
+			"value": 56.26372223045993,
+			"threshold": 1
+		},
+		"success": {
+			"value": true
+		}
+	}
+}

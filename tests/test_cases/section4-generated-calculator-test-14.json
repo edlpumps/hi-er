@@ -2,7 +2,7 @@
 	"name": "section4-generated-calculator-test-14",
 	"pump": {
 		"auto": true,
-		"doe": "RSV",
+		"doe": "ESFM",
 		"bowl_diameter": "N/A",
 		"speed": 1800,
 		"section": "4",
@@ -28,11 +28,11 @@
 	},
 	"expected": {
 		"pei": {
-			"value": 0.9393401891996865,
+			"value": 0.9491144371177901,
 			"threshold": 0.001
 		},
 		"energy_rating": {
-			"value": 6.065981080031346,
+			"value": 13.874608206637252,
 			"threshold": 1
 		},
 		"success": {

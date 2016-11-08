@@ -1,14 +1,15 @@
 {
-	"name": "section4-generated-calculator-test-15",
+	"name": "section5-generated-calculator-test-8",
 	"pump": {
 		"auto": true,
-		"doe": "RSV",
+		"doe": "ST",
 		"bowl_diameter": "N/A",
-		"speed": 3600,
-		"section": "4",
-		"stages": 8,
-		"motor_power_rated": 15,
+		"speed": 1800,
+		"section": "5",
+		"stages": 4,
+		"motor_power_rated": 100,
 		"motor_regulated": false,
+		"motor_efficiency": "N/A",
 		"diameter": 10,
 		"flow": {
 			"bep75": 262.3728813559322,
@@ -20,7 +21,7 @@
 			"bep100": 424.4297615627693,
 			"bep110": 383.47601264004595
 		},
-		"driver_input_power": {
+		"pump_input_power": {
 			"bep75": 49.20125149412829,
 			"bep100": 51.41435215426082,
 			"bep110": 51.808353464019966
@@ -28,11 +29,11 @@
 	},
 	"expected": {
 		"pei": {
-			"value": 0.9521974121231485,
+			"value": 0.8454460002346794,
 			"threshold": 0.001
 		},
 		"energy_rating": {
-			"value": 4.780258787685154,
+			"value": 15.455399976532059,
 			"threshold": 1
 		},
 		"success": {

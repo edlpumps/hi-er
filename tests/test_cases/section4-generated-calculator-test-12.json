@@ -7,7 +7,7 @@
 		"speed": 1800,
 		"section": "4",
 		"stages": 4,
-		"motor_power_rated": 50,
+		"motor_power_rated": 75,
 		"motor_regulated": false,
 		"diameter": 10,
 		"flow": {
@@ -28,11 +28,11 @@
 	},
 	"expected": {
 		"pei": {
-			"value": 0.9045173081916975,
+			"value": 0.9005692332541572,
 			"threshold": 0.001
 		},
 		"energy_rating": {
-			"value": 9.54826918083025,
+			"value": 9.943076674584283,
 			"threshold": 1
 		},
 		"success": {

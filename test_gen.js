@@ -133,6 +133,120 @@ var section5_calculator = function(workbook, row) {
   return test;
 }
 
+var section6a_calculator = function(workbook, row) {
+  var worksheet = workbook.Sheets["Section VI-a (Method C2)"];
+  if ( !worksheet["D"+row] ) {
+    return undefined;
+  }
+  var name = "section6a-generated-calculator-test-" + row;
+  var test = {
+      name : name,
+      pump: {
+            auto:true,
+            doe: worksheet["D"+row].v,
+            bowl_diameter : worksheet["E"+row].v,
+            speed : worksheet["F"+row].v,
+            section : "6a",
+            stages : worksheet["J"+row].v,
+            motor_power_rated : worksheet["H"+row].v,
+            motor_regulated : worksheet["G"+row].v == "yes" || worksheet["G"+row].v == "Yes" ,
+            motor_efficiency :worksheet["I"+row].v,
+            diameter:10,
+            flow: {
+              bep75: worksheet["N"+row].v,
+              bep100: worksheet["K"+row].v,
+              bep110: worksheet["P"+row].v,
+            }, 
+            head : {
+              bep75:worksheet["O"+row].v, 
+              bep100:worksheet["L"+row].v,
+              bep110:worksheet["Q"+row].v,
+            },
+            measured_control_power_input : {
+              bep25:10,
+              bep50:20, 
+              bep75:42,
+              bep100:51.4144
+            },
+            measured_control_flow_input : {
+              bep25:92,
+              bep50:170, 
+              bep75:255,
+              bep100:349.8305
+            },
+            measured_control_head_input : {
+              bep25:100,
+              bep50:175, 
+              bep75:260,
+              bep100:424.4298
+          },
+      },
+      expected : {
+          pei : {value: worksheet["BT"+row].v, "threshold": 0.001},
+          energy_rating : {value: worksheet["CQ"+row].v, "threshold": 1},
+          success :{value:true},
+      } 
+  }
+  return test;
+}
+
+
+var section6b_calculator = function(workbook, row) {
+  var worksheet = workbook.Sheets["Section VI-b (Method C2)"];
+  if ( !worksheet["D"+row] ) {
+    return undefined;
+  }
+  var name = "section6b-generated-calculator-test-" + row;
+  var test = {
+      name : name,
+      pump: {
+            auto:true,
+            doe: worksheet["D"+row].v,
+            bowl_diameter : worksheet["E"+row].v,
+            speed : worksheet["F"+row].v,
+            section : "6b",
+            stages : worksheet["J"+row].v,
+            motor_power_rated : worksheet["H"+row].v,
+            motor_regulated : worksheet["G"+row].v == "yes" || worksheet["G"+row].v == "Yes" ,
+            motor_efficiency :worksheet["I"+row].v,
+            diameter:10,
+            flow: {
+              bep75: worksheet["N"+row].v,
+              bep100: worksheet["K"+row].v,
+              bep110: worksheet["P"+row].v,
+            }, 
+            head : {
+              bep75:worksheet["O"+row].v, 
+              bep100:worksheet["L"+row].v,
+              bep110:worksheet["Q"+row].v,
+            },
+            measured_control_power_input : {
+              bep25:10,
+              bep50:20, 
+              bep75:42,
+              bep100:51.4144
+            },
+            measured_control_flow_input : {
+              bep25:92,
+              bep50:170, 
+              bep75:255,
+              bep100:349.8305
+            },
+            measured_control_head_input : {
+              bep25:100,
+              bep50:175, 
+              bep75:280,
+              bep100:424.4298
+          },
+      },
+      expected : {
+          pei : {value: worksheet["BT"+row].v, "threshold": 0.001},
+          energy_rating : {value: worksheet["CQ"+row].v, "threshold": 1},
+          success :{value:true},
+      } 
+  }
+  return test;
+}
 
 var save_test = function (test) {
   if (test) {
@@ -158,6 +272,16 @@ do {
 
   //// Section 5 Calculator
   var test = section5_calculator(workbook, row);
+  if ( test ) ok = true;
+  save_test(test);
+
+  //// Section 6a Calculator
+  var test = section6a_calculator(workbook, row);
+  if ( test ) ok = true;
+  save_test(test);
+
+  //// Section 6b Calculator
+  var test = section6b_calculator(workbook, row);
   if ( test ) ok = true;
   save_test(test);
 

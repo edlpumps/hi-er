@@ -7,7 +7,7 @@
 		"speed": 1800,
 		"section": "5",
 		"stages": 3,
-		"motor_power_rated": 100,
+		"motor_power_rated": 15,
 		"motor_regulated": false,
 		"motor_efficiency": "N/A",
 		"diameter": 10,
@@ -29,11 +29,11 @@
 	},
 	"expected": {
 		"pei": {
-			"value": 0.8993387513044475,
+			"value": 0.8980294906760627,
 			"threshold": 0.001
 		},
 		"energy_rating": {
-			"value": 21.079081343819304,
+			"value": 21.323868568608383,
 			"threshold": 1
 		},
 		"success": {
