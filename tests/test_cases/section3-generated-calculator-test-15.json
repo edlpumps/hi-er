@@ -1,0 +1,41 @@
+{
+	"name": "section3-generated-calculator-test-15",
+	"pump": {
+		"auto": true,
+		"doe": "ESFM",
+		"bowl_diameter": "N/A",
+		"speed": 3600,
+		"section": "3",
+		"stages": 3,
+		"diameter": 10,
+		"flow": {
+			"bep75": 262.3728813559322,
+			"bep100": 349.830508474576,
+			"bep110": 384.8135593220339
+		},
+		"head": {
+			"bep75": 498.8911232404481,
+			"bep100": 424.429761562769,
+			"bep110": 383.47601264004595
+		},
+		"pump_input_power": {
+			"bep75": 75,
+			"bep100": 76,
+			"bep110": 78,
+			"bep120": 80
+		}
+	},
+	"expected": {
+		"pei": {
+			"value": 1.5085251230768855,
+			"threshold": 0.001
+		},
+		"energy_rating": {
+			"value": -43.196355125113286,
+			"threshold": 1
+		},
+		"success": {
+			"value": true
+		}
+	}
+}

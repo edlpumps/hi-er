@@ -271,7 +271,7 @@ var section5_auto = function(pump) {
     result.default_motor_efficiency = lookup_default_motor_efficiency(pump, pump.motor_power_rated);
     result.full_load_motor_losses = calc_full_load_motor_losses(pump, result);
     
-    if ( pump.motor_efficiency ) {
+    if ( parseFloat(pump.motor_efficiency) ) {
         result.nameplate_full_load_motor_losses = pump.motor_power_rated / (pump.motor_efficiency/100) - pump.motor_power_rated;
     }
     
