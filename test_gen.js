@@ -177,7 +177,7 @@ var section6a_calculator = function(workbook, row) {
             measured_control_head_input : {
               bep25:100,
               bep50:175, 
-              bep75:260,
+              bep75:280,
               bep100:424.4298
           },
       },
@@ -235,7 +235,7 @@ var section6b_calculator = function(workbook, row) {
             measured_control_head_input : {
               bep25:100,
               bep50:175, 
-              bep75:280,
+              bep75:260,
               bep100:424.4298
           },
       },

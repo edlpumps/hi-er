@@ -305,6 +305,13 @@ var section6a_auto = function(pump) {
     
     result.control_power_input_bep25 = (targets.head_25 / pump.measured_control_head_input.bep25) * (targets.flow_25 / pump.measured_control_flow_input.bep25) * pump.measured_control_power_input.bep25;
     result.control_power_input_bep50 = (targets.head_50 / pump.measured_control_head_input.bep50) * (targets.flow_50 / pump.measured_control_flow_input.bep50) * pump.measured_control_power_input.bep50;
+    console.log("-----");
+    console.log(targets.head_75);
+    console.log(pump.measured_control_head_input.bep75);
+    console.log(targets.flow_75);
+    console.log(pump.measured_control_flow_input.bep75);
+    console.log(pump.measured_control_power_input.bep75);
+    console.log("-----");
     result.control_power_input_bep75 = (targets.head_75 / pump.measured_control_head_input.bep75) * (targets.flow_75 / pump.measured_control_flow_input.bep75) * pump.measured_control_power_input.bep75;
     result.control_power_input_bep100 = pump.measured_control_power_input.bep100;
 
