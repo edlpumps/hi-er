@@ -66,12 +66,12 @@ var PEIController = function($scope, $location, $window, service) {
           if (!vm.pump.measured_control_flow_input.bep25) return true;
           if (!vm.pump.measured_control_flow_input.bep50) return true;
           if (!vm.pump.measured_control_flow_input.bep75) return true;
-          if (!vm.pump.measured_control_flow_input.bep100) return true;
+          //if (!vm.pump.measured_control_flow_input.bep100) return true;
 
           if (!vm.pump.measured_control_head_input.bep25) return true;
           if (!vm.pump.measured_control_head_input.bep50) return true;
           if (!vm.pump.measured_control_head_input.bep75) return true;
-          if (!vm.pump.measured_control_head_input.bep100) return true;
+          //if (!vm.pump.measured_control_head_input.bep100) return true;
 
           if (!vm.pump.measured_control_power_input.bep25) return true;
           if (!vm.pump.measured_control_power_input.bep50) return true;
@@ -301,6 +301,13 @@ var PEIController = function($scope, $location, $window, service) {
 
   vm.go2Results = function() {
      vm.calc_errors = null;
+
+     // If using measured values, make sure the bep 100 points are auto-calculated.
+     if ( vm.pump.measured_control_flow_input && vm.pump.measured_control_flow_input.bep75) {
+         vm.pump.measured_control_flow_input.bep100 = vm.pump.flow.bep100;
+         vm.pump.measured_control_head_input.bep100 = vm.pump.head.bep100;
+     }
+
      service.calculate(vm.pump).then(function(result) {
             vm.step = "results";
             vm.pump.pei = result.pei;

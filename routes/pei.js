@@ -18,9 +18,6 @@ var pei_baselines = {
 router.post('/api/calculate', function(req, res){
     var pump = req.body.pump;
     pump.doe = pump.doe.value;
-    console.log("--------------");
-    console.log(pump.stages);
-    console.log("==============");
     if ( pump.flow ) {
         if ( pump.load120) {
             pump.flow.bep75 = pump.flow.bep100 * 0.75;
@@ -31,6 +28,8 @@ router.post('/api/calculate', function(req, res){
             pump.flow.bep110 = pump.flow.bep100 /0.9;
         }
     }
+
+    
       
     var calculator = require("../calculator");
     var results = calculator.calculate(pump);
