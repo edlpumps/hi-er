@@ -2,11 +2,11 @@
 	"name": "section3-generated-calculator-test-8",
 	"pump": {
 		"auto": true,
-		"doe": "ESFM",
-		"bowl_diameter": "N/A",
+		"doe": "ESCC",
+		"bowl_diameter": 4,
 		"speed": 3600,
 		"section": "3",
-		"stages": 3,
+		"stages": 1,
 		"diameter": 10,
 		"flow": {
 			"bep75": 262.3728813559322,
@@ -27,11 +27,11 @@
 	},
 	"expected": {
 		"pei": {
-			"value": 1.0208701559252513,
+			"value": 0.8392054264086818,
 			"threshold": 0.001
 		},
 		"energy_rating": {
-			"value": 5.790194505054802,
+			"value": 25.551914743224213,
 			"threshold": 1
 		},
 		"success": {

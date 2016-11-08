@@ -7,7 +7,7 @@
 		"speed": 3600,
 		"section": "6b",
 		"stages": 9,
-		"motor_power_rated": 60,
+		"motor_power_rated": 50,
 		"motor_regulated": false,
 		"motor_efficiency": "N/A",
 		"diameter": 10,
@@ -42,11 +42,11 @@
 	},
 	"expected": {
 		"pei": {
-			"value": 0.482679095429698,
+			"value": 0.48346012986463766,
 			"threshold": 0.001
 		},
 		"energy_rating": {
-			"value": 57.445454612144495,
+			"value": 56.58727737378262,
 			"threshold": 1
 		},
 		"success": {

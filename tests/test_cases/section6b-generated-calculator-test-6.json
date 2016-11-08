@@ -2,12 +2,12 @@
 	"name": "section6b-generated-calculator-test-6",
 	"pump": {
 		"auto": true,
-		"doe": "ST",
+		"doe": "ESCC",
 		"bowl_diameter": 4,
 		"speed": 3600,
 		"section": "6b",
 		"stages": 9,
-		"motor_power_rated": 60,
+		"motor_power_rated": 150,
 		"motor_regulated": false,
 		"motor_efficiency": "N/A",
 		"diameter": 10,
@@ -42,11 +42,11 @@
 	},
 	"expected": {
 		"pei": {
-			"value": 0.482679095429698,
+			"value": 0.5688501795727556,
 			"threshold": 0.001
 		},
 		"energy_rating": {
-			"value": 57.445454612144495,
+			"value": 50.575843056366665,
 			"threshold": 1
 		},
 		"success": {

@@ -3,10 +3,10 @@
 	"pump": {
 		"auto": true,
 		"doe": "RSV",
-		"bowl_diameter": "N/A",
-		"speed": 1800,
+		"bowl_diameter": 4,
+		"speed": 3600,
 		"section": "3",
-		"stages": 9,
+		"stages": 2,
 		"diameter": 10,
 		"flow": {
 			"bep75": 262.3728813559322,
@@ -27,11 +27,11 @@
 	},
 	"expected": {
 		"pei": {
-			"value": 1.0502001461382173,
+			"value": 0.9454521190854877,
 			"threshold": 0.001
 		},
 		"energy_rating": {
-			"value": -5.110898267400932,
+			"value": 5.3352331796862495,
 			"threshold": 1
 		},
 		"success": {

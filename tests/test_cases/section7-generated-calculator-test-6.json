@@ -2,12 +2,12 @@
 	"name": "section7-generated-calculator-test-6",
 	"pump": {
 		"auto": true,
-		"doe": "ESCC",
-		"bowl_diameter": "N/A",
+		"doe": "ST",
+		"bowl_diameter": 4,
 		"speed": 3600,
 		"section": "7",
-		"stages": 1,
-		"motor_power_rated": 200,
+		"stages": 9,
+		"motor_power_rated": 150,
 		"motor_regulated": true,
 		"motor_efficiency": 97,
 		"diameter": 10,
@@ -18,7 +18,7 @@
 		},
 		"head": {
 			"bep75": 498.8911232404481,
-			"bep100": 424.4297615627693,
+			"bep100": 424.429761562769,
 			"bep110": 383.47601264004595
 		},
 		"pump_input_power": {
@@ -29,11 +29,11 @@
 	},
 	"expected": {
 		"pei": {
-			"value": 0.38658020992440234,
+			"value": 0.3574191083866803,
 			"threshold": 0.001
 		},
 		"energy_rating": {
-			"value": 70.53455818190028,
+			"value": 69.08262474816229,
 			"threshold": 1
 		},
 		"success": {

@@ -3,10 +3,10 @@
 	"pump": {
 		"auto": true,
 		"doe": "IL",
-		"bowl_diameter": "N/A",
+		"bowl_diameter": 1,
 		"speed": 1800,
 		"section": "3",
-		"stages": 8,
+		"stages": 4,
 		"diameter": 10,
 		"flow": {
 			"bep75": 262.3728813559322,
@@ -19,19 +19,19 @@
 			"bep110": 383.47601264004595
 		},
 		"pump_input_power": {
-			"bep75": 6.2,
-			"bep100": 5.7,
-			"bep110": 6.7,
-			"bep120": 6.8
+			"bep75": 75,
+			"bep100": 76,
+			"bep110": 78,
+			"bep120": 80
 		}
 	},
 	"expected": {
 		"pei": {
-			"value": 0.13931203136578435,
+			"value": 1.4258862922940567,
 			"threshold": 0.001
 		},
 		"energy_rating": {
-			"value": 95.47596477626605,
+			"value": -32.48733524964869,
 			"threshold": 1
 		},
 		"success": {
