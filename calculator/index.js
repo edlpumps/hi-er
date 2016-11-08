@@ -387,7 +387,8 @@ var section7_auto = function(pump) {
     result.default_motor_efficiency = lookup_default_motor_efficiency(pump, pump.motor_power_rated);
     result.full_load_motor_losses = calc_full_load_motor_losses(pump, result);
     
-    if ( pump.motor_efficiency ) {
+    if ( parseFloat(pump.motor_efficiency) ) {
+        console.log("NAMEPLATE");
         result.nameplate_full_load_motor_losses = pump.motor_power_rated / (pump.motor_efficiency/100) - pump.motor_power_rated;
     }
     
@@ -432,7 +433,7 @@ var section7_auto = function(pump) {
     result.mc_part_load_loss_factor_bep100 = poly3(loss_coeffs, result.pump_power_input_motor_power_ratio_bep100);
     
     var loss = result.full_load_motor_losses;
-    if ( pump.motor_efficiency ) {
+    if ( parseFloat(pump.motor_efficiency) ) {
       loss = result.nameplate_full_load_motor_losses;
     }
    
@@ -682,7 +683,7 @@ var check_regulated_motor = function(pump, missing) {
         missing.push("Pump specification must include true/false if motor is regulated.")
     }
     if ( pump.motor_regulated ) {
-        if ( !pump.motor_efficiency) {
+        if ( !parseFloat(pump.motor_efficiency)) {
             missing.push("Pumps with regulated motors must contain Nominal Motor Efficiency in their specifications")
         }
     }
