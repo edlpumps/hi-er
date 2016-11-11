@@ -238,11 +238,6 @@ var ERNewPumpController = function($scope, $location, service) {
   vm.basic_model_valid  = function() {
     if (!vm.pump) return false;
     if (!vm.pump.basic_model) return false;
-    var tokens = vm.pump.basic_model.split(".");
-    if ( tokens.length != 3) return false;
-    if ( tokens[0].length != 3) return false;
-    if ( tokens[1].length != 3) return false;
-    if ( tokens[2].length != 2) return false;
     return true;
   }
 }

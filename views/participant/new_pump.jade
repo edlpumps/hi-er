@@ -29,7 +29,6 @@ block content
                     label.text-primary Basic Model Designation
                   .col.col-xs-7.col-sm-4
                     input.form-control(name="basic_model", id="basic_model", type="text" ng-model="app.pump.basic_model")
-                    p.help-block(ng-hide="app.basic_model_valid()")  must be in the form xxx.xxx.xx 
             
             .row
                 .form-group
@@ -67,13 +66,5 @@ block content
             .row
                input(type="hidden" id="pei_type", ng-model="app.pump.pei", name="pei_input_type")
                .form-group
-                  .col.col-xs-5
-                    label.text-primary Do you already have a PEI calculation ready for this pump?
-                    p.help-block If not, you'll be asked to enter a few additional parameters to help calculate the PEI
-                  .col.col-xs-7.col-sm-4
-                    .row
-                     .col.col-lg-12
-                        button.btn.btn-primary(type="button", ng-disabled = "app.new_missing()", ng-click="app.manual()") Yes, I have a PEI calculation already.
-                    .row(style="margin-top:5px")
-                     .col.col-lg-12
-                        button.btn.btn-warning(type="button", ng-disabled = "app.new_missing()", ng-click="app.calculate()") No, use the HI PEI calculator to help.
+                  .col.col-lg-12
+                    button.btn.btn-primary(type="button", ng-disabled = "app.new_missing()", ng-click="app.manual()") Next
