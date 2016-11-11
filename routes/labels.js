@@ -11,7 +11,12 @@ var getSVG = function(pump, label, callback) {
         ? "" 
         : (pump.configuration=="pump_motor_cc" 
             ? "- Drive &amp; Continuous Controls" 
-            : "- Drive &amp; Non-Continuous Controls")
+            : "- Drive &amp; Non-Continuous Controls");
+    
+    console.log("----");
+    console.log(pump.configuration);
+    console.log(config);
+    console.log("----");
     var load = pump.configuration =="bare" || pump.configuration=="pump_motor" ? "CONSTANT LOAD" : "VARIABLE LOAD";
     var datetime = label.date;
     var locale = "en-us";
@@ -20,7 +25,7 @@ var getSVG = function(pump, label, callback) {
     var date = datetime.toLocaleString(locale, { month: "short" });
     var span = label.max - label.min;
     var distance = (er - label.min)/span;
-    var pos = Math.round(distance*450 + 75) ;
+    var pos = Math.round(distance*574 + 20) ;
     date += " " + datetime.getFullYear()
     var filename = path.join(__dirname, "label.template.svg");
     fs.readFile(filename, 'utf8', (err, data) => {
@@ -37,8 +42,9 @@ var getSVG = function(pump, label, callback) {
 
         data = data.replace("%%ERPOS%%", pos);
         data = data.replace("%%CPOS%%", pos);
-        data = data.replace("%%LPOS%%", pos-5);
-        data = data.replace("%%RPOS%%", pos+5);
+
+        data = data.replace("%%LPOS%%", pos-75);
+        data = data.replace("%%RPOS%%", pos+75);
         callback(err, data);
     });
 }

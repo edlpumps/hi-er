@@ -1,10 +1,118 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="600" height="400" preserveAspectRatio="xMinYMin meet"
-viewBox="0 0 600 400">
-    <rect x="0" y="0" rx="0" ry="0" width="600" height="400" style="fill:#0460ab;;stroke: #0460ab;;stroke-width:1;" />
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="620" height="720" preserveAspectRatio="xMinYMin meet"
+viewBox="0 0 620 720">
 
-    <text x="300" y="50" font-family="Arial" font-size="24" text-anchor="middle" fill="white">HYDRAULIC INSTITUTE ENERGY RATING</text>
+   <defs>
+    <style type="text/css">
+        @import url('https://fonts.googleapis.com/css?family=Arimo:400,400i,700,700i');
+    </style>
+    </defs>
+    <rect x="0" y="0" rx="0" ry="0" width="620" height="720" style="fill:#FFFFFF;;stroke: #222222;;stroke-width:1;" />
+
+    <image xlink:href="/images/logo-big.png" x="25" y="17" height="75px" width="75px" />
+    <line x1="105" y1="25" x2="105" y2="85" stroke-width="2" stroke="#000000"/>
+   
+    <text x="120" y="50" style="font-family: 'Arimo'; font-weight:bold" font-size="34" text-anchor="left" letter-spacing="0.18em" fill="black">HYDRAULIC</text>
+    <text x="120" y="80" style="font-family: 'Arimo'; font-weight:bold" font-size="34" text-anchor="left" letter-spacing="0.27em" fill="black">INSTITUTE</text>
+    <line x1="385" y1="25" x2="385" y2="85" stroke-width="2" stroke="#000000"/>
+    <text x="405" y="50" style="font-family: 'Arimo'; font-weight:bold" font-size="34" text-anchor="left" letter-spacing="0.18em" fill="#8dc73f">ENERGY</text>
+    <text x="405" y="80" style="font-family: 'Arimo'; font-weight:bold" font-size="34" text-anchor="left" letter-spacing="0.28em" fill="#8dc73f">RATING</text>
+
+    <line x1="21" y1="25" x2="21" y2="570" stroke-width="2" stroke="#000000"/>
+    <line x1="595" y1="25" x2="595" y2="570" stroke-width="2" stroke="#000000"/>
+
+    <!--
+    <image xlink:href="/images/labelhead.png" x="38" y="20" height="85px" width="500px" preserveAspectRatio="xMinYMin meet" viewBox="0 0 500 84"/>
+    -->
+
+    <text x="30" y="150" style="font-family: 'Arimo'" font-size="16" text-anchor="start" fill="black">Participant:</text>
+    <text x="125" y="150" style="font-family: 'Arimo'; font-weight:bold" font-size="16" text-anchor="start" fill="black">%%PARTICIPANT%%</text>
+    <text x="300" y="150" style="font-family: 'Arimo'; font-weight:bold" font-size="16" text-anchor="start" fill="black">%%DOE%%</text>
+
+    <text x="30" y="180" style="font-family: 'Arimo'" font-size="16" text-anchor="start" fill="black">Model Number:</text>
+    <text x="30" y="210" style="font-family: 'Arimo'" font-size="16" text-anchor="start" fill="black">Nominal Speed:</text>
+
+    <text x="155" y="180" style="font-family: 'Arimo';font-weight:bold" font-size="16" text-anchor="start" fill="black">%%MODEL%%</text>
+    <text x="155" y="210" style="font-family: 'Arimo';font-weight:bold" font-size="16" text-anchor="start" fill="black">%%SPEED%%</text>
+
+    <text x="300" y="180" style="font-family: 'Arimo'; font-weight:bold" font-size="16" text-anchor="start" fill="black">%%PM%%</text>
+    <text x="300" y="210" style="font-family: 'Arimo'; font-weight:bold" font-size="16" text-anchor="start" fill="black">%%CONFIG%%</text>
+
+    <rect x="30" y="250" rx="0" ry="0" width="555" height="50" style="fill:#8dc73f;;stroke: #8dc73f;stroke-width:1;" />
+    <text x="45" y="285" style="font-family: 'Arimo'; font-style:italic; font-weight:bold" font-size="30" text-anchor="start" fill="white">%%LOAD%%</text>
 
 
+    <!--<line x1='20' y1='485' x2='20' y2='570' stroke-width='2' stroke='black'/>-->
+<line x1='34.35' y1='485' x2='34.35' y2='570' stroke-width='2' stroke='black'/>
+<line x1='48.7' y1='485' x2='48.7' y2='570' stroke-width='2' stroke='black'/>
+<line x1='63.05' y1='485' x2='63.05' y2='570' stroke-width='2' stroke='black'/>
+<line x1='77.4' y1='485' x2='77.4' y2='570' stroke-width='2' stroke='black'/>
+<line x1='91.75' y1='485' x2='91.75' y2='570' stroke-width='2' stroke='black'/>
+<line x1='106.1' y1='485' x2='106.1' y2='570' stroke-width='2' stroke='black'/>
+<line x1='120.45' y1='485' x2='120.45' y2='570' stroke-width='2' stroke='black'/>
+<line x1='134.8' y1='485' x2='134.8' y2='570' stroke-width='2' stroke='black'/>
+<line x1='149.15' y1='485' x2='149.15' y2='570' stroke-width='2' stroke='black'/>
+<line x1='163.5' y1='450' x2='163.5' y2='570' stroke-width='2' stroke='black'/>
+<line x1='177.85' y1='485' x2='177.85' y2='570' stroke-width='2' stroke='black'/>
+<line x1='192.2' y1='485' x2='192.2' y2='570' stroke-width='2' stroke='black'/>
+<line x1='206.55' y1='485' x2='206.55' y2='570' stroke-width='2' stroke='black'/>
+<line x1='220.9' y1='485' x2='220.9' y2='570' stroke-width='2' stroke='black'/>
+<line x1='235.25' y1='485' x2='235.25' y2='570' stroke-width='2' stroke='black'/>
+<line x1='249.6' y1='485' x2='249.6' y2='570' stroke-width='2' stroke='black'/>
+<line x1='263.95' y1='485' x2='263.95' y2='570' stroke-width='2' stroke='black'/>
+<line x1='278.3' y1='485' x2='278.3' y2='570' stroke-width='2' stroke='black'/>
+<line x1='292.65' y1='485' x2='292.65' y2='570' stroke-width='2' stroke='black'/>
+<line x1='307' y1='450' x2='307' y2='570' stroke-width='2' stroke='black'/>
+<line x1='321.35' y1='485' x2='321.35' y2='570' stroke-width='2' stroke='black'/>
+<line x1='335.7' y1='485' x2='335.7' y2='570' stroke-width='2' stroke='black'/>
+<line x1='350.05' y1='485' x2='350.05' y2='570' stroke-width='2' stroke='black'/>
+<line x1='364.4' y1='485' x2='364.4' y2='570' stroke-width='2' stroke='black'/>
+<line x1='378.75' y1='485' x2='378.75' y2='570' stroke-width='2' stroke='black'/>
+<line x1='393.1' y1='485' x2='393.1' y2='570' stroke-width='2' stroke='black'/>
+<line x1='407.45' y1='485' x2='407.45' y2='570' stroke-width='2' stroke='black'/>
+<line x1='421.8' y1='485' x2='421.8' y2='570' stroke-width='2' stroke='black'/>
+<line x1='436.15' y1='485' x2='436.15' y2='570' stroke-width='2' stroke='black'/>
+<line x1='450.5' y1='450' x2='450.5' y2='570' stroke-width='2' stroke='black'/>
+<line x1='464.85' y1='485' x2='464.85' y2='570' stroke-width='2' stroke='black'/>
+<line x1='479.2' y1='485' x2='479.2' y2='570' stroke-width='2' stroke='black'/>
+<line x1='493.55' y1='485' x2='493.55' y2='570' stroke-width='2' stroke='black'/>
+<line x1='507.9' y1='485' x2='507.9' y2='570' stroke-width='2' stroke='black'/>
+<line x1='522.25' y1='485' x2='522.25' y2='570' stroke-width='2' stroke='black'/>
+<line x1='536.6' y1='485' x2='536.6' y2='570' stroke-width='2' stroke='black'/>
+<line x1='550.95' y1='485' x2='550.95' y2='570' stroke-width='2' stroke='black'/>
+<line x1='565.3' y1='485' x2='565.3' y2='570' stroke-width='2' stroke='black'/>
+<line x1='579.65' y1='485' x2='579.65' y2='570' stroke-width='2' stroke='black'/>
+<!--<line x1='594' y1='485' x2='594' y2='570' stroke-width='2' stroke='black'/>-->
+
+    <text x="20" y="590" style="font-family: 'Arimo'; font-weight:bold" font-size="16" text-anchor="start" fill="black">Most Consumptive</text>
+    <text x="308" y="590" style="font-family: 'Arimo'; font-weight:bold" font-size="16" text-anchor="middle" fill="black">RANGE</text>
+    <text x="595" y="590" style="font-family: 'Arimo'; font-weight:bold" font-size="16" text-anchor="end" fill="black">Least Consumptive</text>
+    
+    <text x="20" y="620" style="font-family: 'Arimo';" font-size="16" text-anchor="start" fill="black">
+    Power savings over baseline can be estimated by multiplying ER by
+    </text>
+    <text x="20" y="640" style="font-family: 'Arimo';" font-size="16" text-anchor="start" fill="black">
+    motor input power (kw) and dividing by 100.  Multiplying power savings by
+    </text>
+    <text x="20" y="660" style="font-family: 'Arimo';" font-size="16" text-anchor="start" fill="black">
+    operating hours and cost of energy will yeild estimated cost.
+    </text>
+
+    <text x="20" y="700" style="font-family: 'Arimo'; font-weight:bold" font-size="16" text-anchor="start" fill="black">
+    %%RID%%
+    </text>
+
+    <text x="308" y="700" style="font-family: 'Arimo'; font-weight:bold" font-size="16" text-anchor="middle" fill="black">
+    pumps.org/40.5
+    </text>   
+
+    <text x="595" y="700" style="font-family: 'Arimo'; font-weight:bold" font-size="16" text-anchor="end" fill="black">
+    %%DATE%%
+    </text>    
+
+    <polygon fill="#8dc73f" stroke="#8dc73f" stroke-width="1" points="%%CPOS%%,510 %%LPOS%%,415 %%RPOS%%,415"/>
+    <text x="%%ERPOS%%" y="400" style="font-family: 'Arimo'; font-weight:bold" font-size="96" text-anchor="middle" fill="#8dc73f">%%ER%%</text>
+    
+    <!--
     <text x="65" y="100" font-family="Arial" font-size="14" text-anchor="start" fill="white">Pump:  %%DOE%%</text>
     <text x="75" y="120" font-family="Arial" font-size="14" text-anchor="start" fill="white">%%PM%%</text>
     <text x="75" y="140" font-family="Arial" font-size="14" text-anchor="start" fill="white">%%CONFIG%%</text>
@@ -19,7 +127,7 @@ viewBox="0 0 600 400">
 
 
     <text x="%%ERPOS%%" y="260" font-family="Arial" font-size="20" text-anchor="middle" fill="#E6AF2E">%%ER%%</text>
-    <polygon fill="#E6AF2E" stroke="#E6AF2E" stroke-width="1" points="%%CPOS%%,280 %%LPOS%%,270 %%RPOS%%,270"/>
+    
     <line x1="75" y1="281" x2="525" y2="281" stroke-width="2" stroke="#0460ab"/>
     <line x1="75" y1="290" x2="75" y2="235" stroke-width="2" stroke="#0460ab"/>
     <line x1="525" y1="290" x2="525" y2="235" stroke-width="2" stroke="#0460ab"/>
@@ -27,4 +135,5 @@ viewBox="0 0 600 400">
 
     <text x="65" y="360" font-family="Arial" font-size="12" text-anchor="start" fill="#E6AF2E">Rating ID:  %%RID%%</text>
     <text x="535" y="360" font-family="Arial" font-size="14" text-anchor="end" fill="#E6AF2E">%%DATE%%</text>
+    -->
 </svg>
