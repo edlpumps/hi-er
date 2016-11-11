@@ -100,7 +100,7 @@ mixin calculator(er, mode)
             hr
             .row
               .col.col-xs-12
-                button.btn.btn-primary(type="button", ng-disabled="!app.pump.configuration", ng-click="app.go2MotorMethod()") Next
+                button.btn.btn-primary(type="button", ng-disabled="!app.pump.configuration || !app.pump.speed || !app.pump.diameter  || !app.pump.basic_model ||!app.pump.participant || !app.pump.stages || !app.pump.laboratory", ng-click="app.go2MotorMethod()") Next
 
 
         //---------------------------------------------------------------
