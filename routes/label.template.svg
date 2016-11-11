@@ -112,28 +112,5 @@ viewBox="0 0 620 720">
     <polygon fill="#8dc73f" stroke="#8dc73f" stroke-width="1" points="%%CPOS%%,510 %%LPOS%%,415 %%RPOS%%,415"/>
     <text x="%%ERPOS%%" y="400" style="font-family: 'Arimo'; font-weight:bold" font-size="96" text-anchor="middle" fill="#8dc73f">%%ER%%</text>
     
-    <!--
-    <text x="65" y="100" font-family="Arial" font-size="14" text-anchor="start" fill="white">Pump:  %%DOE%%</text>
-    <text x="75" y="120" font-family="Arial" font-size="14" text-anchor="start" fill="white">%%PM%%</text>
-    <text x="75" y="140" font-family="Arial" font-size="14" text-anchor="start" fill="white">%%CONFIG%%</text>
-
-    <text x="535" y="100" font-family="Arial" font-size="14" text-anchor="end" fill="white">Company:  %%PARTICIPANT%%</text>
-    <text x="535" y="120" font-family="Arial" font-size="14" text-anchor="end" fill="white">Model:  %%MODEL%%</text>
-    <text x="535" y="140" font-family="Arial" font-size="14" text-anchor="end" fill="white">Nominal Speed:  %%SPEED%%</text>
-
-
-    <rect x="65" y="170" rx="0" ry="0" width="470" height="160" style="fill:white;;stroke:white;stroke-width:1;" />
-    <text x="300" y="200" font-family="Arial" font-size="20" text-anchor="middle" fill="#0460ab">HI ENERGY RATING - %%LOAD%%</text>
-
-
-    <text x="%%ERPOS%%" y="260" font-family="Arial" font-size="20" text-anchor="middle" fill="#E6AF2E">%%ER%%</text>
-    
-    <line x1="75" y1="281" x2="525" y2="281" stroke-width="2" stroke="#0460ab"/>
-    <line x1="75" y1="290" x2="75" y2="235" stroke-width="2" stroke="#0460ab"/>
-    <line x1="525" y1="290" x2="525" y2="235" stroke-width="2" stroke="#0460ab"/>
-    <line x1="525" y1="290" x2="525" y2="235" stroke-width="2" stroke="#0460ab"/>
-
-    <text x="65" y="360" font-family="Arial" font-size="12" text-anchor="start" fill="#E6AF2E">Rating ID:  %%RID%%</text>
-    <text x="535" y="360" font-family="Arial" font-size="14" text-anchor="end" fill="#E6AF2E">%%DATE%%</text>
-    -->
+   
 </svg>

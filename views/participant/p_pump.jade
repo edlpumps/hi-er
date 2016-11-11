@@ -45,14 +45,13 @@ block content
         .panel-body
           
           .row.solo
-            .col.col-lg-8.text-center
-             
-              object(id="label_svg", data="/labels/#{participant._id}/#{pump._id}/svg", type="image/svg+xml")
-                
+            .col.col-xs-12.text-center
+              object(id="label_svg", style="max-width:90%", data="/labels/#{participant._id}/#{pump._id}/svg", type="image/svg+xml")
               p.solo.text-center: a.btn.btn-primary(href="/labels/#{participant._id}/#{pump._id}/svg", target="_blank") Download
-            
-            .col.col-lg-4.text-center
-              img(src="/labels/#{participant._id}/#{pump._id}/qr")
+          
+          .row.solo
+            .col.col-xs-12.text-center
+              object(id="qr_svg", style="max-width:90%", data="/labels/#{participant._id}/#{pump._id}/qr", type="image/svg+xml")
               p.solo.text-center: a.btn.btn-primary(href="/labels/#{participant._id}/#{pump._id}/qr", target="_blank") Download
 
              

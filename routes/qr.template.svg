@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="620" height="620" preserveAspectRatio="xMinYMin meet"
+viewBox="0 0 620 620">
+
+   <defs>
+    <style type="text/css">
+        @import url('https://fonts.googleapis.com/css?family=Arimo:400,400i,700,700i');
+    </style>
+    </defs>
+    
+    <image xlink:href="/images/logo-big.png" x="10" y="10" height="75px" width="75px" />
+    <line x1="105" y1="25" x2="105" y2="85" stroke-width="2" stroke="#000000"/>
+    <text x="120" y="50" style="font-family: 'Arimo'; font-weight:bold" font-size="34" text-anchor="left" letter-spacing="0.18em" fill="black">HYDRAULIC</text>
+    <text x="120" y="80" style="font-family: 'Arimo'; font-weight:bold" font-size="34" text-anchor="left" letter-spacing="0.27em" fill="black">INSTITUTE</text>
+    <line x1="385" y1="25" x2="385" y2="85" stroke-width="2" stroke="#000000"/>
+    <text x="405" y="50" style="font-family: 'Arimo'; font-weight:bold" font-size="34" text-anchor="left" letter-spacing="0.18em" fill="#8dc73f">ENERGY</text>
+    <text x="405" y="80" style="font-family: 'Arimo'; font-weight:bold" font-size="34" text-anchor="left" letter-spacing="0.28em" fill="#8dc73f">RATING</text>
+
+    <image xlink:href="%%IMAGE%%" x="85" y="85" height="550px" width="550px" />
+    
+    <text x="90" y="145" style="writing-mode: tb; font-family: 'Arimo';" font-size="30" text-anchor="left">%%RID%%</text>
+    <text x="40" y="145" style="writing-mode: tb; font-family: 'Arimo';" font-size="30" text-anchor="left">pumps.org/40.5</text>
+    <text x="40" y="450" style="writing-mode: tb; font-family: 'Arimo';" font-size="30" text-anchor="right">%%DATE%%</text>
+</svg>

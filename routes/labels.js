@@ -13,10 +13,6 @@ var getSVG = function(pump, label, callback) {
             ? "- Drive &amp; Continuous Controls" 
             : "- Drive &amp; Non-Continuous Controls");
     
-    console.log("----");
-    console.log(pump.configuration);
-    console.log(config);
-    console.log("----");
     var load = pump.configuration =="bare" || pump.configuration=="pump_motor" ? "CONSTANT LOAD" : "VARIABLE LOAD";
     var datetime = label.date;
     var locale = "en-us";
@@ -45,6 +41,23 @@ var getSVG = function(pump, label, callback) {
 
         data = data.replace("%%LPOS%%", pos-75);
         data = data.replace("%%RPOS%%", pos+75);
+        callback(err, data);
+    });
+}
+
+var getQRSVG = function(participant, pump, label, callback) {
+    var image_uri = "/labels/" + participant._id + "/" + pump._id + "/qr_image";
+    console.log(image_uri);
+    var datetime = label.date;
+    var locale = "en-us";
+
+    var date = datetime.toLocaleString(locale, { month: "short" });
+    date += " " + datetime.getFullYear()
+    var filename = path.join(__dirname, "qr.template.svg");
+    fs.readFile(filename, 'utf8', (err, data) => {
+        data = data.replace("%%DATE%%", date);
+        data = data.replace("%%RID%%", pump.rating_id);
+        data = data.replace("%%IMAGE%%", image_uri);
         callback(err, data);
     });
 }
@@ -82,6 +95,37 @@ var getit = function(req,res, callback){
     });
 }
 
+var getqr = function(req,res, callback){
+    req.Participants.findById(req.params.participant_id, function(err, participant) {
+        if ( err ) {
+            re.log.error(err);
+            res.status(500).send({ error: err });
+        }
+        else if (!participant) {
+            res.status(401).send({ error: err });
+        }
+        else {
+            var pump = participant.pumps.id(req.params.id);
+            if ( !pump) {
+                res.status(401).send({ error: err });
+            }
+            else {
+                var load = pump.configuration =="bare" || pump.configuration=="pump_motor" ? "CL" : "VL";
+                req.Labels.findOne().and([
+                    {speed : pump.speed}, 
+                    {doe : pump.doe}, 
+                    {load: load}
+                ]).exec(function(err, label) {
+                        getQRSVG(participant, pump, label, function(err, svg) {
+                            callback(svg);
+                        })
+                });
+
+            }
+        }
+    });
+}
+
 router.get('/:participant_id/:id/svg', function(req, res) {
    getit(req, res, function(svg){
         res.setHeader('Content-Type', 'image/svg+xml');
@@ -89,8 +133,15 @@ router.get('/:participant_id/:id/svg', function(req, res) {
    });
 });
 
-
 router.get('/:participant_id/:id/qr', function(req, res) {
+   getqr(req, res, function(svg){
+        res.setHeader('Content-Type', 'image/svg+xml');
+        res.send(svg);
+   });
+});
+
+
+router.get('/:participant_id/:id/qr_image', function(req, res) {
     var port = req.app.settings.port || cfg.port;
     var base = req.protocol + '://' + req.host;
 
