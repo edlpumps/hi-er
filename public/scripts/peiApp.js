@@ -328,7 +328,8 @@ var PEIController = function($scope, $location, $window, service) {
      })
   }
 
-  vm.submitListing = function() {
+  vm.submitListing = function(active) {
+      $("input[name='pump[listed]']").val(active);
       new_pump_pei.submit();
   }
   

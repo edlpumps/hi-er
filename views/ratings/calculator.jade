@@ -26,6 +26,7 @@ mixin calculator(er, mode)
             input(type="hidden", name="pump[rating_id]", ng-value="app.pump.rating_id")
             input(type="hidden", name="pump[pei_baseline]", ng-value="app.pump.pei_baseline")
             input(type="hidden", name="pump[results]", ng-value="app.pump.results")
+            input(type="hidden", name="pump[listed]", ng-value="app.pump.listed")
             
 
             .row
@@ -474,10 +475,11 @@ mixin calculator(er, mode)
                 h4 Energy Rating
                 p.er_display {{app.pump.energy_rating}}
             .row
-              .col.col-xs-9
+              .col.col-xs-7
                   button(type="button", ng-click="app.go2Data(true)").btn.btn-default.btn-space Back
-              .col.col-xs-3
-                  button(type="button", ng-hide="app.calc_errors", ng-click="app.submitListing()").btn.btn-danger.btn-space Save pump listing
+              .col.col-xs-5
+                  button(type="button", ng-hide="app.calc_errors", ng-click="app.submitListing(false)").btn.btn-default.btn-space Save pump 
+                  button(type="button", ng-hide="app.calc_errors", ng-click="app.submitListing(true)").btn.btn-danger.btn-space Save and Activate pump
 
         else
           .panel-body(ng-show="app.step=='results'")

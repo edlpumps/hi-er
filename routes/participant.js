@@ -181,9 +181,7 @@ router.get('/purchase', function(req, res) {
 
 router.post("/pumps/submit", function(req, res){
     var pump = req.body.pump;
-    // automatically set to listed - user can change this later.
-    pump.listed = true;
-
+    console.log(req.body);
     if (pump.results ) {
         pump.results = JSON.parse(pump.results);
     }
