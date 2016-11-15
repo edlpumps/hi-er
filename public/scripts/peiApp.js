@@ -218,7 +218,7 @@ var PEIController = function($scope, $location, $window, service) {
   vm.control_power_visible = function() {
       if (!vm.pump) return false;
       if ( vm.mode == "manual" ) {
-          return vm.pump.section =='6a' || vm.pump.section=='6b' || vm.pump.section=='7';
+          return vm.pump.section =='6' || vm.pump.section =='6a' || vm.pump.section=='6b' || vm.pump.section=='7';
       }
       else return false;// never visible in calculator mode
   }
