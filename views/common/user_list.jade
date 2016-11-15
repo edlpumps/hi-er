@@ -1,6 +1,6 @@
 
 
-mixin userlist()
+mixin userlist(roles)
    .panel.panel-default
       .panel-heading
         h3 
@@ -20,7 +20,7 @@ mixin userlist()
                       th 
                 tbody
                       tr(ng-repeat="user in app.users")
-                        td.hidden-xs {{user.name.first}} {{user.name.last}}
+                        td.hidden-xs {{user.name.first}} {{user.name.last}} {{user.participant_admin}} {{user.participant_edit}}
                         td.hidden-sm.hidden-md.hidden-lg 
                            a(href="mailto:{{user.email}}") {{user.name.first}} {{user.name.last}}
                         td.hidden-xs 
@@ -30,6 +30,9 @@ mixin userlist()
                              button(type="button", ng-click="app.activateInfo(user)").btn.btn-primary Needs Activation
                            span(ng-show="user.needsActivation==false") Active
                         td 
+                          .btn-group
+                            if roles  
+                              button(type="button", ng-click="app.editUser(user)", ng-hide="user._id == app.user._id").btn.btn-default Edit
                             button(type="button", ng-click="app.removeUser(user)", ng-hide="user._id == app.user._id").btn.btn-danger Delete
    
    
@@ -55,12 +58,68 @@ mixin userlist()
                                   .col-sm-12
                                       .form-group
                                           label Email:
-                                          input.form-control.input-sm(type="email", ng-model='app.new_user.email', required)
+                                          input.form-control.input-sm(type="email", ng-model='app.new_user.email', disabled, title="Emails are not editable, if you must change a users's email address, delete the user and recreate a new account.")
+                              if roles
+                                .row
+                                  .col-sm-12
+                                    .form-group 
+                                      label.checkbox-inline
+                                        input(type="checkbox", ng-model='app.new_user.participant_admin')
+                                        | Administrator
+                                      label.checkbox-inline
+                                        input(type="checkbox", ng-model='app.new_user.participant_edit')
+                                        | Edit pump listings
+                                      label.checkbox-inline
+                                        input(type="checkbox", ng-model='app.new_user.participant_view', disabled)
+                                        | View pump listings
                              
                       .modal-footer
                           div
                               .pull-left.text-danger(ng-show='app.new_user_error') {{app.new_user_error}}
                               button.btn.btn-primary(type='button' ng-click='app.addUser()') Add User
+                              button.btn.btn-default(type='button' data-dismiss='modal') Cancel
+
+   .modal.fade#edit(tabindex='-1', role='dialog' aria-labelledby='titleLabel', aria-hidden='true')
+              .modal-dialog
+                  .modal-content
+                      .modal-header
+                          button(type='button', class='close' data-dismiss='modal' aria-hidden='hidden') &times;
+                          h4.modal-title#title Label Edit User
+                      .modal-body
+                          form(role='form' name='edit_user')
+                              .row
+                                  .col-sm-12
+                                      .form-group
+                                          label First Name:
+                                          input.form-control.input-sm(ng-model='app.edit_user.name.first', required)
+                              .row
+                                  .col-sm-12
+                                      .form-group
+                                          label Last Name:
+                                          input.form-control.input-sm(ng-model='app.edit_user.name.last', required)
+                              .row
+                                  .col-sm-12
+                                      .form-group
+                                          label Email:
+                                          input.form-control.input-sm(type="email", ng-model='app.edit_user.email', required)
+                              if roles
+                                .row
+                                  .col-sm-12
+                                    .form-group 
+                                      label.checkbox-inline
+                                        input(type="checkbox", ng-model='app.edit_user.participant_admin')
+                                        | Administrator
+                                      label.checkbox-inline
+                                        input(type="checkbox", ng-model='app.edit_user.participant_edit')
+                                        | Edit pump listings
+                                      label.checkbox-inline
+                                        input(type="checkbox", ng-model='app.edit_user.participant_view', disabled)
+                                        | View pump listings
+                             
+                      .modal-footer
+                          div
+                              .pull-left.text-danger(ng-show='app.edit_user_error') {{app.edit_user_error}}
+                              button.btn.btn-primary(type='button' ng-click='app.saveUser()') Save Changes
                               button.btn.btn-default(type='button' data-dismiss='modal') Cancel
 
    .modal.fade#activation(tabindex='-1', role='dialog' aria-labelledby='titleLabel', aria-hidden='true')

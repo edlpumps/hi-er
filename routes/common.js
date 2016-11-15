@@ -43,6 +43,11 @@ exports.addUser = function(req, res) {
     user.participant = req.participant ? req.participant._id : undefined;
     user.needsActivation = true;
     user.admin = req.user.admin;
+    if (!user.admin) {
+        user.participant_admin = req.body.user.participant_admin;
+        user.participant_edit = req.body.user.participant_edit;
+        user.participant_view = req.body.user.participant_view;
+    }
     user.activationKey = uuid.v1();
     
     if ( !user.name || !user.name.first || !user.name.last) {
@@ -72,6 +77,23 @@ exports.addUser = function(req, res) {
         });
     })
 };
+
+
+exports.saveUser = function(req, res) {
+    var user = req.body.user;
+    
+    req.Users.update({email: user.email}, 
+        {$set : {name : user.name, participant_admin:user.participant_admin, participant_edit:user.participant_edit}},
+        function(err, users){
+            if ( err) {
+            res.status(500).send({error:err});
+            }
+            else {
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify({ user: user}));
+            }
+        });
+}
 
 exports.build_pump_spreadsheet = function(pump) {
     var toxl = require('jsonexcel');

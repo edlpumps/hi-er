@@ -271,7 +271,7 @@ router.get("/api/users", function(req, res) {
     req.log.debug("Returning user listings for participating organization");
     req.Users.find(
         {participant:req.participant._id}, 
-        {name:true,email:true, _id:true, needsActivation:true, activationKey:true}, 
+        {name:true,email:true, _id:true, needsActivation:true, activationKey:true, participant_admin:true, participant_edit:true, participant_view:true}, 
         function(err, users){
             if ( err ) {
                 res.status(500).send({ error: err });
@@ -287,6 +287,7 @@ router.get("/api/users", function(req, res) {
 
 router.post("/api/users/delete/:id", common.deleteUser);
 router.post("/api/users/add", common.addUser)
+router.post("/api/users/save", common.saveUser)
 
 
 

@@ -31,6 +31,13 @@ var service = app.factory('service', function($http) {
                 return data;
             });
      },
+     saveUser : function (user) {
+        return $http.post('/participant/api/users/save', {user:user})
+            .success(function(docs) { return docs.data; })
+            .error(function(data, status) {
+                return data;
+            });
+     },
      deleteUser : function (user) {
         return $http.post('/participant/api/users/delete/'+user._id, {})
             .success(function(docs) { return docs.data; })
@@ -108,6 +115,20 @@ var ERParticipantController = function($scope, $location, service) {
      })
   }
 
+  vm.saveUser = function() {
+      service.saveUser(vm.edit_user).then(function(saved) {
+        vm.edit_user_error = false;
+        $('#edit').modal('hide');
+      }).catch(function(error) {
+        if (error.status == 403) {
+          window.location="/";
+        }
+        else {
+          vm.edit_user_error = error.data;
+        }
+     })
+  }
+
   vm.activateInfo = function(user) {
     vm.activate_user = user;
     $('#activation').modal('show')
@@ -115,9 +136,14 @@ var ERParticipantController = function($scope, $location, service) {
 
   vm.showAddUser = function() {
       vm.new_user = {
-          email : ""
+          email : "",
+          participant_view : true
       };
       $('#add').modal('show')
+  }
+  vm.editUser = function(user) {
+      vm.edit_user = user;
+      $('#edit').modal('show')
   }
 
   vm.removeUser = function(user) {

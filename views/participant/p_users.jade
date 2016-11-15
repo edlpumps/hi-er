@@ -7,6 +7,6 @@ block content
   div(ng-app='ERParticipantApp')
     .container(ng-controller="ERParticipantController as app",ng-init="app.user= #{JSON.stringify(user)}")
 
-        +userlist()
+        +userlist(true)
       
         
