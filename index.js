@@ -163,6 +163,8 @@ app.use(function(req, res, next) {
             factor : res.locals.unit_set == units.US ? 1 : units.factors.diameter            
         } 
     }
+
+    res.locals.moment = require('moment');
     next();
 });
 

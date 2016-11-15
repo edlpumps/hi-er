@@ -83,3 +83,11 @@ mixin pump_page_info(pump)
                 - var mpr = pump.motor_power_rated ? pump.motor_power_rated : pump.results.motor_power_rated
                 - var mpr_display = mpr ? (mpr * units.power.factor).toFixed(0) : ""
                 .form-control-static #{mpr_display} #{units.power.label}
+
+    if pump.date
+      .row 
+        .form-group
+            .col.col-xs-5
+                label Date listed:
+            .col.col-xs-7
+                .form-control-static #{moment(pump.date).format("ll")}

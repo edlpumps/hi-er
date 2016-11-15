@@ -35,12 +35,14 @@ block content
                  tr 
                   th
                   th ID
-                  th Basic Model Designation
-                  th Configuration
-                  th DOE Pump Category
-                  th Impeller (#{units.diameter.label})
-                  th Nominal speed (rpm)
-                  th PEI
+                  th.hidden-xs Listing Date
+                  th Basic Model #
+                  th.hidden-xs Configuration
+                  th.hidden-xs DOE Pump Category
+                  th.hidden-xs.hidden-sm Impeller (#{units.diameter.label})
+                  th.hidden-xs.hidden-sm Nominal speed (rpm)
+                  th.hidden-xs.hidden-sm Stages
+                  th.hidden-xs PEI
                   th ER
                   th
                 tbody
@@ -48,12 +50,14 @@ block content
                   td
                     img(height="25" width="25" ng-src="/images/{{pump.listed && pump.active_admin ? 'active' : 'inactive'}}.png")
                   td {{pump.rating_id}}
+                  td.hidden-xs {{pump.date | date:'mediumDate'}}
                   td: a(href="pumps/{{pump._id}}") {{pump.basic_model}}
-                  td {{app.getConfigLabel(pump.configuration)}}
-                  td {{pump.doe}}
-                  td {{pump.diameter * app.units.diameter.factor | number:3}}
-                  td {{pump.speed}}
-                  td {{pump.pei | number:4}}
+                  td.hidden-xs {{app.getConfigLabel(pump.configuration)}}
+                  td.hidden-xs {{pump.doe}}
+                  td.hidden-xs.hidden-sm {{pump.diameter * app.units.diameter.factor | number:3}}
+                  td.hidden-xs.hidden-sm {{pump.speed}}
+                  td.hidden-xs.hidden-sm {{pump.stages}}
+                  td.hidden-xs {{pump.pei | number:4}}
                   td {{pump.energy_rating}} 
                   
                   td 

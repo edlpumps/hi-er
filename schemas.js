@@ -43,6 +43,7 @@ exports.init = function init(mongoose) {
     rating_id : String,
     participant: String,
     configuration : String,
+    brand : String,
     basic_model : String,
     diameter: Number,
     speed : Number,

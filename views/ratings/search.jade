@@ -26,6 +26,10 @@ block content
                .col.col-sm-6
                  input.form-control(ng-model="app.search.basic_model", type="text")
              .form-group
+               label.col-sm-3.control-label Brand
+               .col.col-sm-6
+                 input.form-control(ng-model="app.search.brand", type="text")
+             .form-group
                label.col-sm-3.control-label Participating Organization
                .col.col-sm-6
                  select.form-control(ng-model="app.search.participant", ng-options="p for p in app.participants")
@@ -46,12 +50,12 @@ block content
                 a(href="/ratings/{{pump.rating_id}}").listing
                     .row
                         .col.col-xs-8.col-sm-6
-                           h3 {{pump.basic_model}}
+                           h3 {{pump.brand}} {{pump.brand ? ' / ' : ''}} {{pump.basic_model}}
                            p {{pump.participant}}
                            p {{pump.doe}} - {{app.getConfigLabel(pump.configuration)}}
                         .col.hidden-xs.col-sm-4(style="padding-top:20px")
-                           p Diameter:  {{pump.diameter * app.units.diameter.factor | number:3}}{{app.units.diameter.label}}
-                           p Speed:  {{pump.speed}}rpm
+                           p Diameter:  {{pump.diameter * app.units.diameter.factor | number:3}} {{app.units.diameter.label}}
+                           p Speed:  {{pump.speed}} rpm
                            p {{pump.stages}} stages
                         .col.col-xs-4.col-sm-2.energy_badge
                            .small(style="padding-top:20px; margin-bottom:0px") Energy Rating

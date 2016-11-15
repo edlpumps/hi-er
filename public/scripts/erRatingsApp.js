@@ -46,9 +46,9 @@ var ERRatingsController = function($scope, $location, service) {
   })
   
   vm.getPumps = function() {
-      if ( !vm.search.rating_id && !vm.search.participant && !vm.search.basic_model) {
+      if ( !vm.search.rating_id && !vm.search.participant && !vm.search.basic_model && !vm.search.brand) {
         vm.pumps = [];
-        vm.pumps_error = "You must enter at least one of the following:  Rating ID, Basic Model Number, or Participant";
+        vm.pumps_error = "You must enter at least one of the following:  Rating ID, Basic Model Number, Brand, or Participant";
         return;
       }
       vm.pumps_error = false;

@@ -53,8 +53,15 @@ mixin calculator(er, mode)
                   .col.col-xs-7
                     .form-control-static {{app.pump.configuration.value == 'bare' || app.pump.configuration.value == 'pump_motor' ? "Continuous Load (CL)" : "Variable Load (VL)"}}
            
+            
             .row
-               
+                .form-group
+                  .col.col-xs-5
+                    label.text-primary Pump Brand
+                  .col.col-xs-7.col-sm-4
+                    input.form-control(type="text" ng-model="app.pump.brand" name="pump[brand]")
+            
+            .row
                 .form-group
                   .col.col-xs-5
                     label.text-primary Basic Model Designation
@@ -131,6 +138,12 @@ mixin calculator(er, mode)
             .row 
                 .form-group
                   .col.col-xs-5
+                    label Pump Brand:
+                  .col.col-xs-7
+                    .form-control-static {{app.pump.brand}}
+            .row 
+                .form-group
+                  .col.col-xs-5
                     label Basic Model Designation:
                   .col.col-xs-7
                     .form-control-static {{app.pump.basic_model}}
@@ -183,7 +196,12 @@ mixin calculator(er, mode)
                   .col.col-xs-7
                     .form-control-static {{app.pump.configuration.value == 'bare' || app.pump.configuration.value == 'pump_motor' ? "Continuous Load (CL)" : "Variable Load (VL)"}}
            
-           
+            .row 
+                .form-group
+                  .col.col-xs-5
+                    label Pump Brand:
+                  .col.col-xs-7
+                    .form-control-static {{app.pump.brand}}
             .row 
                 .form-group
                   .col.col-xs-5
@@ -296,7 +314,12 @@ mixin calculator(er, mode)
                   .col.col-xs-7
                     .form-control-static {{app.pump.configuration.value == 'bare' || app.pump.configuration.value == 'pump_motor' ? "Continuous Load (CL)" : "Variable Load (VL)"}}
            
-           
+            .row 
+                .form-group
+                  .col.col-xs-5
+                    label Pump Brand:
+                  .col.col-xs-7
+                    .form-control-static {{app.pump.brand}}
             .row 
                 .form-group
                   .col.col-xs-5

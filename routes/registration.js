@@ -134,7 +134,7 @@ var missing_reg = function(user) {
 
 var missing_participant = function(participant) {
     var missing = [];
-    if ( !participant || !participant.name) missing.push("Organization name");
+    if ( !participant || !participant.name) missing.push("Participant name");
     return missing;
 }
 

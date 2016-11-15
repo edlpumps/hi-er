@@ -75,6 +75,7 @@ router.get("/pumps/new", function(req, res){
     pump.configuration = {value:"bare"};
     pump.laboratory = "TEST LAB"
     pump.basic_model = "PRE.SET.00";
+    pump.brand = "Brand X";
     pump.doe = {value:"RSV"};
     pump.flow = {
             "bep75": 262.3,//72881355932,

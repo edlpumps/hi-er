@@ -94,7 +94,7 @@ exports.build_pump_spreadsheet = function(pump) {
         "section" : "Calculation Section", 
         "energy_rating" : "Energy Rating",
         "energy_savings" : "Energy Savings", 
-        "participant" : "Organization",
+        "participant" : "Participant",
         "configuration" : "Configuration", 
         "basic_model" : "Basic Model Designation", 
         "diameter" : "Impeller Diameters (inches)", 

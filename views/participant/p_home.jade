@@ -15,10 +15,10 @@ block content
              .panel.panel-default
                .panel-heading
                     .pull-right
-                        a(href="#", ng-hide="vm.edit_settings", ng-click="vm.edit_settings = true") Edit organizational settings
+                        a(href="#", ng-hide="vm.edit_settings", ng-click="vm.edit_settings = true") Edit participant settings
                         button.btn.btn-primary(type="submit", ng-show="vm.edit_settings", ng-disabled="settingsForm.$invalid") Save changes
                         a.btn.btn-default.btn-space(type="button", href="javascript:window.location.reload(true)", ng-show="vm.edit_settings", ) Cancel
-                    h4 Organization Profile
+                    h4 Participant Profile
 
                .panel-body(ng-hide="vm.edit_settings")     
                    h1 {{app.participant.name}}

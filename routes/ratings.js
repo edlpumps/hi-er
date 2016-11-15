@@ -18,6 +18,7 @@ var default_search_operators = function (search_parameters) {
         participant : {$first: "$pumps.participant"},
         configuration : {$first: "$pumps.configuration"},
         basic_model : {$first: "$pumps.basic_model"},
+        brand : {$first: "$pumps.brand"},
         diameter : {$first: "$pumps.diameter"},
         speed : {$first: "$pumps.speed"},
         laboratory : {$first: "$pumps.laboratory"},
@@ -59,6 +60,9 @@ var default_search_operators = function (search_parameters) {
     }
     if ( search.basic_model) {
         operators.push({ $match : {basic_model : search.basic_model}});
+    }
+    if ( search.brand) {
+        operators.push({ $match : {brand : search.brand}});
     }
     if ( search ) {
         var configs = [];
@@ -210,7 +214,7 @@ router.post("/search", function(req, res) {
     req.session.search = req.body.search;
     
     // Per HI request, you cannot search unless participant, basic_model or rating_id is specified.
-    if ( !req.session.search.rating_id && !req.session.search.participant && !req.session.search.basic_model) {
+    if ( !req.session.search.rating_id && !req.session.search.participant && !req.session.search.basic_model && !req.session.search.brand) {
         res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify({ pumps: []}));
         return;
@@ -222,7 +226,9 @@ router.post("/search", function(req, res) {
     var search_params = {
         rating_id : req.session.search.rating_id, 
         participant : req.session.search.participant, 
-        basic_model : req.session.search.basic_model
+        basic_model : req.session.search.basic_model,
+        brand : req.session.search.brand
+
     }
     
     var operators = default_search_operators(search_params);
