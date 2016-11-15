@@ -20,7 +20,7 @@ mixin userlist(roles)
                       th 
                 tbody
                       tr(ng-repeat="user in app.users")
-                        td.hidden-xs {{user.name.first}} {{user.name.last}} {{user.participant_admin}} {{user.participant_edit}}
+                        td.hidden-xs {{user.name.first}} {{user.name.last}} {{user.participant_admin}} {{user.participant_editPpartic}}
                         td.hidden-sm.hidden-md.hidden-lg 
                            a(href="mailto:{{user.email}}") {{user.name.first}} {{user.name.last}}
                         td.hidden-xs 
