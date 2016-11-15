@@ -9,7 +9,7 @@ block content
 
       .panel.panel-default
         .panel-heading 
-            h2 Pump #{pump.basic_model} - #{pump.diameter} inches @ #{pump.speed} rpm
+            h2 Pump #{pump.basic_model} - #{(pump.diameter*units.diameter.factor).toFixed(3)} #{units.diameter.label} @ #{pump.speed} rpm
         .panel-body
           .row
            .col.col-sm-5.text-center

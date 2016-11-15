@@ -30,6 +30,10 @@ var PEIController = function($scope, $location, $window, service) {
       return false;
   }
 
+  vm.bowl_diameters = function() {
+    return [1, 2, 3, 4, 6].map(function(d) {return (d * vm.units.diameter.factor).toFixed(1)});
+  }
+
   vm.data_missing = function() {
       if (!vm.pump ) return true;
       if (!vm.pump.flow) return true;
@@ -113,7 +117,9 @@ var PEIController = function($scope, $location, $window, service) {
   ];
 
 
-  vm.powers = [250, 200, 150, 125, 100, 75, 60, 50, 40, 30, 25, 20, 15, 10, 7.5, 5, 3, 2, 1.5, 1];
+  vm.powers = function() {
+      return [250, 200, 150, 125, 100, 75, 60, 50, 40, 30, 25, 20, 15, 10, 7.5, 5, 3, 2, 1.5, 1, vm.units.power.factor].map(function(d) {return (d * vm.units.power.factor)});
+  }
 
 
   vm.go2Configuration = function(back) {
@@ -298,7 +304,7 @@ var PEIController = function($scope, $location, $window, service) {
 
   }
 
-
+  
   vm.go2Results = function() {
      vm.calc_errors = null;
 
@@ -307,7 +313,7 @@ var PEIController = function($scope, $location, $window, service) {
          vm.pump.measured_control_flow_input.bep100 = vm.pump.flow.bep100;
          vm.pump.measured_control_head_input.bep100 = vm.pump.head.bep100;
      }
-
+     vm.pump.unit_set = vm.units.active;
      service.calculate(vm.pump).then(function(result) {
             vm.step = "results";
             vm.pump.pei = result.pei;
@@ -330,6 +336,7 @@ var PEIController = function($scope, $location, $window, service) {
 
   vm.submitListing = function(active) {
       $("input[name='pump[listed]']").val(active);
+      $("input[name='pump[unit_set]']").val(vm.units.active);
       new_pump_pei.submit();
   }
   

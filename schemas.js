@@ -37,7 +37,8 @@ exports.init = function init(mongoose) {
   exports.Users = users;
 
 
-  var pumpSchema = new Schema({ 
+  var pumpSchema = new Schema({
+    date : Date, 
     auto : Boolean,
     rating_id : String,
     participant: String,

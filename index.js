@@ -15,6 +15,7 @@ const bunyan = require('bunyan');
 
 const mongoose = require("mongoose");
 const schemas = require("./schemas");
+const units = require('./utils/uom');
 const MongoStore = require('connect-mongo')(session);
 const port = process.env.PORT || 3000;
 const session_connection_str = process.env.MONGO_CONNECTION_SESSIONS;
@@ -137,30 +138,69 @@ app.use(function(req, res, next){
     next();
 })
 
-const registration = require("./routes/registration");
+app.use(function(req, res, next) {
+    if (!req.session.unit_set) {
+        req.session.unit_set = units.US;
+    }
+    res.locals.unit_set = req.session.unit_set;
+
+    res.locals.units = {
+        active : res.locals.unit_set,
+        flow : {
+            label : res.locals.unit_set == units.US ? "gpm" : "m3/hr", 
+            factor : res.locals.unit_set == units.US ? 1 : units.factors.flow
+        }, 
+        head : {
+            label : res.locals.unit_set == units.US ? "ft" : "m", 
+            factor : res.locals.unit_set == units.US ? 1 : units.factors.head
+        },
+        power : {
+            label : res.locals.unit_set == units.US ? "hp" : "kW",  
+            factor : res.locals.unit_set == units.US ? 1 : units.factors.power
+        },
+        diameter :  {
+            label : res.locals.unit_set == units.US ? "inches" : "mm", 
+            factor : res.locals.unit_set == units.US ? 1 : units.factors.diameter            
+        } 
+    }
+    next();
+});
+
+
+const root = require("./routes/registration");
 const participant = require("./routes/participant");
 const admin = require("./routes/admin");
 const pei = require("./routes/pei");
 const labels = require("./routes/labels");
 const ratings = require("./routes/ratings");
-app.use("/", registration);
+app.use("/", root);
 app.use("/participant", participant);
 app.use("/admin", admin);
 app.use("/pei", pei);
 app.use("/labels", labels);
 app.use("/ratings", ratings);
 
-registration.post('/login', 
+root.post('/login', 
   passport.authenticate('local', { failureRedirect: '/portal' }),
   function(req, res) {
     res.cookie('email', req.body.email);
     req.log.debug("User authenticated, redirecting to landing page");
     res.redirect('/');
 });
-registration.get('/logout', function (req, res){
+root.get('/logout', function (req, res){
   req.logOut() ;
   res.redirect('/portal')
 });
+
+root.post('/units', function(req, res) {
+    var unit_set = req.body.unit_set;
+    if (unit_set == units.US || unit_set == units.METRIC) {
+        req.session.unit_set = unit_set;
+        console.log("Unit set changed to " + unit_set);
+    }
+    res.status(200).send();
+});
+
 
 app.use("/error", function(req, res) {
     res.render("error", {});

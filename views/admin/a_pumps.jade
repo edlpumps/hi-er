@@ -20,7 +20,7 @@ block content
                   th Basic Model Designation
                   th Configuration
                   th DOE Pump Category
-                  th Impeller (inches)
+                  th Impeller (#{units.diameter.label})
                   th Nominal speed (rpm)
                   th PEI
                   th ER
@@ -33,7 +33,7 @@ block content
                    td: a(href="pumps/#{pump._id}") #{pump.basic_model}
                    td #{getConfigLabel(pump.configuration)}
                    td #{pump.doe}
-                   td #{pump.diameter}
+                   td #{(pump.diameter *units.diameter.factor).toFixed(3)}
                    td #{pump.speed}
                    td #{pump.pei.toFixed(2)}
                    td #{pump.energy_rating} 

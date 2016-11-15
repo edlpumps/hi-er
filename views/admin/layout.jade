@@ -27,7 +27,7 @@ html(ng-app='ERAdminApp')
                
               
            .collapse.navbar-collapse#navcollapse
-               .navbar-text HI Energy Ratings Program
+               .navbar-text.hidden-sm HI Energy Ratings Program
                ul.nav.navbar-nav
                   li(class=(active == 'home' ? 'active' : ''))
                     a(href="/") 
@@ -45,10 +45,12 @@ html(ng-app='ERAdminApp')
                   li: a(href="/ratings/home") 
                         .glyphicon.glyphicon-eye-open.margin-right
                         | Public site
-                  li
+                  li.hidden-sm
                     .navbar-text #{user.name.first} #{user.name.last}
                   li
                     a(href="/logout") Sign out
+                  +unit_switch()
+            
      //- heading stuff
      block nav
      block content

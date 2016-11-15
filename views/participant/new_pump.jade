@@ -5,7 +5,7 @@ block nav
      +navigation("new")
 block content
   div(ng-app='ERParticipantApp')
-    .container.pei(ng-controller="ERNewPumpController as app",ng-init="app.pump = #{JSON.stringify(pump)}; app.user= #{JSON.stringify(user)}; app.participant= #{JSON.stringify(participant)}")
+    .container.pei(ng-controller="ERNewPumpController as app",ng-init="app.units = #{JSON.stringify(units)}; app.pump = #{JSON.stringify(pump)}; app.user= #{JSON.stringify(user)}; app.participant= #{JSON.stringify(participant)}")
       .panel.panel-default.solo
         .panel-heading 
             h1 Create pump listing
@@ -33,10 +33,10 @@ block content
             .row
                 .form-group
                   .col.col-xs-5
-                    label.text-primary Model Full Impeller Diameter (in)
+                    label.text-primary Model Full Impeller Diameter ({{app.units.diameter.label}})
                   .col.col-xs-7.col-sm-4.col-md-2
                     input.form-control(name="diameter", type="number" ng-model="app.pump.diameter", min="0", step=".0625")
-
+                    
             .row
                 .form-group
                   .col.col-xs-5

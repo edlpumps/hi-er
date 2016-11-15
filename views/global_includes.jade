@@ -18,6 +18,14 @@ script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
 
 script(src="/scripts/er.js")
 script(src="/scripts/peiApp.js")
+script(src="/scripts/units.js")
 
 script(src="/scripts/bootstrap-switch.min.js")
 
+
+mixin unit_switch()
+ li
+   .navbar-text
+    .btn-group.btn-group-xs
+      button(type="button", class=(unit_set == 'US' ? 'btn us_unit_switch btn-primary' : 'btn us_unit_switch btn-default') title="Show all values in standard US units") US
+      button(type="button", class=(unit_set == 'METRIC' ? 'btn metric_unit_switch btn-primary' : 'btn metric_unit_switch btn-default') title="Show all values in standard metric units") Metric

@@ -5,7 +5,7 @@ block nav
 
 block content
   div(ng-app='ERRatingsApp')
-    .container(ng-controller="ERRatingsController as app",ng-init="app.search= #{JSON.stringify(search)}; app.load_search()")
+    .container(ng-controller="ERRatingsController as app",ng-init="app.units = #{JSON.stringify(units)}; app.search= #{JSON.stringify(search)}; app.load_search()")
         form.form-horizontal
         
          
@@ -50,8 +50,8 @@ block content
                            p {{pump.participant}}
                            p {{pump.doe}} - {{app.getConfigLabel(pump.configuration)}}
                         .col.hidden-xs.col-sm-4(style="padding-top:20px")
-                           p {{pump.diameter}}" diameter
-                           p {{pump.speed}} rpm
+                           p Diameter:  {{pump.diameter * app.units.diameter.factor | number:3}}{{app.units.diameter.label}}
+                           p Speed:  {{pump.speed}}rpm
                            p {{pump.stages}} stages
                         .col.col-xs-4.col-sm-2.energy_badge
                            .small(style="padding-top:20px; margin-bottom:0px") Energy Rating

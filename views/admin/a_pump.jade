@@ -1,4 +1,5 @@
 extends layout
+include ../common/pump_page
 
 block nav
     +navigation("participant_pumps")
@@ -12,7 +13,7 @@ block content
                a(href="/admin/participant/#{participant._id}/pumps") Back to pump list
             
             
-            h2 Pump #{pump.basic_model} - #{pump.diameter} inches @ #{pump.speed} rpm
+            h2 Pump #{pump.basic_model} - #{(pump.diameter*units.diameter.factor).toFixed(3)} #{units.diameter.label} @ #{pump.speed} rpm
         .panel-body
           .row
            .col.col-sm-5.text-center

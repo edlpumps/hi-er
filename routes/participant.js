@@ -2,7 +2,7 @@ const express = require('express');
 const passport = require('passport');
 const router = express.Router();
 const common = require('./common');
-
+const units = require('../utils/uom');
 var Hashids = require('hashids');
 var hashids = new Hashids("hydraulic institute", 6, 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789');
 
@@ -100,10 +100,6 @@ router.get("/pumps/new", function(req, res){
 
 router.post("/pumps/new", function(req, res){
     var pump = req.body;
-    console.log("------------------");
-    console.log("Getting pump from New Form");
-    console.log(pump);
-    console.log("------------------");
     if ( !pump ) {
         req.flash("errorTitle", "Internal application error");
         req.flash("errorMessage", "Pump cannot be created - required information is missing.");
@@ -181,18 +177,16 @@ router.get('/purchase', function(req, res) {
 
 router.post("/pumps/submit", function(req, res){
     var pump = req.body.pump;
-    console.log(req.body);
     if (pump.results ) {
         pump.results = JSON.parse(pump.results);
     }
-   
+    pump = units.convert_to_us(pump);
+    pump.date = new Date();
     var toSave = req.participant.pumps.create(pump);
     req.participant.pumps.push(toSave);
     req.participant.save(function(err) {
         res.redirect("/participant/pumps");
     })
-
-    
 });
 
 

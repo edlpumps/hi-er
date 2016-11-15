@@ -33,53 +33,53 @@ mixin pump_page_info(pump)
     .row 
         .form-group
             .col.col-xs-5
-                label Full impeller diameter (in):
+                label Full impeller diameter:
             .col.col-xs-7
-                .form-control-static #{pump.diameter.toFixed(3)}
+                .form-control-static #{(pump.diameter*units.diameter.factor).toFixed(3)} #{units.diameter.label}
     .row 
         .form-group
             .col.col-xs-5
-                label Nominal speed (rpm):
+                label Nominal speed:
             .col.col-xs-7
-                .form-control-static #{pump.speed}
+                .form-control-static #{pump.speed} rpm
     .row 
         .form-group
             .col.col-xs-5
-                label BEP flow rate (gpm):
+                label BEP flow rate:
             .col.col-xs-7
-                .form-control-static #{pump.flow.bep100.toFixed(2)}
+                .form-control-static #{(pump.flow.bep100 * units.flow.factor).toFixed(2)} #{units.flow.label}
     .row 
         .form-group
             .col.col-xs-5
-                label BEP head (feet):
+                label BEP head:
             .col.col-xs-7
-                .form-control-static #{pump.head.bep100.toFixed(2)}
+                .form-control-static #{(pump.head.bep100 * units.head.factor).toFixed(2)} #{units.head.label}
 
     if pump.section == '3' || pump.section == '4' || pump.section == '5'
         .row 
             .form-group
                 .col.col-xs-5
-                    label BEP Driver input power (hp):
+                    label BEP Driver input power:
                 .col.col-xs-7
                     if pump.driver_input_power.bep100
-                        .form-control-static #{pump.driver_input_power.bep100.toFixed(2)}
+                        .form-control-static #{(pump.driver_input_power.bep100 * units.power.factor).toFixed(2)} #{units.power.label}
                     else
                         .form-control-static Unavailble (MVP)
     else 
         .row 
             .form-group
                 .col.col-xs-5
-                    label BEP Control input power (hp):
+                    label BEP Control input power:
                 .col.col-xs-7
                     if pump.control_power_input.bep100
-                        .form-control-static #{pump.control_power_input.bep100.toFixed(2)}
+                        .form-control-static #{(pump.control_power_input.bep100 * units.power.factor).toFixed(2)} #{units.power.label}
                     else
                         .form-control-static Unavailble (MVP)
     .row 
         .form-group
             .col.col-xs-5
-                label Rated motor power (hp):
+                label Rated motor power:
             .col.col-xs-7
                 - var mpr = pump.motor_power_rated ? pump.motor_power_rated : pump.results.motor_power_rated
-                - var mpr_display = mpr ? mpr.toFixed(0) : ""
-                .form-control-static #{mpr_display}
+                - var mpr_display = mpr ? (mpr * units.power.factor).toFixed(0) : ""
+                .form-control-static #{mpr_display} #{units.power.label}

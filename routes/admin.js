@@ -1,6 +1,7 @@
 const express = require('express');
 const passport = require('passport');
 const router = express.Router();
+const units = require('../utils/uom');
 
 const common = require('./common');
 module.exports = router;
@@ -16,10 +17,10 @@ router.use(function(req, res, next){
     }
 });
 
+
 router.get('/', function(req, res) {
-    req.log.debug("Rendering administration portal");
     res.render("admin/a_home", {
-        user : req.user,
+        user : req.user
     });
 });
 
