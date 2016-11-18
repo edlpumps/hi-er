@@ -37,6 +37,10 @@ html(ng-app='ERAdminApp')
                     a(href="/admin/participants") 
                      .glyphicon.glyphicon-user.margin-right
                      | Participants
+                  li(class=(active == 'labs' ? 'active' : ''))
+                    a(href="/admin/labs") 
+                     .glyphicon.glyphicon-scale.margin-right
+                     | Laboratories
                   li(class=(active == 'labels' ? 'active' : ''))
                     a(href="/admin/labels") 
                      .glyphicon.glyphicon-wrench.margin-right

@@ -129,12 +129,7 @@ var PEIController = function($scope, $location, $window, service) {
 
 
   vm.go2Configuration = function(back) {
-      if ( back && !vm.standalone) {
-        $window.location = "/participant/pumps/new";
-      }
-      else {
-          vm.step = "configuration";
-      }
+      vm.step = "configuration";
   }
 
   vm.motor_method_required = function() {

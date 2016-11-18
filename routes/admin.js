@@ -40,6 +40,12 @@ router.get('/participants', function(req, res) {
         user : req.user,
     });
 });
+router.get('/labs', function(req, res) {
+    req.log.debug("Rendering administration portal - labs page");
+    res.render("admin/a_labs", {
+        user : req.user,
+    });
+});
 
 router.get('/participant/:id', function(req, res) {
     req.log.debug("Rendering participant info page for administrative portal");
@@ -201,6 +207,22 @@ router.get("/api/users", function(req, res) {
     )
 });
 
+router.get("/api/labs", function(req, res) {
+    req.log.debug("Returning lab listings");
+    req.Labs.find(
+        {}, 
+        function(err, labs){
+            if ( err ) {
+                res.status(500).send({ error: err });
+            }
+            else {
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify({ labs: labs}));
+            }
+        }
+    )
+});
+
 router.get("/api/participants", function(req, res) {
     req.log.debug("Returning participant listings");
     req.Participants.find(
@@ -217,6 +239,72 @@ router.get("/api/participants", function(req, res) {
     )
 });
 
+router.post("/api/labs/add", function(req, res) {
+
+    var newLab = req.body.lab;
+    if ( !newLab.code || !newLab.name) {
+        req.log.info("Add lab attempted without code or name");
+        res.status(403).send("Labs must have a lab number and name");
+        return;
+    }
+
+    req.Labs.find({code: newLab.code}, function(err, labs){
+        if ( labs && labs.length > 0) {
+            res.status(400).send("Lab already exists");
+            return;
+        }
+        var lab = new req.Labs(newLab);
+        lab.save(function(err, saved) {
+            if ( err) {
+                res.status(500).send({error:err});
+            }
+            else {
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify({ lab: saved}));
+            }
+        });
+    })
+});
+
+router.post("/api/labs/save", function(req, res) {
+    var lab = req.body.lab;
+    req.Labs.update({code: lab.code}, 
+        {$set : {name : lab.name, address:lab.address}},
+        function(err, labs){
+            if ( err) {
+            res.status(500).send({error:err});
+            }
+            else {
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify({ lab: lab}));
+            }
+        });
+});
+
+router.post("/api/labs/delete/:id", function(req, res) {
+    req.Labs.findOne({_id: req.params.id}, function(err, lab){
+        if ( err ) {
+            req.log.debug("Error getting lab to delete");
+            req.log.debug(err);
+            res.status(500).send({error:err});
+        }
+        else if (!lab ) {
+            res.status(200).send("Lab doesn't exist");
+        }
+        else {
+            req.Labs.remove({_id:req.params.id}, function(err) {
+                if ( err ) {
+                    req.log.debug("Error removing lab");
+                    req.log.debug(err);
+                    res.status(500).send({error:err});
+                }
+                else {
+                    res.status(200).send("Lab removed");
+                }
+            })
+        }
+    });
+});
 
 router.post("/api/users/delete/:id", common.deleteUser);
 router.post("/api/users/add", common.addUser)

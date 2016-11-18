@@ -40,6 +40,22 @@ exports.init = function init(mongoose) {
   exports.Users = users;
 
 
+  var labs = mongoose.model('labs', {
+    name: String,
+    code : String,
+    address: {
+      street : String,
+      street2 : String,
+      city : String,
+      state : String,
+      postal : String,
+      country : String
+    }
+  }, "labs");
+
+  exports.Labs = labs;
+
+
   var pumpSchema = new Schema({
     date : Date, 
     auto : Boolean,

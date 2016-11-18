@@ -130,7 +130,7 @@ router.post("/pumps/new", function(req, res){
         return;
     }
     var view = pump.pei_input_type == 'calculate'  ? "participant/calculate_pump" : "participant/manual_pump";
-
+    console.log("NEW");
     var toSave = req.participant.pumps.create(pump);
     toSave.rating_id = req.nextRatingsId(function(err, doc) {
         toSave.rating_id = hashids.encode(doc.value.seq);

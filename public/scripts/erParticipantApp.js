@@ -119,6 +119,7 @@ var ERParticipantController = function($scope, $location, service) {
       service.saveUser(vm.edit_user).then(function(saved) {
         vm.edit_user_error = false;
         $('#edit').modal('hide');
+        vm.refreshUsers();
       }).catch(function(error) {
         if (error.status == 403) {
           window.location="/";
@@ -142,7 +143,7 @@ var ERParticipantController = function($scope, $location, service) {
       $('#add').modal('show')
   }
   vm.editUser = function(user) {
-      vm.edit_user = user;
+      vm.edit_user = JSON.parse(JSON.stringify(user));
       $('#edit').modal('show')
   }
 

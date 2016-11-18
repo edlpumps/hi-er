@@ -33,7 +33,7 @@ mixin calculator(er, mode)
               .col.col-xs-12
                 fieldset
                   legend Pump listing data
-            .row 
+            .row(ng-show='app.standalone') 
               .form-group
                 .col.col-xs-5
                     label.text-primary Organization / Participant:
@@ -46,7 +46,7 @@ mixin calculator(er, mode)
                 .col.col-xs-7
                     select.form-control(name="pump[configuration]", data-width="auto", ng-model="app.pump.configuration", ng-options="config as config.label for config in app.configurations track by config.value")
             
-            .row(ng-show="app.pump.configuration")
+            .row(ng-show="app.pump.configuration && app.standalone")
                 .form-group
                   .col.col-xs-5
                     label.text-primary Rating Load Type:

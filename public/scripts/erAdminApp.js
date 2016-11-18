@@ -10,7 +10,20 @@ var service = app.factory('service', function($http) {
                 return docs.data;
            });
      },
-    getParticipants : function () {
+     getLabs : function () {
+       return $http.get('/admin/api/labs', {})
+           .then(function(docs) {
+                return docs.data;
+           });
+     },
+     saveLab : function (lab) {
+        return $http.post('/admin/api/labs/save', {lab:lab})
+            .success(function(docs) { return docs.data; })
+            .error(function(data, status) {
+                return data;
+            });
+     },
+     getParticipants : function () {
         return $http.get('/admin/api/participants', {})
             .then(function(docs) {
                 return docs.data;
@@ -23,9 +36,23 @@ var service = app.factory('service', function($http) {
                 return data;
             });
      },
+     saveNewLab : function (lab) {
+        return $http.post('/admin/api/labs/add', {lab:lab})
+            .success(function(docs) { return docs.data; })
+            .error(function(data, status) {
+                return data;
+            });
+     },
      
      deleteUser : function (user) {
         return $http.post('/admin/api/users/delete/'+user._id, {})
+            .success(function(docs) { return docs.data; })
+            .error(function(data, status) {
+                return data;
+            });
+     },
+     deleteLab : function (lab) {
+        return $http.post('/admin/api/labs/delete/'+lab._id, {})
             .success(function(docs) { return docs.data; })
             .error(function(data, status) {
                 return data;
@@ -72,10 +99,19 @@ var ERAdminController = function($scope, $location, service) {
         console.error(error);
       });
   }
+  vm.refreshLabs = function() {
+      service.getLabs().then(function(results) {
+        vm.labs = results.labs;
+        vm.labs_error = false;
+      }).catch(function(error) {
+        vm.labs_error = true;
+        console.error(error);
+      });
+  }
 
   vm.addUser = function() {
       
-  service.saveNewUser(vm.new_user).then(function(saved) {
+    service.saveNewUser(vm.new_user).then(function(saved) {
         vm.new_user_error = false;
         vm.refreshUsers(function() {
             var u = vm.users.filter(function(u_){return u_.email ==  vm.new_user.email});
@@ -95,6 +131,52 @@ var ERAdminController = function($scope, $location, service) {
      })
   }
 
+  vm.addLab = function() {
+    console.log("Saving new lab!");
+    service.saveNewLab(vm.new_lab).then(function(saved) {
+        vm.new_lab_error = false;
+        vm.refreshLabs();
+        $('#add').modal('hide');
+
+       
+      }).catch(function(error) {
+        if (error.status == 403) {
+          window.location="/";
+        }
+        else {
+          vm.new_lab_error = error.data;
+        }
+     })
+  }
+
+  vm.saveLab = function() {
+      service.saveLab(vm.edit_lab).then(function(saved) {
+        vm.edit_lab_error = false;
+        $('#edit').modal('hide');
+        vm.refreshLabs();
+      }).catch(function(error) {
+        if (error.status == 403) {
+          window.location="/";
+        }
+        else {
+          vm.edit_lab_error = error.data;
+        }
+     })
+  }
+
+  vm.removeLab = function(lab) {
+      service.deleteLab(lab).then(function(saved) {
+        vm.refreshLabs();
+      }).catch(function(error) {
+        if (error.status == 403) {
+          window.location="/";
+        }
+        else {
+          console.log(error);
+        }
+     })
+  }
+
   vm.activateInfo = function(user) {
     vm.activate_user = user;
     $('#activation').modal('show')
@@ -107,6 +189,23 @@ var ERAdminController = function($scope, $location, service) {
       
       $('#add').modal('show')
   }
+
+
+
+  vm.showAddLab = function() {
+      vm.new_lab = {
+          
+      };
+      
+      $('#add').modal('show')
+  }
+
+  vm.showEditLab = function(lab) {
+     console.log("Editing lab");
+      vm.edit_lab = JSON.parse(JSON.stringify(lab));
+      $('#edit').modal('show')
+  }
+
 
   vm.removeUser = function(user) {
       service.deleteUser(user).then(function(saved) {
@@ -142,7 +241,7 @@ var ERAdminController = function($scope, $location, service) {
 
   vm.refreshUsers();
   vm.refreshParticipants();
-
+  vm.refreshLabs();
 }
 
 

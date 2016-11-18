@@ -1,0 +1,84 @@
+extends layout
+
+block nav
+    +navigation("labs")
+    
+block content
+     .container(ng-controller="ERAdminController as app",ng-init="app.user= #{JSON.stringify(user)}")
+       .panel.panel-default
+        .panel-heading 
+            h2 
+             .pull-right(ng-show="{{app.user.participant_admin || app.user.admin}}")
+               button(type="button", ng-click="app.showAddLab()").btn.btn-primary New Laboratory
+             | Approved HI Test Labs 
+        .panel-body
+          .row
+           .col.col-xs-12
+            .table-responsive
+              table.table.table-striped
+                thead
+                 tr 
+                  th Lab #
+                  th Name
+                  th Address
+                  th 
+                tbody
+                  tr(ng-repeat='lab in app.labs')
+                   td {{lab.code}}
+                   td {{lab.name}}
+                   td {{lab.street}}, {{lab.city}}, {{lab.state}} {{lab.postal}} - {{lab.country}}
+                   td 
+                    .btn-group
+                     button(type="button", ng-click="app.showEditLab(lab)").btn.btn-default Edit
+                     button(type="button", ng-click="app.removeLab(lab)").btn.btn-danger Delete
+
+        .modal.fade#add(tabindex='-1', role='dialog' aria-labelledby='titleLabel', aria-hidden='true')
+              .modal-dialog
+                  .modal-content
+                      .modal-header
+                          button(type='button', class='close' data-dismiss='modal' aria-hidden='hidden') &times;
+                          h4.modal-title#titleLabel Add New Lab
+                      .modal-body
+                          form(role='form' name='new_lab')
+                              .row
+                                  .col-sm-12
+                                      .form-group
+                                          label Laboratory Name:
+                                          input.form-control.input-sm(ng-model='app.new_lab.name', required)
+                              .row
+                                  .col-sm-12
+                                      .form-group
+                                          label Laboratory Number:
+                                          input.form-control.input-sm(ng-model='app.new_lab.code', required)
+                             
+                             
+                      .modal-footer
+                          div
+                              .pull-left.text-danger(ng-show='app.new_lab_error') {{app.new_lab_error}}
+                              button.btn.btn-primary(type='button' ng-click='app.addLab()') Add Lab
+                              button.btn.btn-default(type='button' data-dismiss='modal') Cancel
+
+          .modal.fade#edit(tabindex='-1', role='dialog' aria-labelledby='titleLabel', aria-hidden='true')
+              .modal-dialog
+                  .modal-content
+                      .modal-header
+                          button(type='button', class='close' data-dismiss='modal' aria-hidden='hidden') &times;
+                          h4.modal-title#title Edit Lab
+                      .modal-body
+                          form(role='form' name='edit_lab')
+                              .row
+                                  .col-sm-12
+                                      .form-group
+                                          label Laboratory Name:
+                                          input.form-control.input-sm(ng-model='app.edit_lab.name', required)
+                              .row
+                                  .col-sm-12
+                                      .form-group
+                                          label Laboratory Number:
+                                          input.form-control.input-sm(ng-model='app.edit_lab.code', readonly, required, title="Lab numbers cannot be edited.  If you must change the lab number, you must delete and recreate this lab")
+                             
+                      .modal-footer
+                          div
+                              .pull-left.text-danger(ng-show='app.edit_lab_error') {{app.edit_lab_error}}
+                              button.btn.btn-primary(type='button' ng-click='app.saveLab()') Save Changes
+                              button.btn.btn-default(type='button' data-dismiss='modal') Cancel

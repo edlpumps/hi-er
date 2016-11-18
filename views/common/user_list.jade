@@ -4,7 +4,7 @@ mixin userlist(roles)
    .panel.panel-default
       .panel-heading
         h3 
-         .pull-right(ng-show="{{app.user.participant_admin}}")
+         .pull-right(ng-show="{{app.user.participant_admin || app.user.admin}}")
            button(type="button", ng-click="app.showAddUser()").btn.btn-primary New user
          | Users
       .panel-body
@@ -90,7 +90,7 @@ mixin userlist(roles)
                   .modal-content
                       .modal-header
                           button(type='button', class='close' data-dismiss='modal' aria-hidden='hidden') &times;
-                          h4.modal-title#title Label Edit User
+                          h4.modal-title#title Edit User
                       .modal-body
                           form(role='form' name='edit_user')
                               .row
@@ -107,7 +107,7 @@ mixin userlist(roles)
                                   .col-sm-12
                                       .form-group
                                           label Email:
-                                          input.form-control.input-sm(type="email", ng-model='app.edit_user.email', required)
+                                          input.form-control.input-sm(type="email", ng-model='app.edit_user.email', readonly, required)
                               if roles
                                 .row
                                   .col-sm-12
