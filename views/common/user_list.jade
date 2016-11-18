@@ -18,7 +18,7 @@ mixin userlist(roles)
                       th.hidden-xs Email
                       th.hidden-xs(ng-show="{{app.user.participant_admin}}") Roles
                       th.hidden-xs(ng-show="{{app.user.participant_admin}}") Activation
-                      th(ng-show="{{app.user.participant_admin}}") 
+                      th(ng-show="{{app.user.participant_admin || app.user.admin}}") 
                 tbody
                       tr(ng-repeat="user in app.users")
                         td.hidden-xs
@@ -35,7 +35,7 @@ mixin userlist(roles)
                            span(ng-show="user.needsActivation") 
                              button(type="button", ng-click="app.activateInfo(user)").btn.btn-primary Needs Activation
                            span(ng-show="user.needsActivation==false") Active
-                        td(ng-show="{{app.user.participant_admin}}") 
+                        td(ng-show="{{app.user.participant_admin || app.user.admin}}") 
                           .btn-group
                             if roles  
                               button(type="button", ng-click="app.editUser(user)", ng-hide="user._id == app.user._id").btn.btn-default Edit
