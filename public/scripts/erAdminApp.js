@@ -194,7 +194,9 @@ var ERAdminController = function($scope, $location, service) {
 
   vm.showAddLab = function() {
       vm.new_lab = {
-          
+          address : {
+            country : "United States"
+          }
       };
       
       $('#add').modal('show')

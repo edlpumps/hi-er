@@ -26,7 +26,7 @@ block content
                   tr(ng-repeat='lab in app.labs')
                    td {{lab.code}}
                    td {{lab.name}}
-                   td {{lab.street}}, {{lab.city}}, {{lab.state}} {{lab.postal}} - {{lab.country}}
+                   td {{lab.address.street}}, {{lab.address.city}}, {{lab.address.state}} {{lab.address.postal}} - {{lab.address.country}}
                    td 
                     .btn-group
                      button(type="button", ng-click="app.showEditLab(lab)").btn.btn-default Edit
@@ -41,16 +41,47 @@ block content
                       .modal-body
                           form(role='form' name='new_lab')
                               .row
+                                  .col-sm-6
+                                      .form-group
+                                          label Laboratory Number:
+                                          input.form-control.input-sm(ng-model='app.new_lab.code', required)
+                              .row
                                   .col-sm-12
                                       .form-group
                                           label Laboratory Name:
                                           input.form-control.input-sm(ng-model='app.new_lab.name', required)
+                              
                               .row
                                   .col-sm-12
                                       .form-group
-                                          label Laboratory Number:
-                                          input.form-control.input-sm(ng-model='app.new_lab.code', required)
-                             
+                                          label Street:
+                                          input.form-control.input-sm(ng-model='app.new_lab.address.street', required)
+                              .row
+                                  .col-sm-12
+                                      .form-group
+                                          label Street (cont.):
+                                          input.form-control.input-sm(ng-model='app.new_lab.address.street2')
+
+                              .row
+                                  .col-sm-6
+                                      .form-group
+                                          label City/Town:
+                                          input.form-control.input-sm(ng-model='app.new_lab.address.city', required)
+                                   .col-sm-2
+                                      .form-group
+                                          label State:
+                                          input.form-control.input-sm(ng-model='app.new_lab.address.state', required)
+                                   .col-sm-4
+                                      .form-group
+                                          label Postal code:
+                                          input.form-control.input-sm(ng-model='app.new_lab.address.postal', required)
+                                   
+
+                              .row
+                                  .col-sm-8
+                                      .form-group
+                                          label Country:
+                                          input.form-control.input-sm(ng-model='app.new_lab.address.country', required)
                              
                       .modal-footer
                           div
@@ -67,16 +98,47 @@ block content
                       .modal-body
                           form(role='form' name='edit_lab')
                               .row
+                                  .col-sm-6
+                                      .form-group
+                                          label Laboratory Number:
+                                          input.form-control.input-sm(ng-model='app.edit_lab.code', required, readonly, title="Laboratory number cannot be edited.  If you need to change this, please delete the lab and recreate it.")
+                              .row
                                   .col-sm-12
                                       .form-group
                                           label Laboratory Name:
                                           input.form-control.input-sm(ng-model='app.edit_lab.name', required)
+                              
                               .row
                                   .col-sm-12
                                       .form-group
-                                          label Laboratory Number:
-                                          input.form-control.input-sm(ng-model='app.edit_lab.code', readonly, required, title="Lab numbers cannot be edited.  If you must change the lab number, you must delete and recreate this lab")
-                             
+                                          label Street:
+                                          input.form-control.input-sm(ng-model='app.edit_lab.address.street', required)
+                              .row
+                                  .col-sm-12
+                                      .form-group
+                                          label Street (cont.):
+                                          input.form-control.input-sm(ng-model='app.edit_lab.address.street2')
+
+                              .row
+                                  .col-sm-6
+                                      .form-group
+                                          label City/Town:
+                                          input.form-control.input-sm(ng-model='app.edit_lab.address.city', required)
+                                   .col-sm-2
+                                      .form-group
+                                          label State:
+                                          input.form-control.input-sm(ng-model='app.edit_lab.address.state', required)
+                                   .col-sm-4
+                                      .form-group
+                                          label Postal code:
+                                          input.form-control.input-sm(ng-model='app.edit_lab.address.postal', required)
+                                   
+
+                              .row
+                                  .col-sm-8
+                                      .form-group
+                                          label Country:
+                                          input.form-control.input-sm(ng-model='app.edit_lab.address.country', required)
                       .modal-footer
                           div
                               .pull-left.text-danger(ng-show='app.edit_lab_error') {{app.edit_lab_error}}
