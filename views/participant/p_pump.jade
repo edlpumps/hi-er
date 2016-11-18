@@ -54,8 +54,8 @@ block content
               p.solo.text-center: a.btn.btn-primary(href="/labels/#{participant._id}/#{pump._id}/qr", target="_blank") Download
 
              
-
-      .panel.panel-default
+      if user.participant_edit
+       .panel.panel-default
         .panel-heading
           h2 Administrative controls
         .panel-body

@@ -41,6 +41,12 @@ router.get('/', function(req, res) {
 
 
 router.get('/users', function(req, res) {
+     if ( !req.user.participant_admin) {
+        req.log.info("View Users attempted by unauthorized user");
+        req.log.info(req.user);
+        res.redirect("/unauthorized");
+        return;
+    }
     req.log.debug("Rendering participant portal (users)");
     res.render("participant/p_users", {
         user : req.user,
@@ -59,6 +65,12 @@ router.get('/pumps', function(req, res) {
 });
 
 router.get("/pumps/new", function(req, res){
+     if ( !req.user.participant_edit) {
+        req.log.info("New pump attempted by unauthorized user");
+        req.log.info(req.user);
+        res.redirect("/unauthorized");
+        return;
+    }
     if ( req.participant.pumps.length >= req.participant.pumpLimit){
         req.flash("errorTitle", "Subscription limit");
         req.flash("errorMessage", "You cannot list additional pumps until you've updated your subscription level.");
@@ -100,6 +112,12 @@ router.get("/pumps/new", function(req, res){
 });
 
 router.post("/pumps/new", function(req, res){
+     if ( !req.user.participant_edit) {
+        req.log.info("Create pump attempted by unauthorized user");
+        req.log.info(req.user);
+        res.redirect("/unauthorized");
+        return;
+    }
     var pump = req.body;
     if ( !pump ) {
         req.flash("errorTitle", "Internal application error");
@@ -177,6 +195,12 @@ router.get('/purchase', function(req, res) {
 
 
 router.post("/pumps/submit", function(req, res){
+    if ( !req.user.participant_edit) {
+        req.log.info("Submit pump attempted by unauthorized user");
+        req.log.info(req.user);
+        res.redirect("/unauthorized");
+        return;
+    }
     var pump = req.body.pump;
     if (pump.results ) {
         pump.results = JSON.parse(pump.results);
@@ -193,6 +217,12 @@ router.post("/pumps/submit", function(req, res){
 
 
 router.post('/pumps/:id', function(req, res) {
+    if ( !req.user.participant_edit) {
+        req.log.info("Delete pump attempted by unauthorized user");
+        req.log.info(req.user);
+        res.redirect("/unauthorized");
+        return;
+    }
     var pump = req.participant.pumps.id(req.params.id);
     if ( pump ) {
         pump.listed = req.body.listed ? true : false;
@@ -218,6 +248,12 @@ router.get("/api/pumps", function(req, res) {
 });
 
 router.post("/api/pumps/delete/:id", function(req, res) {
+    if ( !req.user.participant_edit) {
+        req.log.info("Delete pump attempted by unauthorized user");
+        req.log.info(req.user);
+        res.status(403).send("Cannot delete pump without edit role");
+        return;
+    }
     var pump = req.participant.pumps.id(req.params.id);
     if (pump) pump.remove();
     req.participant.save(function(err) {
@@ -237,6 +273,12 @@ router.post("/api/pumps/delete/:id", function(req, res) {
 
 router.post('/api/settings', function(req, res) {
     req.log.debug("Saving participant settings");
+    if ( !req.user.participant_admin) {
+        req.log.info("Save settings attempted by unauthorized user");
+        req.log.info(req.user);
+        res.status(403).send("Cannot set organization settings without admin role");
+        return;
+    }
     req.Participants.findById(req.participant._id, function(err, participant) {
         if ( err ) {
             re.log.error(err);

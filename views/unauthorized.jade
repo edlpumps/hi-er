@@ -1,0 +1,16 @@
+extends layout
+
+
+
+block content
+    .container
+        .panel.panel-defaultdanger.solo
+            .panel-heading
+                h3 Unauthorized
+            .panel-body
+                .alert.alert-warning 
+                  p This page / action is not accessible with the current role assigned to your account.  Please contact your administrator for more detail.
+                  p
+                    | Please return to the 
+                    a(href="/") Energy Ratings home page 
+                    | to continue to use this application.

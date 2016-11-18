@@ -16,7 +16,11 @@ exports.deleteUser = function(req, res) {
         }
         else if (req.user.admin && !user.admin) {
             req.log.info("Deletion attempt by administrator on participant user");
-            res.status(403).send("Cannot delete user from another participating organization");
+            res.status(403).send("Cannot delete user from a participating organization");
+        }
+        else if (!req.user.admin && !req.user.participant_admin) {
+            req.log.info("Deletion attempt by unauthorized user");
+            res.status(403).send("Cannot delete user unless you are a HI or Participant administrator");
         }
         else {
             req.Users.remove({_id:req.params.id}, function(err) {
@@ -34,6 +38,12 @@ exports.deleteUser = function(req, res) {
 };
 
 exports.addUser = function(req, res) {
+
+    if ( !req.user.admin && !req.user.participant_admin) {
+        req.log.info("Add user attempted by unauthorized user");
+        res.status(403).send("Cannot add user unless you are a HI or Participant administrator");
+        return;
+    }
     // New user only needs name and email address.  
     // An activation link will be generated and will be in the response.
     var uuid = require('uuid');
@@ -80,8 +90,12 @@ exports.addUser = function(req, res) {
 
 
 exports.saveUser = function(req, res) {
+    if ( !req.user.admin && !req.user.participant_admin) {
+        req.log.info("Save user attempted by unauthorized user");
+        res.status(403).send("Cannot save user unless you are a HI or Participant administrator");
+        return;
+    }
     var user = req.body.user;
-    
     req.Users.update({email: user.email}, 
         {$set : {name : user.name, participant_admin:user.participant_admin, participant_edit:user.participant_edit}},
         function(err, users){

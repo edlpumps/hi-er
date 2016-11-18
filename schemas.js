@@ -31,7 +31,7 @@ exports.init = function init(mongoose) {
     activationKey:String,
     needsActivation:{type:Boolean, default:false},
     admin : Boolean, 
-    participant_admin : {type:Boolean, default:false},
+    participant_admin : {type:Boolean, default:true},
     participant_edit : {type:Boolean, default:false},
     participant_view : {type:Boolean, default:true},
     participant : Schema.Types.ObjectId,

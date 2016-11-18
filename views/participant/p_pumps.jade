@@ -11,7 +11,7 @@ block content
         .panel-heading 
             h1 Pump listings
         .panel-body
-          .row
+          .row(ng-show='app.user.participant_edit')
             
             if subcription_limit
               .col.col-xs-12
@@ -44,7 +44,7 @@ block content
                   th.hidden-xs.hidden-sm Stages
                   th.hidden-xs PEI
                   th ER
-                  th
+                  th(ng-show='app.user.participant_edit')
                 tbody
                  tr(ng-repeat="pump in app.participant.pumps")
                   td
@@ -60,6 +60,6 @@ block content
                   td.hidden-xs {{pump.pei | number:4}}
                   td {{pump.energy_rating}} 
                   
-                  td 
+                  td(ng-show='app.user.participant_edit') 
                      button(type="button", ng-click="app.removePump(pump)").btn.btn-danger.btn-xs Delete
 

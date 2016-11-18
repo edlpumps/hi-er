@@ -34,7 +34,8 @@ html
                     a(href="/participant") 
                       .glyphicon.glyphicon-home.margin-right
                       | Home
-                  li(class=(active == 'users' ? 'active' : ''))
+                  if user.participant_admin
+                   li(class=(active == 'users' ? 'active' : ''))
                     a(href="/participant/users") 
                       .glyphicon.glyphicon-user.margin-right
                       | User Management
