@@ -9,7 +9,7 @@ block content
 
       .panel.panel-default
         .panel-heading 
-            h2 #{pump.brand} #{pump.brand ? ' / ' : ''} #{pump.basic_model}
+            h2 #{pump.brand} #{pump.brand ? ' / ' : ''} #{pump.basic_model} #{pump.individual_model}
             h2 #{(pump.diameter*units.diameter.factor).toFixed(3)} #{units.diameter.label} @ #{pump.speed} rpm
         .panel-body
           .row

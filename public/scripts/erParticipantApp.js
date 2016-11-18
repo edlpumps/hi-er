@@ -253,6 +253,7 @@ var ERNewPumpController = function($scope, $location, service) {
     if (!vm.pump) return true;
     if (!vm.pump.configuration || !vm.pump.configuration.value ) return true;
     if (!vm.pump.brand) return true;
+    if (!vm.pump.individual_model) return true;
     if (!vm.pump.basic_model) return true;
     if (!vm.pump.diameter) return true;
     if (!vm.pump.speed) return true;

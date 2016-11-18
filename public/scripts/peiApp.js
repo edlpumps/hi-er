@@ -11,6 +11,12 @@ var service = app.factory('service', function($http) {
                 return docs.data;
            });
      },
+     model_check : function (pump) {
+       return $http.post('/participant/api/model_check', {pump:pump})
+           .then(function(docs) {
+                return docs.data;
+           });
+     },
    };
 });
 
@@ -321,9 +327,24 @@ var PEIController = function($scope, $location, $window, service) {
             vm.pump.energy_savings = result.energy_savings;
             vm.pump.pei_baseline = result.pei_baseline;
             vm.pump.results = JSON.stringify(result);
+            vm.basic_collide = "";
+            vm.individual_collide = "";
             if (!result.success) {
                 vm.calc_errors = result.reasons;
             }
+
+            // Now see if this pump can be listed (only for er mode).
+            if ( vm.mode == "manual" && result.success) {
+                service.model_check(vm.pump).then(function(result) {
+                    if (result.basic_collide) {
+                        vm.basic_collide = "This pump cannot be listed because there are already pump(s) listed under this basic model (" + vm.pump.basic_model + ") with a conflicting Energy Rating value";
+                    }
+                    if (result.individual_collide) {
+                        vm.individual_collide = "This pump cannot be listed because there is already a pump listed with individual model number " + vm.pump.individual_model;
+                    }
+                });
+            }
+
      }).catch(function(error) {
             if (error.status == 403) {
                 window.location="/";

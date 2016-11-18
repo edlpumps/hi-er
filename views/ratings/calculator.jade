@@ -67,6 +67,13 @@ mixin calculator(er, mode)
                     label.text-primary Basic Model Designation
                   .col.col-xs-7.col-sm-4
                     input.form-control(type="text" ng-model="app.pump.basic_model" name="pump[basic_model]")
+
+            .row
+                .form-group
+                  .col.col-xs-5
+                    label.text-primary Individual Model Number
+                  .col.col-xs-7.col-sm-4
+                    input.form-control(type="text" ng-model="app.pump.individual_model" name="pump[individual_model]")
             
             .row
                 .form-group
@@ -144,9 +151,10 @@ mixin calculator(er, mode)
             .row 
                 .form-group
                   .col.col-xs-5
-                    label Basic Model Designation:
+                    label Basic / Individual Model Number:
                   .col.col-xs-7
-                    .form-control-static {{app.pump.basic_model}}
+                    .form-control-static {{app.pump.basic_model}} / {{app.pump.individual_model}}
+         
             .row 
                 .form-group
                   .col.col-xs-5
@@ -205,9 +213,9 @@ mixin calculator(er, mode)
             .row 
                 .form-group
                   .col.col-xs-5
-                    label Basic Model Designation:
+                    label Basic / Individual Model Number:
                   .col.col-xs-7
-                    .form-control-static {{app.pump.basic_model}}
+                    .form-control-static {{app.pump.basic_model}} / {{app.pump.individual_model}}
             .row 
                 .form-group
                   .col.col-xs-5
@@ -323,9 +331,9 @@ mixin calculator(er, mode)
             .row 
                 .form-group
                   .col.col-xs-5
-                    label Basic Model Designation:
+                    label Basic / Individual Model Number:
                   .col.col-xs-7
-                    .form-control-static {{app.pump.basic_model}}
+                    .form-control-static {{app.pump.basic_model}} / {{app.pump.individual_model}}
             .row 
                 .form-group
                   .col.col-xs-5
@@ -498,13 +506,19 @@ mixin calculator(er, mode)
               .col.col-sm-6.text-center
                 h4 Energy Rating
                 p.er_display {{app.pump.energy_rating}}
+            .row(ng-show="app.basic_collide")
+              .col.col-xs-12
+                .alert.alert-danger {{app.basic_collide}}
+            .row(ng-show="app.individual_collide")
+              .col.col-xs-12
+                .alert.alert-danger {{app.individual_collide}}
             .row
               .col.col-xs-7
                   button(type="button", ng-click="app.go2Data(true)").btn.btn-default.btn-space Back
               .col.col-xs-5
-                  button(type="button", ng-hide="app.calc_errors", ng-click="app.submitListing(false)").btn.btn-default.btn-space Save pump 
-                  button(type="button", ng-hide="app.calc_errors", ng-click="app.submitListing(true)").btn.btn-danger.btn-space Save and Activate pump
-
+                  button(type="button", ng-hide="app.calc_errors || app.basic_collide || app.individual_collide", ng-click="app.submitListing(false)").btn.btn-default.btn-space Save pump 
+                  button(type="button", ng-hide="app.calc_errors || app.basic_collide || app.individual_collide", ng-click="app.submitListing(true)").btn.btn-danger.btn-space Save and Activate pump
+            
         else
           .panel-body(ng-show="app.step=='results'")
             .row(ng-show="app.calc_errors")

@@ -24,7 +24,6 @@ block content
                     select.form-control(name="configuration", data-width="auto", ng-model="app.pump.configuration", ng-options="config as config.label for config in app.configurations track by config.value")
             
             .row
-               
                 .form-group
                   .col.col-xs-5
                     label.text-primary Pump Brand
@@ -32,13 +31,18 @@ block content
                     input.form-control(name="brand", id="brand", type="text" ng-model="app.pump.brand")
             
             .row
-               
                 .form-group
                   .col.col-xs-5
                     label.text-primary Basic Model Designation
                   .col.col-xs-7.col-sm-4
                     input.form-control(name="basic_model", id="basic_model", type="text" ng-model="app.pump.basic_model")
 
+            .row
+                .form-group
+                  .col.col-xs-5
+                    label.text-primary Individual Model Number
+                  .col.col-xs-7.col-sm-4
+                    input.form-control(name="individual_model", id="individual_model", type="text" ng-model="app.pump.individual_model")
             
             
             .row

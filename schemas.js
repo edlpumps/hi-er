@@ -48,6 +48,7 @@ exports.init = function init(mongoose) {
     configuration : String,
     brand : String,
     basic_model : String,
+    individual_model : {type:String, default:"N/A"},
     diameter: Number,
     speed : Number,
     laboratory : String,

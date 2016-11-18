@@ -1,3 +1,4 @@
+"use strict";
 const express = require('express');
 const passport = require('passport');
 const router = express.Router();
@@ -64,6 +65,8 @@ router.get('/pumps', function(req, res) {
     });
 });
 
+
+
 router.get("/pumps/new", function(req, res){
      if ( !req.user.participant_edit) {
         req.log.info("New pump attempted by unauthorized user");
@@ -87,6 +90,7 @@ router.get("/pumps/new", function(req, res){
     pump.configuration = {value:"bare"};
     pump.laboratory = "TEST LAB"
     pump.basic_model = "PRE.SET.00";
+    pump.individual_model = "123-456-89";
     pump.brand = "Brand X";
     pump.doe = {value:"RSV"};
     pump.flow = {
@@ -241,6 +245,30 @@ router.post('/pumps/:id', function(req, res) {
     })
     
 });
+
+router.post("/api/model_check", function(req, res) {
+    var newPump = req.body.pump;
+
+    for (let i = 0; i < req.participant.pumps.length;i++ ) {
+        let pump = req.participant.pumps[i];
+        
+        // If there is already a pump with this individual model number, then 
+        // return failure - these must be unique.
+        if (pump.individual_model === newPump.individual_model) {
+            res.status(200).send(JSON.stringify({individual_collide:true}));
+            return;
+        }  
+        // If there is already pump(s) with the same basic model, check to make sure
+        // that this has the same ER value.
+        if (pump.basic_model === newPump.basic_model && pump.energy_rating != newPump.energy_rating) {
+            res.status(200).send(JSON.stringify({basic_collide:true}));
+            return;
+        }  
+    };
+
+    res.status(200).send(JSON.stringify({ok:true}));
+});
+
 
 router.get("/api/pumps", function(req, res) {
     res.setHeader('Content-Type', 'application/json');

@@ -12,7 +12,7 @@ block content
             .pull-right.solo
                a(href="/admin/participant/#{participant._id}/pumps") Back to pump list
             
-            h2 #{pump.brand} #{pump.brand ? ' / ' : ''} #{pump.basic_model}
+            h2 #{pump.brand} #{pump.brand ? ' / ' : ''} #{pump.basic_model} #{pump.individual_model}
             h2 #{(pump.diameter*units.diameter.factor).toFixed(3)} #{units.diameter.label} @ #{pump.speed} rpm
         .panel-body
           .row

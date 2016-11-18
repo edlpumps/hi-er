@@ -36,7 +36,8 @@ block content
                   th
                   th ID
                   th.hidden-xs Listing Date
-                  th Basic Model #
+                  th.hidden-xs Basic Model #
+                  th Individual Model #
                   th.hidden-xs Configuration
                   th.hidden-xs DOE Pump Category
                   th.hidden-xs.hidden-sm Impeller (#{units.diameter.label})
@@ -51,7 +52,8 @@ block content
                     img(height="25" width="25" ng-src="/images/{{pump.listed && pump.active_admin ? 'active' : 'inactive'}}.png")
                   td {{pump.rating_id}}
                   td.hidden-xs {{pump.date | date:'mediumDate'}}
-                  td: a(href="pumps/{{pump._id}}") {{pump.basic_model}}
+                  td.hidden-xs: a(href="pumps/{{pump._id}}") {{pump.basic_model}}
+                  td {{pump.individual_model}}
                   td.hidden-xs {{app.getConfigLabel(pump.configuration)}}
                   td.hidden-xs {{pump.doe}}
                   td.hidden-xs.hidden-sm {{pump.diameter * app.units.diameter.factor | number:3}}
