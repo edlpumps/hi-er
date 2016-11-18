@@ -27,6 +27,13 @@ exports.saltHashPassword = function(userpassword) {
 }
 
 exports.checkPassword = function(userpassword, hashed, salt) {
-    var candidate = sha512(userpassword, salt);
-    return candidate.passwordHash === hashed;
+    try {
+        var candidate = sha512(userpassword, salt);
+        return candidate.passwordHash === hashed;
+    }
+    catch (e) {
+        console.log("Error checking password");
+        console.log(e);
+        return false;
+    }
 }
