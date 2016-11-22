@@ -125,10 +125,13 @@ router.get("/pumps/new", function(req, res){
             "bep100":55.2,//03,
             "bep110":55.6,//20
           }
+
+    var help = require("../public/resources/help.json");
     res.render("participant/new_pump", {
         user : req.user,
         participant : req.participant, 
-        pump : pump
+        pump : pump, 
+        help : help
     });
 });
 
@@ -157,13 +160,15 @@ router.post("/pumps/new", function(req, res){
         pump.laboratory = lab;
         
         var view = pump.pei_input_type == 'calculate'  ? "participant/calculate_pump" : "participant/manual_pump";
+        var help = require("../public/resources/help.json");
         var toSave = req.participant.pumps.create(pump);
         toSave.rating_id = req.nextRatingsId(function(err, doc) {
             toSave.rating_id = hashids.encode(doc.value.seq);
             res.render(view, {
                     user : req.user,
                     participant : req.participant, 
-                    pump:toSave
+                    pump:toSave, 
+                    help:help
                 });
         });
     })

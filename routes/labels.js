@@ -47,7 +47,6 @@ var getSVG = function(pump, label, callback) {
 
 var getQRSVG = function(participant, pump, label, callback) {
     var image_uri = "/labels/" + participant._id + "/" + pump._id + "/qr_image";
-    console.log(image_uri);
     var datetime = label.date;
     var locale = "en-us";
 

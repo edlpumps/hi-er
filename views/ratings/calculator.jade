@@ -33,28 +33,13 @@ mixin calculator(er, mode)
             .row
               .col.col-xs-12
                 fieldset
-                  legend Pump listing data
+                  legend Pump listing information
             .row(ng-show='app.standalone') 
               .form-group
                 .col.col-xs-5
                     label.text-primary Organization / Participant:
                 .col.col-xs-7
                     input.form-control(type="text", name="pump[participant]", ng-model="app.pump.participant", ng-readonly="app.participant")
-            .row 
-              .form-group
-                .col.col-xs-5
-                    label.text-primary Configuration:
-                .col.col-xs-7
-                    select.form-control(name="pump[configuration]", data-width="auto", ng-model="app.pump.configuration", ng-options="config as config.label for config in app.configurations track by config.value")
-            
-            .row(ng-show="app.pump.configuration && app.standalone")
-                .form-group
-                  .col.col-xs-5
-                    label.text-primary Rating Load Type:
-                  .col.col-xs-7
-                    .form-control-static {{app.pump.configuration.value == 'bare' || app.pump.configuration.value == 'pump_motor' ? "Continuous Load (CL)" : "Variable Load (VL)"}}
-           
-            
             .row
                 .form-group
                   .col.col-xs-5
@@ -75,6 +60,22 @@ mixin calculator(er, mode)
                     label.text-primary Individual Model Number
                   .col.col-xs-7.col-sm-4
                     input.form-control(type="text" ng-model="app.pump.individual_model" name="pump[individual_model]")
+            
+            .row 
+              .form-group
+                .col.col-xs-5
+                    label.text-primary Configuration:
+                .col.col-xs-7
+                    select.form-control(name="pump[configuration]", data-width="auto", ng-model="app.pump.configuration", ng-options="config as config.label for config in app.configurations track by config.value")
+            
+            .row(ng-show="app.pump.configuration && app.standalone")
+                .form-group
+                  .col.col-xs-5
+                    label.text-primary Rating Load Type:
+                  .col.col-xs-7
+                    .form-control-static {{app.pump.configuration.value == 'bare' || app.pump.configuration.value == 'pump_motor' ? "Continuous Load (CL)" : "Variable Load (VL)"}}
+           
+            
             
             .row
                 .form-group
@@ -168,7 +169,8 @@ mixin calculator(er, mode)
             .row
                 .form-group
                   .col.col-xs-5
-                    label.text-primary How is motor performance determined?  
+                    label.text-primary How are motor losses determined?  
+                    +help(help.motor_loss)
                   .col.col-xs-7
                     label.radio-inline
                       input(type="radio", name="pump[motor_method]", ng-model="app.pump.motor_method", value="tested") 
@@ -247,7 +249,8 @@ mixin calculator(er, mode)
                 hr
                 .form-group
                   .col.col-xs-5
-                    label.text-primary DOE Pump Category 
+                    label.text-primary Equipment Category 
+                    +help(help.motor_loss)
                   .col.col-xs-7
                     select.form-control(ng-model="app.pump.doe", name="pump[doe]", data-width="auto", ng-options="opt as opt.label for opt in app.doe_opts track by opt.value")
                         option(value="")  

@@ -1,0 +1,23 @@
+{
+	"configuration": "This is the configuration of the individual model number as it is being rated.",
+	"brand": "This is the brand associated with the pump being listed.  This name will appear on the label.",
+	"basic_model_number": ["This number must be identical to any reported to DOE for certification of this model.",
+		"This is the designation given to an individual model number or multiple individual model numbers of the same equipment category having the same primary energy source, and having essentially identical electrical, physical and functional characteristics that affect energy consumption, energy efficiency, water consumption or water efficiency.  Except that RSV and ST pumps, all variations in numbers of stages of the bare pumps must be considered a single basic model, pump models for which the bare pump differs in impeller diameter or impeller trim may be considered a single basic model and pump models for which the bare pump differs in number of stages or impeller diameter and which are sold with motors of varying horsepower may only be considered a single basic model if:",
+		"i.  for ESCC, ESFM, IL, and RSV pumps, each motor offered in the basic model has a nominal full load  motor efficiency rated at the Federal minimum (see the current table for NEMA Design B motors at 10 CFR 431.25) or the same number of bands above the Federal minimum for each respective motor horsepower (see Table 3 of Appendix A to Subpart Y of Part 431); or",
+		"ii. for ST pumps, each motor offered in the basic model has a full load motor efficiency at the default nominal full load submersible motor efficiency shown in Table 2 of appendix A to subpart Y of part 431 or the same number of bands above the default nominal full load submersible motor efficiency for each respective motor horsepower (see Table 3 of Appendix A to Subpart Y of Part 431).",
+		"****Individual model numbers listed under one basic model must have the same PEI and ER listings.******"
+	],
+	"individual_model_number": [
+		"This number must be identical to any reported to DOE for certification of this model.",
+		"This is the unique model number given to the pump being rated.  A basic model can have multiple individual models listed under it, (as a separate entry) as long as they are of they meet the same definition of basic model."
+	],
+	"diameter": "This is the full diameter of the individual model number.",
+	"speed": "Pumps designed to operate anywhere between 1440 RPM - 2160 RPM are listed as 1800 RPM nominal and pumps designed to operated anywhere between 2880 RPM - 4320 RPM are listed as 3600 RPM nominal. ",
+	"stages": "No help text provided",
+	"lab": "The representative data reported must be developed per Appendix A to Subpart Y or 10 CFR 431 and based on testing done in an HI approved laboratory (www.pumps.org/40.7).  Please enter select the HI approved laboratory that samples were tested at to develop the representative values.", 
+    "motor_loss" : [
+        "Sections III, V and VII of Appendix A to Subpart Y provide methods to determine driver and control losses that are applied to a bare pump test (Calculated).  For theses cases select 'Calculated'",
+        "Sections IV an VI of Appendix A to Subpart Y provide methods to determine the power consumption of the bare pump, driver and control when applicable through wire-to-water testing (Tested).  For these cases select 'Tested'"
+    ], 
+    "category":"This is the equipment category of the pump being rated as defined in Appendix A to Subpart Y of 10 CFR 431."
+}

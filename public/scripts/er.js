@@ -10,5 +10,6 @@ var make_base_url = function($location) {
 
 $( document ).ready(function() {
     $(".switchBox").bootstrapSwitch();
+    $('[data-toggle="tooltip"]').tooltip();
 });
 

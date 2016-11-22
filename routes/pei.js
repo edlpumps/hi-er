@@ -4,8 +4,10 @@ const units = require('../utils/uom');
 
 
 router.get('/', function(req, res) {
+    var help = require("../public/resources/help.json");
     req.log.debug("Rendering PEI calculator in standalone mode");
     res.render("ratings/standalone", {
+        help:help
     });
 });
 
