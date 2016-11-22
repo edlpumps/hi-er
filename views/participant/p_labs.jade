@@ -1,0 +1,36 @@
+extends layout
+
+
+block nav
+     +navigation("labs")
+block content
+ div(ng-app='ERParticipantApp')
+    .container(ng-controller="ERParticipantController as app",ng-init="app.units = #{JSON.stringify(units)}; app.user= #{JSON.stringify(user)}; app.participant= #{JSON.stringify(participant)}; app.sync_labs()")
+
+      .panel.panel-default
+        .panel-heading 
+            h1 Testing labs
+        .panel-body
+         .row
+           .col.col-xs-12
+             p.text-info When listing pumps, only the labs selected below will be available in the laboratory choice list.
+         .row
+           .col.col-xs-12
+            .table-responsive
+              table.table.table-striped
+                thead
+                 tr 
+                  th.hidden-xs Certificate Number
+                  th Name
+                  th.hidden-xs Address
+                  th Availability
+                tbody
+                 tr(ng-repeat="lab in app.labs")
+                  td.hidden-xs {{lab.code}}
+                  td {{lab.name}}
+                  td.hidden-xs {{lab.address.street}} {{lab.address.city}}, {{lab.address.state}} {{lab.address.postal}} - {{lab.address.country}}
+                  td.hidden-xs 
+                    input(type="checkbox", bootstrap-switch, ng-model="app.lab_models[lab._id]", ng-change="app.sync_available_labs(lab._id)", data-on-text="Available", data-off-text="Unavailable")
+                  td.hidden-sm.hidden-md.hidden-lg 
+                    input(type="checkbox", bootstrap-switch, ng-model="app.lab_models[lab._id]", ng-change="app.sync_available_labs(lab._id)")
+                      

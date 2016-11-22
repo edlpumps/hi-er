@@ -70,13 +70,12 @@ block content
                   .col.col-xs-7.col-sm-4.col-md-2
                     input.form-control(type="number", min="1", name="stages", ng-model="app.pump.stages")
      
-            .row
-                .form-group
-                  .col.col-xs-5
-                    label.text-primary HI Approved Laboratory Registration Number
-                  .col.col-xs-7.col-sm-4
-                    input.form-control(name="laboratory", type="text", ng-model="app.pump.laboratory")     
-            
+            .row 
+              .form-group
+                .col.col-xs-5
+                  label.text-primary HI Approved Laboratory 
+                .col.col-xs-7.col-sm-4
+                  select.form-control(name="laboratory", ng-model="app.pump.laboratory", ng-options="lab as (lab.name + ' - ' + lab.code) for lab in app.active_labs track by lab._id")
             hr           
             .row
                input(type="hidden" id="pei_type", ng-model="app.pump.pei", name="pei_input_type")

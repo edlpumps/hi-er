@@ -39,8 +39,7 @@ exports.init = function init(mongoose) {
 
   exports.Users = users;
 
-
-  var labs = mongoose.model('labs', {
+  var lab_schema = new Schema({
     name: String,
     code : String,
     address: {
@@ -51,7 +50,8 @@ exports.init = function init(mongoose) {
       postal : String,
       country : String
     }
-  }, "labs");
+  } )
+  var labs = mongoose.model('labs', lab_schema, "labs");
 
   exports.Labs = labs;
 
@@ -67,7 +67,19 @@ exports.init = function init(mongoose) {
     individual_model : {type:String, default:"N/A"},
     diameter: Number,
     speed : Number,
-    laboratory : String,
+    laboratory : {
+      _id : String,
+      name: String,
+      code : String,
+      address: {
+        street : String,
+        street2 : String,
+        city : String,
+        state : String,
+        postal : String,
+        country : String
+      }
+    },
     motor_method : String,
     section : String,
     stages : Number,
@@ -160,7 +172,9 @@ exports.init = function init(mongoose) {
       },
       active: Boolean,
       pumpLimit : Number, 
-      pumps : [pumpSchema]
+      pumps : [pumpSchema],
+      labs : [Schema.Types.ObjectId]
+
   }, "participants");
 
   exports.Participants = participants;

@@ -22,7 +22,7 @@ mixin pump_page_info(pump)
             .col.col-xs-5
                 label HI approved laboratory:
             .col.col-xs-7
-                .form-control-static #{pump.laboratory}
+                .form-control-static #{pump.laboratory ? pump.laboratory.name + ' - ' + pump.laboratory.code : 'N/A'}
     if section_label
      .row 
         .form-group

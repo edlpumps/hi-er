@@ -207,21 +207,7 @@ router.get("/api/users", function(req, res) {
     )
 });
 
-router.get("/api/labs", function(req, res) {
-    req.log.debug("Returning lab listings");
-    req.Labs.find(
-        {}, 
-        function(err, labs){
-            if ( err ) {
-                res.status(500).send({ error: err });
-            }
-            else {
-                res.setHeader('Content-Type', 'application/json');
-                res.end(JSON.stringify({ labs: labs}));
-            }
-        }
-    )
-});
+router.get("/api/labs", common.labs);
 
 router.get("/api/participants", function(req, res) {
     req.log.debug("Returning participant listings");

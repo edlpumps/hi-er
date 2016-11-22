@@ -6,6 +6,7 @@ const common = require('./common');
 const units = require('../utils/uom');
 var Hashids = require('hashids');
 var hashids = new Hashids("hydraulic institute", 6, 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789');
+var ObjectId = require('mongodb').ObjectID;
 
 // All resources served from here are restricted to participants.
 router.use(function(req, res, next){
@@ -54,6 +55,22 @@ router.get('/users', function(req, res) {
         participant : req.participant
     });
 });
+
+router.get('/labs', function(req, res) {
+     if ( !req.user.participant_admin) {
+        req.log.info("View Labs attempted by unauthorized user");
+        req.log.info(req.user);
+        res.redirect("/unauthorized");
+        return;
+    }
+    req.log.debug("Rendering participant portal (labs)");
+    res.render("participant/p_labs", {
+        user : req.user,
+        participant : req.participant
+    });
+});
+
+
 
 router.get('/pumps', function(req, res) {
     req.log.debug("Rendering participant portal (pumps)");
@@ -129,17 +146,28 @@ router.post("/pumps/new", function(req, res){
         res.redirect("/error");
         return;
     }
-    var view = pump.pei_input_type == 'calculate'  ? "participant/calculate_pump" : "participant/manual_pump";
-    console.log("NEW");
-    var toSave = req.participant.pumps.create(pump);
-    toSave.rating_id = req.nextRatingsId(function(err, doc) {
-        toSave.rating_id = hashids.encode(doc.value.seq);
-        res.render(view, {
-                user : req.user,
-                participant : req.participant, 
-                pump:toSave
-            });
-    });
+    
+    req.Labs.findOne({_id: pump.laboratory}, function(err, lab){
+        if ( err || !lab) {
+            req.flash("errorTitle", "Internal application error");
+            req.flash("errorMessage", "Pump cannot be created - invalid laboratory.");
+            res.redirect("/error");
+            return;
+        }
+        pump.laboratory = lab;
+        
+        var view = pump.pei_input_type == 'calculate'  ? "participant/calculate_pump" : "participant/manual_pump";
+        var toSave = req.participant.pumps.create(pump);
+        toSave.rating_id = req.nextRatingsId(function(err, doc) {
+            toSave.rating_id = hashids.encode(doc.value.seq);
+            res.render(view, {
+                    user : req.user,
+                    participant : req.participant, 
+                    pump:toSave
+                });
+        });
+    })
+    
 });
 
 router.get("/pumps/upload", function(req, res){
@@ -206,16 +234,19 @@ router.post("/pumps/submit", function(req, res){
         return;
     }
     var pump = req.body.pump;
+    
     if (pump.results ) {
         pump.results = JSON.parse(pump.results);
     }
+    pump.laboratory = JSON.parse(pump.laboratory);
     pump = units.convert_to_us(pump);
     pump.date = new Date();
+    
     var toSave = req.participant.pumps.create(pump);
     req.participant.pumps.push(toSave);
     req.participant.save(function(err) {
         res.redirect("/participant/pumps");
-    })
+    })    
 });
 
 
@@ -337,6 +368,54 @@ router.post('/api/settings', function(req, res) {
     });
 });
 
+router.post('/api/labs/:id', function(req, res) {
+    if ( !req.user.participant_admin) {
+        req.log.info("Change Labs attempted by unauthorized user");
+        req.log.info(req.user);
+        res.status(403).send("Cannot set lab status without admin role");
+        return;
+    }
+    var lab = req.params.id;
+    var available = req.body.available;
+    var existing = req.participant.labs.indexOf(lab);
+    var changed = false;
+    if ( existing >= 0 && !available) {
+        req.participant.labs.splice(existing, 1);
+        changed = true;
+    }
+    else if (existing < 0 && available) {
+        req.participant.labs.push(lab);
+        changed = true;
+    }
+
+    var respond  = function(err) {
+        if ( err ) {
+            res.status(500).send({ error: err });
+        }
+        else {
+            req.log.debug("Saved lab state successfully");
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify({ labs: req.participant.labs}));
+        }
+    }
+
+    changed ?   req.participant.save(respond) : respond();
+})
+
+router.get("/api/active_labs", function(req, res) {
+    req.log.debug("Returning participant labs");
+    var list = req.participant.labs.map(lab => ObjectId(lab));
+    req.Labs.find({'_id': { $in: list}}, function(err, docs){
+        if ( err ) {
+            res.status(500).send({ error: err });
+        }
+        else {
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify({ labs: docs}));
+        }
+    });
+});
+
 router.get("/api/users", function(req, res) {
     req.log.debug("Returning user listings for participating organization");
     req.Users.find(
@@ -355,10 +434,12 @@ router.get("/api/users", function(req, res) {
 });
 
 
+
+
 router.post("/api/users/delete/:id", common.deleteUser);
 router.post("/api/users/add", common.addUser)
 router.post("/api/users/save", common.saveUser)
-
+router.get("/api/labs", common.labs);
 
 
 

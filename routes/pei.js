@@ -25,14 +25,11 @@ router.post('/api/calculate', function(req, res){
         }
     }
     pump = units.convert_to_us(pump);
-    console.log(pump);
 
     var calculator = require("../calculator");
     var results = calculator.calculate(pump);
     res.setHeader('Content-Type', 'application/json');
     res.end(JSON.stringify(results));
-    /*console.log(JSON.stringify(pump, null, '\t'));
-    console.log(results);*/
 })
 
 module.exports = router;

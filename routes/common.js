@@ -108,6 +108,20 @@ exports.saveUser = function(req, res) {
             }
         });
 }
+exports.labs = function(req, res) {
+    req.Labs.find(
+        {}, 
+        function(err, labs){
+            if ( err ) {
+                res.status(500).send({ error: err });
+            }
+            else {
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify({ labs: labs}));
+            }
+        }
+    )
+}
 
 exports.build_pump_spreadsheet = function(pump) {
     var toxl = require('jsonexcel');

@@ -17,6 +17,18 @@ var service = app.factory('service', function($http) {
                 return docs.data;
            });
      },
+     getActiveLabs : function () {
+       return $http.get('/participant/api/active_labs', {})
+           .then(function(docs) {
+                return docs.data;
+           });
+     },
+     getLabs : function () {
+       return $http.get('/participant/api/labs', {})
+           .then(function(docs) {
+                return docs.data;
+           });
+     },
    };
 });
 
@@ -258,6 +270,8 @@ var PEIController = function($scope, $location, $window, service) {
 
 
   vm.setup = function(er, pump, mode) {
+      
+      console.log(mode);
       if ( pump ) {
           vm.pump = pump;
           vm.pump.auto = mode == "calculator";
@@ -302,7 +316,7 @@ var PEIController = function($scope, $location, $window, service) {
       vm.standalone = !er;
       vm.mode = mode;
       vm.pump.pei_method = mode;
-
+      vm.refreshActiveLabs();
   }
 
   
@@ -349,14 +363,30 @@ var PEIController = function($scope, $location, $window, service) {
             }
      })
   }
+  vm.refreshActiveLabs = function(callback) {
+    var labgetter = vm.mode == 'calculator' ? service.getLabs : service.getActiveLabs;
+    labgetter().then(function(results) {
+        vm.active_labs = results.labs;
+        vm.labs_error = false;
+        if ( callback ) {
+          callback();
+        }
+    }).catch(function(error) {
+        vm.labs_error = true;
+        console.error(error);
+    });
+  }
 
   vm.submitListing = function(active) {
       $("input[name='pump[listed]']").val(active);
       $("input[name='pump[unit_set]']").val(vm.units.active);
+      $("input[name='pump[laboratory]']").val(JSON.stringify(vm.pump.laboratory));
       new_pump_pei.submit();
+
   }
   
   vm.go2Configuration();
+  
 }
 
 

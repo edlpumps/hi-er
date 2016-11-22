@@ -39,6 +39,10 @@ html
                     a(href="/participant/users") 
                       .glyphicon.glyphicon-user.margin-right
                       | User Management
+                   li(class=(active == 'labs' ? 'active' : ''))
+                    a(href="/participant/labs") 
+                      .glyphicon.glyphicon-scale.margin-right
+                      | Testing Labs
                   li(class=(active == 'pumps' ? 'active' : ''))
                     
                     a(href="/participant/pumps") 

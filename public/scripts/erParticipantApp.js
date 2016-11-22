@@ -7,7 +7,33 @@ var configurations = [
        { value: "pump_motor_nc", label: "Pump + Motor w/ Non-continuous Controls"}
   ];
 
-var app = angular.module('ERParticipantApp', []);
+var app = angular.module('ERParticipantApp', []).directive('bootstrapSwitch', [
+        function() {
+            return {
+                restrict: 'A',
+                require: '?ngModel',
+                link: function(scope, element, attrs, ngModel) {
+                    element.bootstrapSwitch();
+
+                    element.on('switchChange.bootstrapSwitch', function(event, state) {
+                        if (ngModel) {
+                            scope.$apply(function() {
+                                ngModel.$setViewValue(state);
+                            });
+                        }
+                    });
+
+                    scope.$watch(attrs.ngModel, function(newValue, oldValue) {
+                        if (newValue) {
+                            element.bootstrapSwitch('state', true, true);
+                        } else {
+                            element.bootstrapSwitch('state', false, true);
+                        }
+                    });
+                }
+            };
+        }
+    ]);;
 
 
 var service = app.factory('service', function($http) {
@@ -23,6 +49,25 @@ var service = app.factory('service', function($http) {
            .then(function(docs) {
                 return docs.data;
            });
+     },
+     getLabs : function () {
+       return $http.get('/participant/api/labs', {})
+           .then(function(docs) {
+                return docs.data;
+           });
+     },
+     getActiveLabs : function () {
+       return $http.get('/participant/api/active_labs', {})
+           .then(function(docs) {
+                return docs.data;
+           });
+     },
+     updateLab : function (id, available) {
+        return $http.post('/participant/api/labs/'+id, {available:available})
+            .success(function(docs) { return docs.data; })
+            .error(function(data, status) {
+                return data;
+            });
      },
      saveNewUser : function (user) {
         return $http.post('/participant/api/users/add', {user:user})
@@ -80,6 +125,20 @@ var ERParticipantController = function($scope, $location, service) {
         console.error(error);
       });
   }
+
+  vm.refreshLabs = function(callback) {
+      service.getLabs().then(function(results) {
+        vm.labs = results.labs;
+        vm.labs_error = false;
+        if ( callback ) {
+          callback();
+        }
+      }).catch(function(error) {
+        vm.labs_error = true;
+        console.error(error);
+      });
+  }
+  
 
   vm.refreshPumps = function(callback) {
       service.getPumps().then(function(results) {
@@ -221,10 +280,31 @@ var ERParticipantController = function($scope, $location, service) {
       }
   }
 
+  vm.sync_labs = function() {
+    if ( vm.labs && vm.participant ) {
+      vm.lab_models = {}
+      vm.labs.forEach(function(lab){
+        vm.lab_models[lab._id] = vm.participant.labs.indexOf(lab._id) >= 0;
+      })
+    }
+  }
+
+  vm.sync_available_labs = function(id) {
+   service.updateLab(id, vm.lab_models[id]).then(function(result) {
+        vm.participant.labs = result.data.labs;
+      }).catch(function(error) {
+        if (error.status == 403) {
+          window.location="/";
+        }
+        else {
+          console.log(error);
+        }
+     })
+  }
 
   vm.refreshUsers();
-
-
+  vm.refreshLabs(vm.sync_labs);
+  
 }
 
 
@@ -236,7 +316,19 @@ var ERNewPumpController = function($scope, $location, service) {
 
   vm.configurations = configurations;
 
-  
+  vm.refreshActiveLabs = function(callback) {
+      service.getActiveLabs().then(function(results) {
+        vm.active_labs = results.labs;
+        vm.labs_error = false;
+        if ( callback ) {
+          callback();
+        }
+      }).catch(function(error) {
+        vm.labs_error = true;
+        console.error(error);
+      });
+  }
+
   vm.manual = function(){
     var myEl = angular.element( document.querySelector( '#pei_type' ) );
     myEl.val('manual');
@@ -269,7 +361,12 @@ var ERNewPumpController = function($scope, $location, service) {
     if (!vm.pump.basic_model) return false;
     return true;
   }
+
+  vm.refreshActiveLabs();
 }
+
+
+
 
 
 app.controller('ERNewPumpController', ERNewPumpController);

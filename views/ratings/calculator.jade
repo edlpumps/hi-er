@@ -28,7 +28,8 @@ mixin calculator(er, mode)
             input(type="hidden", name="pump[results]", ng-value="app.pump.results")
             input(type="hidden", name="pump[listed]", ng-value="app.pump.listed")
             input(type="hidden", name="pump[unit_set]", ng-value="app.pump.unit_set")
-            
+            input(type="hidden", name="pump[laboratory]")
+        
             .row
               .col.col-xs-12
                 fieldset
@@ -105,13 +106,15 @@ mixin calculator(er, mode)
  
             
                 
+            .row 
+              .form-group
+                .col.col-xs-5
+                  label.text-primary HI Approved Laboratory
+                .col.col-xs-7.col-sm-4
 
-            .row
-                .form-group
-                  .col.col-xs-5
-                    label.text-primary HI Approved Laboratory Registration Number
-                  .col.col-xs-7.col-sm-4
-                    input.form-control(ng-model="app.pump.laboratory", name="pump[laboratory]")     
+                  select.form-control(ng-model="app.pump.laboratory", ng-options="lab as (lab.name + ' - ' + lab.code) for lab in app.active_labs track by lab._id")
+            
+           
             
             hr
             .row

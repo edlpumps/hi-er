@@ -132,7 +132,6 @@ var ERAdminController = function($scope, $location, service) {
   }
 
   vm.addLab = function() {
-    console.log("Saving new lab!");
     service.saveNewLab(vm.new_lab).then(function(saved) {
         vm.new_lab_error = false;
         vm.refreshLabs();
@@ -203,7 +202,6 @@ var ERAdminController = function($scope, $location, service) {
   }
 
   vm.showEditLab = function(lab) {
-     console.log("Editing lab");
       vm.edit_lab = JSON.parse(JSON.stringify(lab));
       $('#edit').modal('show')
   }
