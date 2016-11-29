@@ -1,8 +1,12 @@
 extends layout
 include ../common/pump_page
 
+block script
+  script(src="/scripts/er.js")
+  
 block nav
      +navigation("pump")
+
 block content
  div(ng-app='ERParticipantApp')
     .container(ng-controller="ERParticipantController as app",ng-init="app.user= #{JSON.stringify(user)}; app.participant= #{JSON.stringify(participant)}")
