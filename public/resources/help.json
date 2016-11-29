@@ -13,11 +13,19 @@
 	],
 	"diameter": "This is the full diameter of the individual model number.",
 	"speed": "Pumps designed to operate anywhere between 1440 RPM - 2160 RPM are listed as 1800 RPM nominal and pumps designed to operated anywhere between 2880 RPM - 4320 RPM are listed as 3600 RPM nominal. ",
-	"stages": "No help text provided",
+	"stages": "This is the number of stages in the pump.",
 	"lab": "The representative data reported must be developed per Appendix A to Subpart Y or 10 CFR 431 and based on testing done in an HI approved laboratory (www.pumps.org/40.7).  Please enter select the HI approved laboratory that samples were tested at to develop the representative values.", 
     "motor_loss" : [
         "Sections III, V and VII of Appendix A to Subpart Y provide methods to determine driver and control losses that are applied to a bare pump test (Calculated).  For theses cases select 'Calculated'",
         "Sections IV an VI of Appendix A to Subpart Y provide methods to determine the power consumption of the bare pump, driver and control when applicable through wire-to-water testing (Tested).  For these cases select 'Tested'"
     ], 
-    "category":"This is the equipment category of the pump being rated as defined in Appendix A to Subpart Y of 10 CFR 431."
+    "category":"This is the equipment category of the pump being rated as defined in Appendix A to Subpart Y of 10 CFR 431.",
+	"motor_power_rated_3" : "The rated motor power used to calculate default driver losses as outlined in Appendix A to Subpart Y or 10 CFR 431 for the individual model being rated.",
+	"motor_power_rated_4567" : "The nameplate rated motor power for the individual model being listed.",
+	"motor_regulated" : "Please select if the motor(s) used with this listing are regulated under 10 CFR 431.25.", 
+	"nominal_motor_efficiency" : "This is the nominal motor efficiency listed on the pump nameplate determined per the test procedure for 10 CFR 431.25.", 
+	"bowl_diameter":"ST pumps are within scope up to a 6 inch bowl diameter.  Please indicate the nominal diameter of the bowls for the pump being listed.",
+	"bep120" :"Appendix A to Subpart Y of 10 CFR 431 outlines procedures to test pumps that can be tested to 120% of BEP and pumps that cannot be tested to 120% of BEP.  If the pump being listed was tested to 120% of BEP, select 'Yes' and the representative load points entered will be 75%, 100% and 110% of BEP.  If the pump being listed could not be tested to 120% of BEP, select 'No' and the representative load points entered will be 65%, 90% and 100% of BEP.", 
+	"rep_nominal_speed":"The values entered must be identical to any reported to DOE for this model.  The values entered for Rate of flow, Head and Driver Input Power are 'representative' values determined the appropriate section of Appendix A to Subpart Y of 10 CFR 431 and representative values determined per 10 CFR 429.59.  Enter the 100% flow point and the other flow points will calculated.", 
+	"pei_entry":"This is the representative PEI value as determined per 10 CFR 429.59.  This value must be identical to any reported to DOE for this model."
 }
