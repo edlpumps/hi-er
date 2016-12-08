@@ -1,0 +1,150 @@
+{
+    "config" : {
+        "first_row" : 3, 
+        "filename": "er_pump_listings.xlsx"
+    },
+
+    "mappings" : {
+        "participant" : {
+            "column" : "A",
+            "path": "participant"
+        },
+
+        "brand" : {
+            "column" : "B",
+            "path": "brand"
+        },
+
+        "basic_model" : {
+            "column" : "C",
+            "path": "basic_model"
+        },
+
+        "individual_model" : {
+            "column" : "D",
+            "path": "individual_model"
+        },
+
+        "doe" : {
+            "column" : "E",
+             "path" :"doe"
+        },
+
+        "configuration" : {
+            "column" : "F", 
+            "path" :"configuration"
+        },
+
+        "motor_method" : {
+            "column" : "G", 
+            "path" :"motor_method"
+        },
+
+        "diameter" : {
+            "column" : "H", 
+            "path" :"diameter"
+        },
+
+        "section" : {
+            "column" : "I", 
+            "path" :"section"
+        },
+
+        "stages" : {
+            "column" : "J", 
+            "path" :"stages"
+        },
+
+        "speed" : {
+            "column" : "K", 
+            "path" :"speed"
+        },
+
+        "bowl_diameter" : {
+            "column" : "L", 
+            "path" :"bowl_diameter"
+        },
+
+        "motor_regulated" : {
+            "column" : "M", 
+            "path" :"motor_regulated",
+            "sections" : ["4", "5", "6", "6a", "6b", "7"]
+        },
+
+        "motor_efficiency" : {
+            "column" : "N", 
+            "path" :"motor_efficiency"
+        },
+
+        "motor_power_rated" : {
+            "column" : "O", 
+            "path" :"motor_power_rated"
+        },
+
+        "flow.bep100" : {
+            "column" : "Q", 
+            "path" :"flow.bep100"
+        },
+
+        "head.bep100" : {
+            "column" : "S", 
+            "path" :"head.bep100"
+        },
+        "head.bep75" : {
+            "column" : "AF", 
+            "path" :"head.bep75"
+        },
+        "head.bep110" : {
+            "column" : "AG", 
+            "path" :"head.bep110"
+        },
+
+        "driver_input_power.beq75" : {
+            "column" : "X", 
+            "path" :"driver_input_power.bep75", 
+            "sections" : ["3", "4", "5"]
+        },
+        "driver_input_power.bep100" : {
+            "column" : "Y", 
+            "path" :"driver_input_power.bep100", 
+            "sections" : ["3", "4", "5"]
+        },
+        "driver_input_power.bep110" : {
+            "column" : "Z", 
+            "path" :"driver_input_power.bep110", 
+            "sections" : ["3", "4", "5"]
+        },
+
+        "control_power_input.beq25" : {
+            "column" : "AA", 
+            "path" :"control_power_input.bep25", 
+            "sections" : ["6a", "6b", "6", "7"]
+        },
+        "control_power_input.bep50" : {
+            "column" : "AB", 
+            "path" :"control_power_input.bep50", 
+            "sections" : ["6a", "6b", "6", "7"]
+        },
+        "control_power_input.bep75" : {
+            "column" : "AC", 
+            "path" :"control_power_input.bep75", 
+            "sections" : ["6a", "6b", "6", "7"]
+        },
+        "control_power_input.bep100" : {
+            "column" : "AD", 
+            "path" :"control_power_input.bep100", 
+            "sections" : ["6a", "6b", "6", "7"]
+        },
+
+        "laboratory.name" : {
+            "column" : "AH", 
+            "path" :"laboratory.name"
+        },
+
+        "pei" : {
+            "column" : "AE", 
+            "path" :"pei"
+        }
+    }
+
+}

@@ -185,11 +185,12 @@ router.get("/pumps/upload", function(req, res){
 router.get('/pumps/download', function(req, res) {
     var pumps= JSON.parse(JSON.stringify(req.participant.pumps));
 
-    var buffer = common.build_pump_spreadsheet(pumps);
-    res.setHeader('Content-Type', 'application/vnd.openxmlformats');
-    res.setHeader("Content-Disposition", "attachment; filename=" + "Pump Energy Ratings - All.xlsx");
-    res.setHeader('Content-Length', buffer.length);
-    res.end(buffer);
+    common.build_pump_spreadsheet(pumps, function(error, file, cleanup) {
+        res.download(file, 'Pump Listings.xlsx', function(err){
+                cleanup();
+        });
+    });
+    
 });
 
 router.get('/pumps/:id', function(req, res) {
@@ -208,11 +209,13 @@ router.get('/pumps/:id', function(req, res) {
 router.get('/pumps/:id/download', function(req, res) {
     var pump = req.participant.pumps.id(req.params.id);
     pump= JSON.parse(JSON.stringify(pump));
-    var buffer = common.build_pump_spreadsheet(pump);
-    res.setHeader('Content-Type', 'application/vnd.openxmlformats');
-    res.setHeader("Content-Disposition", "attachment; filename=" + "Pump Energy Ratings.xlsx");
-    res.setHeader('Content-Length', buffer.length);
-    res.end(buffer);
+    common.build_pump_spreadsheet(pump, function(error, file, cleanup) {
+        res.download(file, 'Pump Listings.xlsx', function(err){
+                cleanup();
+        });
+    });
+    
+    
 });
 
 

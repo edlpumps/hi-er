@@ -1,3 +1,5 @@
+"use strict";
+
 exports.deleteUser = function(req, res) {
     req.Users.findOne({_id: req.params.id}, function(err, user){
         if ( err ) {
@@ -123,7 +125,70 @@ exports.labs = function(req, res) {
     )
 }
 
-exports.build_pump_spreadsheet = function(pump) {
+exports.build_pump_spreadsheet = function(pump, callback) {
+    const _ = require('lodash');
+    const template = require('./template_map.json');
+    const path = require('path');
+    const tmp = require('tmp');
+    const fs = require('fs');
+    const Excel = require('exceljs');
+
+    var workbook = new Excel.Workbook();
+    workbook.xlsx.readFile(path.join(__dirname, template.config.filename))
+        .then(function() {
+            var pumps = [];
+            if (pump instanceof Array) {
+                pumps = pump;
+            }
+            else {
+                pumps.push(pump);
+            }
+
+            var r = template.config.first_row;
+            var worksheet = workbook.getWorksheet(1);
+            
+            pumps.forEach(function(p) {
+                for ( var mapping in template.mappings ) {
+                    var prop = template.mappings[mapping];
+                    var value = _.get(p, prop.path);
+                    var enabled = true;
+                    if ( prop.sections ) {
+                        enabled = prop.sections.indexOf(p.section) >= 0;
+                    } 
+                    
+                    if ( enabled && value) {
+                        var address = prop.column + r;
+                        var cell = worksheet.getCell(address);
+                        cell.value = value;
+                    }
+                }
+                r++;
+            });
+
+            tmp.file(function(err, path, fd, cleanupCallback) {
+                if (err) throw err;
+                workbook.xlsx.writeFile(path).then(function() {
+                    callback(null, path, cleanupCallback);
+                    
+                });
+            }, {postfix:".xlsx"});
+
+
+
+
+        });
+
+
+
+   
+
+    
+
+    
+
+    
+
+    /*
     var toxl = require('jsonexcel');
 
 
@@ -206,6 +271,8 @@ exports.build_pump_spreadsheet = function(pump) {
     }
     var buffer = toxl(pump, opts);
     return buffer;
+    */
+    return null;
 }
 
 exports.section_label = function(section) {

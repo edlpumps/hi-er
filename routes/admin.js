@@ -112,11 +112,13 @@ router.get('/participant/:id/pumps/:pump_id/download', function(req, res) {
     req.Participants.findById(req.params.id, function(err, participant){
         var pump = participant.pumps.id(req.params.pump_id);
         pump= JSON.parse(JSON.stringify(pump));
-        var buffer = common.build_pump_spreadsheet(pump);
-        res.setHeader('Content-Type', 'application/vnd.openxmlformats');
-        res.setHeader("Content-Disposition", "attachment; filename=" + "Pump Energy Ratings.xlsx");
-        res.setHeader('Content-Length', buffer.length);
-        res.end(buffer);
+        common.build_pump_spreadsheet(pump, function(buffer){
+            res.setHeader('Content-Type', 'application/vnd.openxmlformats');
+            res.setHeader("Content-Disposition", "attachment; filename=" + "Pump Energy Ratings.xlsx");
+            res.setHeader('Content-Length', buffer.length);
+            res.end(buffer);
+        });
+        
     });
 });
 
