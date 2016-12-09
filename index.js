@@ -8,10 +8,10 @@ const app = express();
 const session = require('express-session');
 const favicon = require('serve-favicon');
 const cookieParser = require('cookie-parser');
-const busboy = require('express-busboy');
 const flash = require('express-flash')
 const helmet = require('helmet');
 const bunyan = require('bunyan');
+const fileUpload = require('express-fileupload');
 
 const mongoose = require("mongoose");
 const schemas = require("./schemas");
@@ -41,10 +41,10 @@ app.use(session({
     resave: true,
     saveUninitialized: true
 }));
-busboy.extend(app);
 
 app.use(helmet());
 app.use(flash());
+app.use(fileUpload());
 
 ////////////////////////////////////////////////////
 // Logging configuration, main log added to each

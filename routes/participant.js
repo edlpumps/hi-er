@@ -4,9 +4,14 @@ const passport = require('passport');
 const router = express.Router();
 const common = require('./common');
 const units = require('../utils/uom');
-var Hashids = require('hashids');
-var hashids = new Hashids("hydraulic institute", 6, 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789');
-var ObjectId = require('mongodb').ObjectID;
+const Hashids = require('hashids');
+const hashids = new Hashids("hydraulic institute", 6, 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789');
+const ObjectId = require('mongodb').ObjectID;
+const Excel = require('exceljs');
+const tmp = require('tmp');
+const _ = require('lodash');
+const async = require('async');
+    
 
 // All resources served from here are restricted to participants.
 router.use(function(req, res, next){
@@ -162,7 +167,7 @@ router.post("/pumps/new", function(req, res){
         var view = pump.pei_input_type == 'calculate'  ? "participant/calculate_pump" : "participant/manual_pump";
         var help = require("../public/resources/help.json");
         var toSave = req.participant.pumps.create(pump);
-        toSave.rating_id = req.nextRatingsId(function(err, doc) {
+        req.nextRatingsId(function(err, doc) {
             toSave.rating_id = hashids.encode(doc.value.seq);
             res.render(view, {
                     user : req.user,
@@ -181,6 +186,131 @@ router.get("/pumps/upload", function(req, res){
         user : req.user,
         participant : req.participant
     });
+})
+
+router.post("/pumps/save_upload", function(req, res) {
+    if ( !req.user.participant_edit) {
+        req.log.info("Submit pump attempted by unauthorized user");
+        req.log.info(req.user);
+        res.redirect("/unauthorized");
+        return;
+    }
+    var pumps = JSON.parse(req.body.pumps);
+    
+    //pump = units.convert_to_us(pump);
+    var saves = [];
+
+    pumps.forEach(function(pump) {
+        saves.push(function(done) {
+            pump.date = new Date();
+            pump.energy_rating = pump.results.energy_rating;
+            pump.energy_savings = pump.results.energy_savings;
+            pump.pei_baseline = pump.results.pei_baseline;
+            var toSave = req.participant.pumps.create(pump);
+            req.nextRatingsId(function(err, doc) {
+                toSave.rating_id = hashids.encode(doc.value.seq);
+                req.participant.pumps.push(toSave);
+                req.participant.save(function(err) {
+                    done();
+                })
+            });
+            
+        })
+    })
+
+    async.parallel(saves, function() {
+        res.redirect("/participant/pumps");
+    })
+        
+    
+
+   
+
+    
+});
+router.post("/pumps/upload", function(req, res) {
+    if (!req.files) {
+        res.send('No files were uploaded.');
+        return;
+    }
+
+    var uploaded = req.files.template;
+    tmp.file(function(err, path, fd, cleanupCallback) {
+        console.log(path);
+        uploaded.mv(path, function(err) {
+            if (err) {
+                res.status(500).send(err);
+            }
+            else {
+                var workbook = new Excel.Workbook();
+                workbook.xlsx.readFile(path).then(function() {
+                    const pumps_succeeded = [];
+                    const pumps_failed = [];
+                    const template = require('./template_map.json');
+                    var r = template.config.first_row;
+                    var worksheet = workbook.getWorksheet(1);
+                    var first_cell = null;
+                    var done = false;
+                    while (!done) {
+                        first_cell = worksheet.getCell(template.mappings.basic_model.column+r)
+                        if (first_cell.value) {
+                            var pump = {}
+                            for ( var mapping in template.mappings ) {
+                                var prop = template.mappings[mapping];
+                                var cell = worksheet.getCell(prop.column + r);
+                                _.set(pump, prop.path, cell.value);
+                            }
+
+                            // strip out driver/control if not used.
+                            if (!pump.driver_input_power.bep100) {
+                                delete pump.driver_input_power;
+                            }
+                            if ( !pump.control_power_input.bep100) {
+                                delete pump.control_power_input;
+                            }
+                            console.log(pump);
+                            if ( pump.flow ) {
+                                pump.flow.bep75 = pump.flow.bep100 * 0.75;
+                                pump.flow.bep110 = pump.flow.bep100 * 1.1;
+                            }
+                            //pump = units.convert_to_us(pump);
+
+                            var calculator = require("../calculator");
+                            var results = calculator.calculate(pump);
+                            pump.results = results;
+                            delete pump.results.pump;
+                            if ( results.success ){
+                                pumps_succeeded.push(pump);
+                            }
+                            else {
+                                pumps_failed.push(pump)
+                            }
+                            r++;
+                        }
+                        else {
+                            done = true;
+                        }
+                    }
+
+                    cleanupCallback();
+                    res.render("participant/upload_confirm", {
+                        user : req.user,
+                        participant : req.participant, 
+                        succeeded:pumps_succeeded, 
+                        failed:pumps_failed 
+                    });
+                })
+                
+            }
+        });
+
+    });
+    
+    
+   
+   
+
+    
 })
 router.get('/pumps/download', function(req, res) {
     var pumps= JSON.parse(JSON.stringify(req.participant.pumps));

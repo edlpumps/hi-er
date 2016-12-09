@@ -1,0 +1,31 @@
+extends layout
+
+
+block nav
+     +navigation("upload")
+block content
+  div(ng-app='ERParticipantApp')
+
+    .container
+      .panel.panel-default
+        .panel-heading 
+            h1 Pump upload results
+            p.text-warning Note, these pumps will not be listed or saved until you confirm below
+
+        .panel-default
+           h1 Succeeded
+           ul
+            each success in succeeded
+              li #{success.basic_model} / #{success.individual_model}
+
+           form(action="save_upload", method="post")
+            input(type="checkbox", name="list_pumps", checked) 
+            label List pumps when saved.
+            input(type="hidden", name="pumps", value="#{JSON.stringify(succeeded)}")
+            button.btn.btn-primary(type="submit") Save pumps
+           h1 Failed
+           ul 
+            each fail in failed
+              li #{fail.basic_model} / #{fail.individual_model} - #{fail.results.reasons[0]}
+
+            
