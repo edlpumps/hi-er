@@ -196,6 +196,7 @@ router.post("/pumps/save_upload", function(req, res) {
         return;
     }
     var pumps = JSON.parse(req.body.pumps);
+    var list_now = req.body.list_pumps ? true  : false;
     
     //pump = units.convert_to_us(pump);
     var saves = [];
@@ -203,6 +204,7 @@ router.post("/pumps/save_upload", function(req, res) {
     pumps.forEach(function(pump) {
         saves.push(function(done) {
             pump.date = new Date();
+            pump.listed = list_now;
             pump.energy_rating = pump.results.energy_rating;
             pump.energy_savings = pump.results.energy_savings;
             pump.pei_baseline = pump.results.pei_baseline;
@@ -210,16 +212,18 @@ router.post("/pumps/save_upload", function(req, res) {
             req.nextRatingsId(function(err, doc) {
                 toSave.rating_id = hashids.encode(doc.value.seq);
                 req.participant.pumps.push(toSave);
-                req.participant.save(function(err) {
-                    done();
-                })
+                console.log(toSave.rating_id + " saved, " + req.participant.pumps.length + " pumps in participant listings");
+                done();
             });
             
         })
     })
 
     async.parallel(saves, function() {
-        res.redirect("/participant/pumps");
+        req.participant.save(function(err) {
+            res.redirect("/participant/pumps");
+        })
+        
     })
         
     
@@ -233,79 +237,63 @@ router.post("/pumps/upload", function(req, res) {
         res.send('No files were uploaded.');
         return;
     }
+    var workbook = new Excel.Workbook();
+    workbook.xlsx.readFile(req.files.template.file).then(function() {
+       const pumps_succeeded = [];
+       const pumps_failed = [];
+       const template = require('./template_map.json');
+       var r = template.config.first_row;
+       var worksheet = workbook.getWorksheet(1);
+       var first_cell = null;
+       var done = false;
+       while (!done) {
+           first_cell = worksheet.getCell(template.mappings.basic_model.column+r)
+           if (first_cell.value) {
+                var pump = {}
+                pump.row = r;
+                for ( var mapping in template.mappings ) {
+                    var prop = template.mappings[mapping];
+                    var cell = worksheet.getCell(prop.column + r);
+                    _.set(pump, prop.path, cell.value);
+                }
 
-    var uploaded = req.files.template;
-    tmp.file(function(err, path, fd, cleanupCallback) {
-        console.log(path);
-        uploaded.mv(path, function(err) {
-            if (err) {
-                res.status(500).send(err);
+                // strip out driver/control if not used.
+                if (!pump.driver_input_power.bep100) {
+                    delete pump.driver_input_power;
+                }
+                if ( !pump.control_power_input.bep100) {
+                    delete pump.control_power_input;
+                }
+                if ( pump.flow ) {
+                    pump.flow.bep75 = pump.flow.bep100 * 0.75;
+                    pump.flow.bep110 = pump.flow.bep100 * 1.1;
+                }
+                //pump = units.convert_to_us(pump);
+
+                var calculator = require("../calculator");
+                var results = calculator.calculate(pump);
+                pump.results = results;
+                delete pump.results.pump;
+                if ( results.success ){
+                    pumps_succeeded.push(pump);
+                }
+                else {
+                    pumps_failed.push(pump)
+                }
+                r++;
+                }
+                else {
+                done = true;
+                }
             }
-            else {
-                var workbook = new Excel.Workbook();
-                workbook.xlsx.readFile(path).then(function() {
-                    const pumps_succeeded = [];
-                    const pumps_failed = [];
-                    const template = require('./template_map.json');
-                    var r = template.config.first_row;
-                    var worksheet = workbook.getWorksheet(1);
-                    var first_cell = null;
-                    var done = false;
-                    while (!done) {
-                        first_cell = worksheet.getCell(template.mappings.basic_model.column+r)
-                        if (first_cell.value) {
-                            var pump = {}
-                            for ( var mapping in template.mappings ) {
-                                var prop = template.mappings[mapping];
-                                var cell = worksheet.getCell(prop.column + r);
-                                _.set(pump, prop.path, cell.value);
-                            }
-
-                            // strip out driver/control if not used.
-                            if (!pump.driver_input_power.bep100) {
-                                delete pump.driver_input_power;
-                            }
-                            if ( !pump.control_power_input.bep100) {
-                                delete pump.control_power_input;
-                            }
-                            console.log(pump);
-                            if ( pump.flow ) {
-                                pump.flow.bep75 = pump.flow.bep100 * 0.75;
-                                pump.flow.bep110 = pump.flow.bep100 * 1.1;
-                            }
-                            //pump = units.convert_to_us(pump);
-
-                            var calculator = require("../calculator");
-                            var results = calculator.calculate(pump);
-                            pump.results = results;
-                            delete pump.results.pump;
-                            if ( results.success ){
-                                pumps_succeeded.push(pump);
-                            }
-                            else {
-                                pumps_failed.push(pump)
-                            }
-                            r++;
-                        }
-                        else {
-                            done = true;
-                        }
-                    }
-
-                    cleanupCallback();
-                    res.render("participant/upload_confirm", {
-                        user : req.user,
-                        participant : req.participant, 
-                        succeeded:pumps_succeeded, 
-                        failed:pumps_failed 
-                    });
-                })
-                
-            }
-        });
-
+            res.render("participant/upload_confirm", {
+                user : req.user,
+                participant : req.participant, 
+                succeeded:pumps_succeeded, 
+                failed:pumps_failed 
+            });
     });
-    
+ 
     
    
    
@@ -317,7 +305,7 @@ router.get('/pumps/download', function(req, res) {
 
     common.build_pump_spreadsheet(pumps, function(error, file, cleanup) {
         res.download(file, 'Pump Listings.xlsx', function(err){
-                cleanup();
+            cleanup();
         });
     });
     

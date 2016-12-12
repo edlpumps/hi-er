@@ -27,7 +27,7 @@
     "email-validator": "1.0.5",
     "exceljs": "0.2.37",
     "express": "4.14.0",
-    "express-fileupload": "0.0.5",
+    "express-busboy": "4.0.0",
     "express-flash": "0.0.2",
     "express-session": "1.14.1",
     "hashids": "1.0.0",

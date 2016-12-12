@@ -4,14 +4,13 @@ const path = require('path');
 const http = require('http');
 const express = require('express');
 const app = express();
-
+const busboy = require('express-busboy');
 const session = require('express-session');
 const favicon = require('serve-favicon');
 const cookieParser = require('cookie-parser');
 const flash = require('express-flash')
 const helmet = require('helmet');
 const bunyan = require('bunyan');
-const fileUpload = require('express-fileupload');
 
 const mongoose = require("mongoose");
 const schemas = require("./schemas");
@@ -44,7 +43,11 @@ app.use(session({
 
 app.use(helmet());
 app.use(flash());
-app.use(fileUpload());
+busboy.extend(app,
+    {
+        upload: true
+    }
+);
 
 ////////////////////////////////////////////////////
 // Logging configuration, main log added to each

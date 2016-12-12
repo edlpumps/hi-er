@@ -9,23 +9,56 @@ block content
     .container
       .panel.panel-default
         .panel-heading 
-            h1 Pump upload results
+            h1 Pumps ready for input
             p.text-warning Note, these pumps will not be listed or saved until you confirm below
 
-        .panel-default
-           h1 Succeeded
-           ul
-            each success in succeeded
-              li #{success.basic_model} / #{success.individual_model}
-
+        .panel-body
+           table.table.table-striped
+              thead
+                tr
+                  th Template row #
+                  th Basic model number
+                  th Individual model number
+                  th PEI
+                  th Energy Rating
+              tbody
+               each success in succeeded
+                 tr
+                  td #{success.row}
+                  td #{success.basic_model}
+                  td #{success.individual_model}
+                  td #{success.pei}
+                  td #{success.results.energy_rating}
+                 
            form(action="save_upload", method="post")
-            input(type="checkbox", name="list_pumps", checked) 
-            label List pumps when saved.
+            button.btn.btn-primary(type="submit") Add pumps
+            .checkbox
+              label  
+               input(type="checkbox", name="list_pumps", checked) 
+               .text-info List pumps when added.  If left unchecked, pumps will be added, but won't be publically listed until you activate them individually.
             input(type="hidden", name="pumps", value="#{JSON.stringify(succeeded)}")
-            button.btn.btn-primary(type="submit") Save pumps
-           h1 Failed
-           ul 
-            each fail in failed
-              li #{fail.basic_model} / #{fail.individual_model} - #{fail.results.reasons[0]}
+            
+      if failed && failed.length > 0
+        .panel.panel-warning
+          .panel-heading
+            h1 Pumps that cannot be imported
+            p.text-warning The following pumps cannot be imported as they are currently listed in this template.  They will be ignored.
+          .panel-body
+            table.table.table-striped
+              thead
+                tr
+                  th Template row #
+                  th Basic model number
+                  th Individual model number
+                  th Failure reasons
+              tbody
+               each fail in failed
+                 tr
+                   td #{fail.row}
+                   td #{fail.basic_model}
+                   td #{fail.individual_model}
+                   td
+                    each reason in fail.results.reasons
+                     p.text-danger #{reason}
 
             

@@ -10,9 +10,14 @@ block content
       .panel.panel-default
         .panel-heading 
             h1 Upload pump listings
-
-        .panel-default
+        .panel-body
+          
           form(action="upload", method="post", enctype="multipart/form-data")
-            input(type="file",name="template", size="40")
-            button(type="submit")#go.btn.btn-primary Upload and list pumps
-            
+           .row
+            .col.col-md-6
+              .form-group
+                label Template file
+                input.form-control(type="file",name="template", size="40")
+              .form-group
+                button(type="submit")#go.btn.btn-primary Upload and list pumps
+              
