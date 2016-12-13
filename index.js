@@ -149,26 +149,7 @@ app.use(function(req, res, next) {
     }
     res.locals.unit_set = req.session.unit_set;
 
-    res.locals.units = {
-        active : res.locals.unit_set,
-        flow : {
-            label : res.locals.unit_set == units.US ? "gpm" : "m3/hr", 
-            factor : res.locals.unit_set == units.US ? 1 : units.factors.flow
-        }, 
-        head : {
-            label : res.locals.unit_set == units.US ? "ft" : "m", 
-            factor : res.locals.unit_set == units.US ? 1 : units.factors.head
-        },
-        power : {
-            label : res.locals.unit_set == units.US ? "hp" : "kW",  
-            factor : res.locals.unit_set == units.US ? 1 : units.factors.power
-        },
-        diameter :  {
-            label : res.locals.unit_set == units.US ? "inches" : "mm", 
-            factor : res.locals.unit_set == units.US ? 1 : units.factors.diameter            
-        } 
-    }
-
+    res.locals.units = units.make_units(res.locals.unit_set);
     res.locals.moment = require('moment');
     next();
 });

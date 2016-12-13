@@ -21,7 +21,6 @@ block content
                | if you don't already have a spreadsheet template.
             
               
-
           .row
             .col.col-md-12
               h2 Step 2 - Upload spreadsheet
@@ -33,4 +32,13 @@ block content
                 input.form-control(type="file",name="template", size="40")
               .form-group
                 button(type="submit")#go.btn.btn-primary Upload and list pumps
-              
+            .col.col-md-6
+              .alert(class=(units.active=="US" ? "alert-warning" : "alert-info"))
+                p.strong Your active unit set is #{units.active} units.  All data in your template should be in the associated units. 
+                ul(style="margin-top:1em;margin-bottom:1em")
+                  li Flow should be in #{units.flow.label}
+                  li Head should be in #{units.head.label}
+                  li Diameters should be in #{units.diameter.label}
+                  li Power should be in #{units.power.label}
+                p You may change your active unit set by accessing the control at the top-right side of this screen.  
+

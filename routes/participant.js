@@ -211,7 +211,6 @@ router.post("/pumps/save_upload", function(req, res) {
     var pumps = JSON.parse(req.body.pumps);
     var list_now = req.body.list_pumps ? true  : false;
     
-    //pump = units.convert_to_us(pump);
     var saves = [];
 
     pumps.forEach(function(pump) {
@@ -261,7 +260,7 @@ var map_doe = function (input) {
     else return undefined;
 }
 router.post("/pumps/upload", function(req, res) {
-    if (!req.files) {
+    if (!req.files || !req.files.template) {
         res.send('No files were uploaded.');
         return;
     }
@@ -332,8 +331,8 @@ router.post("/pumps/upload", function(req, res) {
                     }
 
                     
-
-                    //pump = units.convert_to_us(pump);
+                    pump.unit_set = req.session.unit_set;
+                    pump = units.convert_to_us(pump);
                     
                     var calculator = require("../calculator");
                     var results = calculator.calculate(pump);
@@ -346,25 +345,25 @@ router.post("/pumps/upload", function(req, res) {
                     pump.laboratory = find_lab(pump.laboratory, labs);
                     pump.doe = map_doe(pump.doe);
                     
-                    if ( !pump.doe) {
+                    if ( pump.results.success && !pump.doe) {
                         pump.results.success = false;
                         if (!pump.results.reasons) pump.results.reasons = [];
                         pump.results.reasons.push("The pump must have a recognized DOE category.")
                     }
 
-                    if ( !pump.laboratory) {
+                    if ( pump.results.success &&  !pump.laboratory) {
                         pump.results.success = false;
                         if (!pump.results.reasons) pump.results.reasons = [];
                         pump.results.reasons.push("The laboratory specified for this pump is not one of your organization's active HI Laboratories.")
                     }
 
                     var mcheck = model_check(pump, req.participant.pumps.concat(pumps_succeeded));
-                    if (mcheck.individual_collide) {
+                    if ( pump.results.success && mcheck.individual_collide) {
                         pump.results.success = false;
                         if (!pump.results.reasons) pump.results.reasons = [];
                         pump.results.reasons.push("This pump cannot be listed because there is already a pump listed with individual model number " + pump.individual_model)
                     }
-                    if (mcheck.basic_collide) {
+                    if ( pump.results.success && mcheck.basic_collide) {
                         pump.results.success = false;
                         if (!pump.results.reasons) pump.results.reasons = [];
                         pump.results.reasons.push("This pump cannot be listed because there are already pump(s) listed under this basic model (" + pump.basic_model + ") with a conflicting Energy Rating value")
@@ -401,7 +400,7 @@ router.post("/pumps/upload", function(req, res) {
 router.get('/pumps/download', function(req, res) {
     var pumps= JSON.parse(JSON.stringify(req.participant.pumps));
 
-    common.build_pump_spreadsheet(pumps, function(error, file, cleanup) {
+    common.build_pump_spreadsheet(pumps, req.session.unit_set, function(error, file, cleanup) {
         res.download(file, 'Pump Listings.xlsx', function(err){
             cleanup();
         });
@@ -425,7 +424,7 @@ router.get('/pumps/:id', function(req, res) {
 router.get('/pumps/:id/download', function(req, res) {
     var pump = req.participant.pumps.id(req.params.id);
     pump= JSON.parse(JSON.stringify(pump));
-    common.build_pump_spreadsheet(pump, function(error, file, cleanup) {
+    common.build_pump_spreadsheet(pump, req.session.unit_set, function(error, file, cleanup) {
         res.download(file, 'Pump Listings.xlsx', function(err){
                 cleanup();
         });

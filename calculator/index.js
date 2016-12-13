@@ -480,6 +480,13 @@ var manual_calculation = function(pump, set_point_threshold) {
     
     result.ns = calc_ns(pump);
     result.default_motor_efficiency = lookup_default_motor_efficiency(pump, pump.motor_power_rated);
+    if (!result.default_motor_efficiency) {
+        result.success = false;
+        result.reasons = [];
+        result.reasons.push("Error, the provided rated motor power of " + pump.motor_power_rated + " is not one of the allowable powers in the ER program.  Please check your data, and the units of measure you are using to add this pump")
+        result.pump = pump;
+        return result;
+    }
     result.full_load_motor_losses = calc_full_load_motor_losses(pump, result);
     
     result.per_cl = calc_per_cl(pump);

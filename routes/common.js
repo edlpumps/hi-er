@@ -1,4 +1,5 @@
 "use strict";
+var units = require('../utils/uom');
 
 exports.deleteUser = function(req, res) {
     req.Users.findOne({_id: req.params.id}, function(err, user){
@@ -163,7 +164,7 @@ exports.map_config_output = function(value) {
     else return null;
 }
 
-exports.build_pump_spreadsheet = function(pump, callback) {
+exports.build_pump_spreadsheet = function(pump, unit_set, callback) {
     const _ = require('lodash');
     const template = require('./template_map.json');
     const path = require('path');
@@ -184,8 +185,22 @@ exports.build_pump_spreadsheet = function(pump, callback) {
 
             var r = template.config.first_row;
             var worksheet = workbook.getWorksheet(1);
+
+            var unit_row = template.config.unit_row;
+            for ( var mapping in template.mappings ) {
+                var prop = template.mappings[mapping];
+                if ( prop.unit ) {
+                    var address = prop.column + unit_row;
+                    var cell = worksheet.getCell(address);
+                    cell.value = units.labels[prop.unit][unit_set];
+                }
+            }
             
             pumps.forEach(function(p) {
+                if ( unit_set == units.METRIC) {
+                    // pumps are stored internally in US units.
+                    p = units.convert_to_metric(p);
+                }
                 for ( var mapping in template.mappings ) {
                     var prop = template.mappings[mapping];
                     var enabled = true;
