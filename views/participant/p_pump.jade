@@ -15,6 +15,7 @@ block content
         .panel-heading 
             h2 #{pump.brand} #{pump.brand ? ' / ' : ''} #{pump.basic_model} #{pump.individual_model}
             h2 #{(pump.diameter*units.diameter.factor).toFixed(3)} #{units.diameter.label} @ #{pump.speed} rpm
+            .help-block This data is visible to the public.
         .panel-body
           .row
            .col.col-sm-5.text-center
@@ -25,10 +26,61 @@ block content
              +pump_page_info(pump)
 
                 
-      
+      .panel.panel-default
+        .panel-heading 
+            h2 Load Point Data
+            .help-block This data is not visible to the public, it is only visible to members of your organization.
+        .panel-body
+           table.table
+            thead
+              tr 
+                th &nbsp;
+                th #{pump.load120 ? "75% BEP" : "65% BEP"}
+                th #{pump.load120 ? "100% BEP" : "90% BEP"}
+                th #{pump.load120 ? "110% BEP" : "100% BEP"} 
+            tbody
+              tr
+                td Flow (#{units.flow.label})
+                td #{(pump.flow.bep75 * units.flow.factor).toFixed(2)}
+                td #{(pump.flow.bep100 * units.flow.factor).toFixed(2)}
+                td #{(pump.flow.bep110 * units.flow.factor).toFixed(2)}
+              tr
+                td Head (#{units.head.label})
+                td #{(pump.head.bep75 * units.head.factor).toFixed(2)}
+                td #{(pump.head.bep100 * units.head.factor).toFixed(2)}
+                td #{(pump.head.bep110 * units.head.factor).toFixed(2)}
+              if pump.driver_input_power.bep100
+                tr
+                  td Driver input power (#{units.power.label})
+                  td #{(pump.driver_input_power.bep75 * units.power.factor).toFixed(2)}
+                  td #{(pump.driver_input_power.bep100 * units.power.factor).toFixed(2)}
+                  td #{(pump.driver_input_power.bep110 * units.power.factor).toFixed(2)}
+        
+           if pump.section == '6' || pump.section == '6a' || pump.section == '6b' || pump.section == '7'
+            table.table
+              thead
+                tr
+                  th &nbsp
+                  th Control input power (#{units.power.label})
+                  
+              tbody
+                tr
+                 td 25% BEP
+                 td #{(pump.control_power_input.bep25 * units.power.factor).toFixed(2)}
+                tr
+                 td 50% BEP
+                 td #{(pump.control_power_input.bep50 * units.power.factor).toFixed(2)}
+                tr
+                 td 75% BEP
+                 td #{(pump.control_power_input.bep75 * units.power.factor).toFixed(2)}
+                tr
+                 td 100% BEP
+                 td #{(pump.control_power_input.bep100 * units.power.factor).toFixed(2)}
+
       .panel.panel-default
         .panel-heading 
             h2 Energy Ratings
+            .help-block This data is visible to the public.
         .panel-body
            
            .row

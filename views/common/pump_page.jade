@@ -47,13 +47,13 @@ mixin pump_page_info(pump)
             .col.col-xs-5
                 label BEP flow rate:
             .col.col-xs-7
-                .form-control-static #{(pump.flow.bep100 * units.flow.factor).toFixed(2)} #{units.flow.label}
+                .form-control-static #{((pump.load120 ? pump.flow.bep100 : pump.flow.bep110) * units.flow.factor).toFixed(2)} #{units.flow.label}
     .row 
         .form-group
             .col.col-xs-5
                 label BEP head:
             .col.col-xs-7
-                .form-control-static #{(pump.head.bep100 * units.head.factor).toFixed(2)} #{units.head.label}
+                .form-control-static #{((pump.load120 ? pump.head.bep100 : pump.head.bep110)  * units.head.factor).toFixed(2)} #{units.head.label}
 
     if pump.section == '3' || pump.section == '4' || pump.section == '5'
         .row 
@@ -61,20 +61,14 @@ mixin pump_page_info(pump)
                 .col.col-xs-5
                     label BEP Driver input power:
                 .col.col-xs-7
-                    if pump.driver_input_power.bep100
-                        .form-control-static #{(pump.driver_input_power.bep100 * units.power.factor).toFixed(2)} #{units.power.label}
-                    else
-                        .form-control-static Unavailble (MVP)
+                    .form-control-static #{((pump.load120? pump.driver_input_power.bep100 : pump.driver_input_power.bep110) * units.power.factor).toFixed(2)} #{units.power.label}
     else 
         .row 
             .form-group
                 .col.col-xs-5
                     label BEP Control input power:
                 .col.col-xs-7
-                    if pump.control_power_input.bep100
-                        .form-control-static #{(pump.control_power_input.bep100 * units.power.factor).toFixed(2)} #{units.power.label}
-                    else
-                        .form-control-static Unavailble (MVP)
+                    .form-control-static #{(pump.control_power_input.bep100 * units.power.factor).toFixed(2)} #{units.power.label}
     .row 
         .form-group
             .col.col-xs-5

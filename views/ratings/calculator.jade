@@ -29,6 +29,9 @@ mixin calculator(er, mode)
             input(type="hidden", name="pump[listed]", ng-value="app.pump.listed")
             input(type="hidden", name="pump[unit_set]", ng-value="app.pump.unit_set")
             input(type="hidden", name="pump[laboratory]")
+            input(type="hidden", name="pump[flow][bep75]", ng-value="app.pump.flow.bep75")
+            input(type="hidden", name="pump[flow][bep100]", ng-value="app.pump.flow.bep100")
+            input(type="hidden", name="pump[flow][bep110]", ng-value="app.pump.flow.bep110")
         
             .row
               .col.col-xs-12
@@ -408,11 +411,17 @@ mixin calculator(er, mode)
                        th {{app.pump.load120 ? "@ 110% BEP" : "@ 100% BEP"}}
                        th(ng-show="app.bep120_visible()") @ 120% BEP
                     tbody
-                      tr
+                      tr(ng-show='app.pump.load120')
                        td.col-label Rate of flow ({{app.units.flow.label}})
-                       td: input.form-control(type="number", ng-value="(app.pump.load120 ? app.pump.flow.bep100*0.75 : app.pump.flow.bep100/0.9*0.60).toFixed(2)", name="pump[flow][bep75]", readonly)
-                       td: input.form-control(type="number", ng-model="app.pump.flow.bep100", name="pump[flow][bep100]")
-                       td: input.form-control(type="number", ng-value="(app.pump.load120 ? app.pump.flow.bep100*1.1 : app.pump.flow.bep100/0.9).toFixed(2)", name="pump[flow][bep110]", readonly)
+                       td: input.form-control(type="number", ng-value="app.pump.flow.bep100*0.75", readonly)
+                       td: input.form-control(type="number", ng-model="app.pump.flow.bep100")
+                       td: input.form-control(type="number", ng-value="app.pump.flow.bep100*1.10", readonly)
+                       td(ng-show="app.bep120_visible()") 
+                      tr(ng-hide='app.pump.load120')
+                       td.col-label Rate of flow ({{app.units.flow.label}})
+                       td: input.form-control(type="number", ng-value="app.pump.flow.bep110*0.65", readonly)
+                       td: input.form-control(type="number", ng-value="app.pump.flow.bep110*0.90", readonly)
+                       td: input.form-control(type="number", ng-model="app.pump.flow.bep110")
                        td(ng-show="app.bep120_visible()") 
                       tr
                        td.col-label Head ({{app.units.head.label}}) 

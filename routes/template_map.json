@@ -159,7 +159,7 @@
             "bep120" : "no"
         },
         "driver_input_power.bep100" : {
-            "column" : "AZ", 
+            "column" : "Z", 
             "path" :"driver_input_power.bep100", 
             "path2" :"driver_input_power.bep110", 
             "sections" : ["3", "4", "5"]

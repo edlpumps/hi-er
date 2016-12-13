@@ -8,7 +8,8 @@ block content
   div(ng-app='ERParticipantApp')
 
     .container
-      .panel.panel-default
+      if succeeded && succeeded.length > 0
+       .panel.panel-default
         .panel-heading 
             h1 Pumps ready for input
             p.text-warning Note, these pumps will not be listed or saved until you confirm below

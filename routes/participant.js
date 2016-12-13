@@ -44,7 +44,21 @@ router.get('/', function(req, res) {
 });
 
 
+router.get('/template', function(req, res) {
+    const template = require('./template_map.json');
+    var path = require('path');
+    var fs = require('fs');
+    var filePath = path.join(__dirname, template.config.filename);
+    var stat = fs.statSync(filePath);
 
+    res.writeHead(200, {
+        'Content-Type': 'application/vnd.openxmlformats',
+        'Content-Disposition': "attachment; filename=" + "Pump Energy Ratings.xlsx",
+        'Content-Length': stat.size
+    });
+    var readStream = fs.createReadStream(filePath);
+    readStream.pipe(res);
+})
 
 
 router.get('/users', function(req, res) {

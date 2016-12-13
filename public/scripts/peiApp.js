@@ -328,6 +328,31 @@ var PEIController = function($scope, $location, $window, service) {
          vm.pump.measured_control_flow_input.bep100 = vm.pump.flow.bep100;
          vm.pump.measured_control_head_input.bep100 = vm.pump.head.bep100;
      }
+
+     var flow75, flow100, flow110;
+
+      if ( vm.pump.load120) {
+          console.log("Calculating for BEP 120 Load Points")
+          flow100 = vm.pump.flow.bep100;
+          flow75 = flow100 * 0.75;
+          flow110 = flow100 * 1.10;
+      }
+      else {
+          console.log("Calculating for BEP 100 Load Points")
+          flow110 = vm.pump.flow.bep110;
+          flow75 = flow110*0.65;
+          flow100 = flow110 * 0.9;
+      }
+      console.log(flow75);
+      console.log(flow100);
+      console.log(flow110);
+      vm.pump.flow.bep75 = flow75;
+      vm.pump.flow.bep100 = flow100;
+      vm.pump.flow.bep110 = flow110;
+      $("input[name='pump[flow][bep75]']").val(flow75);
+      $("input[name='pump[flow][bep100]']").val(flow100);
+      $("input[name='pump[flow][bep110]']").val(flow110);
+
      vm.pump.unit_set = vm.units.active;
      service.calculate(vm.pump).then(function(result) {
             vm.step = "results";

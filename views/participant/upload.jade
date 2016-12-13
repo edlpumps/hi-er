@@ -11,12 +11,25 @@ block content
         .panel-heading 
             h1 Upload pump listings
         .panel-body
-          
+          .row
+            .col.col-md-12
+              h2 Step 1 - Populate spreadsheet template
+          .row
+            .col.col-md-12
+              p.strong
+               a(href="/participant/template") Download a template 
+               | if you don't already have a spreadsheet template.
+            
+              
+
+          .row
+            .col.col-md-12
+              h2 Step 2 - Upload spreadsheet
           form(action="upload", method="post", enctype="multipart/form-data")
            .row
             .col.col-md-6
               .form-group
-                label Template file
+                label Select file
                 input.form-control(type="file",name="template", size="40")
               .form-group
                 button(type="submit")#go.btn.btn-primary Upload and list pumps
