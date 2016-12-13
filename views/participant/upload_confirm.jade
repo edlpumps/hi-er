@@ -1,5 +1,6 @@
 extends layout
 
+include ../common/labels
 
 block nav
      +navigation("upload")
@@ -19,6 +20,7 @@ block content
                   th Template row #
                   th Basic model number
                   th Individual model number
+                  th Configuration
                   th PEI
                   th Energy Rating
               tbody
@@ -27,6 +29,8 @@ block content
                   td #{success.row}
                   td #{success.basic_model}
                   td #{success.individual_model}
+                  td 
+                    +configuration_label(success.configuration)
                   td #{success.pei}
                   td #{success.results.energy_rating}
                  
@@ -50,6 +54,7 @@ block content
                   th Template row #
                   th Basic model number
                   th Individual model number
+                  th Configuration
                   th Failure reasons
               tbody
                each fail in failed
@@ -57,6 +62,8 @@ block content
                    td #{fail.row}
                    td #{fail.basic_model}
                    td #{fail.individual_model}
+                   td 
+                    +configuration_label(fail.configuration)
                    td
                     each reason in fail.results.reasons
                      p.text-danger #{reason}

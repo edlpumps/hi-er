@@ -1,6 +1,6 @@
 {
     "config" : {
-        "first_row" : 3, 
+        "first_row" : 4, 
         "filename": "er_pump_listings.xlsx"
     },
 
@@ -35,115 +35,177 @@
             "path" :"configuration"
         },
 
-        "motor_method" : {
-            "column" : "G", 
-            "path" :"motor_method"
-        },
+        
 
         "diameter" : {
-            "column" : "H", 
+            "column" : "G", 
             "path" :"diameter"
         },
 
         "section" : {
-            "column" : "I", 
+            "column" : "H", 
             "path" :"section"
         },
 
         "stages" : {
-            "column" : "J", 
+            "column" : "I", 
             "path" :"stages"
         },
 
         "speed" : {
-            "column" : "K", 
+            "column" : "J", 
             "path" :"speed"
         },
 
         "bowl_diameter" : {
-            "column" : "L", 
+            "column" : "K", 
             "path" :"bowl_diameter"
         },
 
         "motor_regulated" : {
-            "column" : "M", 
+            "column" : "L", 
             "path" :"motor_regulated",
-            "sections" : ["4", "5", "6", "6a", "6b", "7"]
+            "sections" : ["4", "5", "6", "6a", "6b", "7"], 
+            "boolean":true
         },
 
         "motor_efficiency" : {
-            "column" : "N", 
+            "column" : "M", 
             "path" :"motor_efficiency"
         },
 
         "motor_power_rated" : {
-            "column" : "O", 
+            "column" : "N", 
             "path" :"motor_power_rated"
         },
 
-        "flow.bep100" : {
+        "bep120" : {
+            "column" : "O", 
+            "path" :"load120", 
+            "boolean":true
+        },
+
+        "flow.bep65" : {
+            "column" : "S", 
+            "path" :"flow.bep75",
+            "output_only":true,
+            "bep120" : "no"
+        },
+        "flow.bep75" : {
             "column" : "Q", 
-            "path" :"flow.bep100"
+            "path" :"flow.bep75",
+            "output_only":true,
+            "bep120" : "yes"
+        },
+        "flow.bep90" : {
+            "column" : "T", 
+            "path" :"flow.bep100",
+            "output_only":true,
+            "bep120" : "no"
+        },
+        "flow.bep100" : {
+            "column" : "P", 
+            "path" :"flow.bep100",
+            "path2" :"flow.bep110"
+        },
+        "flow.bep110" : {
+            "column" : "R", 
+            "path" :"flow.bep110",
+            "output_only":true,
+            "bep120" : "yes"
         },
 
         "head.bep100" : {
-            "column" : "S", 
-            "path" :"head.bep100"
+            "column" : "U", 
+            "path" :"head.bep100",
+            "path2" :"head.bep110"
+        },
+        "head.bep65" : {
+            "column" : "AL", 
+            "path" :"head.bep75",
+            "bep120" : "no"
         },
         "head.bep75" : {
-            "column" : "AF", 
-            "path" :"head.bep75"
+            "column" : "AJ", 
+            "path" :"head.bep75",
+            "bep120" : "yes"
+        },
+        "head.bep90" : {
+            "column" : "AM", 
+            "path" :"head.bep100",
+            "bep120" : "no"
         },
         "head.bep110" : {
-            "column" : "AG", 
-            "path" :"head.bep110"
+            "column" : "AK", 
+            "path" :"head.bep110",
+            "bep120" : "yes"
         },
-
-        "driver_input_power.beq75" : {
-            "column" : "X", 
+        "driver_input_power.bep65" : {
+            "column" : "AC", 
             "path" :"driver_input_power.bep75", 
-            "sections" : ["3", "4", "5"]
+            "sections" : ["3", "4", "5"],
+            "bep120" : "no"
+        },
+        "driver_input_power.bep75" : {
+            "column" : "AA", 
+            "path" :"driver_input_power.bep75", 
+            "sections" : ["3", "4", "5"],
+            "bep120" : "yes"
+        },
+        "driver_input_power.bep90" : {
+            "column" : "AD", 
+            "path" :"driver_input_power.bep100", 
+            "sections" : ["3", "4", "5"],
+            "bep120" : "no"
         },
         "driver_input_power.bep100" : {
-            "column" : "Y", 
+            "column" : "AZ", 
             "path" :"driver_input_power.bep100", 
+            "path2" :"driver_input_power.bep110", 
             "sections" : ["3", "4", "5"]
         },
         "driver_input_power.bep110" : {
-            "column" : "Z", 
+            "column" : "AB", 
             "path" :"driver_input_power.bep110", 
-            "sections" : ["3", "4", "5"]
+            "sections" : ["3", "4", "5"],
+            "bep120" : "yes"
         },
 
         "control_power_input.beq25" : {
-            "column" : "AA", 
+            "column" : "AE", 
             "path" :"control_power_input.bep25", 
             "sections" : ["6a", "6b", "6", "7"]
         },
         "control_power_input.bep50" : {
-            "column" : "AB", 
+            "column" : "AF", 
             "path" :"control_power_input.bep50", 
             "sections" : ["6a", "6b", "6", "7"]
         },
         "control_power_input.bep75" : {
-            "column" : "AC", 
+            "column" : "AG", 
             "path" :"control_power_input.bep75", 
             "sections" : ["6a", "6b", "6", "7"]
         },
         "control_power_input.bep100" : {
-            "column" : "AD", 
+            "column" : "AH", 
             "path" :"control_power_input.bep100", 
             "sections" : ["6a", "6b", "6", "7"]
         },
 
         "laboratory.name" : {
-            "column" : "AH", 
+            "column" : "AN", 
             "path" :"laboratory.name"
         },
 
         "pei" : {
-            "column" : "AE", 
+            "column" : "AI", 
             "path" :"pei"
+        },
+
+        "energy_rating" : {
+            "column" : "AO", 
+            "path" :"energy_rating",
+            "output_only":true
         }
     }
 

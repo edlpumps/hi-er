@@ -1,0 +1,12 @@
+mixin configuration_label(value)
+    if value == "bare"
+        span Bare Pump
+    else if value == "pump_motor"
+        span Pump + Motor
+    else if value == "pump_motor_cc"
+        span Pump + Motor w/ Continuous Controls
+    else if value == "pump_motor_nc"
+        span Pump + Motor w/ Non-continuous Controls
+    else
+        span.text-warning Unrecognized configuration
+    

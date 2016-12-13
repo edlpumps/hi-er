@@ -225,13 +225,10 @@ router.post("/pumps/save_upload", function(req, res) {
         })
         
     })
-        
-    
-
-   
-
-    
 });
+
+
+
 router.post("/pumps/upload", function(req, res) {
     if (!req.files) {
         res.send('No files were uploaded.');
@@ -251,10 +248,37 @@ router.post("/pumps/upload", function(req, res) {
            if (first_cell.value) {
                 var pump = {}
                 pump.row = r;
+                var load120Cell = worksheet.getCell(template.mappings.bep120.column+r);
+                var load120 = common.map_boolean_input(load120Cell.value);
+
                 for ( var mapping in template.mappings ) {
                     var prop = template.mappings[mapping];
                     var cell = worksheet.getCell(prop.column + r);
-                    _.set(pump, prop.path, cell.value);
+                    var value = cell.value;
+                    var enabled = true;
+                    if (mapping == "configuration") {
+                        value = common.map_config_input(cell.value);
+                    }
+                    if ( prop.boolean ) {
+                        value = common.map_boolean_input(cell.value);
+                    }
+                    if ( prop.bep120) {
+                        if ( prop.bep120 == "no" && load120) {
+                            enabled = false;
+                        }
+                        else if (prop.bep120 == "yes" && !load120){
+                            enabled = false;
+                        }
+                    }
+                    if ( enabled && !prop.output_only) {
+                        if ( prop.path2 && !load120) {
+                            // this property gets pulled from an alternative path if pump is tested @ 120 BEP
+                            _.set(pump, prop.path2, value);
+                        }
+                        else {
+                            _.set(pump, prop.path, value);
+                        }
+                    }
                 }
 
                 // strip out driver/control if not used.
@@ -264,12 +288,16 @@ router.post("/pumps/upload", function(req, res) {
                 if ( !pump.control_power_input.bep100) {
                     delete pump.control_power_input;
                 }
-                if ( pump.flow ) {
+                if ( pump.flow && load120 ) {
                     pump.flow.bep75 = pump.flow.bep100 * 0.75;
                     pump.flow.bep110 = pump.flow.bep100 * 1.1;
                 }
+                else if (pump.flow && !load120) {
+                    pump.flow.bep75 = pump.flow.bep110 * 0.65;
+                    pump.flow.bep100 = pump.flow.bep110 * 0.9;
+                }
                 //pump = units.convert_to_us(pump);
-
+                console.log(pump);
                 var calculator = require("../calculator");
                 var results = calculator.calculate(pump);
                 pump.results = results;
@@ -281,17 +309,17 @@ router.post("/pumps/upload", function(req, res) {
                     pumps_failed.push(pump)
                 }
                 r++;
-                }
-                else {
-                done = true;
-                }
             }
-            res.render("participant/upload_confirm", {
+            else {
+                done = true;
+            }
+        }
+        res.render("participant/upload_confirm", {
                 user : req.user,
                 participant : req.participant, 
                 succeeded:pumps_succeeded, 
                 failed:pumps_failed 
-            });
+        });
     });
  
     

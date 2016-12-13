@@ -125,6 +125,44 @@ exports.labs = function(req, res) {
     )
 }
 
+exports.map_boolean_input = function(input) {
+    if (input) {
+        var entered = input.toLowerCase();
+        // yes, y, true, T
+        if ( entered.indexOf("y") >= 0 || entered.indexOf("t") >= 0) return true;
+    }
+    return false;
+}
+exports.map_boolean_output = function(value) {
+    return value ? "Yes" : "No";
+}
+exports.map_config_input = function(input) {
+    /*
+    Bare pump
+    Bare pump + motor
+    Bare pump + motor + continuous control
+    Bare pump + motor + non-continuous control
+    */
+    var result = "bare";
+    if ( input.toLowerCase().indexOf("non") >= 0) {
+        result = "pump_motor_nc";
+    }
+    else if (input.toLowerCase().indexOf("contin") >= 0) {
+        result = "pump_motor_cc";
+    }
+    else if (input.toLowerCase().indexOf("motor") >= 0) {
+        result = "pump_motor";
+    }
+    return result;
+}
+exports.map_config_output = function(value) {
+    if (value == "bare") return "Bare pump";
+    else if (value == "pump_motor") return "Bare pump + motor";
+    else if (value == "pump_motor_cc") return "Bare pump + motor + continuous control";
+    else if (value == "pump_motor_nc") return "Bare pump + motor + non-continuous control";
+    else return null;
+}
+
 exports.build_pump_spreadsheet = function(pump, callback) {
     const _ = require('lodash');
     const template = require('./template_map.json');
@@ -150,10 +188,30 @@ exports.build_pump_spreadsheet = function(pump, callback) {
             pumps.forEach(function(p) {
                 for ( var mapping in template.mappings ) {
                     var prop = template.mappings[mapping];
-                    var value = _.get(p, prop.path);
                     var enabled = true;
+                    var value = _.get(p, prop.path);
+                    if ( prop.bep120 ) {
+                        // this property is dependent on whether the pump is tested @120BEP
+                        if ( prop.bep120 == "no" && p.load120) {
+                            enabled = false;
+                        }
+                        else if (prop.bep120 == "yes" && !p.load120){
+                            enabled = false;
+                        }
+                    }
+                    if ( prop.path2 && !p.load120) {
+                        // this property gets pulled from an alternative path if pump is tested @ 120 BEP
+                        value = _.get(p, prop.path2);
+                    }
+                    if (mapping =="configuration") {
+                        value = exports.map_config_output(value);
+                    }
+                    if ( prop.boolean) {
+                        value = exports.map_boolean_output(value);
+                    }
+                    
                     if ( prop.sections ) {
-                        enabled = prop.sections.indexOf(p.section) >= 0;
+                        enabled = enabled && prop.sections.indexOf(p.section) >= 0;
                     } 
                     
                     if ( enabled && value) {
