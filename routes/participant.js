@@ -110,7 +110,6 @@ router.get("/pumps/new", function(req, res){
 
     
     pump.configuration = {value:"bare"};
-    pump.laboratory = "TEST LAB"
     pump.basic_model = "PRE.SET.00";
     pump.individual_model = "123-456-89";
     pump.brand = "Brand X";

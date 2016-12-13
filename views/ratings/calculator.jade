@@ -113,22 +113,22 @@ mixin calculator(er, mode)
                     input.form-control(type="number", min="1", name="pump[stages]", ng-model="app.pump.stages")
  
             
-                
-            .row 
-              .form-group
-                .col.col-xs-5
-                  label.text-primary HI Approved Laboratory
-                  +help(help.lab)
-                .col.col-xs-7.col-sm-4
+            if (er)  
+              .row 
+                .form-group
+                  .col.col-xs-5
+                    label.text-primary HI Approved Laboratory
+                    +help(help.lab)
+                  .col.col-xs-7.col-sm-4
 
-                  select.form-control(ng-model="app.pump.laboratory", ng-options="lab as (lab.name + ' - ' + lab.code) for lab in app.active_labs track by lab._id")
-            
+                    select.form-control(ng-model="app.pump.laboratory", ng-options="lab as (lab.name + ' - ' + lab.code) for lab in app.active_labs track by lab._id")
+              
            
             
             hr
             .row
               .col.col-xs-12
-                button.btn.btn-primary(type="button", ng-disabled="!app.pump.configuration || !app.pump.speed || !app.pump.diameter  || !app.pump.basic_model ||!app.pump.participant || !app.pump.stages || !app.pump.laboratory", ng-click="app.go2MotorMethod()") Next
+                button.btn.btn-primary(type="button", ng-disabled="!app.pump.configuration || !app.pump.speed || !app.pump.diameter  || !app.pump.basic_model ||!app.pump.participant || !app.pump.stages || (app.mode!='calculator' && !app.pump.laboratory)", ng-click="app.go2MotorMethod()") Next
 
 
         //---------------------------------------------------------------
