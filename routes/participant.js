@@ -218,9 +218,6 @@ router.post("/pumps/save_upload", function(req, res) {
         saves.push(function(done) {
             pump.date = new Date();
             pump.listed = list_now;
-            pump.energy_rating = pump.results.energy_rating;
-            pump.energy_savings = pump.results.energy_savings;
-            pump.pei_baseline = pump.results.pei_baseline;
             var toSave = req.participant.pumps.create(pump);
             req.nextRatingsId(function(err, doc) {
                 toSave.rating_id = hashids.encode(doc.value.seq);
@@ -252,6 +249,15 @@ var find_lab = function(imported, labs) {
         }
     });
     if (found.length > 0) return found[0];
+    else return undefined;
+}
+
+var map_doe = function (input) {
+    if (!input ) return undefined;
+    input = String(input);
+    var does = ["ESCC", "ESFM", "IL", "RSV", "ST"];
+    var index = does.indexOf(input.toUpperCase());
+    if (index >= 0) return does[index];
     else return undefined;
 }
 router.post("/pumps/upload", function(req, res) {
@@ -332,15 +338,36 @@ router.post("/pumps/upload", function(req, res) {
                     var calculator = require("../calculator");
                     var results = calculator.calculate(pump);
                     pump.results = results;
+                    pump.energy_rating = pump.results.energy_rating;
+                    pump.energy_savings = pump.results.energy_savings;
+                    pump.pei_baseline = pump.results.pei_baseline;
                     delete pump.results.pump;
 
                     pump.laboratory = find_lab(pump.laboratory, labs);
-                    console.log(pump.laboratory)
+                    pump.doe = map_doe(pump.doe);
+                    
+                    if ( !pump.doe) {
+                        pump.results.success = false;
+                        if (!pump.results.reasons) pump.results.reasons = [];
+                        pump.results.reasons.push("The pump must have a recognized DOE category.")
+                    }
+
                     if ( !pump.laboratory) {
-                        console.log("NO IMPORT - Missing lab");
                         pump.results.success = false;
                         if (!pump.results.reasons) pump.results.reasons = [];
                         pump.results.reasons.push("The laboratory specified for this pump is not one of your organization's active HI Laboratories.")
+                    }
+
+                    var mcheck = model_check(pump, req.participant.pumps.concat(pumps_succeeded));
+                    if (mcheck.individual_collide) {
+                        pump.results.success = false;
+                        if (!pump.results.reasons) pump.results.reasons = [];
+                        pump.results.reasons.push("This pump cannot be listed because there is already a pump listed with individual model number " + pump.individual_model)
+                    }
+                    if (mcheck.basic_collide) {
+                        pump.results.success = false;
+                        if (!pump.results.reasons) pump.results.reasons = [];
+                        pump.results.reasons.push("This pump cannot be listed because there are already pump(s) listed under this basic model (" + pump.basic_model + ") with a conflicting Energy Rating value")
                     }
 
                     if ( pump.results.success ){
@@ -474,27 +501,29 @@ router.post('/pumps/:id', function(req, res) {
     
 });
 
-router.post("/api/model_check", function(req, res) {
-    var newPump = req.body.pump;
-
-    for (let i = 0; i < req.participant.pumps.length;i++ ) {
-        let pump = req.participant.pumps[i];
+var model_check = function(newPump, pumps) {
+    for (let i = 0; i < pumps.length;i++ ) {
+        let pump = pumps[i];
         
         // If there is already a pump with this individual model number, then 
         // return failure - these must be unique.
         if (pump.individual_model === newPump.individual_model) {
-            res.status(200).send(JSON.stringify({individual_collide:true}));
-            return;
+            return {individual_collide:true};
         }  
         // If there is already pump(s) with the same basic model, check to make sure
         // that this has the same ER value.
         if (pump.basic_model === newPump.basic_model && pump.energy_rating != newPump.energy_rating) {
-            res.status(200).send(JSON.stringify({basic_collide:true}));
-            return;
+            console.log(pump.energy_rating);
+            console.log(newPump.energy_rating);
+            return {basic_collide:true};
         }  
     };
+    return {ok:true};
+}
 
-    res.status(200).send(JSON.stringify({ok:true}));
+router.post("/api/model_check", function(req, res) {
+    var newPump = req.body.pump;
+    res.status(200).send(JSON.stringify(model_check(newPump, req.participant.pumps)));
 });
 
 

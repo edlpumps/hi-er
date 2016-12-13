@@ -46,15 +46,18 @@ var lookup_motor_control_losses = function (pump) {
 
 }
 var lookup_standard_c_value = function(pump) {
-    var label = pump.doe.toUpperCase() + "-" + pump.speed;
+    var doe = String(pump.doe);
+    var label = doe.toUpperCase() + "-" + pump.speed;
     return standard_c_values[label];
 }
 var lookup_baseline_c_value = function(pump) {
-    var label = pump.doe.toUpperCase() + "-" + pump.speed;
+    var doe = String(pump.doe);
+    var label = doe.toUpperCase() + "-" + pump.speed;
     return baseline_c_values[label];
 }
 var lookup_default_motor_efficiency = function(pump, power) {
-    var label = pump.doe.toUpperCase() + "-" + power + "-" + pump.speed;
+    var doe = String(pump.doe);
+    var label = doe.toUpperCase() + "-" + power + "-" + pump.speed;
     var table = require("./default_motor_efficiencies.json");
     var retval = table[label];
     return retval;
