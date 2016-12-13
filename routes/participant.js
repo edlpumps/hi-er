@@ -241,98 +241,128 @@ router.post("/pumps/save_upload", function(req, res) {
 });
 
 
-
+var find_lab = function(imported, labs) {
+    if (!imported || !imported.name) return undefined;
+    var found = labs.filter(function (lab) {
+        if ( imported.name.toLowerCase)
+        return lab.name.toLowerCase() == imported.name.toLowerCase() || 
+                lab.code == imported.name;
+        else {
+            return lab.code == imported.name;
+        }
+    });
+    if (found.length > 0) return found[0];
+    else return undefined;
+}
 router.post("/pumps/upload", function(req, res) {
     if (!req.files) {
         res.send('No files were uploaded.');
         return;
     }
     var workbook = new Excel.Workbook();
-    workbook.xlsx.readFile(req.files.template.file).then(function() {
-       const pumps_succeeded = [];
-       const pumps_failed = [];
-       const template = require('./template_map.json');
-       var r = template.config.first_row;
-       var worksheet = workbook.getWorksheet(1);
-       var first_cell = null;
-       var done = false;
-       while (!done) {
-           first_cell = worksheet.getCell(template.mappings.basic_model.column+r)
-           if (first_cell.value) {
-                var pump = {}
-                pump.row = r;
-                var load120Cell = worksheet.getCell(template.mappings.bep120.column+r);
-                var load120 = common.map_boolean_input(load120Cell.value);
+    
+    // Load all the laboratories for this participant
+    req.Labs.find({_id : {$in :req.participant.labs}}, function(err, labs) {
+        workbook.xlsx.readFile(req.files.template.file).then(function() {
+        const pumps_succeeded = [];
+        const pumps_failed = [];
+        const template = require('./template_map.json');
+        var r = template.config.first_row;
+        var worksheet = workbook.getWorksheet(1);
+        var first_cell = null;
+        var done = false;
+        while (!done) {
+            first_cell = worksheet.getCell(template.mappings.basic_model.column+r)
+            if (first_cell.value) {
+                    var pump = {}
+                    pump.row = r;
+                    var load120Cell = worksheet.getCell(template.mappings.bep120.column+r);
+                    var load120 = common.map_boolean_input(load120Cell.value);
 
-                for ( var mapping in template.mappings ) {
-                    var prop = template.mappings[mapping];
-                    var cell = worksheet.getCell(prop.column + r);
-                    var value = cell.value;
-                    var enabled = true;
-                    if (mapping == "configuration") {
-                        value = common.map_config_input(cell.value);
-                    }
-                    if ( prop.boolean ) {
-                        value = common.map_boolean_input(cell.value);
-                    }
-                    if ( prop.bep120) {
-                        if ( prop.bep120 == "no" && load120) {
-                            enabled = false;
+                    for ( var mapping in template.mappings ) {
+                        var prop = template.mappings[mapping];
+                        var cell = worksheet.getCell(prop.column + r);
+                        var value = cell.value;
+                        var enabled = true;
+                        if (mapping == "configuration") {
+                            value = common.map_config_input(cell.value);
                         }
-                        else if (prop.bep120 == "yes" && !load120){
-                            enabled = false;
+                        if ( prop.boolean ) {
+                            value = common.map_boolean_input(cell.value);
+                        }
+                        if ( prop.bep120) {
+                            if ( prop.bep120 == "no" && load120) {
+                                enabled = false;
+                            }
+                            else if (prop.bep120 == "yes" && !load120){
+                                enabled = false;
+                            }
+                        }
+                        if ( enabled && !prop.output_only) {
+                            if ( prop.path2 && !load120) {
+                                // this property gets pulled from an alternative path if pump is tested @ 120 BEP
+                                _.set(pump, prop.path2, value);
+                            }
+                            else {
+                                _.set(pump, prop.path, value);
+                            }
                         }
                     }
-                    if ( enabled && !prop.output_only) {
-                        if ( prop.path2 && !load120) {
-                            // this property gets pulled from an alternative path if pump is tested @ 120 BEP
-                            _.set(pump, prop.path2, value);
-                        }
-                        else {
-                            _.set(pump, prop.path, value);
-                        }
-                    }
-                }
 
-                // strip out driver/control if not used.
-                if (!pump.driver_input_power.bep100) {
-                    delete pump.driver_input_power;
-                }
-                if ( !pump.control_power_input.bep100) {
-                    delete pump.control_power_input;
-                }
-                if ( pump.flow && load120 ) {
-                    pump.flow.bep75 = pump.flow.bep100 * 0.75;
-                    pump.flow.bep110 = pump.flow.bep100 * 1.1;
-                }
-                else if (pump.flow && !load120) {
-                    pump.flow.bep75 = pump.flow.bep110 * 0.65;
-                    pump.flow.bep100 = pump.flow.bep110 * 0.9;
-                }
-                //pump = units.convert_to_us(pump);
-                console.log(pump);
-                var calculator = require("../calculator");
-                var results = calculator.calculate(pump);
-                pump.results = results;
-                delete pump.results.pump;
-                if ( results.success ){
-                    pumps_succeeded.push(pump);
+                    // strip out driver/control if not used.
+                    if (!pump.driver_input_power.bep100) {
+                        delete pump.driver_input_power;
+                    }
+                    if ( !pump.control_power_input.bep100) {
+                        delete pump.control_power_input;
+                    }
+                    if ( pump.flow && load120 ) {
+                        pump.flow.bep75 = pump.flow.bep100 * 0.75;
+                        pump.flow.bep110 = pump.flow.bep100 * 1.1;
+                    }
+                    else if (pump.flow && !load120) {
+                        pump.flow.bep75 = pump.flow.bep110 * 0.65;
+                        pump.flow.bep100 = pump.flow.bep110 * 0.9;
+                    }
+
+                    
+
+                    //pump = units.convert_to_us(pump);
+                    
+                    var calculator = require("../calculator");
+                    var results = calculator.calculate(pump);
+                    pump.results = results;
+                    delete pump.results.pump;
+
+                    pump.laboratory = find_lab(pump.laboratory, labs);
+                    console.log(pump.laboratory)
+                    if ( !pump.laboratory) {
+                        console.log("NO IMPORT - Missing lab");
+                        pump.results.success = false;
+                        if (!pump.results.reasons) pump.results.reasons = [];
+                        pump.results.reasons.push("The laboratory specified for this pump is not one of your organization's active HI Laboratories.")
+                    }
+
+                    if ( pump.results.success ){
+                        pumps_succeeded.push(pump);
+                    }
+                    else {
+                        pumps_failed.push(pump)
+                    }
+                    r++;
                 }
                 else {
-                    pumps_failed.push(pump)
+                    done = true;
                 }
-                r++;
             }
-            else {
-                done = true;
-            }
-        }
-        res.render("participant/upload_confirm", {
-                user : req.user,
-                participant : req.participant, 
-                succeeded:pumps_succeeded, 
-                failed:pumps_failed 
+            res.render("participant/upload_confirm", {
+                    user : req.user,
+                    participant : req.participant, 
+                    succeeded:pumps_succeeded, 
+                    failed:pumps_failed 
+            });
         });
+
     });
  
     
