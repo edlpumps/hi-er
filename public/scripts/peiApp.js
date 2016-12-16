@@ -343,9 +343,6 @@ var PEIController = function($scope, $location, $window, service) {
           flow75 = flow110*0.65;
           flow100 = flow110 * 0.9;
       }
-      console.log(flow75);
-      console.log(flow100);
-      console.log(flow110);
       vm.pump.flow.bep75 = flow75;
       vm.pump.flow.bep100 = flow100;
       vm.pump.flow.bep110 = flow110;
@@ -408,6 +405,15 @@ var PEIController = function($scope, $location, $window, service) {
       $("input[name='pump[laboratory]']").val(JSON.stringify(vm.pump.laboratory));
       new_pump_pei.submit();
 
+  }
+
+  vm.download = function(active) {
+      $("input[name='pump[listed]']").val(active);
+      $("input[name='pump[unit_set]']").val(vm.units.active);
+      $("input[name='pump[laboratory]']").val(JSON.stringify(vm.pump.laboratory));
+      new_pump_pei.action = "/pei/download";
+      console.log(new_pump_pei.action);
+      new_pump_pei.submit();
   }
   
   vm.go2Configuration();

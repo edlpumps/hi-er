@@ -11,6 +11,27 @@ html
     block script
     
   body.ratings
+     mixin navigation_calculator()
+       .navbar.navbar-inverse
+        .container-fluid
+           .navbar-header
+              button.navbar-toggle.collapsed(type="button", data-toggle="collapse", data-target="#navcollapse",aria-expanded="false")
+                .sr-only Toggle navigation
+                .icon-bar 
+                .icon-bar 
+                .icon-bar 
+              a.navbar-brand(href="http://pumps.org") 
+                img(style="max-width:27px; margin-top: -7px;", src="/images/white-brand.png")
+               
+              
+           .collapse.navbar-collapse#navcollapse
+               ul.nav.navbar-nav
+                  li(class=(active == 'home' ? 'active' : ''))
+                    a(href="/ratings/home") 
+                     .glyphicon.glyphicon-home.margin-right
+                     | HI Energy Ratings Home
+                ul.nav.navbar-nav.navbar-right
+                  +unit_switch()
 
      mixin navigation(active)
        .navbar.navbar-inverse

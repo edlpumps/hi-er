@@ -41,7 +41,8 @@
         "diameter" : {
             "column" : "G", 
             "path" :"diameter", 
-            "unit" : "diameter"
+            "unit" : "diameter",
+            "format": "0.000"
         },
 
         "section" : {
@@ -51,18 +52,21 @@
 
         "stages" : {
             "column" : "I", 
-            "path" :"stages"
+            "path" :"stages",
+            "format": "0"
         },
 
         "speed" : {
             "column" : "J", 
-            "path" :"speed"
+            "path" :"speed",
+            "format": "0"
         },
 
         "bowl_diameter" : {
             "column" : "K", 
             "path" :"bowl_diameter", 
-            "unit" : "diameter"
+            "unit" : "diameter",
+            "format": "0.00"
         },
 
         "motor_regulated" : {
@@ -74,13 +78,15 @@
 
         "motor_efficiency" : {
             "column" : "M", 
-            "path" :"motor_efficiency"
+            "path" :"motor_efficiency",
+            "format": "0.00"
         },
 
         "motor_power_rated" : {
             "column" : "N", 
             "path" :"motor_power_rated", 
-            "unit" : "power"
+            "unit" : "power", 
+            "format": "0.00"
         },
 
         "bep120" : {
@@ -94,125 +100,144 @@
             "path" :"flow.bep75",
             "output_only":true,
             "bep120" : "no", 
-            "unit" : "flow"
+            "unit" : "flow", 
+            "format": "0.00"
         },
         "flow.bep75" : {
             "column" : "Q", 
             "path" :"flow.bep75",
             "output_only":true,
             "bep120" : "yes", 
-            "unit" : "flow"
+            "unit" : "flow", 
+            "format": "0.00"
         },
         "flow.bep90" : {
             "column" : "T", 
             "path" :"flow.bep100",
             "output_only":true,
             "bep120" : "no", 
-            "unit" : "flow"
+            "unit" : "flow", 
+            "format": "0.00"
         },
         "flow.bep100" : {
             "column" : "P", 
             "path" :"flow.bep100",
             "path2" :"flow.bep110", 
-            "unit" : "flow"
+            "unit" : "flow", 
+            "format": "0.00"
         },
         "flow.bep110" : {
             "column" : "R", 
             "path" :"flow.bep110",
             "output_only":true,
             "bep120" : "yes", 
-            "unit" : "flow"
+            "unit" : "flow", 
+            "format": "0.00"
         },
 
         "head.bep100" : {
             "column" : "U", 
             "path" :"head.bep100",
             "path2" :"head.bep110", 
-            "unit" : "head"
+            "unit" : "head", 
+            "format": "0.00"
         },
         "head.bep65" : {
             "column" : "AL", 
             "path" :"head.bep75",
             "bep120" : "no", 
-            "unit" : "head"
+            "unit" : "head", 
+            "format": "0.00"
         },
         "head.bep75" : {
             "column" : "AJ", 
             "path" :"head.bep75",
             "bep120" : "yes", 
-            "unit" : "head"
+            "unit" : "head", 
+            "format": "0.00"
         },
         "head.bep90" : {
             "column" : "AM", 
             "path" :"head.bep100",
             "bep120" : "no", 
-            "unit" : "head"
+            "unit" : "head", 
+            "format": "0.00"
         },
         "head.bep110" : {
             "column" : "AK", 
             "path" :"head.bep110",
             "bep120" : "yes", 
-            "unit" : "head"
+            "unit" : "head", 
+            "format": "0.00"
         },
         "driver_input_power.bep65" : {
             "column" : "AC", 
             "path" :"driver_input_power.bep75", 
             "sections" : ["3", "4", "5"],
             "bep120" : "no", 
-            "unit" : "power"
+            "unit" : "power", 
+            "format": "0.00"
         },
         "driver_input_power.bep75" : {
             "column" : "AA", 
             "path" :"driver_input_power.bep75", 
             "sections" : ["3", "4", "5"],
             "bep120" : "yes", 
-            "unit" : "power"
+            "unit" : "power", 
+            "format": "0.00"
         },
         "driver_input_power.bep90" : {
             "column" : "AD", 
             "path" :"driver_input_power.bep100", 
             "sections" : ["3", "4", "5"],
             "bep120" : "no", 
-            "unit" : "power"
+            "unit" : "power", 
+            "format": "0.00"
         },
         "driver_input_power.bep100" : {
             "column" : "Z", 
             "path" :"driver_input_power.bep100", 
             "path2" :"driver_input_power.bep110", 
             "sections" : ["3", "4", "5"], 
-            "unit" : "power"
+            "unit" : "power", 
+            "format": "0.00"
         },
         "driver_input_power.bep110" : {
             "column" : "AB", 
             "path" :"driver_input_power.bep110", 
             "sections" : ["3", "4", "5"],
             "bep120" : "yes", 
-            "unit" : "power"
+            "unit" : "power", 
+            "format": "0.00"
         },
 
         "control_power_input.beq25" : {
             "column" : "AE", 
             "path" :"control_power_input.bep25", 
             "sections" : ["6a", "6b", "6", "7"], 
-            "unit" : "power"
+            "unit" : "power", 
+            "format": "0.00"
         },
         "control_power_input.bep50" : {
             "column" : "AF", 
             "path" :"control_power_input.bep50", 
             "sections" : ["6a", "6b", "6", "7"], 
-            "unit" : "power"
+            "unit" : "power", 
+            "format": "0.00"
         },
         "control_power_input.bep75" : {
             "column" : "AG", 
             "path" :"control_power_input.bep75", 
             "sections" : ["6a", "6b", "6", "7"], 
-            "unit" : "power"
+            "unit" : "power", 
+            "format": "0.00"
         },
         "control_power_input.bep100" : {
             "column" : "AH", 
             "path" :"control_power_input.bep100", 
             "sections" : ["6a", "6b", "6", "7"], 
-            "unit" : "power"
+            "unit" : "power", 
+            "format": "0.00"
         },
 
         "laboratory.name" : {
@@ -222,13 +247,15 @@
 
         "pei" : {
             "column" : "AI", 
-            "path" :"pei"
+            "path" :"pei", 
+            "format": "0.00"
         },
 
         "energy_rating" : {
             "column" : "AO", 
             "path" :"energy_rating",
-            "output_only":true
+            "output_only":true, 
+            "format": "0"
         }
     }
 

@@ -232,7 +232,18 @@ exports.build_pump_spreadsheet = function(pump, unit_set, callback) {
                     if ( enabled && value) {
                         var address = prop.column + r;
                         var cell = worksheet.getCell(address);
-                        cell.value = value;
+                        if ("format" in prop){
+                            cell.numFmt= prop.format
+                            var v = parseFloat(value);
+                            if ( !isNaN(v) ) {
+                                value = v;
+                            }
+                            cell.value = value;
+                        }
+                        else {
+                            cell.value = value;
+                        }
+                        
                     }
                 }
                 r++;

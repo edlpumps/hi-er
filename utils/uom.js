@@ -61,6 +61,9 @@ exports.make_units = function(unit_set) {
     }
 }
 
+exports.convert_motor_rated_power_result = function(motor_rated_power) {
+    return motor_rated_power *  exports.factors.power;
+}
 var convert = function(pump, flip, round) {
       var retval = JSON.parse(JSON.stringify(pump));
       
