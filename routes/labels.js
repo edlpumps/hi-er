@@ -31,9 +31,7 @@ var render_svg = function(req,res, svg_maker, callback){
                     {doe : pump.doe}, 
                     {load: load}
                 ]).exec(function(err, label) {
-                        var svg = svg_maker(req, participant, pump, label);
-                        res.setHeader('Content-Type', 'image/svg+xml');
-                        res.send(svg);
+                        callback(svg_maker(req, participant, pump, label), pump);
                 });
             }
         }
@@ -41,15 +39,22 @@ var render_svg = function(req,res, svg_maker, callback){
 }
 
 
+
 router.get('/:participant_id/:id/svg', function(req, res) {
-   render_svg(req, res, svg_builder.make_label, function(svg){
+   render_svg(req, res, svg_builder.make_label, function(svg, pump){
+        if (req.query.download) {
+            res.setHeader('Content-disposition', 'attachment; filename=Energy Rating Label - '+pump.rating_id+'.svg');
+        }
         res.setHeader('Content-Type', 'image/svg+xml');
         res.send(svg);
    });
 });
 
 router.get('/:participant_id/:id/qr', function(req, res) {
-    render_svg(req, res, svg_builder.make_qr, function(svg){
+    render_svg(req, res, svg_builder.make_qr, function(svg, pump){
+        if (req.query.download) {
+            res.setHeader('Content-disposition', 'attachment; filename=Energy Rating QR -'+pump.rating_id+'.svg');
+        }
         res.setHeader('Content-Type', 'image/svg+xml');
         res.send(svg);
    });

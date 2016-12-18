@@ -111,11 +111,18 @@ block content
           .row.solo
             .col.col-xs-12.text-center
               img(id="svg_rendered", style="width:100%; max-width:600px;")
-              p.solo.text-center: a.btn.btn-primary(href="/labels/#{participant._id}/#{pump._id}/svg", target="_blank") Download
+              p 
+               a#label_img_download(download="Energy Rating Label - #{pump.rating_id}.png") Download as PNG
+               | &nbsp;&nbsp; - &nbsp;&nbsp; 
+               a#label_svg_download(href="/labels/#{participant._id}/#{pump._id}/svg?download=true") Download as SVG 
           .row.solo
             .col.col-xs-12.text-center
               img(id="svg_qr_rendered", style="width:100%; max-width:600px;")
-              p.solo.text-center: a.btn.btn-primary(href="/labels/#{participant._id}/#{pump._id}/qr", target="_blank") Download
+              p
+               a#qr_img_download(download="Energy Rating QR - #{pump.rating_id}.png") Download as PNG
+               | &nbsp;&nbsp; - &nbsp;&nbsp; 
+               a#qr_svg_download(href="/labels/#{participant._id}/#{pump._id}/qr?download=true") Download as SVG 
+              
           
 
              
