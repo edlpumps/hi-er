@@ -411,12 +411,25 @@ router.get('/pumps/download', function(req, res) {
 router.get('/pumps/:id', function(req, res) {
     req.log.debug("Rendering participant portal (pump id = " + req.params.id);
     var pump = req.participant.pumps.id(req.params.id);
-    res.render("participant/p_pump", {
-        user : req.user,
-        participant : req.participant, 
-        pump : pump, 
-        pump_drawing : pump.doe? pump.doe.toLowerCase() +  ".png" : ""   , 
-        section_label : common.section_label
+    var svg_builder = require('../utils/label_builder');
+    var load = pump.configuration =="bare" || pump.configuration=="pump_motor" ? "CL" : "VL";
+    req.Labels.findOne().and([
+                    {speed : pump.speed}, 
+                    {doe : pump.doe}, 
+                    {load: load}
+    ]).exec(function(err, label) {
+        var qr_svg = svg_builder.make_qr(req, req.participant, pump, label);
+        var label_svg = svg_builder.make_label(req, req.participant, pump, label);
+
+        res.render("participant/p_pump", {
+            user : req.user,
+            participant : req.participant, 
+            pump : pump, 
+            pump_drawing : pump.doe? pump.doe.toLowerCase() +  ".png" : ""   , 
+            section_label : common.section_label, 
+            label_svg : label_svg, 
+            qr_svg : qr_svg
+        });
     });
 });
 

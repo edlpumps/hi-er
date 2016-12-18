@@ -1,0 +1,71 @@
+include common.pug
+
+doctype xml
+svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.w3.org/1999/xlink", version="1.1", width="620", height="720", preserveAspectRatio="xMinYMin meet", viewBox="0 0 620 620")
+
+    defs
+     include fonts.pug
+    
+    
+    rect(x="0", y="0", rx="0", ry="0", width="620", height="720", style="fill:#FFFFFF;;stroke: #222222;;stroke-width:1;")
+    image(x="25", y="15", height="100px", width="565px", xlink:href=logo)
+    line(x1="21", y1="25", x2="21", y2="300", stroke-width="2", stroke="#000000")
+    line(x1="595", y1="25", x2="595", y2="300", stroke-width="2", stroke="#000000")
+
+    text(x="30", y="150", style="font-family: 'Arimo'; font-weight:bold", font-size="16", text-anchor="start", fill="black") #{participant}
+    text(x="330", y="150", style="font-family: 'Arimo'; font-weight:bold", font-size="16", text-anchor="start", fill="black") #{doe}   Pump Type
+
+    text(x="30", y="180", style="font-family: 'Arimo'", font-size="16", text-anchor="start", fill="black") Model #:
+    text(x="30", y="210", style="font-family: 'Arimo'", font-size="16", text-anchor="start", fill="black") Nominal Speed:
+
+    text(x="110", y="180", style="font-family: 'Arimo';font-weight:bold", ont-size="16", text-anchor="start", fill="black") #{basic_model}
+    text(x="155", y="210", style="font-family: 'Arimo';font-weight:bold", font-size="16", text-anchor="start", fill="black") #{speed}
+
+    text(x="330", y="180", style="font-family: 'Arimo'; font-weight:bold", font-size="16", text-anchor="start", fill="black") #{pm}
+    text(x="330", y="210", style="font-family: 'Arimo'; font-weight:bold", font-size="16", text-anchor="start", fill="black") #{config}
+
+    rect(x="30", y="250", rx="0", ry="0", width="555", height="50", style="fill:#8dc73f;;stroke: #8dc73f;stroke-width:1;")
+    text(x="45", y="285", style="font-family: 'Arimo'; font-style:italic; font-weight:bold", font-size="30", text-anchor="start", fill="white") #{load}
+
+    - var tick = 0;
+    - var scale_width = 500;
+    - var start = 60;
+    - var tick_distance = scale_width / 100
+    - var x = start;
+    
+    while tick < 101
+        - var y1 = tick % 100 == 0 ? 450 : 480
+        - var y2 = tick % 25 == 0 ? 510 : 495
+        - var color = tick % 25 == 0 ? 'black' : 'grey'
+        line(x1=x, y1=y1, x2=x, y2=y2, stroke-width='2', stroke=color)
+
+        - x += tick_distance
+        - tick ++
+    
+    line(x1=start, y1='480', x2=(start + scale_width), y2='480', stroke-width='2', stroke='black')
+
+    - var center = er_pos
+    - var left = center - 15
+    - var right = center + 15
+    - var positions = center + ",460 " + left + ",415 " + right + ",415";    
+    
+    polygon(fill="#8dc73f", stroke="#8dc73f", stroke-width="1", points=positions)
+    text(x=center, y="400", style="font-family: 'Arimo'; font-weight:bold", font-size="96", text-anchor="middle", fill="#8dc73f") #{er}
+
+    rect(x="61", y="460", rx="0", ry="0", width=bar_width,  height="19", style="fill:#8dc73f;stroke: #8dc73f;stroke-width:1;")
+
+    text(x="60", y="530", style="font-family: 'Arimo'; font-weight:bold", font-size="16", text-anchor="start", fill="black") Most Consumptive
+    text(x="310", y="530", style="font-family: 'Arimo'; font-weight:bold", font-size="16", text-anchor="middle", fill="grey") RANGE
+    text(x="560", y="530", style="font-family: 'Arimo'; font-weight:bold", font-size="16", text-anchor="end", fill="black") Least Consumptive
+    
+
+    text(x="20", y="620", style="font-family: 'Arimo';", font-size="16", text-anchor="start",fill="black") Power savings over baseline can be estimated by multiplying ER by motor input 
+    
+    text(x="20", y="640", style="font-family: 'Arimo';", font-size="16", text-anchor="start", fill="black") power (kw) and dividing by 100.  Multiplying power savings by operating hours and 
+    
+    text(x="20", y="660", style="font-family: 'Arimo';", font-size="16", text-anchor="start", fill="black") cost of energy will yeild estimated cost.
+    
+    +footer(700)
+
+    
+        

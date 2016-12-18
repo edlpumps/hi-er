@@ -100,14 +100,23 @@ block content
         .panel-body
           
           .row.solo
-            .col.col-xs-12.text-center
-              object(id="label_svg", style="max-width:90%", data="/labels/#{participant._id}/#{pump._id}/svg", type="image/svg+xml")
-              p.solo.text-center: a.btn.btn-primary(href="/labels/#{participant._id}/#{pump._id}/svg", target="_blank") Download
-          
+            .col.col-xs-12.text-center(style="display:none")
+              div(style="max-width:90%") !{label_svg}
+              
+          .row.solo
+            .col.col-xs-12.text-center(style="display:none")
+              div(style="max-width:90%") !{qr_svg}
+              
+
           .row.solo
             .col.col-xs-12.text-center
-              object(id="qr_svg", style="max-width:90%", data="/labels/#{participant._id}/#{pump._id}/qr", type="image/svg+xml")
+              img(id="svg_rendered", style="width:100%; max-width:600px;")
+              p.solo.text-center: a.btn.btn-primary(href="/labels/#{participant._id}/#{pump._id}/svg", target="_blank") Download
+          .row.solo
+            .col.col-xs-12.text-center
+              img(id="svg_qr_rendered", style="width:100%; max-width:600px;")
               p.solo.text-center: a.btn.btn-primary(href="/labels/#{participant._id}/#{pump._id}/qr", target="_blank") Download
+          
 
              
       if user.participant_edit
