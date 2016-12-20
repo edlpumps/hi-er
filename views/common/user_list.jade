@@ -39,7 +39,7 @@ mixin userlist(roles)
                           .btn-group
                             if roles  
                               button(type="button", ng-click="app.editUser(user)", ng-hide="user._id == app.user._id").btn.btn-default Edit
-                            button(type="button", ng-click="app.removeUser(user)", ng-hide="user._id == app.user._id").btn.btn-danger Delete
+                              button(type="button", ng-click="app.confirmDeleteUser(user)", ng-hide="user._id == app.user._id").btn.btn-danger Delete
    
    
    .modal.fade#add(tabindex='-1', role='dialog' aria-labelledby='titleLabel', aria-hidden='true')
@@ -160,4 +160,17 @@ mixin userlist(roles)
                                         | Until this is done, {{app.activate_user.name.first}} will not be able to access this application.
                       .modal-footer
                           div
+                              button.btn.btn-default(type='button' data-dismiss='modal') Dismiss
+
+    .modal.fade#delete(tabindex='-1', role='dialog' aria-labelledby='titleLabel', aria-hidden='true')
+              .modal-dialog
+                  .modal-content
+                      .modal-header
+                          button(type='button', class='close' data-dismiss='modal' aria-hidden='hidden') &times;
+                          h4.modal-title#titleLabel Delete user
+                      .modal-body
+                          p Are you sure you want to delete {{app.user_to_delete.name.first}} {{app.user_to_delete.name.last}} from the ER portal?
+                      .modal-footer
+                          div
+                              button.btn.btn-danger(type="button", data-dismiss='modal', ng-click="app.removeUser(app.user_to_delete)") Delete user
                               button.btn.btn-default(type='button' data-dismiss='modal') Dismiss

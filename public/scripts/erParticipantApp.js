@@ -205,6 +205,12 @@ var ERParticipantController = function($scope, $location, service) {
       vm.edit_user = JSON.parse(JSON.stringify(user));
       $('#edit').modal('show')
   }
+  vm.confirmDeleteUser = function(user) {
+      vm.user_to_delete = user
+      $('#delete').modal('show');
+      console.log("ere");
+  }
+  
 
   vm.removeUser = function(user) {
       service.deleteUser(user).then(function(saved) {
