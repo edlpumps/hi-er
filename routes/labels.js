@@ -4,25 +4,20 @@ const fs = require('fs')
 const path = require('path');
 const svg_builder = require('../utils/label_builder.js');
 
+
   
-                
-
-
-
-
 var render_svg = function(req,res, svg_maker, callback){
     req.Participants.findById(req.params.participant_id, function(err, participant) {
         if ( err ) {
-            re.log.error(err);
-            res.status(500).send({ error: err });
+            return callback(err);
         }
         else if (!participant) {
-            res.status(401).send({ error: err });
+            return callback("Unknown participant");
         }
         else {
             var pump = participant.pumps.id(req.params.id);
             if ( !pump) {
-                res.status(401).send({ error: err });
+                return callback("Unknown pump");
             }
             else {
                 var load = pump.configuration =="bare" || pump.configuration=="pump_motor" ? "CL" : "VL";
@@ -31,7 +26,8 @@ var render_svg = function(req,res, svg_maker, callback){
                     {doe : pump.doe}, 
                     {load: load}
                 ]).exec(function(err, label) {
-                        callback(svg_maker(req, participant, pump, label), pump);
+                    if ( err ) return callback(err);
+                    else return callback(null, svg_maker(req, participant, pump, label), pump);
                 });
             }
         }
@@ -41,7 +37,11 @@ var render_svg = function(req,res, svg_maker, callback){
 
 
 router.get('/:participant_id/:id/svg', function(req, res) {
-   render_svg(req, res, svg_builder.make_label, function(svg, pump){
+   render_svg(req, res, svg_builder.make_label, function(err, svg, pump){
+        if ( err ) {
+            res.status(500).send(err);
+            return;
+        }
         if (req.query.download) {
             res.setHeader('Content-disposition', 'attachment; filename=Energy Rating Label - '+pump.rating_id+'.svg');
         }
@@ -51,7 +51,11 @@ router.get('/:participant_id/:id/svg', function(req, res) {
 });
 
 router.get('/:participant_id/:id/qr', function(req, res) {
-    render_svg(req, res, svg_builder.make_qr, function(svg, pump){
+    render_svg(req, res, svg_builder.make_qr, function(err, svg, pump){
+        if ( err ) {
+            res.status(500).send(err);
+            return;
+        }
         if (req.query.download) {
             res.setHeader('Content-disposition', 'attachment; filename=Energy Rating QR -'+pump.rating_id+'.svg');
         }
@@ -61,6 +65,27 @@ router.get('/:participant_id/:id/qr', function(req, res) {
 });
 
 
+router.get('/sample/svg', function(req, res) {
+    var file = fs.readFileSync(path.join(__dirname, "label.svg"), "utf8");
+    res.setHeader('Content-Type', 'image/svg+xml');
+    res.send(file);
+});
+
+router.get('/sample/png', function(req, res) {
+    var file = fs.readFileSync(path.join(__dirname, "label.svg"));
+    const svg2png = require("svg2png");
+    svg2png(file, {  })
+    .then(function(png_buffer) {
+        res.writeHead(200, {
+            'Content-Type': "image/png",
+            'Content-disposition': 'attachment;filename=sample.png',
+            'Content-Length': png_buffer.length
+        });
+        res.end(png_buffer);
+    } )
+    .catch(e => console.error(e));
+    
+})
 
 
 
