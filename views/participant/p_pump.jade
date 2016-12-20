@@ -1,9 +1,6 @@
 extends layout
 include ../common/pump_page
 
-block script
-  script(src="/scripts/media.js")
-
 block nav
      +navigation("pump")
 
@@ -100,32 +97,23 @@ block content
         .panel-body
           
           .row.solo
-            .col.col-xs-12.text-center(style="display:none")
-              div(style="max-width:90%") !{label_svg}
-              
-          .row.solo
-            .col.col-xs-12.text-center(style="display:none")
-              div(style="max-width:90%") !{qr_svg}
-              
-
-          .row.solo
             .col.col-xs-12.text-center
-              img(id="svg_rendered", style="width:100%; max-width:600px;")
+              img(src="/labels/#{participant._id}/#{pump._id}/png", style="width:100%; max-width:600px;")
               p 
-               a#label_img_download(download="Energy Rating Label - #{pump.rating_id}.png") Download as PNG
+               a(href="/labels/#{participant._id}/#{pump._id}/png?download=true") Download as PNG
                | &nbsp;&nbsp; - &nbsp;&nbsp; 
-               a#label_svg_download(href="/labels/#{participant._id}/#{pump._id}/svg?download=true") Download as SVG 
+               a(href="/labels/#{participant._id}/#{pump._id}/svg?download=true") Download as SVG 
           .row.solo
             .col.col-xs-12.text-center
-              img(id="svg_qr_rendered", style="width:100%; max-width:600px;")
+              img(src="/labels/#{participant._id}/#{pump._id}/qr/png", style="width:100%; max-width:600px;")
               p
-               a#qr_img_download(download="Energy Rating QR - #{pump.rating_id}.png") Download as PNG
+               a(href="/labels/#{participant._id}/#{pump._id}/qr/png?download=true") Download as PNG
                | &nbsp;&nbsp; - &nbsp;&nbsp; 
-               a#qr_svg_download(href="/labels/#{participant._id}/#{pump._id}/qr?download=true") Download as SVG 
+               a(href="/labels/#{participant._id}/#{pump._id}/qr?download=true") Download as SVG 
               
           
 
-             
+            
       if user.participant_edit
        .panel.panel-default
         .panel-heading

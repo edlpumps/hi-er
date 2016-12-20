@@ -41,12 +41,8 @@ block content
             .col.col-sm-6.text-center
               h4 Energy Rating
               p.er_display #{pump.energy_rating}
-           .row.solo.hidden-xs
+           .row.solo
             .col.col-lg-12.text-center
-              object(id="label_svg", data="/labels/#{participant._id}/#{pump._id}/svg", type="image/svg+xml")
-           .row.solo.hidden-sm.hidden-md.hidden-lg
-            .col.col-lg-12.text-center
-              object(id="label_svg", style="width:90%", data="/labels/#{participant._id}/#{pump._id}/svg", type="image/svg+xml")
+              img(src="/labels/#{participant._id}/#{pump._id}/png", style="width:100%; max-width:600px;")
            
-          
    

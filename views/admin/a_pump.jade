@@ -47,11 +47,11 @@ block content
           
           .row.solo
             .col.col-xs-12.text-center
-              object(id="label_svg", style="max-width:90%", data="/labels/#{participant._id}/#{pump._id}/svg", type="image/svg+xml")
+              img(src="/labels/#{participant._id}/#{pump._id}/png", style="width:100%; max-width:600px;")
           
           .row.solo
             .col.col-xs-12.text-center
-              object(id="qr_svg", style="max-width:90%", data="/labels/#{participant._id}/#{pump._id}/qr", type="image/svg+xml")
+              img(src="/labels/#{participant._id}/#{pump._id}/qr/png", style="width:100%; max-width:600px;")
 
 
       .panel.panel-default
