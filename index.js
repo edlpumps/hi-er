@@ -74,7 +74,8 @@ var conn = mongoose.connect(data_connection_str, {auto_reconnect:true}, function
       Participants: schemas.Participants,
       Labels : schemas.Labels, 
       Labs : schemas.Labs,
-      nextRatingsId : schemas.nextRatingsId
+      nextRatingsId : schemas.nextRatingsId, 
+      PasswordResets : schemas.PasswordResets
     };
     // Startup the http server once the database is connected.
     startup();
@@ -140,6 +141,7 @@ app.use(function(req, res, next){
     req.Labels = req.app.locals.db.Labels;
     req.Labs = req.app.locals.db.Labs;
     req.nextRatingsId = req.app.locals.db.nextRatingsId;
+    req.PasswordResets = req.app.locals.db.PasswordResets;
     req.base_url = req.protocol + '://' + req.get('Host');
     next();
 })

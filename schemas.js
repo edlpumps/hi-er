@@ -18,6 +18,20 @@ exports.init = function init(mongoose) {
           callback
     );
   }
+  
+  
+  
+  var resetSchema ={
+    email:String,
+    expire: { type: Date, index: { expireAfterSeconds: 60*60*24 }, default : new Date() }
+  }
+
+  var PasswordResets = mongoose.model('password_resets', resetSchema , "password_resets");
+  PasswordResets.ensureIndexes(function(err) {
+    
+  })
+  exports.PasswordResets = PasswordResets;
+
 
 
   var users = mongoose.model('users', {

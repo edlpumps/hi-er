@@ -46,6 +46,7 @@ block content
                         button.btn.btn-primary(type="submit") Login
                         if messages.loginMessage
                           .alert.alert-warning.solo #{messages.loginMessage}
+                        a(href="/password").pull-right Forgot password
            .tab-pane#register(class=(target == "register" ? "active" : ""))
               .register
             

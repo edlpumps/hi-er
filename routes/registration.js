@@ -1,6 +1,7 @@
 const express = require('express');
 const passport = require('passport');
 const router = express.Router();
+const mailer = require('../utils/mailer');
 
 router.get('/portal', function(req, res) {
     // Check if a user is logged in, if so, redirect to the correct landing page - 
@@ -36,6 +37,130 @@ router.get('/', function(req, res) {
         req.log.debug("No user is logged in, rendering landing page");
         res.redirect("/ratings/home");
     }
+});
+
+
+router.get('/reset/:id', function(req, res) {
+    req.PasswordResets.findOne({_id: req.params.id}, function(err, reset) {
+        if ( err || !reset ) {
+            console.log(err);
+            req.flash("errorTitle", "Password reset has expired");
+            req.flash("errorMessage", "Reset links are only valid for 24 hours.  Please request another reset link.");
+            res.redirect("/error");
+        }
+        else {
+            res.render("registration/reset", {id:req.params.id})
+        }
+    })
+    
+});
+router.get('/resetcurrent', function(req, res) {
+    if ( !req.user ) {
+        res.redirect("/portal");
+        return;
+    }
+    else {
+        res.render("registration/reset-current", {})
+    }
+});
+
+router.post('/resetcurrent', function(req, res) {
+    if ( req.body.password1 != req.body.password2 || !req.body.password1) {
+        req.flash("message", "The passwords you entered do not match.");
+        res.render("registration/reset-current", {})
+    }
+    else {
+        var pswd = require("../utils/password");
+        var secured = pswd.saltHashPassword(req.body.password1);
+        req.user.password = secured.hash;
+        req.user.salt = secured.salt;
+        req.user.save(function(err, u) {
+            req.flash("success", "Your password has been updated.");
+            res.render("registration/reset-current", {});
+        });
+    }
+});
+
+router.post('/reset/:id', function(req, res) {
+    req.PasswordResets.findOne({_id: req.params.id}, function(err, reset) {
+        if ( err || !reset ) {
+            req.flash("errorTitle", "Password reset has expired");
+            req.flash("errorMessage", "Reset links are only valid for 24 hours.  Please request another reset link.");
+            res.redirect("/error");
+        }
+        else {
+            if ( req.body.password1 != req.body.password2 || !req.body.password1) {
+                req.flash("message", "The passwords you entered do not match.");
+                res.render("registration/reset", {})
+            }
+            else {
+                req.Users.findOne({email:reset.email}, function(err, user) {
+                    if ( err || !user ) {
+                        req.flash("message", "The passwords you entered do not match.");
+                        res.render("registration/reset", {})
+                    }
+                    else {
+                        var pswd = require("../utils/password");
+                        var secured = pswd.saltHashPassword(req.body.password1);
+                        user.password = secured.hash;
+                        user.salt = secured.salt;
+                        user.save(function(err, u) {
+                            req.PasswordResets.findOneAndRemove({_id:reset._id}, function(err, doc) {
+                                req.flash("success", "Your password has been updated.");
+                                res.render("registration/reset", {id:req.params.id});
+                            });
+                        })
+                    }
+                })
+            }
+        }
+    })
+});
+
+router.get('/password', function(req, res) {
+    res.render("registration/password_forgot", {})
+});
+
+router.post('/password', function(req, res) {
+    var email = req.body.email;
+    if ( !email ) {
+        req.flash("message", "You must provide an email address associated with your account.");
+        res.redirect("/password");
+        return;
+    }
+    req.Users.findOne({email:email}, function(err, user) {
+        if ( err ) {
+            req.flash("errorTitle", "Internal application error");
+            req.flash("errorMessage", "Database lookup (activation) failed.");
+            res.redirect("/error");
+        }
+        else if (!user ) {
+            req.flash("message", "The email address " + email + " does not match any accounts in the ER Portal.");
+            res.redirect("/password");
+            return;
+        }
+        else {
+            var reset = new req.PasswordResets({email:email});
+            reset.save(function(err, saved) {
+                if ( err ) {
+                     req.flash("errorTitle", "Internal application error");
+                     req.flash("errorMessage", "Saving password reset failed.");
+                     res.redirect("/error");
+                     return;
+                }
+                else {
+                    mailer.sendPasswordReset(req.base_url, saved, user);
+                    req.flash("success", "A password reset link has been sent to " + email + ".  The email will be from " + process.env.SMTP_SENDING_ADDRESS + ".  Please check your email to reset your password.");
+                    res.redirect("/password");
+                }
+                
+            }); 
+
+            
+            return;
+        }
+    })
+    //res.render("registration/password_forgot", {})
 });
 
 

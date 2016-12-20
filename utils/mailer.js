@@ -9,6 +9,12 @@ const activation_template = pug.compileFile(activation_template_file);
 const activation_template_pt_file = path.join(__dirname, "../views/registration/activation-email-plain.pug");
 const activation_template_pt = pug.compileFile(activation_template_pt_file);
 
+const reset_template_file = path.join(__dirname, "../views/registration/password-email.pug");
+const reset_template = pug.compileFile(reset_template_file);
+
+const reset_template_pt_file = path.join(__dirname, "../views/registration/password-email-plain.pug");
+const reset_template_pt = pug.compileFile(reset_template_pt_file);
+
 var smtpConfig = {
     host: process.env.SMTP,
     port: process.env.SMTP_PORT || 25,
@@ -24,15 +30,23 @@ var smtpConfig = {
 
 var transporter = nodemailer.createTransport(smtpConfig);
 
-exports.sendAuthenticationEmail = function (base_url, user, creator) {
+var make_mail_options = function(recipient, subject, template_params, html, text) {
     var sender = process.env.SMTP_SENDING_ADDRESS;
-    var recipient = process.env.LIVE_EMAIL ? user.email : process.env.SMTP_RECIPIENT_OVERRIDE;
-
+    var recipient = process.env.LIVE_EMAIL ? recipient : process.env.SMTP_RECIPIENT_OVERRIDE;
+    var mailOptions = {
+        from: sender, 
+        to: recipient, 
+        subject: subject, 
+        html: html(template_params),
+        text: text(template_params)
+    };
     if (!process.env.LIVE_EMAIL) {
         console.log("WARNING:  Emails are being sent only to " + process.env.SMTP_RECIPIENT_OVERRIDE + ", to enable emailing to actual recipients you must enable live email by setting LIVE_EMAIL environment variable to true.")
     }
+    return mailOptions;
+}
+exports.sendAuthenticationEmail = function (base_url, user, creator) {
     var activation_link = base_url + '/activate/' + user.activationKey;
-    
     var template_params = {
             user:user, 
             creator:creator, 
@@ -40,24 +54,36 @@ exports.sendAuthenticationEmail = function (base_url, user, creator) {
             base_url:base_url
         };
     
-    var mailOptions = {
-        from: sender, 
-        to: recipient,  
-        subject: 'HI Energy Rating Portal - Account Activation', 
-        text: activation_template_pt(template_params),
-        html: activation_template(template_params)
-    };
+    var mailOptions = make_mail_options(user.email, "HI Energy Rating Portal - Account Activation", template_params, activation_template, activation_template_pt);
 
     transporter.sendMail(mailOptions, function(error, info){
         if(error){
             console.log("Could not send email using the following user:")
             console.log(process.env.SMTP_USERNAME)
-            
-            
             return console.log(error);
         }
         else {
-            console.log("Email sent to " + recipient + " successfully");
+            console.log("Email sent successfully");
+        }
+    });
+}
+exports.sendPasswordReset = function (base_url, reset, user) {
+    var template_params = {
+        reset_link:base_url + '/reset/' + reset._id, 
+        base_url:base_url, 
+        user : user
+    };
+    
+    var mailOptions = make_mail_options(reset.email, "HI Energy Rating Portal - Password Reset", template_params, reset_template, reset_template_pt);
+
+    transporter.sendMail(mailOptions, function(error, info){
+        if(error){
+            console.log("Could not send email using the following user:")
+            console.log(process.env.SMTP_USERNAME)
+            return console.log(error);
+        }
+        else {
+            console.log("Email sent to successfully");
         }
     });
 }

@@ -36,6 +36,7 @@ mixin userlist(roles)
                              button(type="button", ng-click="app.activateInfo(user)").btn.btn-primary Needs Activation
                            span(ng-show="user.needsActivation==false") Active
                         td(ng-show="{{app.user.participant_admin || app.user.admin}}") 
+                          a(href="/resetcurrent", ng-show="user._id == app.user._id") Reset your password
                           .btn-group
                             if roles  
                               button(type="button", ng-click="app.editUser(user)", ng-hide="user._id == app.user._id").btn.btn-default Edit

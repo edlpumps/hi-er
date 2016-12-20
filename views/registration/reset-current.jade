@@ -1,0 +1,36 @@
+extends ../layout
+
+block content
+    .container
+        .panel.panel-default.solo
+            .panel-heading 
+                h1 Password Reset
+            .panel-body
+                form(method="post" action="/resetcurrent")
+                  .row
+                    .col.col-md-6
+                        .form-group
+                            label New Password:
+                            input.form-control(type="password", name="password1")
+                  .row
+                    .col.col-md-6
+                        .form-group
+                            label Confirm Password:
+                            input.form-control(type="password", name="password2")
+                  if messages.message
+                    .row
+                      .col.col-md-6
+                        .alert.alert-warning #{messages.message}
+                  if messages.success
+                    .row
+                     .col.col-md-6
+                       .alert.alert-success #{messages.success}
+                       a.btn.btn-primary(href="/") Return to portal
+                   
+                  else 
+                   .row
+                    .col.col-sm-4
+                        button.btn.btn-primary(type="submit") Reset password
+                    
+                  
+        
