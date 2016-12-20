@@ -104,7 +104,7 @@ var PEIController = function($scope, $location, $window, service) {
   }
 
   vm.show_motor_regulated = function() {
-      if ( !vm.pump || !vm.pump.configuration || !vm.pump.doe || vm.pump.section == '5') return false;
+      if ( !vm.pump || !vm.pump.configuration || !vm.pump.doe || vm.pump.section == '3') return false;
       return vm.pump.configuration.value != 'bare' && vm.pump.doe.value != 'ST';
   }
 
