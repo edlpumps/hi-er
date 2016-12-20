@@ -131,7 +131,7 @@ mixin calculator(er, mode)
             hr
             .row
               .col.col-xs-12
-                button.btn.btn-primary(type="button", ng-disabled="!app.pump.configuration || !app.pump.speed || !app.pump.diameter  || !app.pump.basic_model ||!app.pump.participant || !app.pump.stages || (app.mode!='calculator' && !app.pump.laboratory)", ng-click="app.go2MotorMethod()") Next
+                button.btn.btn-primary(type="button", ng-disabled="!app.pump.configuration || !app.pump.speed || !app.pump.diameter  || (!app.pump.basic_model && app.mode!='calculator') ||(!app.pump.participant && app.mode!='calculator') || !app.pump.stages || (app.mode!='calculator' && !app.pump.laboratory)", ng-click="app.go2MotorMethod()") Next
 
 
         //---------------------------------------------------------------
@@ -263,7 +263,7 @@ mixin calculator(er, mode)
                     label.text-primary Equipment Category 
                     +help(help.motor_loss)
                   .col.col-xs-7
-                    select.form-control(ng-model="app.pump.doe", name="pump[doe]", data-width="auto", ng-options="opt as opt.label for opt in app.doe_opts track by opt.value")
+                    select.form-control(ng-model="app.pump.doe", name="pump[doe]", data-width="auto", ng-options="opt as opt.label for opt in app.doe_choices() track by opt.value")
                         option(value="")  
                
             
@@ -567,9 +567,11 @@ mixin calculator(er, mode)
               .col.col-sm-6.text-center
                 h4 Pump Energy Index
                 p.pei_display {{app.pump.pei | number:2}}
-              .col.col-sm-6.text-center
-                h4 Energy Rating
-                p.er_display {{app.pump.energy_rating}}
+              .col.col-sm-6
+                .well
+                  p 
+                   | This PEI value represent one of several samples that you will need to gather to calculate a representative PEI.  With a representative PEI, you may calculate the Energy Rating for the pump and list the pump in the 
+                   a(href="/ratings/home") HI Energy Rating Program.
             
             .row
                .col.col-xs-6

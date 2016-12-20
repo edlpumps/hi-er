@@ -54,6 +54,11 @@ block content
                         label(style="margin-right:10px") Participant Status:  
                         input.switchBox(type="checkbox", name="participant[active]", checked=(participant.active), data-on-text="Active", data-off-text="Disabled")
                         .help-block Administrators can disable a participant account if terms of service are violated.  This will prevent all users associated with this organization from logging in, and their pumps will no longer be publically listed (although they will not be deleted from the program database).  For temporary payment issues, another alternative is to set the subscription level as appropriate instead of disabling the account.  This allows users to continue to log in, but they will not be able to add new pumps.
+
+                .row 
+                  .col.col-xs-12
+                    .form-group
+                        a.btn.btn-danger(href="/admin/participant/#{participant._id}/delete") Delete this participant completely
          .panel-footer
                 .row     
                     .col.col-xs-12   

@@ -101,6 +101,25 @@ router.get('/participant/:id/delete', function(req, res) {
     })
 })
 
+router.post('/participant/:id/delete', function(req, res) {
+    if ( req.body.confirm !== "DELETE COMPLETELY") {
+        req.flash("errorTitle", "Cannot delete this participant as requested");
+        req.flash("errorMessage", "You may have entered the text challenge incorrectly - please use your browser's back button to try again.");
+        res.redirect("/error");
+        return;
+    }
+    req.Participants.findByIdAndRemove(req.params.id, function(err){
+        if ( err ) {
+            req.log.error(err);
+            req.flash("errorTitle", "Cannot delete this participant as requested");
+            req.flash("errorMessage", "Cannot delete this participant as requested.");
+            res.redirect("/error");
+            return;
+        }
+        res.redirect("/admin/participants")
+    })
+})
+
 router.get('/participant/:id/pumps', function(req, res) {
     req.log.debug("Rendering participant pumps page for administrative portal");
     req.Participants.findById(req.params.id, function(err, participant){
