@@ -78,7 +78,6 @@ router.get('/sample/png', function(req, res) {
     .then(function(png_buffer) {
         res.writeHead(200, {
             'Content-Type': "image/png",
-            'Content-disposition': 'attachment;filename=sample.png',
             'Content-Length': png_buffer.length
         });
         res.end(png_buffer);
