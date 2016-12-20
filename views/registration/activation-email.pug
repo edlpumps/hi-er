@@ -1,0 +1,21 @@
+doctype html
+html
+  head
+    meta(http-equiv="Content-Type", content="text/html; charset=UTF-8")
+    title HI Energy Rating Portal - Account Activation
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+  body
+    p: img(style="width:100%; max-width:500px", src="https://hi-energy-ratings.herokuapp.com/images/hydraulic-institute-logo.png")
+    h1 Hello #{user.name.first},
+    p 
+     | #{creator.name.first} #{creator.name.last} has just created an account for you on the 
+     a(href=base_url) Hydraulic Institute's Energy Rating Portal.
+    p In order to access your account, click on the activation link below.  You will be asked to create your password for the portal, and can begin using the portal right away.
+    p 
+      b Click to activate: &nbsp;
+      a(href=activation_link) #{activation_link}
+
+    p If you have any questions about why this account has been created, and what you can do with the Energy Rating Portal, please contact one of your organization's portal administrators (i.e. #{creator.name.first} #{creator.name.last}).
+
+    p Thank you -
+    p The Hydraulic Institute

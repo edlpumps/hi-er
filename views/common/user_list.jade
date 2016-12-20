@@ -149,21 +149,15 @@ mixin userlist(roles)
                                 .col.col-sm-12
                                     h4 The account for {{app.activate_user.name.first}} {{app.activate_user.name.last}} must be activated.
                                     p 
-                                        | Please send the following link to {{app.activate_user.name.first}} at 
-                                        a(href='mailto:{{app.activate_user.email}}') {{app.activate_user.email}}: 
+                                        | An email has been sent to {{app.activate_user.name.first}} at   
+                                        a(href='mailto:{{app.activate_user.email}}') {{app.activate_user.email}} 
+                                        | containing an activation link, which is also shown below: 
                                     p
                                         a(target="_blank", href="{{app.base_url + '/activate/' + app.activate_user.activationKey}}") {{app.base_url + '/activate/' + app.activate_user.activationKey}}
                                     
                                     p  
                                         | {{app.activate_user.name.first}} will be able to create a password on that page, which will activate this account.
                                         | Until this is done, {{app.activate_user.name.first}} will not be able to access this application.
-                              .row
-                                .col.col-sm-12
-                                  p.alert.alert-info
-                                    b Note:  
-                                    | This process will be streamlined after the beta/MVP period.  An email will be automatically sent to 
-                                    | the new user with this information - eliminating the need to send this link manually.
-                             
                       .modal-footer
                           div
                               button.btn.btn-default(type='button' data-dismiss='modal') Dismiss

@@ -140,6 +140,7 @@ app.use(function(req, res, next){
     req.Labels = req.app.locals.db.Labels;
     req.Labs = req.app.locals.db.Labs;
     req.nextRatingsId = req.app.locals.db.nextRatingsId;
+    req.base_url = req.protocol + '://' + req.get('Host');
     next();
 })
 

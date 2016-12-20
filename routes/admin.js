@@ -75,6 +75,32 @@ router.get('/participant/:id', function(req, res) {
     })
 })
 
+router.get('/participant/:id/delete', function(req, res) {
+    req.Participants.findById(req.params.id, function(err, participant){
+        if ( err ) {
+            req.log.error(err);
+            req.flash("errorTitle", "Internal application error");
+            req.flash("errorMessage", "Database lookup (participant) failed.");
+            res.redirect("/error");
+            return;
+        }
+        if ( participant) {
+            req.log.debug("Lookup of participant succeeded - " + participant.name);
+            res.render("admin/a_participant_delete", {
+                user : req.user,
+                participant : participant
+            });
+        }
+        else {
+            req.log.error(err);
+            req.flash("errorTitle", "Not found");
+            req.flash("errorMessage", "This participant does not exist.");
+            res.redirect("/error");
+            return;
+        }
+    })
+})
+
 router.get('/participant/:id/pumps', function(req, res) {
     req.log.debug("Rendering participant pumps page for administrative portal");
     req.Participants.findById(req.params.id, function(err, participant){

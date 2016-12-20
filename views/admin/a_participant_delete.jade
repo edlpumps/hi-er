@@ -1,0 +1,43 @@
+extends layout
+
+block nav
+    +navigation("participant")
+
+    
+
+block content
+    .container
+       form(method="post" action="/admin/participant/#{participant._id}/delete")
+        .panel.panel-danger
+         .panel-heading
+           h1 Account Deletion - #{participant.name}
+         .panel-body
+             .row
+               .col.col-xs-12   
+                h3.text-danger 
+                    | Deleting a participating organization's account will 
+                    b PERMENANTLY 
+                    | delete the participant,  
+                    b AND ALL PUMP LISTINGS 
+                    | from the Energy Rating Database.
+                p 
+                    | If you are thinking of deleting this participant because of an unpaid account, it may be preferrable to simply set their subscription level to "Payment needed", or disable the account from the 
+                    a(href="/admin/participant/#{participant._id}") participant's main page.  
+                    | This prevents pump listings from being displayed until the participant's account is restored, but does not permenantly delete any data.
+
+                p If you are absolutely sure you really want to completely delete this participant from the Energy Rating program, please type "DELETE COMPLETELY" (case sensitive) in the text box below and click "Delete Participant".
+
+              .row
+               .col.col-xs-12   
+                .form-group
+                    input.form-control(type="text", name="confirm")
+              .row
+               .col.col-xs-12   
+                .form-group
+                    button.btn.btn-danger(type="submit") Delete Participant  
+                    a(style="margin-left:2em", href="/admin/participant/#{participant._id}") Cancel
+
+        
+        
+                                
+                                

@@ -109,9 +109,7 @@ var ERRatingsController = function($scope, $location, service) {
       }
   }
   vm.load_count = function() {
-      if (!vm.search.fresh) {
-          vm.countPumps();
-      }
+      vm.countPumps();
   }
 
   vm.getConfigLabel = function(config) {

@@ -1,5 +1,6 @@
 "use strict";
 var units = require('../utils/uom');
+var mailer = require('../utils/mailer');
 
 exports.deleteUser = function(req, res) {
     req.Users.findOne({_id: req.params.id}, function(err, user){
@@ -84,6 +85,7 @@ exports.addUser = function(req, res) {
                 res.status(500).send({error:err});
             }
             else {
+                mailer.sendAuthenticationEmail(req.base_url, user, req.user);
                 res.setHeader('Content-Type', 'application/json');
                 res.end(JSON.stringify({ user: saved}));
             }

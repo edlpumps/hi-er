@@ -69,9 +69,9 @@ block content
              .form-group
               label.col-sm-3.control-label 
               .col.col-sm-6(ng-hide="app.fresh || app.counting || app.search_error")
-               h2.utility_search_count {{app.num_pumps}} pumps found
+               h2.utility_search_count(ng-hide="app.num_pumps === undefined") {{app.num_pumps}} pumps found
                p.text-info(ng-show="app.num_pumps == 1") There is {{app.num_pumps}} pump in listed in the HI Energy Ratings program that fit the criteria you've specified above.
-               p.text-info(ng-show="app.num_pumps != 1") There are {{app.num_pumps}} pumps in listed in the HI Energy Ratings program that fit the criteria you've specified above.
+               p.text-info(ng-show="app.num_pumps !== undefined && app.num_pumps != 1") There are {{app.num_pumps}} pumps in listed in the HI Energy Ratings program that fit the criteria you've specified above.
               .col.col-sm-6(ng-show="app.counting")
                p: img(src="/images/loading-bar.gif")
               .col.col-sm-6(ng-show="app.search_error")
