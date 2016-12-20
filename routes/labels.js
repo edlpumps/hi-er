@@ -3,7 +3,7 @@ const router = express.Router();
 const fs = require('fs')
 const path = require('path');
 const svg_builder = require('../utils/label_builder.js');
-
+const svg2png = require("svg2png");
 
   
 var render_svg = function(req,res, svg_maker, callback){
@@ -50,6 +50,29 @@ router.get('/:participant_id/:id/svg', function(req, res) {
    });
 });
 
+
+
+
+router.get('/:participant_id/:id/png', function(req, res) {
+   render_svg(req, res, svg_builder.make_label, function(err, svg, pump){
+        if ( err ) {
+            res.status(500).send(err);
+            return;
+        }
+        
+        svg2png(svg, {  })
+        .then(function(png_buffer) {
+            if (req.query.download) {
+                res.setHeader('Content-disposition', 'attachment; filename=Energy Rating Label - '+pump.rating_id+'.png');
+            }
+            res.setHeader('Content-Type', 'image/png');
+            res.setHeader('Content-Length', png_buffer.length);
+            res.status(200).send(png_buffer);
+        } )
+        .catch(e => res.status(500).send(e));
+   });
+});
+
 router.get('/:participant_id/:id/qr', function(req, res) {
     render_svg(req, res, svg_builder.make_qr, function(err, svg, pump){
         if ( err ) {
@@ -64,28 +87,24 @@ router.get('/:participant_id/:id/qr', function(req, res) {
    });
 });
 
-
-router.get('/sample/svg', function(req, res) {
-    var file = fs.readFileSync(path.join(__dirname, "label.svg"), "utf8");
-    res.setHeader('Content-Type', 'image/svg+xml');
-    res.send(file);
+router.get('/:participant_id/:id/qr/png', function(req, res) {
+    render_svg(req, res, svg_builder.make_qr, function(err, svg, pump){
+        if ( err ) {
+            res.status(500).send(err);
+            return;
+        }
+        
+        svg2png(svg, {  })
+        .then(function(png_buffer) {
+            if (req.query.download) {
+                res.setHeader('Content-disposition', 'attachment; filename=Energy Rating QR - '+pump.rating_id+'.png');
+            }
+            res.setHeader('Content-Type', 'image/png');
+            res.setHeader('Content-Length', png_buffer.length);
+            res.status(200).send(png_buffer);
+        } )
+        .catch(e => res.status(500).send(e));
+   });
 });
-
-router.get('/sample/png', function(req, res) {
-    var file = fs.readFileSync(path.join(__dirname, "label.svg"));
-    const svg2png = require("svg2png");
-    svg2png(file, {  })
-    .then(function(png_buffer) {
-        res.writeHead(200, {
-            'Content-Type': "image/png",
-            'Content-Length': png_buffer.length
-        });
-        res.end(png_buffer);
-    } )
-    .catch(e => console.error(e));
-    
-})
-
-
 
 module.exports = router;
