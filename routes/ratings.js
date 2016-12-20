@@ -16,6 +16,7 @@ var default_search_operators = function (search_parameters) {
         rating_id : {$first: "$pumps.rating_id"},
         participant_id : {$first: "$_id"},
         participant : {$first: "$pumps.participant"},
+        participant_active : {$first: "$active"},
         configuration : {$first: "$pumps.configuration"},
         basic_model : {$first: "$pumps.basic_model"},
         brand : {$first: "$pumps.brand"},
@@ -37,6 +38,7 @@ var default_search_operators = function (search_parameters) {
                 {doe : {$ne: null}},
                 {rating_id: {$ne:null}},
                 {participant: {$ne:null}},
+                {participant_active: {$eq:true}},
                 {configuration: {$ne:null}},
                 {basic_model: {$ne:null}},
                 {diameter: {$ne:null}},
@@ -119,7 +121,7 @@ router.get('/search', function(req, res) {
 router.get('/api/participants', function(req, res) {
     req.Participants.find({}, function(err, docs) {
         res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify({ participants: docs.map(p => p.name)}));
+        res.end(JSON.stringify({ participants: docs.filter(p => p.active).map(p => p.name)}));
     });
 });
 

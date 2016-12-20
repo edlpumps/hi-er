@@ -568,7 +568,7 @@ mixin calculator(er, mode)
               .col.col-xs-12
                 p(ng-repeat="erro in app.calc_errors").alert.alert-danger
                    {{erro}}
-            .row(ng-hide="app.calc_errorFDs")
+            .row(ng-hide="app.calc_errors")
               .col.col-sm-6.text-center
                 h4 Pump Energy Index
                 p.pei_display {{app.pump.pei | number:2}}
@@ -584,7 +584,7 @@ mixin calculator(er, mode)
                   
                .col.col-xs-6
                 .pull-right
-                  button(type="button", ng-click='app.download()').btn.btn-primary 
+                  button(type="button", ng-click='app.download()', ng-hide="app.calc_errors").btn.btn-primary 
                     .glyphicon.glyphicon-download-alt 
                     span.btn-space Download
                       

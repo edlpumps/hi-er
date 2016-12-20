@@ -208,7 +208,6 @@ var ERParticipantController = function($scope, $location, service) {
   vm.confirmDeleteUser = function(user) {
       vm.user_to_delete = user
       $('#delete').modal('show');
-      console.log("ere");
   }
   
 

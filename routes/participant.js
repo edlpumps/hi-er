@@ -24,7 +24,13 @@ router.use(function(req, res, next){
                 res.redirect("/");
             }
             else {
-                next();
+                if ( participant.active ) {
+                    next();
+                }
+                else {
+                    req.logout();
+                    res.redirect("/disabled");
+                }
             }
         });
     }

@@ -194,6 +194,9 @@ root.post('/units', function(req, res) {
 app.use("/error", function(req, res) {
     res.render("error", {});
 })
+app.use("/disabled", function(req, res) {
+    res.render("disabled", {});
+})
 app.use("/unauthorized", function(req, res) {
     res.render("unauthorized", {});
 })
