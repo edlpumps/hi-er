@@ -157,13 +157,13 @@ mixin calculator(er, mode)
                     .form-control-static {{app.pump.configuration.value == 'bare' || app.pump.configuration.value == 'pump_motor' ? "Constant Load (CL)" : "Variable Load (VL)"}}
            
            
-            .row 
+            .row(ng-show="app.pump.brand") 
                 .form-group
                   .col.col-xs-5
                     label Pump Brand:
                   .col.col-xs-7
                     .form-control-static {{app.pump.brand}}
-            .row 
+            .row(ng-show="app.pump.basic_model || app.pump.individual_model") 
                 .form-group
                   .col.col-xs-5
                     label Basic / Individual Model Number:
@@ -220,13 +220,13 @@ mixin calculator(er, mode)
                   .col.col-xs-7
                     .form-control-static {{app.pump.configuration.value == 'bare' || app.pump.configuration.value == 'pump_motor' ? "Constant Load (CL)" : "Variable Load (VL)"}}
            
-            .row 
+            .row(ng-show="app.pump.brand")  
                 .form-group
                   .col.col-xs-5
                     label Pump Brand:
                   .col.col-xs-7
                     .form-control-static {{app.pump.brand}}
-            .row 
+            .row(ng-show="app.pump.basic_model || app.pump.individual_model")  
                 .form-group
                   .col.col-xs-5
                     label Basic / Individual Model Number:
@@ -346,13 +346,13 @@ mixin calculator(er, mode)
                   .col.col-xs-7
                     .form-control-static {{app.pump.configuration.value == 'bare' || app.pump.configuration.value == 'pump_motor' ? "Constant Load (CL)" : "Variable Load (VL)"}}
            
-            .row 
+            .row(ng-show="app.pump.brand") 
                 .form-group
                   .col.col-xs-5
                     label Pump Brand:
                   .col.col-xs-7
                     .form-control-static {{app.pump.brand}}
-            .row 
+            .row(ng-show="pp.pump.basic_model || app.pump.individual_model")  
                 .form-group
                   .col.col-xs-5
                     label Basic / Individual Model Number:
@@ -403,8 +403,13 @@ mixin calculator(er, mode)
                  table.table
                    thead
                      tr
-                       th.col-label 
+                       if (er ) 
+                        th.col-label 
                          | Representative Values at Nominal Speed of Rotation
+                         +help(help.rep_nominal_speed)
+                       else 
+                         th.col-label 
+                         | Values at Nominal Speed of Rotation
                          +help(help.rep_nominal_speed)
                        th {{app.pump.load120 ? "@ 75% BEP" : "@ 60% BEP"}}
                        th {{app.pump.load120 ? "@ 100% BEP" : "@ 90% BEP"}}
@@ -563,7 +568,7 @@ mixin calculator(er, mode)
               .col.col-xs-12
                 p(ng-repeat="erro in app.calc_errors").alert.alert-danger
                    {{erro}}
-            .row(ng-hide="app.calc_errors")
+            .row(ng-hide="app.calc_errorFDs")
               .col.col-sm-6.text-center
                 h4 Pump Energy Index
                 p.pei_display {{app.pump.pei | number:2}}
