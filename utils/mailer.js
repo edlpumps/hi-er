@@ -50,6 +50,10 @@ exports.sendAuthenticationEmail = function (base_url, user, creator) {
 
     transporter.sendMail(mailOptions, function(error, info){
         if(error){
+            console.log("Could not send email using the following user:")
+            console.log(process.env.SMTP_USERNAME)
+            
+            
             return console.log(error);
         }
         else {
