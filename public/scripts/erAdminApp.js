@@ -87,6 +87,12 @@ var ERAdminController = function($scope, $location, service) {
       });
   }
 
+  vm.confirmDeleteUser = function(user) {
+      vm.user_to_delete = user
+      $('#delete').modal('show');
+  }
+  
+
   vm.refreshParticipants = function(callback) {
       service.getParticipants().then(function(results) {
         vm.participants = results.participants;

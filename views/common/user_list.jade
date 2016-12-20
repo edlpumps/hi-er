@@ -39,7 +39,7 @@ mixin userlist(roles)
                           .btn-group
                             if roles  
                               button(type="button", ng-click="app.editUser(user)", ng-hide="user._id == app.user._id").btn.btn-default Edit
-                              button(type="button", ng-click="app.confirmDeleteUser(user)", ng-hide="user._id == app.user._id").btn.btn-danger Delete
+                            button(type="button", ng-click="app.confirmDeleteUser(user)", ng-hide="user._id == app.user._id").btn.btn-danger Delete
    
    
    .modal.fade#add(tabindex='-1', role='dialog' aria-labelledby='titleLabel', aria-hidden='true')
