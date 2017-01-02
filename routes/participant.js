@@ -244,14 +244,9 @@ router.post("/pumps/save_upload", function(req, res) {
 
 
 var find_lab = function(imported, labs) {
-    if (!imported || !imported.name) return undefined;
+    if (!imported || !imported.code) return undefined;
     var found = labs.filter(function (lab) {
-        if ( imported.name.toLowerCase)
-        return lab.name.toLowerCase() == imported.name.toLowerCase() || 
-                lab.code == imported.name;
-        else {
-            return lab.code == imported.name;
-        }
+        return lab.code == imported.code || lab.name == imported.code;
     });
     if (found.length > 0) return found[0];
     else return undefined;

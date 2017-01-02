@@ -242,7 +242,7 @@
 
         "laboratory.name" : {
             "column" : "AN", 
-            "path" :"laboratory.name"
+            "path" :"laboratory.code"
         },
 
         "pei" : {
