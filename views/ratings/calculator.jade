@@ -47,7 +47,7 @@ mixin calculator(er, mode)
                 .form-group
                   .col.col-xs-5
                     label.text-primary Pump Brand
-                    +help(help.brand)
+                    +help(help.brand, er)
                   .col.col-xs-7.col-sm-4
                     input.form-control(type="text" ng-model="app.pump.brand" name="pump[brand]")
             
@@ -55,7 +55,7 @@ mixin calculator(er, mode)
                 .form-group
                   .col.col-xs-5
                     label.text-primary Basic Model Designation
-                    +help(help.basic_model_number)
+                    +help(help.basic_model_number, er)
                   .col.col-xs-7.col-sm-4
                     input.form-control(type="text" ng-model="app.pump.basic_model" name="pump[basic_model]")
 
@@ -63,7 +63,7 @@ mixin calculator(er, mode)
                 .form-group
                   .col.col-xs-5
                     label.text-primary Individual Model Number
-                    +help(help.individual_model_number)
+                    +help(help.individual_model_number, er)
                   .col.col-xs-7.col-sm-4
                     input.form-control(type="text" ng-model="app.pump.individual_model" name="pump[individual_model]")
             
@@ -71,7 +71,7 @@ mixin calculator(er, mode)
               .form-group
                 .col.col-xs-5
                     label.text-primary Configuration:
-                    +help(help.configuration)
+                    +help(help.configuration, er)
                 .col.col-xs-7
                     select.form-control(name="pump[configuration]", data-width="auto", ng-model="app.pump.configuration", ng-options="config as config.label for config in app.configurations track by config.value")
             
@@ -88,7 +88,7 @@ mixin calculator(er, mode)
                 .form-group
                   .col.col-xs-5
                     label.text-primary Model Full Impeller Diameter ({{app.units.diameter.label}})
-                    +help(help.diameter)
+                    +help(help.diameter, er)
                   .col.col-xs-7.col-sm-4.col-md-2
                     input.form-control(type="number" ng-model="app.pump.diameter", min="0", step=".0625", name="pump[diameter]")
                     
@@ -97,7 +97,7 @@ mixin calculator(er, mode)
                 .form-group
                   .col.col-xs-5
                     label.text-primary Nominal speed of rotation
-                    +help(help.speed)
+                    +help(help.speed, er)
                   .col.col-xs-7
                     label.radio-inline
                       input(type="radio" ng-model="app.pump.speed", value="3600", name="pump[speed]") 
@@ -111,7 +111,7 @@ mixin calculator(er, mode)
                 .form-group
                   .col.col-xs-5
                     label.text-primary Number of stages tested
-                    +help(help.stages)
+                    +help(help.stages, er)
                   .col.col-xs-7.col-sm-4.col-md-2
                     input.form-control(type="number", min="1", name="pump[stages]", ng-model="app.pump.stages")
  
@@ -121,7 +121,7 @@ mixin calculator(er, mode)
                 .form-group
                   .col.col-xs-5
                     label.text-primary HI Approved Laboratory
-                    +help(help.lab)
+                    +help(help.lab, er)
                   .col.col-xs-7.col-sm-4
 
                     select.form-control(ng-model="app.pump.laboratory", ng-options="lab as (lab.name + ' - ' + lab.code) for lab in app.active_labs track by lab._id")
@@ -181,7 +181,7 @@ mixin calculator(er, mode)
                 .form-group
                   .col.col-xs-5
                     label.text-primary How are motor losses determined?  
-                    +help(help.motor_loss)
+                    +help(help.motor_loss, er)
                   .col.col-xs-7
                     label.radio-inline
                       input(type="radio", name="pump[motor_method]", ng-model="app.pump.motor_method", value="tested") 
@@ -261,7 +261,7 @@ mixin calculator(er, mode)
                 .form-group
                   .col.col-xs-5
                     label.text-primary Equipment Category 
-                    +help(help.motor_loss)
+                    +help(help.motor_loss, er)
                   .col.col-xs-7
                     select.form-control(ng-model="app.pump.doe", name="pump[doe]", data-width="auto", ng-options="opt as opt.label for opt in app.doe_choices() track by opt.value")
                         option(value="")  
@@ -272,7 +272,7 @@ mixin calculator(er, mode)
                 .form-group
                   .col.col-xs-5
                     label.text-primary Bowl diameter ({{app.units.diameter.label}})
-                    +help(help.bowl_diameter)
+                    +help(help.bowl_diameter, er)
                   .col.col-xs-7
                     select.form-control(ng-model="app.pump.bowl_diameter", name="pump[bowl_diameter]", data-width="auto", ng-options="val as (val+' ' + app.units.diameter.label) for val in app.bowl_diameters() track by val")
                         option(value="")
@@ -284,7 +284,7 @@ mixin calculator(er, mode)
                 .form-group
                   .col.col-xs-5
                     label.text-primary Is motor regulated under 10CFR 431.25? 
-                    +help(help.motor_regulated)
+                    +help(help.motor_regulated, er)
                   .col.col-xs-7
                     label.radio-inline
                       input(type="radio" name="pump[motor_regulated]", ng-model="app.pump.motor_regulated", ng-value="true", value="true") 
@@ -299,10 +299,10 @@ mixin calculator(er, mode)
                 .form-group
                   .col.col-xs-5(ng-show="app.pump.section=='3'")
                     label.text-primary Rated Motor Power used for default losses
-                    +help(help.motor_power_rated_3)
+                    +help(help.motor_power_rated_3, er)
                   .col.col-xs-5(ng-hide="app.pump.section=='3'")
                     label.text-primary Nameplate Rated Motor Power
-                    +help(help.motor_power_rated_4567) 
+                    +help(help.motor_power_rated_4567, er) 
                   .col.col-xs-7.col-sm-4.col-md-2
                     select.form-control(ng-model="app.pump.motor_power_rated", name="pump[motor_power_rated]", data-width="auto", ng-options="val as (val.toFixed(2)+' ' + app.units.power.label) for val in app.powers() track by val")
                         option(value="")
@@ -314,7 +314,7 @@ mixin calculator(er, mode)
                 .form-group
                   .col.col-xs-5
                     label.text-primary  Nominal nameplate motor efficiency
-                    +help(help.nominal_motor_efficiency)
+                    +help(help.nominal_motor_efficiency, er)
                   .col.col-xs-7.col-sm-4.col-md-2
                     input.form-control(type="number", min="0", name="pump[motor_efficiency]", ng-model="app.pump.motor_efficiency")
 
@@ -385,7 +385,7 @@ mixin calculator(er, mode)
                 .form-group
                   .col.col-xs-5
                     label.text-primary Can the pump be tested at 120% of BEP flow?
-                    +help(help.bep120)
+                    +help(help.bep120, er)
                   .col.col-xs-7
                     div.radio
                       label.radio-inline
@@ -406,11 +406,11 @@ mixin calculator(er, mode)
                        if (er ) 
                         th.col-label 
                          | Representative Values at Nominal Speed of Rotation
-                         +help(help.rep_nominal_speed)
+                         +help(help.rep_nominal_speed, er)
                        else 
                          th.col-label 
                          | Values at Nominal Speed of Rotation
-                         +help(help.rep_nominal_speed)
+                         +help(help.rep_nominal_speed, er)
                        th {{app.pump.load120 ? "@ 75% BEP" : "@ 60% BEP"}}
                        th {{app.pump.load120 ? "@ 100% BEP" : "@ 90% BEP"}}
                        th {{app.pump.load120 ? "@ 110% BEP" : "@ 100% BEP"}}
@@ -523,7 +523,7 @@ mixin calculator(er, mode)
                     sub(ng-show="app.pump.section=='3' || app.pump.section=='4' || app.pump.section=='5'") CL 
                     sub(ng-hide="app.pump.section=='3' || app.pump.section=='4' || app.pump.section=='5'") VL 
                     | :  
-                    +help(help.pei_entry)
+                    +help(help.pei_entry, er)
                .col.col-xs-6.col-sm-3
                     input.form-control(ng-model="app.pump.pei", name="pump[pei]", type="number")
            

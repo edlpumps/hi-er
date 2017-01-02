@@ -1,3 +1,4 @@
-mixin help(content)
+mixin help(item, portal)
   .help-button
+    - var content = portal || !item.calc_help ? item.portal_help : item.calc_help
     img(src="/images/help.png", height="15", width="15", data-html="true" data-helptext=(content) data-toggle="popover", data-placement="auto", data-trigger="click hover focus")

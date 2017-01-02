@@ -20,7 +20,7 @@ block content
                 .form-group
                   .col.col-xs-5
                     label.text-primary Pump Brand
-                    +help(help.brand)
+                    +help(help.brand, true)
                   .col.col-xs-7.col-sm-4
                     input.form-control(name="brand", id="brand", type="text" ng-model="app.pump.brand")
             
@@ -28,7 +28,7 @@ block content
                 .form-group
                   .col.col-xs-5
                     label.text-primary Basic Model Designation
-                    +help(help.basic_model_number)
+                    +help(help.basic_model_number, true)
                   .col.col-xs-7.col-sm-4
                     input.form-control(name="basic_model", id="basic_model", type="text" ng-model="app.pump.basic_model")
 
@@ -36,7 +36,7 @@ block content
                 .form-group
                   .col.col-xs-5
                     label.text-primary Individual Model Number
-                    +help(help.individual_model_number)
+                    +help(help.individual_model_number, true)
                   .col.col-xs-7.col-sm-4
                     input.form-control(name="individual_model", id="individual_model", type="text" ng-model="app.pump.individual_model")
             
@@ -44,7 +44,7 @@ block content
               .form-group
                 .col.col-xs-5
                     label.text-primary Configuration
-                    +help(help.configuration)
+                    +help(help.configuration, true)
                 .col.col-xs-7
                     select.form-control(name="configuration", data-width="auto", ng-model="app.pump.configuration", ng-options="config as config.label for config in app.configurations track by config.value")
             
@@ -53,7 +53,7 @@ block content
                 .form-group
                   .col.col-xs-5
                     label.text-primary Model Full Impeller Diameter ({{app.units.diameter.label}})
-                    +help(help.diameter)
+                    +help(help.diameter, true)
                   .col.col-xs-7.col-sm-4.col-md-2
                     input.form-control(name="diameter", type="number" ng-model="app.pump.diameter", min="0", step=".0625")
                     
@@ -61,7 +61,7 @@ block content
                 .form-group
                   .col.col-xs-5
                     label.text-primary Nominal speed of rotation
-                    +help(help.speed)
+                    +help(help.speed, true)
                   .col.col-xs-7
                     label.radio-inline
                       input(type="radio" name="speed", ng-model="app.pump.speed", value="3600") 
@@ -73,7 +73,7 @@ block content
                .form-group
                   .col.col-xs-5
                     label.text-primary Number of stages tested
-                    +help(help.stages)
+                    +help(help.stages, true)
                   .col.col-xs-7.col-sm-4.col-md-2
                     input.form-control(type="number", min="1", name="stages", ng-model="app.pump.stages")
      
@@ -81,7 +81,7 @@ block content
               .form-group
                 .col.col-xs-5
                   label.text-primary HI Approved Laboratory 
-                  +help(help.lab)
+                  +help(help.lab, true)
                 .col.col-xs-7.col-sm-4
                   select.form-control(name="laboratory", ng-model="app.pump.laboratory", ng-options="lab as (lab.name + ' - ' + lab.code) for lab in app.active_labs track by lab._id")
             hr           
