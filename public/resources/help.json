@@ -1,31 +1,129 @@
 {
-	"configuration": "This is the configuration of the individual model number as it is being rated.",
-	"brand": "This is the brand associated with the pump being listed.  This name will appear on the label.",
-	"basic_model_number": ["This number must be identical to any reported to DOE for certification of this model.",
-		"This is the designation given to an individual model number or multiple individual model numbers of the same equipment category having the same primary energy source, and having essentially identical electrical, physical and functional characteristics that affect energy consumption, energy efficiency, water consumption or water efficiency.  Except that RSV and ST pumps, all variations in numbers of stages of the bare pumps must be considered a single basic model, pump models for which the bare pump differs in impeller diameter or impeller trim may be considered a single basic model and pump models for which the bare pump differs in number of stages or impeller diameter and which are sold with motors of varying horsepower may only be considered a single basic model if:",
-		"i.  for ESCC, ESFM, IL, and RSV pumps, each motor offered in the basic model has a nominal full load  motor efficiency rated at the Federal minimum (see the current table for NEMA Design B motors at 10 CFR 431.25) or the same number of bands above the Federal minimum for each respective motor horsepower (see Table 3 of Appendix A to Subpart Y of Part 431); or",
-		"ii. for ST pumps, each motor offered in the basic model has a full load motor efficiency at the default nominal full load submersible motor efficiency shown in Table 2 of appendix A to subpart Y of part 431 or the same number of bands above the default nominal full load submersible motor efficiency for each respective motor horsepower (see Table 3 of Appendix A to Subpart Y of Part 431).",
-		"****Individual model numbers listed under one basic model must have the same PEI and ER listings.******"
-	],
-	"individual_model_number": [
-		"This number must be identical to any reported to DOE for certification of this model.",
-		"This is the unique model number given to the pump being rated.  A basic model can have multiple individual models listed under it, (as a separate entry) as long as they are of they meet the same definition of basic model."
-	],
-	"diameter": "This is the full diameter of the individual model number.",
-	"speed": "Pumps designed to operate anywhere between 1440 RPM - 2160 RPM are listed as 1800 RPM nominal and pumps designed to operated anywhere between 2880 RPM - 4320 RPM are listed as 3600 RPM nominal. ",
-	"stages": "This is the number of stages in the pump.",
-	"lab": "The representative data reported must be developed per Appendix A to Subpart Y or 10 CFR 431 and based on testing done in an HI approved laboratory (www.pumps.org/40.7).  Please enter select the HI approved laboratory that samples were tested at to develop the representative values.", 
-    "motor_loss" : [
-        "Sections III, V and VII of Appendix A to Subpart Y provide methods to determine driver and control losses that are applied to a bare pump test (Calculated).  For theses cases select 'Calculated'",
-        "Sections IV an VI of Appendix A to Subpart Y provide methods to determine the power consumption of the bare pump, driver and control when applicable through wire-to-water testing (Tested).  For these cases select 'Tested'"
-    ], 
-    "category":"This is the equipment category of the pump being rated as defined in Appendix A to Subpart Y of 10 CFR 431.",
-	"motor_power_rated_3" : "The rated motor power used to calculate default driver losses as outlined in Appendix A to Subpart Y or 10 CFR 431 for the individual model being rated.",
-	"motor_power_rated_4567" : "The nameplate rated motor power for the individual model being listed.",
-	"motor_regulated" : "Please select if the motor(s) used with this listing are regulated under 10 CFR 431.25.", 
-	"nominal_motor_efficiency" : "This is the nominal motor efficiency listed on the pump nameplate determined per the test procedure for 10 CFR 431.25.", 
-	"bowl_diameter":"ST pumps are within scope up to a 6 inch bowl diameter.  Please indicate the nominal diameter of the bowls for the pump being listed.",
-	"bep120" :"Appendix A to Subpart Y of 10 CFR 431 outlines procedures to test pumps that can be tested to 120% of BEP and pumps that cannot be tested to 120% of BEP.  If the pump being listed was tested to 120% of BEP, select 'Yes' and the representative load points entered will be 75%, 100% and 110% of BEP.  If the pump being listed could not be tested to 120% of BEP, select 'No' and the representative load points entered will be 65%, 90% and 100% of BEP.", 
-	"rep_nominal_speed":"The values entered must be identical to any reported to DOE for this model.  The values entered for Rate of flow, Head and Driver Input Power are 'representative' values determined the appropriate section of Appendix A to Subpart Y of 10 CFR 431 and representative values determined per 10 CFR 429.59.  Enter the 100% flow point and the other flow points will calculated.", 
-	"pei_entry":"This is the representative PEI value as determined per 10 CFR 429.59.  This value must be identical to any reported to DOE for this model."
+	"participant": {
+		"title": "Participant / Manufacturer",
+		"calc_help": [
+			"*This is optional for the PEI calculator*"
+		]
+	},
+	"brand": {
+		"title": "Brand name",
+		"portal_help": [
+			"This is the brand associated with the pump being listed. This name will appear on the label. "
+		],
+		"calc_help": [
+			" *This is optional for the PEI calculator*"
+		]
+	},
+	"basic_model_number": {
+		"title": "Basic Model Designation",
+		"portal_help": [
+			"This designation must be identical to any reported to DOE for certification of this model.  Individual model numbers listed under a single basic model must have the same PEI score.  This designation or the Manufacturer’s model number must appear on the pump nameplate. ",
+			"Refer to 10 CFR 431 Section §431.462 (Scope & Definitions) for the definition of basic model.  ",
+			""
+		],
+		"calc_help": [
+			" *This is optional for the PEI calculator*"
+		]
+	},
+	"individual_model_number": {
+		"title": "Manufacturer (individual) model number",
+		"portal_help": [
+			"This is the unique number given to the pump being rated.  A basic model can have multiple individual models listed (as separate entry) as long as they meet the same definition of basic model.  This designation or the basic model number must appear on the pump nameplate. Refer to 10 CFR 429 Section 429.2 Definitions for the definition of manufacturer’s (individual) model number "
+		],
+		"calc_help": [
+			" *This is optional for the PEI calculator*"
+		]
+	},
+	"category": {
+		"title": "Equipment Category of rated pump",
+		"portal_help": [
+			"Five pump equipment categories are within scope.  Refer to 10 CFR 431 Section §431.462 (Scope & Definitions) for the definition of equipment categories.  ",
+			"1. End Suction Close Coupled - ESCC",
+			"2. End Suction Frame Mounted - ESFM",
+			"3. In-line - IL",
+			"4. Radially Split, multi-stage vertical in-line casing diffuser - RSV ",
+			"5. Vertical turbine submersible - ST"
+		]
+	},
+	"diameter": {
+		"title": "\"Full\" Impeller Diameter",
+		"portal_help": [
+			"This is the full impeller diameter the basic model is being listed with. Refer to 10 CFR 431 section 431.462 for the definition of full impeller diameter"
+		]
+	},
+	"stages": {
+		"title": "For RSV and ST Pumps # of Stages",
+		"portal_help": [
+			"This is the number of stages the basic model is being rated with for listing.  ESCC, ESFM and IL pumps are only in scope with a single (1) stage.  For ST and RSV pumps which may have multiple stages, all variations in number of stages of the bare pump must be considered a single basic model. Refer to Appendix A to Subpart Y of 10 CFR Part 431 – Uniform Test Method for the measurement of Energy consumption of Pumps – Section C.2 Test Conditions for Multi-sage pumps, to determine the number of stages to test and rate the basic model.  "
+		]
+	},
+	"speed": {
+		"title": "Nominal Speed",
+		"portal_help": [
+			"Pumps designed to operate anywhere between 1440 RPM - 2160 RPM are listed as 1800 RPM nominal and pumps designed to operated anywhere between 2880 RPM - 4320 RPM are listed as 3600 RPM nominal. "
+		]
+	},
+	"bowl_diameter": {
+		"title": "Pump Bowl Diameter if applicable",
+		"portal_help": [
+			"Bowl diameter is only applicable to ST pumps.  ST pumps are within scope up to a 6 inch bowl diameter. Please indicate the nominal diameter of the bowls for the ST pump being listed."
+		]
+	},
+	"motor_regulated": {
+		"title": "Is Motor Regulated under 10 CFR?",
+		"portal_help": [
+			"For Section IV, V, VI and VII tests, indicate if the motor is regulated under 10 CFR 431.25"
+		]
+	},
+	"nominal_motor_efficiency": {
+		"title": "Nominal Motor Efficiency",
+		"portal_help": [
+			"If regulated under 10 CFR 431.25, This is the nominal motor efficiency listed on the pump nameplate determined per the test procedure for 10 CFR 431.25."
+		]
+	},
+	"motor_power_rated_3": {
+		"title": "Motor power used for default losses",
+		"portal_help": [
+			"For Section III tests, this the motor power used for default loss calculations."
+		]
+	},
+	"motor_power_rated_4567": {
+		"title": "Rated motor horsepower",
+		"portal_help": [
+			"For Section IV, V, VI and VII tests, this is the nameplate rated motor power for the basic model being listed.  All individual model numbers listed under a basic model must have the same rated nameplate motor power."
+		]
+	},
+	"bep120": {
+		"title": "Tested @ 120% BEP?",
+		"portal_help": [
+			"Appendix A to Subpart Y of 10 CFR 431 outlines procedures to test pumps that can be tested to 120% of BEP and pumps that cannot be tested to 120% of BEP. If the pump being listed was tested to 120% of BEP, select 'Yes' and the representative load points entered will be 75%, 100% and 110% of BEP. If the pump being listed could not be tested to 120% of BEP, select 'No' and the representative load points entered will be 65%, 90% and 100% of BEP."
+		]
+	},
+	"rep_nominal_speed": {
+		"title": "Rate of flow, Head and Driver or Control Input Power",
+		"portal_help": [
+			"The \"Representative\" values entered must be identical to any reported to DOE for this model. The values entered for Rate of flow, Head and Driver or Control Input Power are values determined per the appropriate section of Appendix A to Subpart Y of 10 CFR 431 for a \"representative sample\" and \"representative\" values are determined per 10 CFR 429.59. Enter the 100% flow point and the other flow points will calculated."
+		],
+		"calc_help": [
+			"The values entered for rate of flow, head and pump, driver or control input power at various load points are values determined per the appropriate section of Appendix A to Subpart Y of 10 CFR 431 for a \"single sample\""
+		]
+	},
+	"pei_entry": {
+		"title": "PEI",
+		"portal_help": [
+			"This is the representative PEI value for the basic model as determined per 10 CFR 429.59. This value must be identical to any reported to DOE for this model."
+		],
+		"calc_help": [
+			"This is the calculated PEI for a single sample.  PEI reported to DOE for certification or HI in the Energy Rating Program is a representative value for the basic model determined as outlined in 10 CFR 429.59."
+		]
+	},
+	"lab": {
+		"title": "HI Laboratory #",
+		"portal_help": [
+			"The representative data reported must be developed per Appendix A to Subpart Y or 10 CFR 431 and based on testing done in an HI approved laboratory (www.pumps.org/40.7). Please enter or select the HI approved laboratory that samples were tested at to develop the representative values."
+		],
+		"calc_help": [
+			"*Optional for PEI calculator"
+		]
+	}
 }

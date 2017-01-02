@@ -4,6 +4,13 @@ const express = require('express');
 const passport = require('passport');
 const router = express.Router();
 
+router.get("/glossary", function(req, res) {
+    var help = require('../public/resources/help.json')
+    res.render("ratings/glossary", {
+                help : help
+    });
+});
+
 
 var default_search_operators = function (search_parameters) {
     var search = search_parameters || {};
@@ -239,6 +246,9 @@ router.post("/search", function(req, res) {
         res.end(JSON.stringify({ pumps: docs}));
     });
 });
+
+
+
 
 
 module.exports = router;

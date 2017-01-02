@@ -1,0 +1,37 @@
+extends layout
+block nav
+     +navigation("glossary")
+block content
+
+  script.
+    $(document).ready(function(){
+        $("p:contains('10 CFR 429')").html(function(_, html) {
+            return html.replace(/(10 CFR 429)/g, '<a target="blank", href="http://www.ecfr.gov/cgi-bin/text-idx?SID=dce7d3cd41ed676c40daeafe6e5a93a5&mc=true&node=pt10.3.429&rgn=div5">10 CFR 429</a>');
+        });
+        $("p:contains('10 CFR 431')").html(function(_, html) {
+            return html.replace(/(10 CFR 431)/g, '<a target="blank", href="http://www.ecfr.gov/cgi-bin/text-idx?SID=dce7d3cd41ed676c40daeafe6e5a93a5&mc=true&node=pt10.3.431&rgn=div5#sp10.3.431.y">10 CFR 431</a>');
+        });
+        
+    })
+    
+  div
+    .container
+     .panel.panel-default
+      .panel-heading
+        h1 Glossary of terms
+      .panel-body
+        each entry, key in help
+          if entry.portal_help || entry.calc_help
+            a(name=key)
+            h2 #{entry.title}
+            if entry.portal_help
+             if entry.calc_help
+               h4 Energy Rating Portal
+               
+             each line in entry.portal_help 
+                 p #{line} 
+            if entry.calc_help
+              h4 PEI Calculator
+              each line in entry.calc_help 
+                 p #{line} 
+         
