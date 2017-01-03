@@ -1,7 +1,14 @@
 "use strict";
 
 var app = angular.module('PEIApp', []);
-
+app.config(['$httpProvider', function($httpProvider) {
+    $httpProvider.defaults.cache = false;
+    if (!$httpProvider.defaults.headers.get) {
+      $httpProvider.defaults.headers.get = {};
+    }
+    // disable IE ajax request caching
+    $httpProvider.defaults.headers.get['If-Modified-Since'] = '0';
+}]);
 
 var service = app.factory('service', function($http) {
    return {
