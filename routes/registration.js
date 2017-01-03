@@ -364,7 +364,8 @@ router.post("/registration_confirm", function(req, res) {
             newUser.password = secured.hash;
             newUser.salt = secured.salt;
             newUser.participant = saved._id;
-
+            newUser.participant_edit = true;
+            newUser.participant_admin = true;
             newUser.save(function(err, savedUser) {
                 // Log the user in
                 req.body.email = user.email;
