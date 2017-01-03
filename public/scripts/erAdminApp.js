@@ -13,7 +13,7 @@ app.config(['$httpProvider', function($httpProvider) {
 
 var service = app.factory('service', function($http) {
    return {
-    getUsers : function () {
+     getUsers : function () {
        return $http.get('/admin/api/users', {})
            .then(function(docs) {
                 return docs.data;

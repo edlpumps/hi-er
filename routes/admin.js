@@ -59,10 +59,24 @@ router.get('/participant/:id', function(req, res) {
         }
         if ( participant) {
             req.log.debug("Lookup of participant succeeded - " + participant.name);
-            res.render("admin/a_participant", {
-                user : req.user,
-                participant : participant
-            });
+
+
+            req.Users.find({participant:req.params.id}, function(err, users){
+                if ( err ) {
+                    req.log.error(err);
+                    req.flash("errorTitle", "Internal application error");
+                    req.flash("errorMessage", "Database lookup (users) failed.");
+                    res.redirect("/error");
+                    return;
+                }
+                res.render("admin/a_participant", {
+                    user : req.user,
+                    participant : participant, 
+                    users : users
+                });
+            })
+
+            
         }
         else {
             req.log.error(err);
@@ -74,6 +88,9 @@ router.get('/participant/:id', function(req, res) {
         
     })
 })
+
+
+
 
 router.get('/participant/:id/delete', function(req, res) {
     req.Participants.findById(req.params.id, function(err, participant){

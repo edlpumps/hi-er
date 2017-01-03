@@ -33,9 +33,20 @@ block content
                      a(href="mailto:#{participant.contact.email}") #{participant.contact.email}
                      br
                      a(href="tel:#{participant.contact.phone}") #{participant.contact.phone}
+
+                fieldset
+                  h3 Users 
+                  .table-responsive
+                     table.table
+                        tbody
+                         - each user in users
+                            tr 
+                              td #{user.name.first} #{user.name.last}
+                              td #{user.email}
                 fieldset
                   legend Account administration
-
+                
+  
                 .row 
                   .col.col-xs-12
                     .form-group
