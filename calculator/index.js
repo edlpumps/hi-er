@@ -546,7 +546,19 @@ var common_checks = function(pump, manual){
         if (!pump.head.bep100 ) missing.push("Pump head @ 100% BEP must be specified");
         if (!pump.head.bep110 ) missing.push("Pump head @ 110% BEP must be specified");
     }
-    if (!pump.stages ) missing.push("Pump stages must be specified");
+    if (!pump.stages || pump.stages < 1 ) {
+        if ( pump.doe == "ST" || pump.doe == "RSV") {
+         missing.push("Pump stages must be specified");
+        }
+        else {
+         pump.stages = 1
+        }
+    }
+    if ( pump.doe && pump.doe != "ST" && pump.doe != "RSV") {
+        if ( pump.stages != 1 ) {
+            missing.push("Only ST and RSV pumps supports more than one stage");
+        }
+    }
     if (!pump.diameter ) missing.push("Pump impeller diameter must be specified");
     if (!pump.bowl_diameter && pump.doe == "ST" ) missing.push("Pump bowl diameter must be specified");
     // --------------------
