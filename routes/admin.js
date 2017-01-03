@@ -133,7 +133,18 @@ router.post('/participant/:id/delete', function(req, res) {
             res.redirect("/error");
             return;
         }
-        res.redirect("/admin/participants")
+
+        req.Users.remove({participant:req.params.id}, function(err) {
+            if ( err ) {
+                req.log.error(err);
+                req.flash("errorTitle", "Cannot delete this participant as requested");
+                req.flash("errorMessage", "Cannot delete this participant as requested.");
+                res.redirect("/error");
+                return;
+            }
+            res.redirect("/admin/participants")
+        })
+        
     })
 })
 
