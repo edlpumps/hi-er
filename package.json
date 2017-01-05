@@ -46,6 +46,7 @@
     "phantomjs-prebuilt": "2.1.14",
     "pug": "2.0.0-beta6",
     "qr-image": "3.1.0",
+    "request": "2.79.0",
     "serve-favicon": "2.3.0",
     "svg2png": "4.1.1",
     "tmp": "0.0.31",

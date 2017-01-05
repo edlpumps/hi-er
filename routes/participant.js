@@ -11,6 +11,8 @@ const Excel = require('exceljs');
 const tmp = require('tmp');
 const _ = require('lodash');
 const async = require('async');
+const request = require('request');
+
     
 
 // All resources served from here are restricted to participants.
@@ -42,11 +44,53 @@ router.use(function(req, res, next){
 
 
 router.get('/', function(req, res) {
-    req.log.debug("Rendering participant portal home");
-    res.render("participant/p_home", {
-        user : req.user,
-        participant : req.participant
-    });
+    var no_store = function() {
+        req.log.error("ESTORE_URL or ESTORE_AUTH_KEY is missing in the environment variables - cannot poll estore!");
+        req.flash("errorTitle", "E-Store unavailable");
+        req.flash("errorMessage", "The Hydraulic Institute E-Store is currently down, your subscription cannot be validated.  Please check back again soon, we are very sorry for the inconvenience");
+        res.redirect("/error");
+        req.logout();
+    }
+    if (!process.env.ESTORE_URL || !process.env.ESTORE_AUTH_KEY ) {
+       no_store();
+       return;
+    }
+
+    var options = {
+        url: process.env.ESTORE_URL + "/" + req.participant._id,
+        headers: {
+            authorization: 'Bearer ' + process.env.ESTORE_AUTH_KEY
+        }
+    };
+
+    function callback(error, response, body) {
+        var subscription = {
+            status: "estore error",
+            pumps : 0
+        }
+        if (!error && response.statusCode == 200) {
+            var info = JSON.parse(body);
+            subscription.status = info.status;
+            subscription.pumps = info.pumps;
+        }
+        else {
+            console.log(error);
+            console.log(response.statusCode);
+            console.log(body);
+            no_store();
+            return;
+        }
+        req.participant.subscription = subscription;
+        req.participant.save();
+        // save the new subscription information in the participant
+        res.render("participant/p_home", {
+            user : req.user,
+            participant : req.participant
+        });
+    }
+
+    request(options, callback);
+    
 });
 
 
@@ -103,7 +147,8 @@ router.get('/pumps', function(req, res) {
         user : req.user,
         participant : req.participant, 
         section_label :common.section_label, 
-        subcription_limit :req.participant.pumps.length >= req.participant.pumpLimit
+        subscription_limit :req.participant.pumps.length >= req.participant.subscription.pumps,
+        subscription_missing :req.participant.subscription.status != 'Active'
     });
 });
 
@@ -116,7 +161,7 @@ router.get("/pumps/new", function(req, res){
         res.redirect("/unauthorized");
         return;
     }
-    if ( req.participant.pumps.length >= req.participant.pumpLimit){
+    if ( req.participant.pumps.length >= req.participant.subscription.pumps){
         req.flash("errorTitle", "Subscription limit");
         req.flash("errorMessage", "You cannot list additional pumps until you've updated your subscription level.");
         res.redirect("/error");
@@ -368,6 +413,11 @@ router.post("/pumps/upload", function(req, res) {
                         pump.results.success = false;
                         if (!pump.results.reasons) pump.results.reasons = [];
                         pump.results.reasons.push("This pump cannot be listed because there are already pump(s) listed under this basic model (" + pump.basic_model + ") with a conflicting Energy Rating value")
+                    }
+                    if ( pump.results.success && pumps_succeeded.length + req.participant.pumps.length >= req.participant.subscription.pumps) {
+                        pump.results.success = false;
+                        if (!pump.results.reasons) pump.results.reasons = [];
+                        pump.results.reasons.push("This pump has been accurately entered, however you have reached the listing limit on your account.  Please contact the HI Program Manager to upgrade your subscription.");
                     }
 
                     if ( pump.results.success ){

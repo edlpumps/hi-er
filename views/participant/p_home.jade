@@ -114,13 +114,24 @@ block content
                         input.form-control(type="text", name="country", ng-model="app.participant.address.country", required)
                         +warning("country", "Country is required")
 
-            .panel.panel-default(ng-show='app.user.participant_admin')
+            .panel(ng-show='app.user.participant_admin', ng-class="app.participant.subscription.status == 'Active' ? 'panel-default' : 'panel-warning'")
                .panel-heading
                     h4 Subscription level
                .panel-body
-                    h4 {{app.participant.pumps ? app.participant.pumps.length : 0}} of {{app.participant.pumpLimit}} available pump listings are being used.
-                    a(href="/participant/purchase") Upgrade your subscription level
-
+                    div(ng-show="app.participant.subscription.status == 'Expired'").text-danger
+                     p Your account has expired.  Pumps you've added to the portal will remain on the portal, but they are no longer publically listed.  
+                     p Please contact the Hydraulic Institute to renew your subscription.
+                    div(ng-show="app.participant.subscription.status == 'No Account' || app.participant.subscription.status == 'Ready'")
+                     p Your account has not been setup, so you are unable to list pumps yet.  The HI Program Manager will be in contact with your organization's purchasing department to coordinate account setup.  
+                     p The program manager will specifically be contacting {{app.participant.purchasing.name}} at {{app.participant.purchasing.phone}} and/or {{app.participant.purchasing.email}}.  
+                     p Once your account is setup, please login to the portal again to start listing your pumps.
+                    div(ng-show="app.participant.subscription.status == 'Active'")
+                        h4 
+                         | {{app.participant.pumps ? app.participant.pumps.length : 0}} 
+                         span(ng-show="app.participant.subscription.pumps != 'U'") of {{app.participant.subscription.pumps}} available pump listings are being used.
+                         span(ng-hide="app.participant.subscription.pumps != 'U'") pumps listed (Unlimited pumps allowed).
+                        p(href="/participant/purchase") To update your subscription level, please contact the HI Program Manager.
+                       
                     
         
        

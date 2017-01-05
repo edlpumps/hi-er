@@ -76,19 +76,22 @@ block content
                     | then be able to enter payment information in order to list pumps within the system.
           .row
             .col.col-sm-12
-             form(action="registration_confirm", method="post")
+             form(action="registration_confirm", method="post", name="confirm")
                     input.form-control(type="hidden", name="participant[name]" value=participant? participant.name : null)
                     input.form-control(type="hidden", name="user[name][first]" value=user && user.name ? user.name.first : null)
                     input.form-control(type="hidden", name="user[name][last]" value=user && user.name ? user.name.last : null)
                     input.form-control(type="hidden", name="user[email]" value=user ? user.email : null)
                     input.form-control(type="hidden", name="user[password]" value=user ? user.password : null)
+                    input.form-control(type="hidden", name="purchasing[name]" ng-value="app.purchasing.name")
+                    input.form-control(type="hidden", name="purchasing[phone]" ng-value="app.purchasing.phone")
+                    input.form-control(type="hidden", name="purchasing[email]" ng-value="app.purchasing.email")
                     .well
                         h3 Eligibility Requirements
                         p The HI 40.5-2016 Program Guide for Pump Energy Rating Program, outlines the scope of products and Participation requirements of the Energy Rating Program.
                         hr
                         .checkbox
                           label
-                            input(type="checkbox", ng-model="app.confirm1")
+                            input(type="checkbox", ng-model="app.confirm1", ng-required="true")
                             b.strong The Participant has reviewed and understands the scope and requirements of the Program as outlined in HI 40.5-2016 and agrees to the terms of participation as outlined in HI 40.5-2016.
                         hr
                         p Section 40.5.2.1 of HI 40.5-2016 outlines the requirements for eligibility to participate. This section states that any organization which manufactures, sells, packages or distributes pump(s) within the scope of the Guiding Standards listed in section 40.5.1.7 is eligible to participate in the Program per the terms outlined in this application.
@@ -102,7 +105,7 @@ block content
                         hr
                         .checkbox
                           label
-                            input(type="checkbox", ng-model="app.confirm2")
+                            input(type="checkbox", ng-model="app.confirm2", ng-required="true")
                             b.strong The Participant has reviewed section 40.5.2.1 and meets the eligibility requirements
                         
                     .well
@@ -111,10 +114,24 @@ block content
                         hr
                         .checkbox
                           label
-                            input(type="checkbox", ng-model="app.confirm3", required)
+                            input(type="checkbox", ng-model="app.confirm3", ng-required="true")
                             b.strong The participant agrees to the terms of the application
 
-                    
-                    button.btn.btn-primary(type="submit", ng-disabled="!app.confirm1 || !app.confirm2 || !app.confirm3") Confirm Registration
+                    .well
+                      h3 Billing Contact information
+                      p In order to list pumps within the portal the HI Program Manager must verify your eligility and will contact the person listed below to make payment arrangements.  Please specify the name, email address, and phone number of the person in your organization who the Program Manager should contact for this purpose.
+                      .form-group.row
+                        label.col-sm-3.col-md-2.col-lg-2 Name
+                        .col-sm-9.col-md-5.col-lg-5
+                         input.form-control(type='text', ng-model="app.purchasing.name", placeholder="First and last name of best contact", ng-required="true")
+                      .form-group.row
+                        label.col-sm-3.col-md-2.col-lg-2 Phone 
+                        .col-sm-9.col-md-5.col-lg-5
+                         input.form-control(type='text', ng-model="app.purchasing.phone", placeholder="Phone number (with extension) of best contact", ng-required="true")
+                      .form-group.row
+                        label.col-sm-3.col-md-2.col-lg-2 Email 
+                        .col-sm-9.col-md-5.col-lg-5
+                         input.form-control(type='text', ng-model="app.purchasing.email", , placeholder="Email address of best contact", ng-required="true")
+                    button.btn.btn-primary(type="submit", ng-disabled="confirm.$invalid") Confirm Registration
                     
               

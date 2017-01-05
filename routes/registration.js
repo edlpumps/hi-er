@@ -262,6 +262,13 @@ var missing_participant = function(participant) {
     if ( !participant || !participant.name) missing.push("Participant name");
     return missing;
 }
+var missing_purchasing = function(purchasing) {
+    var missing = [];
+    if ( !purchasing || !purchasing.name) missing.push("Purchasing name");
+    if ( !purchasing || !purchasing.phone) missing.push("Purchasing phone number");
+    if ( !purchasing || !purchasing.email) missing.push("Purchasing email address");
+    return missing;
+}
 
 var invalid_reg = function(user, req, check_password) {
     var invalid = [];
@@ -310,18 +317,22 @@ var check_similar_orgs = function(req, user, participant, callback) {
 router.post("/registration_confirm", function(req, res) {
     var user = req.body.user;
     var participant = req.body.participant;
+    var purchasing = req.body.purchasing;
     var db = req.app.locals.db;
     var missing = missing_reg(user);
     var invalid = invalid_reg(user, req, false);
     var missing_p = missing_participant(participant);
+    var missing_pur = missing_purchasing(purchasing);
+
     missing = missing.concat(missing_p);
+    missing = missing.concat(missing_pur);
 
     if ( missing.length || invalid.length ) {
         req.log.debug("Invalid registration request");
         req.log.debug("Missing:  " + missing.join());
         req.log.debug("Invalid:  " + invalid.join());
         req.flash("errorTitle", "Registration error");
-        req.flash("errorMessage", "Invalid registration request.");
+        req.flash("errorMessage", "Invalid registration request.  The following fields were either missing or invalid:  " + missing.concat(invalid).join(", "));
         res.redirect("/error");
         return;
     }
@@ -354,8 +365,8 @@ router.post("/registration_confirm", function(req, res) {
         var newParticipant = new db.Participants();
         newParticipant.name = participant.name.trim();
         newParticipant.active = true;
-        newParticipant.pumpLimit = 0;
         newParticipant.contact = user;
+        newParticipant.purchasing = purchasing;
         newParticipant.save(function(err, saved) {
             req.log.debug("Saved participant = " +saved._id);
             var newUser = new db.Users(user);

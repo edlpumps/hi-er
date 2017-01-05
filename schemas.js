@@ -185,9 +185,18 @@ exports.init = function init(mongoose) {
         email:String
       },
       active: Boolean,
-      pumpLimit : Number, 
       pumps : [pumpSchema],
-      labs : [Schema.Types.ObjectId]
+      labs : [Schema.Types.ObjectId], 
+      purchasing : {
+        name: String,
+        phone : String,
+        email : String
+      },
+      subscription : {
+        pumps : {type: String, default:"0"},
+        status : {type: String, default:"No Account"}
+      }
+      
 
   }, "participants");
 

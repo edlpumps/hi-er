@@ -231,7 +231,6 @@ router.post("/participant/:id", function(req, res) {
         }
         if ( participant) {
             req.log.debug("Lookup of participant succeeded - saving data for" + participant.name);
-            participant.pumpLimit = req.body.participant.pumpLimit;
             participant.active = req.body.participant.active;
             participant.save(function(err, participant) {
                 res.redirect("/");

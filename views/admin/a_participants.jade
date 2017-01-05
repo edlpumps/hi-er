@@ -27,9 +27,9 @@ block content
                                 td: a(href="/admin/participant/{{participant._id}}") {{participant.name}}
                                 td.hidden-xs {{participant.active ? "Active" : "Disabled"}} 
                                 td.hidden-xs
-                                  span(ng-show="participant.pumpLimit === 0") Cannot list - payment needed
-                                  span(ng-show="participant.pumpLimit") Up to {{participant.pumpLimit + " Listings"}}
-                                  span(ng-show="participant.pumpLimit == Infinity") Unlimited listings
+                                  span(ng-show="participant.subscription.status != 'Active'") Cannot list - payment needed
+                                  span(ng-show="participant.subscription.pumps") Up to {{participant.subscription.pumps + " Listings"}}
+                                  span(ng-show="participant.subscription.pumps == 'U'") Unlimited listings
                                 td 
                                   a(href="/admin/participant/{{participant._id}}/pumps") View {{participant.pumps ? participant.pumps.length : 0}} listings
                                 

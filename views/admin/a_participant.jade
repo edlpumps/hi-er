@@ -50,15 +50,13 @@ block content
                 .row 
                   .col.col-xs-12
                     .form-group
-                        label(style="margin-right:10px") Subcription level:  
-                        select.form-control(name="participant[pumpLimit]")
-                            option(value="0", selected=(participant.pumpLimit == 0)) Payment needed
-                            option(value="50", selected=(participant.pumpLimit == 50)) Up to 50 pump listings
-                            option(value="150", selected=(participant.pumpLimit == 150)) Up to 150 pump listings
-                            option(value="250", selected=(participant.pumpLimit == 250)) Up to 250 pump listings
-                            option(value="Infinity", selected=(participant.pumpLimit == Infinity)) Unlimited pump listings
+                        label(style="margin-right:10px") Subcription Status
+                        p.form-control-static #{participant.subscription.status} 
+                    .form-group
+                        label(style="margin-right:10px") Number of pumps (if active)
+                        p.form-control-static #{participant.subscription.pumps} 
                         
-                        .help-block This value is based on payment.  During the MVP / beta period this is manually set by HI adminstrators.
+                    .help-block Subscription level is based on payment in the E-Store.
                 .row 
                   .col.col-xs-12
                     .form-group

@@ -12,10 +12,12 @@ block content
             h1 Pump listings
         .panel-body
           .row(ng-show='app.user.participant_edit')
-            
-            if subcription_limit
+            if subscription_limit
               .col.col-xs-12
-               .alert.alert-warning You have reached the maximum number of pump listings your account subscription allows.
+               .alert.alert-warning You have reached the maximum number of pump listings your account subscription allows.  If you delete pumps, please refresh your browser to begin adding pumps.
+            else if subscription_missing
+              .col.col-xs-12
+               .alert.alert-warning Your account is not active, you may not list pumps at this time.
             else 
               .col.col-xs-12
                .btn-group
