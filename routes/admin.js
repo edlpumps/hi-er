@@ -2,7 +2,7 @@ const express = require('express');
 const passport = require('passport');
 const router = express.Router();
 const units = require('../utils/uom');
-
+const request = require('request');
 const common = require('./common');
 module.exports = router;
 
@@ -59,24 +59,44 @@ router.get('/participant/:id', function(req, res) {
         }
         if ( participant) {
             req.log.debug("Lookup of participant succeeded - " + participant.name);
-
-
-            req.Users.find({participant:req.params.id}, function(err, users){
-                if ( err ) {
-                    req.log.error(err);
-                    req.flash("errorTitle", "Internal application error");
-                    req.flash("errorMessage", "Database lookup (users) failed.");
-                    res.redirect("/error");
-                    return;
-                }
-                res.render("admin/a_participant", {
-                    user : req.user,
-                    participant : participant, 
-                    users : users
-                });
-            })
-
             
+            // refresh estore status
+            var options = {
+                url: process.env.ESTORE_URL + "/" + participant._id,
+                headers: {
+                    authorization: 'Bearer ' + process.env.ESTORE_AUTH_KEY
+                }
+            };
+
+            function callback(error, response, body) {
+                var subscription = {
+                    status: "No Account",
+                    pumps : 0
+                }
+                if (!error) {
+                    var info = JSON.parse(body);
+                    subscription.status = info.status || "No Account";
+                    subscription.pumps = info.pumps || "0";
+                    participant.subscription = subscription;
+                }
+                participant.save(function(err, doc) {
+                    req.Users.find({participant:req.params.id}, function(err, users){
+                        if ( err ) {
+                            req.log.error(err);
+                            req.flash("errorTitle", "Internal application error");
+                            req.flash("errorMessage", "Database lookup (users) failed.");
+                            res.redirect("/error");
+                            return;
+                        }
+                        res.render("admin/a_participant", {
+                            user : req.user,
+                            participant : participant, 
+                            users : users
+                        });
+                    })
+                });
+            }         
+            request(options, callback);
         }
         else {
             req.log.error(err);
