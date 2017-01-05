@@ -65,13 +65,13 @@ router.get('/', function(req, res) {
 
     function callback(error, response, body) {
         var subscription = {
-            status: "estore error",
+            status: "No Account",
             pumps : 0
         }
-        if (!error && response.statusCode == 200) {
+        if (!error) {
             var info = JSON.parse(body);
-            subscription.status = info.status;
-            subscription.pumps = info.pumps;
+            subscription.status = info.status || "No Account";
+            subscription.pumps = info.pumps || "0";
         }
         else {
             console.log(error);

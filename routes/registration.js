@@ -367,6 +367,9 @@ router.post("/registration_confirm", function(req, res) {
         newParticipant.active = true;
         newParticipant.contact = user;
         newParticipant.purchasing = purchasing;
+
+        mailer.sendEStoreSetup(process.env.ESTORE_ADMIN_EMAIL, newParticipant);
+                    
         newParticipant.save(function(err, saved) {
             req.log.debug("Saved participant = " +saved._id);
             var newUser = new db.Users(user);

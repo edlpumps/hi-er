@@ -1,0 +1,32 @@
+doctype html
+html
+  head
+    meta(http-equiv="Content-Type", content="text/html; charset=UTF-8")
+    title HI Energy Rating Portal - Account Registration Request
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+  body
+    p Dear Energy Rating Program Manager,
+    p
+     | This is an automated email from the HI ER Portal.  A new user has registered for the portal and requires E-Store setup.  All provided information is listed
+     | below.  Please contact the person listed under purchasing to discuss payment.
+
+    p 
+     b Organization:  
+     span #{participant.name}
+    p
+     b Purchasing contact name:    
+     span #{participant.purchasing.name}
+    p
+     b Purchasing phone / email:    
+     span #{participant.purchasing.phone} / #{participant.purchasing.email}
+    p
+     b Registrant name:    
+     span #{participant.contact.name.first} #{participant.contact.name.last}
+    p
+     b Registrant email:    
+     span #{participant.contact.email}
+    
+    p: i This email account is not monitored, please do not reply to this email
+
+    p Thank you -
+    p The Hydraulic Institute Energy Rating Portal

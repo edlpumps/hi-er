@@ -3,6 +3,13 @@ const nodemailer = require('nodemailer');
 const pug = require('pug');
 const path = require('path');
 
+
+const estore_template_file = path.join(__dirname, "../views/registration/estore_setup-email.pug");
+const estore_template = pug.compileFile(estore_template_file);
+
+const estore_template_pt_file = path.join(__dirname, "../views/registration/estore_setup-email-plain.pug");
+const estore_template_pt = pug.compileFile(estore_template_pt_file);
+
 const activation_template_file = path.join(__dirname, "../views/registration/activation-email.pug");
 const activation_template = pug.compileFile(activation_template_file);
 
@@ -75,6 +82,25 @@ exports.sendPasswordReset = function (base_url, reset, user) {
     };
     
     var mailOptions = make_mail_options(reset.email, "HI Energy Rating Portal - Password Reset", template_params, reset_template, reset_template_pt);
+
+    transporter.sendMail(mailOptions, function(error, info){
+        if(error){
+            console.log("Could not send email using the following user:")
+            console.log(process.env.SMTP_USERNAME)
+            return console.log(error);
+        }
+        else {
+            console.log("Email sent to successfully");
+        }
+    });
+}
+
+exports.sendEStoreSetup = function (recipient, participant) {
+    var template_params = {
+        participant:participant
+    };
+    
+    var mailOptions = make_mail_options(recipient, "HI Energy Rating Portal - New Account", template_params, estore_template, estore_template_pt);
 
     transporter.sendMail(mailOptions, function(error, info){
         if(error){
