@@ -3,7 +3,7 @@ extends ../layout
 
 
 block content
- .container(ng-app='RegistrationApp')
+ .container.ng-cloak(ng-app='RegistrationApp')
   .panel.panel-default.solo(ng-controller="RegistrationController as app")
     .panel-heading
       h1 Confirm registration information
@@ -78,6 +78,14 @@ block content
             .col.col-sm-12
              form(action="registration_confirm", method="post", name="confirm")
                     input.form-control(type="hidden", name="participant[name]" value=participant? participant.name : null)
+
+                    input.form-control(type="hidden", name="address[street1]" ng-value="app.address.street1")
+                    input.form-control(type="hidden", name="address[street2]" ng-value="app.address.street2")
+                    input.form-control(type="hidden", name="address[city]" ng-value="app.address.city")
+                    input.form-control(type="hidden", name="address[zip]" ng-value="app.address.zip")
+                    input.form-control(type="hidden", name="address[state]" ng-value="app.address.state")
+                    input.form-control(type="hidden", name="address[country]" ng-value="app.address.country")
+
                     input.form-control(type="hidden", name="user[name][first]" value=user && user.name ? user.name.first : null)
                     input.form-control(type="hidden", name="user[name][last]" value=user && user.name ? user.name.last : null)
                     input.form-control(type="hidden", name="user[email]" value=user ? user.email : null)
@@ -116,7 +124,35 @@ block content
                           label
                             input(type="checkbox", ng-model="app.confirm3", ng-required="true")
                             b.strong The participant agrees to the terms of the application
-
+                    
+                    .well
+                      h3 Organization address
+                      p Please provide your organization's full address.  This will be editable from the portal later as well.
+                      .form-group.row
+                        label.col.col-xs-2 Street
+                        .col-xs-10.col-md-6
+                          input.input-sm.form-control(type='text', ng-model="app.address.street1")
+                      .form-group.row
+                        label.col.col-xs-2 
+                        .col-xs-10.col-md-6
+                          input.input-sm.form-control(type='text', ng-model="app.address.street2")
+                      .form-group.row
+                        label.col.col-xs-2 City
+                        .col-xs-10.col-md-6
+                          input.input-sm.form-control(type='text', ng-model="app.address.city")
+                      .form-group.row
+                        label.col-xs-2 State
+                        .col-xs-4
+                          input.input-sm.form-control(type='text', ng-model="app.address.state")
+                      .form-group.row
+                        label.col.col-xs-2 Zip
+                        .col-xs-3
+                          input.input-sm.form-control(type='text', ng-model="app.address.zip")
+                      .form-group.row
+                        label.col.col-xs-2 Country
+                        .col-xs-4
+                          input.input-sm.form-control(type='text', ng-model="app.address.country")
+                        
                     .well
                       h3 Billing Contact information
                       p In order to list pumps within the portal the HI Program Manager must verify your eligility and will contact the person listed below to make payment arrangements.  Please specify the name, email address, and phone number of the person in your organization who the Program Manager should contact for this purpose.

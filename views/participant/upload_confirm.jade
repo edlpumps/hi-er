@@ -5,7 +5,7 @@ include ../common/labels
 block nav
      +navigation("upload")
 block content
-  div(ng-app='ERParticipantApp')
+  div.ng-cloak(ng-app='ERParticipantApp')
 
     .container
       if succeeded && succeeded.length > 0

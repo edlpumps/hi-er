@@ -318,6 +318,7 @@ router.post("/registration_confirm", function(req, res) {
     var user = req.body.user;
     var participant = req.body.participant;
     var purchasing = req.body.purchasing;
+    var address = req.body.address;
     var db = req.app.locals.db;
     var missing = missing_reg(user);
     var invalid = invalid_reg(user, req, false);
@@ -367,6 +368,7 @@ router.post("/registration_confirm", function(req, res) {
         newParticipant.active = true;
         newParticipant.contact = user;
         newParticipant.purchasing = purchasing;
+        newParticipant.address = address;
 
         mailer.sendEStoreSetup(process.env.ESTORE_ADMIN_EMAIL, newParticipant);
                     

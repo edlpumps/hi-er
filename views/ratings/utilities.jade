@@ -2,7 +2,7 @@ extends layout
 block nav
      +navigation("utility")
 block content
-  div(ng-app='ERRatingsApp')
+  div.ng-cloak(ng-app='ERRatingsApp')
     .container(ng-controller="ERRatingsController as app",ng-init="app.search= #{JSON.stringify(search)}; app.load_count()")
         form.form-horizontal
         

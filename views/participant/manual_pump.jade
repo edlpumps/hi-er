@@ -3,5 +3,5 @@ include ../ratings/calculator
 block nav
      +navigation("new_manual")
 block content
-  div(ng-app='PEIApp')
+  div.ng-cloak(ng-app='PEIApp')
     +calculator(true, "manual")

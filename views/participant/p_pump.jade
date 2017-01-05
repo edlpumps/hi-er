@@ -5,7 +5,7 @@ block nav
      +navigation("pump")
 
 block content
- div(ng-app='ERParticipantApp')
+ div.ng-cloak(ng-app='ERParticipantApp')
     .container(ng-controller="ERParticipantController as app",ng-init="app.user= #{JSON.stringify(user)}; app.participant= #{JSON.stringify(participant)}")
 
       .panel.panel-default

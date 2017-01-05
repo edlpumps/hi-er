@@ -4,7 +4,7 @@ block nav
      +navigation("search")
 
 block content
-  div(ng-app='ERRatingsApp')
+  div.ng-cloak(ng-app='ERRatingsApp')
     .container(ng-controller="ERRatingsController as app",ng-init="app.units = #{JSON.stringify(units)}; app.search= #{JSON.stringify(search)}; app.load_search()")
         form.form-horizontal
         

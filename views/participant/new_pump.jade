@@ -4,7 +4,7 @@ extends layout
 block nav
      +navigation("new")
 block content
-  div(ng-app='ERParticipantApp')
+  div.ng-cloak(ng-app='ERParticipantApp')
     .container.pei(ng-controller="ERNewPumpController as app",ng-init="app.units = #{JSON.stringify(units)}; app.pump = #{JSON.stringify(pump)}; app.user= #{JSON.stringify(user)}; app.participant= #{JSON.stringify(participant)}")
       .panel.panel-default.solo
         .panel-heading 
