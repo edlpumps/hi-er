@@ -75,7 +75,7 @@ router.get('/', function(req, res) {
         }
         else {
             console.log(error);
-            console.log(response.statusCode);
+            if ( response) console.log(response.statusCode);
             console.log(body);
             no_store();
             return;
