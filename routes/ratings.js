@@ -24,6 +24,7 @@ var default_search_operators = function (search_parameters) {
         participant_id : {$first: "$_id"},
         participant : {$first: "$pumps.participant"},
         participant_active : {$first: "$active"},
+        participant_status : {$first: "$subscription.status"},
         configuration : {$first: "$pumps.configuration"},
         basic_model : {$first: "$pumps.basic_model"},
         brand : {$first: "$pumps.brand"},
@@ -46,6 +47,7 @@ var default_search_operators = function (search_parameters) {
                 {rating_id: {$ne:null}},
                 {participant: {$ne:null}},
                 {participant_active: {$eq:true}},
+                {participant_status: {$eq:'Active'}},
                 {configuration: {$ne:null}},
                 {basic_model: {$ne:null}},
                 {diameter: {$ne:null}},
@@ -126,7 +128,7 @@ router.get('/search', function(req, res) {
     });
 });
 router.get('/api/participants', function(req, res) {
-    req.Participants.find({}, function(err, docs) {
+    req.Participants.find({$and: [{active:true, 'subscription.status':'Active'}]}, function(err, docs) {
         res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify({ participants: docs.filter(p => p.active).map(p => p.name)}));
     });
@@ -172,7 +174,7 @@ router.get("/:id", function(req, res) {
         if ( !err && participant ) {
 
             var pump = participant.pumps.filter(p => p.rating_id == req.params.id)[0];
-            if (!pump || !participant.active || !pump.listed || !pump.active_admin) {
+            if (!pump || !participant.active || !pump.listed || !pump.active_admin || participant.subscription.status != 'Active') {
                 req.flash("errorTitle", "Not Available");
                 req.flash("errorMessage", "This pump is no longer listed in the Hydraulic Institute Energy Ratings Program");
                 res.redirect("/error");
