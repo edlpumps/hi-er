@@ -497,14 +497,19 @@ var manual_calculation = function(pump, set_point_threshold) {
     section345_baseline_common(pump, result);
     
     var per_diff = result.per_std / result.per_std_calculated;
-    if ( per_diff > (1+spt) || per_diff < (1-spt)){
-        var target_pei = result.per_cl / result.per_std_calculated;
+    var target_pei = result.per_cl / result.per_std_calculated;
+    result.pei_check = {
+        std_percent_difference: per_diff,
+        expected_pei: target_pei
+    }
+    /*if ( per_diff > (1+spt) || per_diff < (1-spt)){
         result.success = false;
         result.reasons = [];
         result.reasons.push("Error, the calculated PER standard value (" + result.per_std_calculated.toFixed(2) + ") must be within 1% of the PER value derived from your inputs.  A PEI of " + target_pei.toFixed(2) + " would have been expected, given your inputs.")
         result.pump = pump;
         return result;
-    }
+        
+    }*/
     
     calc_energy_rating(pump, result);
     return result;
