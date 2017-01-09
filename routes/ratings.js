@@ -27,6 +27,7 @@ var default_search_operators = function (search_parameters) {
         participant_status : {$first: "$subscription.status"},
         configuration : {$first: "$pumps.configuration"},
         basic_model : {$first: "$pumps.basic_model"},
+        individual_model : {$first: "$pumps.individual_model"},
         brand : {$first: "$pumps.brand"},
         diameter : {$first: "$pumps.diameter"},
         speed : {$first: "$pumps.speed"},

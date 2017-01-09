@@ -14,6 +14,12 @@ mixin pump_page_info(pump)
     .row 
         .form-group
             .col.col-xs-5
+                label Manufacturer's model designation:
+            .col.col-xs-7
+                .form-control-static #{pump.individual_model}
+    .row 
+        .form-group
+            .col.col-xs-5
                 label DOE product category:
             .col.col-xs-7
                 .form-control-static #{pump.doe}

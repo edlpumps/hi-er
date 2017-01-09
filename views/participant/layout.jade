@@ -38,26 +38,26 @@ html
                    li(class=(active == 'users' ? 'active' : ''))
                     a(href="/participant/users") 
                       .glyphicon.glyphicon-user.margin-right
-                      | User Management
+                      | Users
                    li(class=(active == 'labs' ? 'active' : ''))
                     a(href="/participant/labs") 
                       .glyphicon.glyphicon-scale.margin-right
-                      | Testing Labs
+                      | Labs
                   li(class=(active == 'pumps' ? 'active' : ''))
                     
                     a(href="/participant/pumps") 
                       .glyphicon.glyphicon-th-list.margin-right
-                      | Pump Listings
+                      | Pumps
                   
                 ul.nav.navbar-nav.navbar-right
                   li: a(href="/ratings/home") 
                     .glyphicon.glyphicon-eye-open.margin-right
                     | Public site
-                  li
-                    .navbar-text #{user.name.first} #{user.name.last}
-                  li
-                    a(href="/logout") Sign out
                   +unit_switch()
+                  li(title="#{user.name.first} #{user.name.last} - Sign out")
+                    a(href="/logout") 
+                     .glyphicon.glyphicon-log-out
+                     
                   li
                     a(href="/ratings/glossary", title="Help documentation", target="_blank") 
                      .glyphicon.glyphicon-question-sign

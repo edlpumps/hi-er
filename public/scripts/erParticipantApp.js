@@ -232,6 +232,12 @@ var ERParticipantController = function($scope, $location, service) {
      })
   }
 
+  vm.confirmDeletePump = function(pump) {
+      vm.pump_to_delete = pump
+      $('#delete').modal('show');
+  }
+  
+
   vm.removePump = function(pump) {
       service.deletePump(pump).then(function(saved) {
         vm.refreshPumps();

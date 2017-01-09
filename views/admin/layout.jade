@@ -32,7 +32,7 @@ html.ng-cloak(ng-app='ERAdminApp')
                   li(class=(active == 'home' ? 'active' : ''))
                     a(href="/") 
                      .glyphicon.glyphicon-cog.margin-right
-                     | Administrators
+                     | Admins
                   li(class=(active == 'participants' ? 'active' : ''))
                     a(href="/admin/participants") 
                      .glyphicon.glyphicon-user.margin-right
@@ -44,16 +44,15 @@ html.ng-cloak(ng-app='ERAdminApp')
                   li(class=(active == 'labels' ? 'active' : ''))
                     a(href="/admin/labels") 
                      .glyphicon.glyphicon-wrench.margin-right
-                     | ER Settings
+                     | Settings
                 ul.nav.navbar-nav.navbar-right
                   li: a(href="/ratings/home") 
                         .glyphicon.glyphicon-eye-open.margin-right
                         | Public site
-                  li.hidden-sm
-                    .navbar-text #{user.name.first} #{user.name.last}
-                  li
-                    a(href="/logout") Sign out
                   +unit_switch()
+                  li(title="#{user.name.first} #{user.name.last} - Sign out")
+                    a(href="/logout") 
+                     .glyphicon.glyphicon-log-out
                   li
                     a(href="/ratings/glossary", title="Help documentation", target="_blank") 
                      .glyphicon.glyphicon-question-sign

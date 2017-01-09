@@ -6,6 +6,22 @@ block nav
 block content
  div.ng-cloak(ng-app='ERParticipantApp')
     .container(ng-controller="ERParticipantController as app",ng-init="app.units = #{JSON.stringify(units)}; app.user= #{JSON.stringify(user)}; app.participant= #{JSON.stringify(participant)}")
+      .modal.fade#delete(tabindex='-1', role='dialog' aria-labelledby='titleLabel', aria-hidden='true')
+        .modal-dialog
+          .modal-content
+            .modal-header
+              button(type='button', class='close' data-dismiss='modal' aria-hidden='hidden') &times;
+              h4.modal-title#titleLabel Delete pump
+            .modal-body
+              p Are you sure you want to delete {{app.pump_to_delete.brand}} {{app.pump_to_delete.basic_model}} / {{app.pump_to_delete.individual_model}} from the ER portal?
+              p.text-danger If you delete this pump, it's public page will no longer be available.  This is a permanent operation and cannot be undone.  
+              p It's recommended to set this pump 'inactive' if you want to temporarily remove the listing.  You can do this by clicking on the pump and setting it to the inactive state at the bottom of the screen.
+              p If you do delete this pump, all claims to ER for this model will need to cease within 30 days.
+            .modal-footer
+              div
+                button.btn.btn-danger(type="button", data-dismiss='modal', ng-click="app.removePump(app.pump_to_delete)") Delete pump
+                button.btn.btn-default(type='button' data-dismiss='modal') Dismiss
+
 
       .panel.panel-default
         .panel-heading 
@@ -65,5 +81,5 @@ block content
                   td {{pump.energy_rating}} 
                   
                   td(ng-show='app.user.participant_edit') 
-                     button(type="button", ng-click="app.removePump(pump)").btn.btn-danger.btn-xs Delete
+                     button(type="button", ng-click="app.confirmDeletePump(pump)").btn.btn-danger.btn-xs Delete
 
