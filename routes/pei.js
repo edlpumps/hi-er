@@ -11,13 +11,21 @@ router.get('/', function(req, res) {
     });
 });
 
-router.post('/api/calculate', function(req, res){
+var get_labels = function(req, res, next) {
+    req.Labels.find({}, function(err, labels) {
+        req.current_labels = labels;
+        next();
+    });
+}
+
+router.post('/api/calculate', get_labels, function(req, res){
     var pump = req.body.pump;
     pump.doe = pump.doe.value;
     pump = units.convert_to_us(pump);
 
     var calculator = require("../calculator");
-    var results = calculator.calculate(pump);
+    // do not do label checks if using public calculator (auto=true)
+    var results = calculator.calculate(pump, pump.auto ? undefined : req.current_labels);
     res.setHeader('Content-Type', 'application/json');
     res.end(JSON.stringify(results));
 })

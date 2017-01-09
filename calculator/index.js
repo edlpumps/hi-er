@@ -512,16 +512,28 @@ var manual_calculation = function(pump, set_point_threshold) {
     }*/
     
     calc_energy_rating(pump, result);
+
+
     return result;
 }
 
+exports.calculate_with_er_check = function(pump, range) {
+    var retval = exports.calculator(pump) ;
+    if ( retval.result.success ) {
+        retval.result.success = false;
+        retval.result.reasons = [];
+        retval.result.reasons.push("The energy rating range for this load/speed/category of pump is between " + range.min + " and " + range.max  + ".  Your calculated energy rating of " + pump.energy_rating + " cannot be listed.  Please contact the HI Program Administrator if you believe this pump should be listed");
+    }
+    return result;
+}
 
-exports.calculate = function(pump) {
+exports.calculate = function(pump, labels) {
+    var retval = undefined;
     if ( !pump ) {
         return build_error("Pump object must be specified");
     }
     if (pump.auto ) {
-        return auto_calculators[pump.section](pump);
+        retval = auto_calculators[pump.section](pump);
     }
     else {
         if (!manual_calculators[pump.section]) {
@@ -529,8 +541,24 @@ exports.calculate = function(pump) {
             console.log(manual_calculators);
             return {};
         }
-        return manual_calculators[pump.section](pump);
+        retval = manual_calculators[pump.section](pump);
     }
+    
+    if ( !labels) return retval;
+    var configuration = pump.configuration.value || pump.configuration;
+    var load = configuration =="bare" || configuration.value=="pump_motor" ? "CL" : "VL";
+    var range = labels.filter(function(label ) {
+        return label.doe == pump.doe && label.speed == pump.speed && label.load == load;
+    })[0];
+
+    if ( retval && retval.success ) {
+        if ( retval.energy_rating < range.min || retval.energy_rating > range.max) {
+            retval.success = false;
+            retval.reasons = [];
+            retval.reasons.push("The energy rating range for this load/speed/category of pump is between " + range.min + " and " + range.max  + ".  Your calculated energy rating of " + retval.energy_rating + " cannot be listed.  Please contact the HI Program Administrator if you believe this pump should be listed");
+        }
+    }
+    return retval;
 }
 
 

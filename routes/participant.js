@@ -305,7 +305,15 @@ var map_doe = function (input) {
     if (index >= 0) return does[index];
     else return undefined;
 }
-router.post("/pumps/upload", function(req, res) {
+
+var get_labels = function(req, res, next) {
+    req.Labels.find({}, function(err, labels) {
+        req.current_labels = labels;
+        next();
+    });
+}
+
+router.post("/pumps/upload", get_labels, function(req, res) {
     if (!req.files || !req.files.template) {
         res.send('No files were uploaded.');
         return;
@@ -381,7 +389,7 @@ router.post("/pumps/upload", function(req, res) {
                     pump = units.convert_to_us(pump);
                     
                     var calculator = require("../calculator");
-                    var results = calculator.calculate(pump);
+                    var results = calculator.calculate(pump, req.current_labels);
                     pump.results = results;
                     pump.energy_rating = pump.results.energy_rating;
                     pump.energy_savings = pump.results.energy_savings;
