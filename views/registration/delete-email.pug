@@ -1,0 +1,18 @@
+doctype html
+html
+  head
+    meta(http-equiv="Content-Type", content="text/html; charset=UTF-8")
+    title HI Energy Rating Portal - Account Deletion
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+  body
+    p: img(style="width:100%; max-width:500px", src="https://hi-er.herokuapp.com/images/hydraulic-institute-logo-mailhead.png")
+    h1 Hello #{deleted.name.first},
+    p Your account with the Hydraulic Institute's Energy Rating Portal has been deleted by #{actor.name.first} #{actor.name.last}.
+    p 
+     | If you believe this was in error, please contact #{actor.name.first} at 
+     a(href="mailto:#{actor.email}") #{actor.email}   
+    
+    p: i This email account is not monitored, please do not reply to this email
+    
+    p Thank you -
+    p The Hydraulic Institute

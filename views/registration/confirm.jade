@@ -79,7 +79,7 @@ block content
              form(action="registration_confirm", method="post", name="confirm")
                     input.form-control(type="hidden", name="participant[name]" value=participant? participant.name : null)
 
-                    input.form-control(type="hidden", name="address[street1]" ng-value="app.address.street1")
+                    input.form-control(type="hidden", name="address[street]" ng-value="app.address.street")
                     input.form-control(type="hidden", name="address[street2]" ng-value="app.address.street2")
                     input.form-control(type="hidden", name="address[city]" ng-value="app.address.city")
                     input.form-control(type="hidden", name="address[zip]" ng-value="app.address.zip")
@@ -131,7 +131,7 @@ block content
                       .form-group.row
                         label.col.col-xs-2 Street
                         .col-xs-10.col-md-6
-                          input.input-sm.form-control(type='text', ng-model="app.address.street1")
+                          input.input-sm.form-control(type='text', ng-model="app.address.street")
                       .form-group.row
                         label.col.col-xs-2 
                         .col-xs-10.col-md-6

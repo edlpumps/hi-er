@@ -120,17 +120,26 @@ block content
                .panel-body
                     div(ng-show="app.participant.subscription.status == 'Expired' || app.participant.subscription.status == 'Unpaid'").text-danger
                      p Your account has expired or is unpaid.  Pumps you've added to the portal will remain on the portal, but they are no longer publically listed.  
-                     p Please contact the Hydraulic Institute to renew your subscription.
+                     p 
+                        | Please contact the Hydraulic Institute Program Manager (
+                        a(href="mailto:(#{ESTORE_ADMIN_EMAIL}") #{ESTORE_ADMIN_EMAIL}
+                        | ) to renew your subscription.
                     div(ng-show="app.participant.subscription.status == 'No Account' || app.participant.subscription.status == 'Ready'")
                      p Your account has not been setup, so you are unable to list pumps yet.  The HI Program Manager will be in contact with your organization's purchasing department to coordinate account setup.  
                      p The program manager will specifically be contacting {{app.participant.purchasing.name}} at {{app.participant.purchasing.phone}} and/or {{app.participant.purchasing.email}}.  
-                     p Once your account is setup, please login to the portal again to start listing your pumps.
+                     p 
+                       | Once your account is setup, please login to the portal again to start listing your pumps.  If you have any questions, please contact the Hydraulic Institute's Program Manager at (
+                       a(href="mailto:(#{ESTORE_ADMIN_EMAIL}") #{ESTORE_ADMIN_EMAIL}
+                       | ).
                     div(ng-show="app.participant.subscription.status == 'Active'")
                         h4 
                          | {{app.participant.pumps ? app.participant.pumps.length : 0}} 
                          span(ng-show="app.participant.subscription.pumps != 'U'") of {{app.participant.subscription.pumps}} available pump listings are being used.
                          span(ng-hide="app.participant.subscription.pumps != 'U'") pumps listed (Unlimited pumps allowed).
-                        p(href="/participant/purchase") To update your subscription level, please contact the HI Program Manager.
+                        p 
+                            | To update your subscription level, please contact the Hydraulic Institute's Program Manager at (
+                            a(href="mailto:(#{ESTORE_ADMIN_EMAIL}") #{ESTORE_ADMIN_EMAIL}
+                            | ).
                        
                     
         

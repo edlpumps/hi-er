@@ -151,7 +151,7 @@ app.use(function(req, res, next) {
         req.session.unit_set = units.US;
     }
     res.locals.unit_set = req.session.unit_set;
-
+    res.locals.ESTORE_ADMIN_EMAIL = process.env.ESTORE_ADMIN_EMAIL;
     res.locals.units = units.make_units(res.locals.unit_set);
     res.locals.moment = require('moment');
     next();

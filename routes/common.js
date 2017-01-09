@@ -34,6 +34,8 @@ exports.deleteUser = function(req, res) {
                     res.status(500).send({error:err});
                 }
                 else {
+                    mailer.sendDeletionNotification(user, req.user);
+
                     res.status(200).send("User removed");
                 }
             })
