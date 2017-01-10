@@ -135,15 +135,28 @@ router.get('/api/participants', function(req, res) {
     });
 });
 
+router.get('/api/brands', function(req, res) {
+    var name = req.query.name;
+    var query = {};
+    if ( name ) {
+        query = {name:name};
+    }
+    req.Participants.find(query, function(err, participants) {
+        var brands = [];
+        participants.forEach(function(p){
+            brands = brands.concat(p.pumps.map(p => p.brand));
+        });
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({ brands: Array.from(new Set(brands))}));
+    });
+})
+
 router.get('/home', function(req, res) {
-   
-   
     res.render("ratings/home", {});
 });
 
 router.get('/utilities', function(req, res) {
     var operators = default_search_operators();
-
     var search_params = req.session.search;
     if (!search_params ) {
         search_params = {};

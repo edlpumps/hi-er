@@ -45,7 +45,7 @@ var service = app.factory('service', function($http) {
 });
 
 
-var ERRatingsController = function($scope, $location, service) {
+var ERRatingsController = function($scope, $location, service, $http) {
   var vm = this;
   
   service.participants().then(function(results) {
@@ -68,6 +68,17 @@ var ERRatingsController = function($scope, $location, service) {
       });
   }
 
+  vm.getBrands = function() { 
+    var p = {};
+    if ( vm.search.participant ) {
+      p.name = vm.search.participant;
+    }
+    console.log(p);
+    $http.get('/ratings/api/brands', {params: p})
+            .success(function(docs) { 
+              vm.brands = docs.brands;
+            });
+  }
 
   vm.countPumps = function() {
       vm.search_error = "";
@@ -113,6 +124,7 @@ var ERRatingsController = function($scope, $location, service) {
       
       if (vm.search && !vm.search.fresh) {
           vm.getPumps();
+          vm.getBrands();
       }
   }
   vm.load_count = function() {
