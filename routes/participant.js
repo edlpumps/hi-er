@@ -75,8 +75,6 @@ router.get('/', function(req, res) {
         }
         else {
             console.log(error);
-            if ( response) console.log(response.statusCode);
-            console.log(body);
             no_store();
             return;
         }
@@ -272,7 +270,7 @@ router.post("/pumps/save_upload", function(req, res) {
             req.nextRatingsId(function(err, doc) {
                 toSave.rating_id = hashids.encode(doc.value.seq);
                 req.participant.pumps.push(toSave);
-                console.log(toSave.rating_id + " saved, " + req.participant.pumps.length + " pumps in participant listings");
+                req.log.info(toSave.rating_id + " saved, " + req.participant.pumps.length + " pumps in participant listings");
                 done();
             });
             
@@ -584,8 +582,6 @@ var model_check = function(newPump, pumps) {
         // If there is already pump(s) with the same basic model, check to make sure
         // that this has the same ER value.
         if (pump.basic_model === newPump.basic_model && pump.energy_rating != newPump.energy_rating) {
-            console.log(pump.energy_rating);
-            console.log(newPump.energy_rating);
             return {basic_collide:true};
         }  
     };

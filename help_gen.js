@@ -24,7 +24,6 @@ for ( var column = 0; column < max_column; column++ ) {
     var cell = worksheet[col + key_row]
     if ( cell ) {
         var key = cell.v;
-        console.log(key);
         if ( key ) {
             cell = worksheet[col+title_row];
             var title = cell.v;

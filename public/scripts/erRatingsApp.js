@@ -73,7 +73,6 @@ var ERRatingsController = function($scope, $location, service, $http) {
     if ( vm.search.participant ) {
       p.name = vm.search.participant;
     }
-    console.log(p);
     $http.get('/ratings/api/brands', {params: p})
             .success(function(docs) { 
               vm.brands = docs.brands;

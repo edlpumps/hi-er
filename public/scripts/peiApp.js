@@ -288,8 +288,6 @@ var PEIController = function($scope, $location, $window, service) {
 
 
   vm.setup = function(er, pump, mode) {
-      
-      console.log(mode);
       if ( pump ) {
           vm.pump = pump;
           vm.pump.auto = mode == "calculator";
@@ -350,13 +348,11 @@ var PEIController = function($scope, $location, $window, service) {
      var flow75, flow100, flow110;
 
       if ( vm.pump.load120) {
-          console.log("Calculating for BEP 120 Load Points")
           flow100 = vm.pump.flow.bep100;
           flow75 = flow100 * 0.75;
           flow110 = flow100 * 1.10;
       }
       else {
-          console.log("Calculating for BEP 100 Load Points")
           flow110 = vm.pump.flow.bep110;
           flow75 = flow110*0.65;
           flow100 = flow110 * 0.9;
@@ -430,7 +426,6 @@ var PEIController = function($scope, $location, $window, service) {
       $("input[name='pump[unit_set]']").val(vm.units.active);
       $("input[name='pump[laboratory]']").val(JSON.stringify(vm.pump.laboratory));
       new_pump_pei.action = "/pei/download";
-      console.log(new_pump_pei.action);
       new_pump_pei.submit();
   }
   

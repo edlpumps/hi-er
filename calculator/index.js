@@ -308,13 +308,6 @@ var section6a_auto = function(pump) {
     
     result.control_power_input_bep25 = (targets.head_25 / pump.measured_control_head_input.bep25) * (targets.flow_25 / pump.measured_control_flow_input.bep25) * pump.measured_control_power_input.bep25;
     result.control_power_input_bep50 = (targets.head_50 / pump.measured_control_head_input.bep50) * (targets.flow_50 / pump.measured_control_flow_input.bep50) * pump.measured_control_power_input.bep50;
-    console.log("-----");
-    console.log(targets.head_75);
-    console.log(pump.measured_control_head_input.bep75);
-    console.log(targets.flow_75);
-    console.log(pump.measured_control_flow_input.bep75);
-    console.log(pump.measured_control_power_input.bep75);
-    console.log("-----");
     result.control_power_input_bep75 = (targets.head_75 / pump.measured_control_head_input.bep75) * (targets.flow_75 / pump.measured_control_flow_input.bep75) * pump.measured_control_power_input.bep75;
     result.control_power_input_bep100 = pump.measured_control_power_input.bep100;
 
@@ -360,14 +353,7 @@ var section6b_auto = function(pump) {
         result.control_power_input_bep75 = (targets.flow_75/pump.measured_control_flow_input.bep75) * pump.measured_control_power_input.bep75;
     }
     else {
-        console.log(targets.head_75);
-        console.log(pump.measured_control_head_input.bep75)
-        console.log(targets.flow_75);
-        console.log(pump.measured_control_flow_input.bep75);
-        console.log(pump.measured_control_power_input.bep75);
         result.control_power_input_bep75 = (targets.head_75 / pump.measured_control_head_input.bep75)*(targets.flow_75/pump.measured_control_flow_input.bep75)* pump.measured_control_power_input.bep75;
-        console.log(result.control_power_input_bep75);
-        
     }
     result.control_power_input_bep100 = pump.measured_control_power_input.bep100;
 
@@ -391,7 +377,6 @@ var section7_auto = function(pump) {
     result.full_load_motor_losses = calc_full_load_motor_losses(pump, result);
     
     if ( parseFloat(pump.motor_efficiency) ) {
-        console.log("NAMEPLATE");
         result.nameplate_full_load_motor_losses = pump.motor_power_rated / (pump.motor_efficiency/100) - pump.motor_power_rated;
     }
     
@@ -730,7 +715,6 @@ var check_measured_inputs = function(pump, missing) {
     }
     else if ( pump.section=="6b"){
         checks.forEach(function(check) {
-            console.log(check.target);
             if ((check.value - check.target)/check.target < -0.1) {
                 missing.push(check.message);
                 return checks;

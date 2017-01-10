@@ -372,7 +372,6 @@ var ERNewPumpController = function($scope, $location, service) {
     if (!vm.pump.stages) return true;
     if (!vm.pump.laboratory) return true;
     if (!vm.basic_model_valid()) return true;
-    console.log(vm.pump.laboratory);
     return false;
   }
 

@@ -187,7 +187,6 @@ root.post('/units', function(req, res) {
     var unit_set = req.body.unit_set;
     if (unit_set == units.US || unit_set == units.METRIC) {
         req.session.unit_set = unit_set;
-        console.log("Unit set changed to " + unit_set);
     }
     res.status(200).send();
 });
