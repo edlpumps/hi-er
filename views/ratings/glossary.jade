@@ -22,7 +22,7 @@ block content
       .panel-body
         each entry, key in help
           if entry.portal_help || entry.calc_help
-            a(name=key)
+            a(name=key) 
             h2 #{entry.title}
             if entry.portal_help
              if entry.calc_help
