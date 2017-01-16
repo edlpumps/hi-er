@@ -77,7 +77,7 @@ block content
                   td.hidden-xs.hidden-sm {{pump.diameter * app.units.diameter.factor | number:3}}
                   td.hidden-xs.hidden-sm {{pump.speed}}
                   td.hidden-xs.hidden-sm {{pump.stages}}
-                  td.hidden-xs {{pump.pei | number:4}}
+                  td.hidden-xs {{pump.pei | number:2}}
                   td {{pump.energy_rating}} 
                   
                   td(ng-show='app.user.participant_edit') 
