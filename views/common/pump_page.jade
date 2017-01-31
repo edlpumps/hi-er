@@ -81,7 +81,7 @@ mixin pump_page_info(pump)
                 label Rated motor power:
             .col.col-xs-7
                 - var mpr = pump.motor_power_rated ? pump.motor_power_rated : pump.results.motor_power_rated
-                - var mpr_display = mpr ? (mpr * units.power.factor).toFixed(0) : ""
+                - var mpr_display = mpr ? (mpr * units.power.factor).toFixed(2) : ""
                 .form-control-static #{mpr_display} #{units.power.label}
 
     if pump.date

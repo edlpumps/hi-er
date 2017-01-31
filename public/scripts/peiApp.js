@@ -154,7 +154,7 @@ var PEIController = function($scope, $location, $window, service) {
 
 
   vm.powers = function() {
-      return [250, 200, 150, 125, 100, 75, 60, 50, 40, 30, 25, 20, 15, 10, 7.5, 5, 3, 2, 1.5, 1, vm.units.power.factor].map(function(d) {return (d * vm.units.power.factor)});
+      return [250, 200, 150, 125, 100, 75, 60, 50, 40, 30, 25, 20, 15, 10, 7.5, 5, 3, 2, 1.5, 1].map(function(d) {return (d * vm.units.power.factor)});
   }
 
 
