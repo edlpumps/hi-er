@@ -118,7 +118,8 @@ router.post('/reset/:id', function(req, res) {
 });
 
 router.get('/password', function(req, res) {
-    res.render("registration/password_forgot", {})
+    var email = req.query.email || ""
+    res.render("registration/password_forgot", {email:email})
 });
 
 router.post('/password', function(req, res) {

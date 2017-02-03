@@ -1,0 +1,13 @@
+extends layout
+
+block nav
+    +navigation("participant")
+
+    
+
+block content
+    .container
+       .alert.alert-info 
+         h2 Activation sent
+         p Activation email was sent to #{user.name.first} #{user.name.last} at #{user.email}.  
+         p Please use your browser's back button to return to the participant page.

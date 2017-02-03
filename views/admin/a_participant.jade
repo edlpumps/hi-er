@@ -38,11 +38,28 @@ block content
                   h3 Users 
                   .table-responsive
                      table.table
+                        thead
+                          tr  
+                            th Name
+                            th Email address
+                            th Account state
+                            th Admin Action
+                           
                         tbody
+                          
                          - each user in users
                             tr 
                               td #{user.name.first} #{user.name.last}
                               td #{user.email}
+                              td #{user.needsActivation ? "Requires Activation" : "Active"}
+                              td
+                               if user.needsActivation
+                                 a.btn.btn-warning(href="/admin/sendactivation/#{user._id}", title="Send an automated email containing a link for this user to activate their account") Email activation link
+                                
+                               else 
+                                a.btn.btn-info(href="/password?email=#{user.email}", title="Send an automated email containing a link for this user to reset their password") Email password reset link
+                                
+                               
                 fieldset
                   legend Account administration
                 

@@ -4,6 +4,7 @@ const router = express.Router();
 const units = require('../utils/uom');
 const request = require('request');
 const common = require('./common');
+var mailer = require('../utils/mailer');
 module.exports = router;
 
 // All resources served from here are restricted to administrators.
@@ -237,6 +238,7 @@ router.post('/participant/:id/pumps/:pump_id', function(req, res) {
     
 });
 
+
 router.post("/participant/:id", function(req, res) {
     req.log.debug("Saving participant info administrative portal");
     req.Participants.findById(req.params.id, function(err, participant){
@@ -265,6 +267,15 @@ router.post("/participant/:id", function(req, res) {
         }
         
     })
+})
+
+router.get("/sendactivation/:id", function(req, res){
+    req.Users.findOne({_id: req.params.id}, function(err, user){
+        mailer.sendAuthenticationEmail(req.base_url, user, req.user);
+        res.render("admin/activation_sent", {
+                user : req.user
+            });
+    });
 })
 
 router.post("/api/labels/", function(req, res) {
