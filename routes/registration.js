@@ -94,7 +94,8 @@ router.post('/reset/:id', function(req, res) {
                 res.render("registration/reset", {})
             }
             else {
-                req.Users.findOne({email:reset.email}, function(err, user) {
+                var regex = new RegExp("^" + reset.email + "$", "i");
+                req.Users.findOne({email:regex}, function(err, user) {
                     if ( err || !user ) {
                         req.flash("message", "The passwords you entered do not match.");
                         res.render("registration/reset", {})
@@ -129,7 +130,8 @@ router.post('/password', function(req, res) {
         res.redirect("/password");
         return;
     }
-    req.Users.findOne({email:email}, function(err, user) {
+    var regex = new RegExp("^" + email + "$", "i");
+    req.Users.findOne({email:regex}, function(err, user) {
         if ( err ) {
             req.flash("errorTitle", "Internal application error");
             req.flash("errorMessage", "Database lookup (activation) failed.");
@@ -301,7 +303,8 @@ var check_similar_orgs = function(req, user, participant, callback) {
         });
 
         var user_exists = false;
-        req.app.locals.db.Users.find({email: user.email}, function(err, users){
+        var regex = new RegExp("^" + user.email + "$", "i");
+        req.app.locals.db.Users.find({email: regex}, function(err, users){
             if ( users && users.length > 0) {
                 user_exists = true;
             }
@@ -378,7 +381,7 @@ router.post("/registration_confirm", function(req, res) {
             var newUser = new db.Users(user);
             var pswd = require("../utils/password");
             var secured = pswd.saltHashPassword(user.password);
-            newUser.email = newUser.email.toLowerCase();
+            newUser.email = newUser.email;
             newUser.password = secured.hash;
             newUser.salt = secured.salt;
             newUser.participant = saved._id;

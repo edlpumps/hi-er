@@ -55,7 +55,7 @@ exports.addUser = function(req, res) {
     var uuid = require('uuid');
     var user = new req.Users();
     user.name = req.body.user.name;
-    user.email = req.body.user.email.toLowerCase();
+    user.email = req.body.user.email;
     user.participant = req.participant ? req.participant._id : undefined;
     user.needsActivation = true;
     user.admin = req.user.admin;
@@ -76,8 +76,8 @@ exports.addUser = function(req, res) {
         res.status(400).send("User must have valid email address");
         return;
     }
-
-    req.Users.find({email: user.email}, function(err, users){
+    var regex = new RegExp("^" + user.email + "$", "i");
+    req.Users.find({email: regex}, function(err, users){
         if ( users && users.length > 0) {
             res.status(400).send("User already exists");
             return;
@@ -103,7 +103,8 @@ exports.saveUser = function(req, res) {
         return;
     }
     var user = req.body.user;
-    req.Users.update({email: user.email}, 
+    var regex = new RegExp("^" + user.email + "$", "i");
+    req.Users.update({email: regex}, 
         {$set : {name : user.name, participant_admin:user.participant_admin, participant_edit:user.participant_edit}},
         function(err, users){
             if ( err) {

@@ -92,7 +92,9 @@ passport.use(new Strategy (
         passReqToCallback : true 
     },  
     function (req, email, password, done) {
-        app.locals.db.Users.findOne({email:email}, function(err, user) {
+        var regex = new RegExp("^" + email + "$", "i");
+        console.log(regex);
+        app.locals.db.Users.findOne({email:regex}, function(err, user) {
             if ( err ) {
                 mainlog.info("Authentication of " + email + " failed (error)");
                 mainlog.error(err);
