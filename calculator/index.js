@@ -663,22 +663,22 @@ var check_measured_inputs = function(pump, missing) {
        target:  targets.flow_25,
        value : pump.measured_control_flow_input.bep25, 
        message : pump.section == "6a" || pump.section=="6" ? 
-                 "Measured flow must be within 10% of calculated target" :
-                 "Measured flow must be within 10% of calculated target"
+                 "Measured flow @25% must be within 10% of calculated target" :
+                 "Measured flow @25% must be within 10% of calculated target"
     });
     checks.push ({
        target:  targets.flow_50,
        value : pump.measured_control_flow_input.bep50, 
        message : pump.section == "6a" || pump.section=="6" ? 
-                 "Measured flow must be within 10% of calculated target" :
-                 "Measured flow must be within 10% of calculated target"
+                 "Measured flow @50% must be within 10% of calculated target" :
+                 "Measured flow @50% must be within 10% of calculated target"
     });
     checks.push ({
        target:  targets.flow_75,
        value : pump.measured_control_flow_input.bep75, 
        message : pump.section == "6a" || pump.section=="6" ? 
-                 "Measured flow must be within 10% of calculated target" :
-                 "Measured flow must be within 10% of calculated target"
+                 "Measured flow @75% must be within 10% of calculated target" :
+                 "Measured flow @75% must be within 10% of calculated target"
     });
 
     //////////////////////////////////////////
@@ -686,22 +686,22 @@ var check_measured_inputs = function(pump, missing) {
        target:  targets.head_25,
        value : pump.measured_control_head_input.bep25, 
        message : pump.section == "6a" || pump.section=="6" ? 
-                 "Measured head must be within 10% of calculated target" :
-                 "Measured head cannot be more than 10% below calculated target"
+                 "Measured head @25% must be within 10% of calculated target" :
+                 "Measured head @25% cannot be more than 10% below calculated target"
     });
     checks.push ({
        target:  targets.head_50,
        value : pump.measured_control_head_input.bep50, 
        message : pump.section == "6a" || pump.section=="6" ? 
-                 "Measured head must be within 10% of calculated target" :
-                 "Measured head cannot be more than 10% below calculated target"
+                 "Measured head @50% must be within 10% of calculated target" :
+                 "Measured head @50% cannot be more than 10% below calculated target"
     });
     checks.push ({
        target:  targets.head_75,
        value : pump.measured_control_head_input.bep75, 
        message : pump.section == "6a" || pump.section=="6" ? 
-                 "Measured head must be within 10% of calculated target" :
-                 "Measured head cannot be more than 10% below calculated target"
+                 "Measured head @75% must be within 10% of calculated target" :
+                 "Measured head @75% cannot be more than 10% below calculated target"
     });
 
    

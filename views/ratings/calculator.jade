@@ -590,4 +590,6 @@ mixin calculator(er, mode)
                       
                   a(href="#" ng-click="app.go2Configuration(true)", style="margin-left:10px;") Start over
                
-            
+        .panel-footer(ng-show="app.disclaimer_visible()")
+          p This calculator tool is designed to perform the calculations necessary to determine the Pump Energy Index (PEI) as outlined in Sections III – VII of Appendix A to Subpart Y of 10 CFR 431.  This calculator is not “approved” by the U.S. Department of Energy and users of this calculator should consult the appropriate section of Appendix A to ensure compliance.  In an attempt to assist the pump manufacturing industry, the Hydraulic Institute (“HI”) offers this calculator in a good-faith effort.  Those who rely on this material do so at their own risk.  This material is based upon information that HI believes is correct, but may contain technical inaccuracies or other errors.  Neither HI nor Intelliquip LLC, makes any representation or warranty as to the suitability of the information provided or the validity of any conclusions drawn, or decisions made, on the basis of this material.  Decisions based upon this material are the exclusive responsibility of the user.  HI and Intelliquip LLC assume no responsibility for any direct, indirect, special, incidental or consequential damages arising from reliance on this material.  This PEI calculator is not an Alternative Efficiency Determination Method (AEDM) and cannot be used to simulate or estimate the efficiency of a pump.
+        

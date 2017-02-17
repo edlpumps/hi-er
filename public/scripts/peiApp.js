@@ -230,7 +230,9 @@ var PEIController = function($scope, $location, $window, service) {
       vm.step = "data";
   }
 
-  
+  vm.disclaimer_visible = function() {
+      return vm.mode == "calculator" && (vm.step == "configuration" || vm.step == "results");
+  }
   vm.measured_visible = function() {
       if (!vm.pump) return false;
       if (vm.pump.section =='6a' || vm.pump.section=='6b') {
@@ -341,6 +343,21 @@ var PEIController = function($scope, $location, $window, service) {
       $("input[name='pump[flow][bep100]']").val(flow100);
       $("input[name='pump[flow][bep110]']").val(flow110);
 
+      // Ensure values that aren't relevant are removed.
+      if (vm.pump.doe.value != "ST" && vm.pump.doe.value != "RSV") {
+          vm.pump.stages = 1;
+      }
+      if (!vm.show_motor_regulated()) {
+          vm.pump.motor_regulated = undefined;
+      }
+      if ( !vm.show_motor_power()) {
+          vm.pump.motor_power_rated = undefined;
+      }
+      if ( !vm.show_motor_efficiency()) {
+        vm.pump.motor_efficiency = undefined;
+      }
+
+ 
      vm.pump.unit_set = vm.units.active;
      service.calculate(vm.pump).then(function(result) {
             vm.step = "results";
