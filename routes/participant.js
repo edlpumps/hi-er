@@ -225,10 +225,15 @@ router.post("/pumps/new", function(req, res){
 });
 
 router.get("/pumps/upload", function(req, res){
+    const template = require('./template_map.json');
     req.log.debug("Rendering participant pump upload");
     res.render("participant/upload", {
         user : req.user,
-        participant : req.participant
+        participant : req.participant, 
+        template : {
+            version : template.config.version,
+            revision_date : template.config.revision_date
+        }
     });
 })
 

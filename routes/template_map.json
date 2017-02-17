@@ -2,7 +2,9 @@
     "config" : {
         "unit_row" : 4,
         "first_row" : 5, 
-        "filename": "er_pump_listings.xlsx"
+        "filename": "er_pump_listings.xlsx", 
+        "version" : "1.0",
+        "revision_date": "2/1/2017"
     },
 
     "mappings" : {
