@@ -378,6 +378,7 @@ router.post("/registration_confirm", function(req, res) {
             var newUser = new db.Users(user);
             var pswd = require("../utils/password");
             var secured = pswd.saltHashPassword(user.password);
+            newUser.email = newUser.email.toLowerCase();
             newUser.password = secured.hash;
             newUser.salt = secured.salt;
             newUser.participant = saved._id;
