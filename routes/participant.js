@@ -173,25 +173,7 @@ router.get("/pumps/new", function(req, res){
 
     
     pump.configuration = {value:"bare"};
-    pump.basic_model = "PRE.SET.00";
-    pump.individual_model = "123-456-89";
-    pump.brand = "Brand X";
-    pump.doe = {value:"RSV"};
-    pump.flow = {
-            "bep75": 262.3,//72881355932,
-            "bep100": 349.8,//30508474576,
-            "bep110": 384.8,//13559322034
-    }
-    pump.head = {
-       "bep75":498.8,//91123240448, 
-       "bep100":424.4,//29761562769,
-       "bep110":383.4//76012640046
-    }
-    pump.driver_input_power ={
-            "bep75":52.8,//12, 
-            "bep100":55.2,//03,
-            "bep110":55.6,//20
-          }
+    
 
     var help = require("../public/resources/help.json");
     res.render("participant/new_pump", {

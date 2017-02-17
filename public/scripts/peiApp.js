@@ -306,29 +306,6 @@ var PEIController = function($scope, $location, $window, service) {
       }
 
       vm.pump.load120 = true; 
-      vm.pump.doe = {value:"RSV"};
-      vm.pump.flow = {
-        "bep75": 262.3,//72881355932,
-        "bep100": 349.8,//30508474576,
-        "bep110": 384.8,//13559322034
-      }
-      vm.pump.head = {
-        "bep75":498.8,//91123240448, 
-        "bep100":424.4,//29761562769,
-        "bep110":383.4//76012640046
-      }
-      vm.pump.driver_input_power ={
-        "bep75":52.8,//12, 
-        "bep100":55.2,//03,
-        "bep110":55.6//20
-      }
-      vm.pump.pump_input_power ={
-        "bep75":49.2,//013, 
-        "bep100":51.4,//1435215,
-        "bep110":51.8,//084,
-        "bep120":53.0//0
-      }
-
       vm.standalone = !er;
       vm.mode = mode;
       vm.pump.pei_method = mode;
