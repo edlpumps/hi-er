@@ -1,4 +1,9 @@
 mixin pump_page_info(pump)
+    unless pump.listed
+      .row
+        .col.col-xs-12
+         .alert.alert-danger
+          p This pump is no longer commercially available.
     .row 
         .form-group
             .col.col-xs-5

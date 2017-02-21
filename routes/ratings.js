@@ -12,8 +12,9 @@ router.get("/glossary", function(req, res) {
 });
 
 
-var default_search_operators = function (search_parameters) {
+var default_search_operators = function (search_parameters, allow_inactive) {
     var search = search_parameters || {};
+    var inactive_allowed = allow_inactive || false;
     var operators = [];
     operators.push({"$unwind" : "$pumps"});
     
@@ -38,12 +39,12 @@ var default_search_operators = function (search_parameters) {
         energy_rating : {$first: "$pumps.energy_rating"},
         energy_savings : {$first: "$pumps.energy_savings"},
         listed : {$first: "$pumps.listed"},
+        pending : {$first: { $ifNull: [ "$pumps.pending", false ] }},
         active_admin : {$first: "$pumps.active_admin"}, 
      } 
     });
-    operators.push(
-        { $match : {
-            $and : [
+
+    var criteria = [
                 {doe : {$ne: null}},
                 {rating_id: {$ne:null}},
                 {participant: {$ne:null}},
@@ -59,9 +60,16 @@ var default_search_operators = function (search_parameters) {
                 {pei: {$ne:null}},
                 {energy_rating: {$ne:null}},
                 {energy_savings: {$ne:null}},
-                {listed: {$eq:true}},
                 {active_admin: {$eq:true}}, 
-            ]
+                {pending: {$eq:false}}
+            ];
+    if (!inactive_allowed) {
+        criteria.push({listed: {$eq:true}});
+    }
+
+    operators.push(
+        { $match : {
+            $and : criteria
         }}
     );
     if ( search.rating_id) {
@@ -117,7 +125,7 @@ var default_search_operators = function (search_parameters) {
     return operators;
 }
 router.get('/search', function(req, res) {
-    var operators = default_search_operators();
+    var operators = default_search_operators(undefined, true);
     var search_params = req.session.search;
     if (!search_params ) {
         search_params = {};
@@ -156,7 +164,7 @@ router.get('/home', function(req, res) {
 });
 
 router.get('/utilities', function(req, res) {
-    var operators = default_search_operators();
+    var operators = default_search_operators(undefined, false);
     var search_params = req.session.search;
     if (!search_params ) {
         search_params = {};
@@ -188,9 +196,9 @@ router.get("/:id", function(req, res) {
         if ( !err && participant ) {
 
             var pump = participant.pumps.filter(p => p.rating_id == req.params.id)[0];
-            if (!pump || !participant.active || !pump.listed || !pump.active_admin || participant.subscription.status != 'Active') {
+            if (!pump || !participant.active || pump.pending || !pump.active_admin || participant.subscription.status != 'Active') {
                 req.flash("errorTitle", "Not Available");
-                req.flash("errorMessage", "This pump is no longer listed in the Hydraulic Institute Energy Ratings Program");
+                req.flash("errorMessage", "No pump corresponding to this ID is listed in the Hydraulic Institute Energy Ratings Program");
                 res.redirect("/error");
                 return;
             }
@@ -228,7 +236,7 @@ router.post("/count", function(req, res) {
         min_er : req.session.search.min_er
     }
 
-    var operators = default_search_operators(search_params);
+    var operators = default_search_operators(search_params, false);
     req.Participants.aggregate(operators).exec(function(err, docs) {
         res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify({ pumps: docs.length}));
@@ -256,7 +264,7 @@ router.post("/search", function(req, res) {
 
     }
     
-    var operators = default_search_operators(search_params);
+    var operators = default_search_operators(search_params, true);
     req.Participants.aggregate(operators).exec(function(err, docs) {
         res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify({ pumps: docs}));
