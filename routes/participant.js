@@ -252,6 +252,7 @@ router.post("/pumps/save_upload", function(req, res) {
     pumps.forEach(function(pump) {
         saves.push(function(done) {
             pump.date = new Date();
+            pump.pending = !list_now;
             pump.listed = list_now;
             var toSave = req.participant.pumps.create(pump);
             req.nextRatingsId(function(err, doc) {
@@ -534,7 +535,7 @@ router.post("/pumps/submit", function(req, res){
 
 router.post('/pumps/:id', function(req, res) {
     if ( !req.user.participant_edit) {
-        req.log.info("Delete pump attempted by unauthorized user");
+        req.log.info("Save pump attempted by unauthorized user");
         req.log.info(req.user);
         res.redirect("/unauthorized");
         return;
@@ -548,13 +549,7 @@ router.post('/pumps/:id', function(req, res) {
         if ( err ) {
             req.log.error(err);
         }
-        res.render("participant/p_pump", {
-            user : req.user,
-            participant : req.participant, 
-            pump : pump, 
-            pump_drawing : pump.doe? pump.doe.toLowerCase() +  ".png" : ""   , 
-            section_label : common.section_label
-        });
+        res.redirect("/participant/pumps");
     })
     
 });

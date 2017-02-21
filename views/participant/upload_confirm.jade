@@ -39,8 +39,8 @@ block content
             button.btn.btn-primary(type="submit") Add pumps
             .checkbox
               label  
-               input(type="checkbox", name="list_pumps", checked) 
-               .text-info List pumps when added.  If left unchecked, pumps will be added, but won't be publically listed until you activate them individually.
+               input(type="checkbox", name="list_pumps") 
+               .text-info List pumps when added.  If left unchecked, pumps will be added, but they will be in the "pending" state until you activate them individually.  Pending pumps are not seen by the public users.
             input(type="hidden", name="pumps", value="#{JSON.stringify(succeeded)}")
             
       if failed && failed.length > 0

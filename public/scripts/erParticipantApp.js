@@ -121,6 +121,11 @@ var ERParticipantController = function($scope, $location, service) {
   vm.base_url = make_base_url($location);
   vm.settings_readonly = true;
 
+
+  vm.confirm_pending = function() {
+    console.log(vm.pump.pending);
+  }
+
   vm.refreshUsers = function(callback) {
       service.getUsers().then(function(results) {
         vm.users = results.users;

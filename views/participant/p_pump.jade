@@ -6,6 +6,20 @@ block nav
 
 block content
  div.ng-cloak(ng-app='ERParticipantApp')
+    .modal.fade#activate(tabindex='-1', role='dialog' aria-labelledby='titleLabel', aria-hidden='true')
+        .modal-dialog
+          .modal-content
+            .modal-header
+              button(type='button', class='close' data-dismiss='modal' aria-hidden='hidden') &times;
+              h4.modal-title Are you sure?
+            .modal-body
+              p.text-warning Are you sure you want to activate this pump?  
+              p Once you activate the pump for the first time, it is considered published.  While you can always file a revision to the pump (which is visible to the public), after the pump is published it can no longer be deleted.  It will appear in public search listings, and be accessible to anyone with the it's rating identification or QR code.
+            .modal-footer
+              div
+                button.btn.btn-danger(type="button", data-dismiss='modal', onclick="$('#pending_update_confirmed').val(true); $('#pump_form').submit()") Yes
+                button.btn.btn-default(type='button' data-dismiss='modal') Nevermind
+
     .container(ng-controller="ERParticipantController as app",ng-init="app.user= #{JSON.stringify(user)}; app.participant= #{JSON.stringify(participant)}")
 
       .panel.panel-default
@@ -114,14 +128,34 @@ block content
         .panel-heading
           h2 Administrative controls
         .panel-body
-         form(action="/participant/pumps/#{pump._id}", method="post")
+         form(action="/participant/pumps/#{pump._id}", id="pump_form", method="post")
+          input(type="hidden", id="pending_status", name="pending", value="#{pump.pending}")
+          input(type="hidden", id="pending_update_confirmed", name="pending_update_confirmed")
+          script.
+            $("#pump_form").submit(function() {
+                var initial = $("#pending_status").val()  === 'true';
+                var current = $("#listed").is(':checked');
+                var confirmed = $("#pending_update_confirmed").val()  === 'true';
+                
+                if ( initial == true && current == true) {
+                  if ( confirmed) {
+                    return true;
+                  }
+                  else {
+                    $('#activate').modal('show');
+                    return false;
+                  }
+                }
+                return true;
+            });
           .row
            .col.col-xs-12
             
               .form-group
                 - var text = pump.pending ? "Pending" : "Disabled"
+                - var checked = pump.listed ? "on" : undefined;
                 label(style="margin-right:10px") Pump listing status:  
-                input.switchBox(type="checkbox", name="listed", checked=(pump.listed), data-on-text="Active", data-off-text=text)
+                input.switchBox(type="checkbox", name="listed", id="listed", checked=(checked), data-on-text="Active", data-off-text=text)
                 .help-block Pending pump are not yet visible to the public.  Disabled pumps listings continue to appear in public listings, however a note will be displayed to the viewer explaining that the pump is no longer commercially available.  Disabled pumps do not count towards your subscription limit.
 
           .row

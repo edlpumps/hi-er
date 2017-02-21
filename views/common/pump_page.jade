@@ -1,9 +1,14 @@
 mixin pump_page_info(pump)
-    unless pump.listed
+    unless pump.listed || pump.pending
       .row
         .col.col-xs-12
          .alert.alert-danger
           p This pump is no longer commercially available.
+    if pump.pending
+      .row
+        .col.col-xs-12
+         .alert.alert-warning
+          p This pump has not been published yet.  You must activate the pump before it will be visible to the public.
     .row 
         .form-group
             .col.col-xs-5
