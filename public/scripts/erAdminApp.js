@@ -235,6 +235,13 @@ var ERAdminController = function($scope, $location, service) {
      })
   }
 
+  vm.listed = function(participant) {
+    if ( participant && participant.pumps) {
+      return participant.pumps.filter(function(p){return p.listed;}).length;
+    }
+    return 0;
+  }
+
   vm.save_labels = function() {
     service.saveLabels(vm.labels).then(function(result) {
         vm.labels_changed = false;

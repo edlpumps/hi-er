@@ -31,6 +31,6 @@ block content
                                   span(ng-show="participant.subscription.status == 'Active' && participant.subscription.pumps") Up to {{participant.subscription.pumps + " Listings"}}
                                   span(ng-show="participant.subscription.status == 'Active' && participant.subscription.pumps == 'U'") Unlimited listings
                                 td 
-                                  a(href="/admin/participant/{{participant._id}}/pumps") View {{participant.pumps ? participant.pumps.length : 0}} listings
+                                  a(href="/admin/participant/{{participant._id}}/pumps") View {{ app.listed(participant) }} listings
                                 
      

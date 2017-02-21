@@ -133,7 +133,7 @@ block content
                        | ).
                     div(ng-show="app.participant.subscription.status == 'Active'")
                         h4 
-                         | {{app.participant.pumps ? app.participant.pumps.length : 0}} 
+                         | {{app.listed()}} 
                          span(ng-show="app.participant.subscription.pumps != 'U'") of {{app.participant.subscription.pumps}} available pump listings are being used.
                          span(ng-hide="app.participant.subscription.pumps != 'U'") pumps listed (Unlimited pumps allowed).
                         p 

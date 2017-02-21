@@ -123,7 +123,7 @@ var ERParticipantController = function($scope, $location, service) {
 
 
   vm.confirm_pending = function() {
-    console.log(vm.pump.pending);
+    
   }
 
   vm.refreshUsers = function(callback) {
@@ -152,6 +152,13 @@ var ERParticipantController = function($scope, $location, service) {
       });
   }
   
+
+  vm.listed = function() {
+    if ( vm.participant && vm.participant.pumps) {
+      return vm.participant.pumps.filter(function(p){return p.listed;}).length;
+    }
+    return 0;
+  }
 
   vm.refreshPumps = function(callback) {
       service.getPumps().then(function(results) {

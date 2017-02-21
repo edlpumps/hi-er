@@ -31,19 +31,20 @@ block content
             if subscription_limit
               .col.col-xs-12
                .alert.alert-warning You have reached the maximum number of pump listings your account subscription allows.  If you delete pumps, please refresh your browser to begin adding pumps.
-            else if subscription_missing
+            if subscription_missing
               .col.col-xs-12
                .alert.alert-warning Your account is not active, you may not list pumps at this time.
             else 
               .col.col-xs-12
-               .btn-group
-                button(type="button", data-toggle="dropdown").btn.btn-primary.dropdown-toggle 
-                  .glyphicon.glyphicon-plus 
-                  span.btn-space New Pump 
-                  span.btn-space.caret
-                us.dropdown-menu
-                  li: a(href="pumps/new") Create new pump listing using web form
-                  li: a(href="pumps/upload") Upload new pump(s) with template
+               unless subscription_limit
+                .btn-group
+                  button(type="button", data-toggle="dropdown").btn.btn-primary.dropdown-toggle 
+                    .glyphicon.glyphicon-plus 
+                    span.btn-space New Pump 
+                    span.btn-space.caret
+                  us.dropdown-menu
+                      li: a(href="pumps/new") Create new pump listing using web form
+                      li: a(href="pumps/upload") Upload new pump(s) with template
                a.btn.btn-default.btn-space(href="/participant/pumps/download") Download pumps
           .row.solo
            .col.col-xs-12

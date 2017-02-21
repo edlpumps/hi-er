@@ -141,11 +141,14 @@ router.get('/labs', function(req, res) {
 
 router.get('/pumps', function(req, res) {
     req.log.debug("Rendering participant portal (pumps)");
+
+    var published = req.participant.pumps.filter(p => p.listed);
+
     res.render("participant/p_pumps", {
         user : req.user,
         participant : req.participant, 
         section_label :common.section_label, 
-        subscription_limit :req.participant.pumps.length >= req.participant.subscription.pumps,
+        subscription_limit :published.length >= req.participant.subscription.pumps,
         subscription_missing :req.participant.subscription.status != 'Active'
     });
 });
@@ -159,7 +162,8 @@ router.get("/pumps/new", function(req, res){
         res.redirect("/unauthorized");
         return;
     }
-    if ( req.participant.pumps.length >= req.participant.subscription.pumps){
+    var published = req.participant.pumps.filter(p => p.listed);
+    if ( published.length >= req.participant.subscription.pumps){
         req.flash("errorTitle", "Subscription limit");
         req.flash("errorMessage", "You cannot list additional pumps until you've updated your subscription level.");
         res.redirect("/error");
@@ -251,13 +255,17 @@ router.post("/pumps/save_upload", function(req, res) {
 
     pumps.forEach(function(pump) {
         saves.push(function(done) {
+            var published = req.participant.pumps.filter(p=>p.listed);
+            if (published.length >= req.participant.subscription.pumps) {
+                list_now = false;
+            }
             pump.date = new Date();
             pump.pending = !list_now;
             pump.listed = list_now;
             var toSave = req.participant.pumps.create(pump);
+            req.participant.pumps.push(toSave);
             req.nextRatingsId(function(err, doc) {
                 toSave.rating_id = hashids.encode(doc.value.seq);
-                req.participant.pumps.push(toSave);
                 req.log.info(toSave.rating_id + " saved, " + req.participant.pumps.length + " pumps in participant listings");
                 done();
             });
@@ -408,12 +416,6 @@ router.post("/pumps/upload", get_labels, function(req, res) {
                         if (!pump.results.reasons) pump.results.reasons = [];
                         pump.results.reasons.push("This pump cannot be listed because there are already pump(s) listed under this basic model (" + pump.basic_model + ") with a conflicting Energy Rating value")
                     }
-                    if ( pump.results.success && pumps_succeeded.length + req.participant.pumps.length >= req.participant.subscription.pumps) {
-                        pump.results.success = false;
-                        if (!pump.results.reasons) pump.results.reasons = [];
-                        pump.results.reasons.push("This pump has been accurately entered, however you have reached the listing limit on your account.  Please contact the HI Program Manager to upgrade your subscription.");
-                    }
-
                     if ( pump.results.success ){
                         pumps_succeeded.push(pump);
                     }
@@ -465,9 +467,10 @@ router.get('/pumps/:id', function(req, res) {
     ]).exec(function(err, label) {
         var qr_svg = svg_builder.make_qr(req, req.participant, pump, label);
         var label_svg = svg_builder.make_label(req, req.participant, pump, label);
-
+        var published = req.participant.pumps.filter(p => p.listed);
         res.render("participant/p_pump", {
             user : req.user,
+            subscription_limit :published.length >= req.participant.subscription.pumps,
             participant : req.participant, 
             pump : pump, 
             pump_drawing : pump.doe? pump.doe.toLowerCase() +  ".png" : ""   , 

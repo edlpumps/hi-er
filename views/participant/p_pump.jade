@@ -150,10 +150,14 @@ block content
             });
           .row
            .col.col-xs-12
-            
-              .form-group
+              if subscription_limit && !pump.listed
+                .alert.alert-warning
+                 p This pump cannot be listed, you've reached the maximum number of pumps listed for your account.
+              else 
+               .form-group
                 - var text = pump.pending ? "Pending" : "Disabled"
                 - var checked = pump.listed ? "on" : undefined;
+                
                 label(style="margin-right:10px") Pump listing status:  
                 input.switchBox(type="checkbox", name="listed", id="listed", checked=(checked), data-on-text="Active", data-off-text=text)
                 .help-block Pending pump are not yet visible to the public.  Disabled pumps listings continue to appear in public listings, however a note will be displayed to the viewer explaining that the pump is no longer commercially available.  Disabled pumps do not count towards your subscription limit.
