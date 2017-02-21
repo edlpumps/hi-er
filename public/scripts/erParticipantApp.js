@@ -122,9 +122,7 @@ var ERParticipantController = function($scope, $location, service) {
   vm.settings_readonly = true;
 
 
-  vm.confirm_pending = function() {
-    
-  }
+  
 
   vm.refreshUsers = function(callback) {
       service.getUsers().then(function(results) {
