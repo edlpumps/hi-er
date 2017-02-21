@@ -67,7 +67,8 @@ block content
                 tbody
                  tr(ng-repeat="pump in app.participant.pumps")
                   td
-                    img(height="25" width="25" ng-src="/images/{{pump.listed && pump.active_admin ? 'active' : 'inactive'}}.png")
+                    img(ng-show="pump.pending", height="25" width="25" ng-src="/images/pending.png")
+                    img(ng-hide="pump.pending", height="25" width="25" ng-src="/images/{{pump.listed && pump.active_admin && !pump.pending ? 'active' : 'inactive'}}.png")
                   td {{pump.rating_id}}
                   td.hidden-xs {{pump.date | date:'mediumDate'}}
                   td.hidden-xs: a(href="pumps/{{pump._id}}") {{pump.basic_model}}
@@ -81,5 +82,5 @@ block content
                   td {{pump.energy_rating}} 
                   
                   td(ng-show='app.user.participant_edit') 
-                     button(type="button", ng-click="app.confirmDeletePump(pump)").btn.btn-danger.btn-xs Delete
+                     button(ng-show="pump.pending", type="button", ng-click="app.confirmDeletePump(pump)").btn.btn-danger.btn-xs Delete
 

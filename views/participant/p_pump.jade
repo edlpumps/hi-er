@@ -119,9 +119,10 @@ block content
            .col.col-xs-12
             
               .form-group
+                - var text = pump.pending ? "Pending" : "Disabled"
                 label(style="margin-right:10px") Pump listing status:  
-                input.switchBox(type="checkbox", name="listed", checked=(pump.listed), data-on-text="Active", data-off-text="Disabled")
-                .help-block Disabled pumps listings are removed from the public energy rating registry, but can be re-activated at any time.
+                input.switchBox(type="checkbox", name="listed", checked=(pump.listed), data-on-text="Active", data-off-text=text)
+                .help-block Pending pump are not yet visible to the public.  Disabled pumps listings continue to appear in public listings, however a note will be displayed to the viewer explaining that the pump is no longer commercially available.  Disabled pumps do not count towards your subscription limit.
 
           .row
            .col.col-xs-12

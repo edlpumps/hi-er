@@ -30,7 +30,7 @@ block content
                  each pump in pumps
                   tr
                    td
-                    img(height="25" width="25" ng-src="/images/#{pump.listed && pump.active_admin ? 'active' : 'inactive'}.png")
+                    img(height="25" width="25" ng-src="/images/#{pump.listed && pump.active_admin && !pump.pending ? 'active' : 'inactive'}.png")
                    td #{pump.rating_id}
                    td.hidden-xs #{pump.date ? moment(pump.date).format("ll") : ' '}
                    td: a(href="pumps/#{pump._id}") #{pump.basic_model}

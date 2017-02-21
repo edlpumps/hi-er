@@ -523,6 +523,7 @@ router.post("/pumps/submit", function(req, res){
     pump.date = new Date();
     
     var toSave = req.participant.pumps.create(pump);
+    toSave.pending = !toSave.listed;
     req.participant.pumps.push(toSave);
     req.participant.save(function(err) {
         res.redirect("/participant/pumps");
@@ -541,6 +542,7 @@ router.post('/pumps/:id', function(req, res) {
     var pump = req.participant.pumps.id(req.params.id);
     if ( pump ) {
         pump.listed = req.body.listed ? true : false;
+        if (pump.listed) pump.pending = false;
     }
     req.participant.save(function(err){
         if ( err ) {
@@ -594,7 +596,8 @@ router.post("/api/pumps/delete/:id", function(req, res) {
         return;
     }
     var pump = req.participant.pumps.id(req.params.id);
-    if (pump) pump.remove();
+    
+    if (pump && pump.pending) pump.remove();
     req.participant.save(function(err) {
         if ( err ) {
             req.log.debug("Error getting user to delete");
