@@ -262,6 +262,9 @@ router.post("/pumps/save_upload", function(req, res) {
             pump.date = new Date();
             pump.pending = !list_now;
             pump.listed = list_now;
+            // Ignore what's in the spreadsheet - the participant name attached to the pump
+            // must always be the currently logged in participant.
+            pump.participant = req.participant.name;
             var toSave = req.participant.pumps.create(pump);
             req.participant.pumps.push(toSave);
             req.nextRatingsId(function(err, doc) {
