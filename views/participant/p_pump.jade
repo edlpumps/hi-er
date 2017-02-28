@@ -152,7 +152,13 @@ block content
            .col.col-xs-12
               if subscription_limit && !pump.listed
                 .alert.alert-warning
-                 p This pump cannot be listed, you've reached the maximum number of pumps listed for your account.
+                 p This pump cannot be activated, you've reached the maximum number of pumps listed for your account.
+              else if !pump.listed && can_activate.individual_collide
+                .alert.alert-warning
+                 p This pump cannot be activated, there is already an active pump with the same individual model number. 
+              else if !pump.listed && can_activate.basic_collide
+                .alert.alert-warning
+                 p This pump cannot be activated, there is already an active pump with the same basic model number which has a different Energy Rating. 
               else 
                .form-group
                 - var text = pump.pending ? "Pending" : "Inactive"

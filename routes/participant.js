@@ -475,6 +475,7 @@ router.get('/pumps/:id', function(req, res) {
             pump : pump, 
             pump_drawing : pump.doe? pump.doe.toLowerCase() +  ".png" : ""   , 
             section_label : common.section_label, 
+            can_activate : model_check(pump, req.participant.pumps, req.participant),
             label_svg : label_svg, 
             qr_svg : qr_svg
         });
@@ -546,6 +547,10 @@ router.post('/pumps/:id', function(req, res) {
     var pump = req.participant.pumps.id(req.params.id);
     if ( pump ) {
         pump.listed = req.body.listed ? true : false;
+        var check = model_check(pump, req.participant.pumps, req.participant) ;
+        if ( req.body.listed && !check.ok) {
+            pump.listed = false;
+        } 
         if (pump.listed) pump.pending = false;
     }
     req.participant.save(function(err){
@@ -565,7 +570,10 @@ var model_check = function(pump, pumps, participant) {
     }
 
     // Cannot share an individual model number with another active pump.
-    var inds = pumps.filter(p=>p.individual_model == pump.individual_model && p.listed);
+    var inds = pumps.filter(
+        p=>p.individual_model == pump.individual_model && 
+        p.listed && 
+        p.rating_id != pump.rating_id);
     if ( inds.length > 0 ) {
         return {individual_collide:true, ok : false};
     }
@@ -574,7 +582,8 @@ var model_check = function(pump, pumps, participant) {
     var bs = participant.pumps.filter(
             p=>p.basic_model == pump.basic_model && 
             p.listed && 
-            p.energy_rating != pump.energy_rating);
+            p.energy_rating != pump.energy_rating && 
+            p.rating_id != pump.rating_id);
     if (bs.length > 0 ) {
         return {basic_collide:true, ok : false};
     }
