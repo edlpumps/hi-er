@@ -19,6 +19,7 @@ block content
                   th Rating ID
                   th.hidden-xs Date Listed
                   th Basic Model Designation
+                  th Individual Model Designation
                   th.hidden-xs Configuration
                   th.hidden-xs DOE Pump Category
                   th.hidden-xs.hidden-sm Impeller (#{units.diameter.label})
@@ -34,6 +35,7 @@ block content
                    td #{pump.rating_id}
                    td.hidden-xs #{pump.date ? moment(pump.date).format("ll") : ' '}
                    td: a(href="pumps/#{pump._id}") #{pump.basic_model}
+                   td #{pump.individual_model}
                    td.hidden-xs #{getConfigLabel(pump.configuration)}
                    td.hidden-xs #{pump.doe}
                    td.hidden-xs.hidden-sm #{(pump.diameter *units.diameter.factor).toFixed(3)}

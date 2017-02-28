@@ -26,15 +26,15 @@ block content
                .col.col-sm-6
                  input.form-control(ng-model="app.search.basic_model", type="text")
              .form-group
-               label.col-sm-3.control-label Brand
-               .col.col-sm-6
-                 select.form-control(ng-model="app.search.brand", ng-options="p for p in app.brands")
-             .form-group
                label.col-sm-3.control-label Participating Organization
                .col.col-sm-6
                  select.form-control(ng-model="app.search.participant", ng-options="p for p in app.participants", ng-change="app.getBrands()")
                   option(value="")
-             .form-group()
+             .form-group(ng-show="app.search.participant && app.brands.length")
+               label.col-sm-3.control-label Brand
+               .col.col-sm-6
+                 select.form-control(ng-model="app.search.brand", ng-options="p for p in app.brands")
+             .form-group
               label.col-sm-3.control-label 
                
               .col.col-sm-5
