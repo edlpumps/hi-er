@@ -551,16 +551,16 @@ mixin calculator(er, mode)
                 p.er_display {{app.pump.energy_rating}}
             .row(ng-show="app.basic_collide")
               .col.col-xs-12
-                .alert.alert-danger {{app.basic_collide}}
+                p.text-danger {{app.basic_collide}}
             .row(ng-show="app.individual_collide")
               .col.col-xs-12
-                .alert.alert-danger {{app.individual_collide}}
+                p.text-danger {{app.individual_collide}}
             .row
               .col.col-xs-7
                   button(type="button", ng-click="app.go2Data(true)").btn.btn-default.btn-space Back
-              .col.col-xs-5
-                  button(type="button", ng-hide="app.calc_errors || app.basic_collide || app.individual_collide", ng-click="app.submitListing(false)").btn.btn-default.btn-space Save pump 
-                  button(type="button", ng-hide="app.calc_errors || app.basic_collide || app.individual_collide", ng-click="app.submitListing(true)").btn.btn-danger.btn-space Save and Activate pump
+              .col.col-xs-5(style="text-align:right")
+                  button(type="button", ng-hide="app.calc_errors", ng-click="app.submitListing(false)").btn.btn-default.btn-space Upload pump 
+                  button(type="button", ng-hide="app.calc_errors || app.basic_collide || app.individual_collide", ng-click="app.submitListing(true)").btn.btn-danger.btn-space Upload and Activate pump
             
         else
           .panel-body(ng-show="app.step=='results'")

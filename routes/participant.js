@@ -13,8 +13,6 @@ const _ = require('lodash');
 const async = require('async');
 const request = require('request');
 
-    
-
 // All resources served from here are restricted to participants.
 router.use(function(req, res, next){
     if ( req.user && req.user.participant) {
@@ -255,10 +253,14 @@ router.post("/pumps/save_upload", function(req, res) {
 
     pumps.forEach(function(pump) {
         saves.push(function(done) {
-            var published = req.participant.pumps.filter(p=>p.listed);
-            if (published.length >= req.participant.subscription.pumps) {
+            var check = model_check(pump, req.participant.pumps, req.participant);
+            // list_now could be true, based on user request, but we
+            // may need to override that choice, based on subscription or 
+            // model number collision.
+            if (check ) {
                 list_now = false;
             }
+            var published = req.participant.pumps.filter(p=>p.listed);
             pump.date = new Date();
             pump.pending = !list_now;
             pump.listed = list_now;
@@ -407,17 +409,14 @@ router.post("/pumps/upload", get_labels, function(req, res) {
                         if (!pump.results.reasons) pump.results.reasons = [];
                         pump.results.reasons.push("The laboratory specified for this pump is not one of your organization's active HI Laboratories.")
                     }
-
-                    var mcheck = model_check(pump, req.participant.pumps.concat(pumps_succeeded));
+                    
+                    var mcheck = model_check(pump, req.participant.pumps.concat(pumps_succeeded), req.participant);
+                    if (!mcheck.ok && !pump.pending_reasons ) pump.pending_reasons = [];
                     if ( pump.results.success && mcheck.individual_collide) {
-                        pump.results.success = false;
-                        if (!pump.results.reasons) pump.results.reasons = [];
-                        pump.results.reasons.push("This pump cannot be listed because there is already a pump listed with individual model number " + pump.individual_model)
+                        pump.pending_reasons.push ("This pump cannot be listed because there is already a pump listed with individual model number " + pump.individual_model)
                     }
                     if ( pump.results.success && mcheck.basic_collide) {
-                        pump.results.success = false;
-                        if (!pump.results.reasons) pump.results.reasons = [];
-                        pump.results.reasons.push("This pump cannot be listed because there are already pump(s) listed under this basic model (" + pump.basic_model + ") with a conflicting Energy Rating value")
+                        pump.pending_reasons.push("This pump cannot be listed because there are already pump(s) listed under this basic model (" + pump.basic_model + ") with a conflicting Energy Rating value")
                     }
                     if ( pump.results.success ){
                         pumps_succeeded.push(pump);
@@ -560,27 +559,38 @@ router.post('/pumps/:id', function(req, res) {
     
 });
 
-var model_check = function(newPump, pumps) {
-    for (let i = 0; i < pumps.length;i++ ) {
-        let pump = pumps[i];
-        
-        // If there is already a pump with this individual model number, then 
-        // return failure - these must be unique.
-        if (pump.individual_model === newPump.individual_model) {
-            return {individual_collide:true};
-        }  
-        // If there is already pump(s) with the same basic model, check to make sure
-        // that this has the same ER value.
-        if (pump.basic_model === newPump.basic_model && pump.energy_rating != newPump.energy_rating) {
-            return {basic_collide:true};
-        }  
-    };
+var model_check = function(pump, pumps, participant) {
+    console.log("Checking to see if this can be made active");
+    // Cannot be above the subscription limit.
+    var published = pumps.filter(p=>p.listed);
+    if (published.length >= participant.subscription.pumps) {
+        console.log("NO - subscription level");
+        return {subscription_limit:true, ok : false};
+    }
+
+    // Cannot share an individual model number with another active pump.
+    var inds = pumps.filter(p=>p.individual_model == pump.individual_model && p.listed);
+    if ( inds.length > 0 ) {
+        console.log("NO - individual model");
+        return {individual_collide:true, ok : false};
+    }
+
+    // Among all active pumps with the same basic model, there must be none that do not have the same er.
+    var bs = participant.pumps.filter(
+            p=>p.basic_model == pump.basic_model && 
+            p.listed && 
+            p.energy_rating != pump.energy_rating);
+    if (bs.length > 0 ) {
+        console.log("NO - basic model");
+        return {basic_collide:true, ok : false};
+    }
+    console.log("YES");
     return {ok:true};
 }
 
 router.post("/api/model_check", function(req, res) {
     var newPump = req.body.pump;
-    res.status(200).send(JSON.stringify(model_check(newPump, req.participant.pumps)));
+    res.status(200).send(JSON.stringify(model_check(newPump, req.participant.pumps, req.participant)));
 });
 
 

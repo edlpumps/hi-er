@@ -376,10 +376,10 @@ var PEIController = function($scope, $location, $window, service) {
             if ( vm.mode == "manual" && result.success) {
                 service.model_check(vm.pump).then(function(result) {
                     if (result.basic_collide) {
-                        vm.basic_collide = "This pump cannot be listed because there are already pump(s) listed under this basic model (" + vm.pump.basic_model + ") with a conflicting Energy Rating value";
+                        vm.basic_collide = "This pump cannot be activated because there are already active pump(s) listed under this basic model (" + vm.pump.basic_model + ") with a conflicting Energy Rating value.  You may still upload it, but you must set the conflicting models to inactive before activating this pump.";
                     }
                     if (result.individual_collide) {
-                        vm.individual_collide = "This pump cannot be listed because there is already a pump listed with individual model number " + vm.pump.individual_model;
+                        vm.individual_collide = "This pump cannot be activated because there is already an active pump listed with individual model number " + vm.pump.individual_model + ".  You may still upload it, but you must set the conflicting models to inactive before activating this pump.";
                     }
                 });
             }

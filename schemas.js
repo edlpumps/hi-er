@@ -160,6 +160,7 @@ exports.init = function init(mongoose) {
     listed : Boolean,
     // defaulting pending for false for backwards compatibility (beta testers already listed)
     pending : {type:Boolean, default:false},
+    pending_reasons : [String],
     active_admin : {type:Boolean, default:true},
     note_admin : String,
 

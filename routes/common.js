@@ -2,6 +2,9 @@
 var units = require('../utils/uom');
 var mailer = require('../utils/mailer');
 
+
+
+
 exports.deleteUser = function(req, res) {
     req.Users.findOne({_id: req.params.id}, function(err, user){
         if ( err ) {
@@ -262,105 +265,7 @@ exports.build_pump_spreadsheet = function(pump, unit_set, callback) {
                 });
             }, {postfix:".xlsx"});
 
-
-
-
         });
-
-
-
-   
-
-    
-
-    
-
-    
-
-    /*
-    var toxl = require('jsonexcel');
-
-
-    // Cleanup the pump schema
-    if (pump.configuration === "bare"){
-        pump.motor_regulated = undefined;
-    }
-
-    var filter = function(key) {
-        return  !( key == "_id" 
-            || key == "active_admin" 
-            || key == "listed"
-            || key == "load120"
-            || key.startsWith("results")) 
-    }
-
-    var headers = {
-        "section" : "Calculation Section", 
-        "energy_rating" : "Energy Rating",
-        "energy_savings" : "Energy Savings", 
-        "participant" : "Participant",
-        "configuration" : "Configuration", 
-        "basic_model" : "Basic Model Designation", 
-        "diameter" : "Impeller Diameters (inches)", 
-        "speed" : "Nominal Speed of Rotation (rpm)", 
-        "stages" : "Stages", 
-        "laboratory": "HI Approved testing laboratory", 
-        "doe" : "Department of Energy Category", 
-        "pei" : "Pump Energy Index", 
-
-        "bowl_diameter" : "Pump Bowl Diameter",
-        "motor_regulated" : "Is Motor Regulated under 10 CFR?",
-        "motor_power_rated" : "Motor Power or  Nameplate Rated Motor Power",
-        "motor_efficiency" : "Nominal Motor Efficiency",
-
-        "head.bep75": "Head @ 75% BEP Flow (feet)",
-        "head.bep100": "Head @ 100% BEP Flow (feet)",
-        "head.bep110": "Head @ 110% BEP Flow (feet)",
-        "flow.bep75": "Flow @ 75% BEP Flow (gpm)",
-        "flow.bep100": "Flow @ 100% BEP Flow (gpm)",
-        "flow.bep110": "Flow @ 110% BEP Flow (gpm)",
-
-        "pump_input_power.bep75": "Pump input power @ 75% BEP flow rate",
-        "pump_input_power.bep100": "Pump input power @ 100% BEP flow rate",
-        "pump_input_power.bep110": "Pump input power @ 110% BEP flow rate",
-        "pump_input_power.bep120": "Pump input power @ 120% BEP flow rate",
-        
-        "driver_input_power.bep75": "Driver input power @ 75% BEP flow rate",
-        "driver_input_power.bep100": "Driver input power @ 100% BEP flow rate",
-        "driver_input_power.bep110": "Driver input power @ 110% BEP flow rate",
-        "driver_input_power.bep120": "Driver input power @ 120% BEP flow rate",
-        
-        "control_power_input.bep25": "Control input power @ 25% BEP flow rate",
-        "control_power_input.bep50": "Control input power @ 50% BEP flow rate",
-        "control_power_input.bep75": "Control input power @ 75% BEP flow rate",
-        "control_power_input.bep100": "Control input power @ 100% BEP flow rate",
-        
-        "measured_control_power_input.bep25": "Measured control input power @ 25% BEP flow rate",
-        "measured_control_power_input.bep50": "Measured control input power @ 50% BEP flow rate",
-        "measured_control_power_input.bep75": "Measured control input power @ 75% BEP flow rate",
-        "measured_control_power_input.bep100": "Measured control input power @ 100% BEP flow rate",
-
-        "measured_control_flow_input.bep25": "Measured control flow @ 25% BEP flow rate",
-        "measured_control_flow_input.bep50": "Measured control flow @ 50% BEP flow rate",
-        "measured_control_flow_input.bep75": "Measured control flow @ 75% BEP flow rate",
-        "measured_control_flow_input.bep100": "Measured control flow @ 100% BEP flow rate",
-        
-        "measured_control_head_input.bep25": "Measured control head @ 25% BEP flow rate",
-        "measured_control_head_input.bep50": "Measured control head @ 50% BEP flow rate",
-        "measured_control_head_input.bep75": "Measured control head @ 75% BEP flow rate",
-        "measured_control_head_input.bep100": "Measured control head @ 100% BEP flow rate",
-
-    }
-
-    var opts = {
-        sheetname : "Pump Energy Ratings",
-        pivot:true, 
-        filter : filter,
-        headings : headers
-    }
-    var buffer = toxl(pump, opts);
-    return buffer;
-    */
     return null;
 }
 
