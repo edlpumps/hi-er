@@ -16,12 +16,14 @@ const mongoose = require("mongoose");
 const schemas = require("./schemas");
 const units = require('./utils/uom');
 const MongoStore = require('connect-mongo')(session);
+var session_store = null;
 const port = process.env.PORT || 3000;
-const session_connection_str = process.env.MONGO_CONNECTION_SESSIONS;
 const data_connection_str = process.env.MONGO_CONNECTION_DATA;
 
 const passport = require('passport');
 const Strategy = require('passport-local').Strategy;
+var mainlog = bunyan.createLogger({name: 'hi', level:process.env.LOG_LEVEL});
+    
 
 ////////////////////////////////////////////////////
 // Basic express configuration
@@ -30,34 +32,114 @@ app.set('port', port);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 
-app.use(favicon(__dirname + '/public/images/favicon.ico'));
-app.use(require('less-middleware')(__dirname + '/public'));
-app.use(express.static(__dirname + '/public'));
-app.use(cookieParser());
-app.use(session({
-    secret: 'intelliquip',
-    store: new MongoStore({ url: session_connection_str }),
-    resave: true,
-    saveUninitialized: true
-}));
 
-app.use(helmet());
-app.use(flash());
-busboy.extend(app,
-    {
-        upload: true
-    }
-);
+var configure = function() {
+    app.use(favicon(__dirname + '/public/images/favicon.ico'));
+    app.use(require('less-middleware')(__dirname + '/public'));
+    app.use(express.static(__dirname + '/public'));
+    app.use(cookieParser());
+    app.use(session({
+        secret: 'intelliquip',
+        store: session_store,
+        resave: true,
+        saveUninitialized: true
+    }));
 
-////////////////////////////////////////////////////
-// Logging configuration, main log added to each
-// request object.
-////////////////////////////////////////////////////
-var mainlog = bunyan.createLogger({name: 'hi', level:process.env.LOG_LEVEL});
-app.use(function (req, res, next) {
-  req.log = mainlog;
-  next();
-});
+    app.use(helmet());
+    app.use(flash());
+    busboy.extend(app,
+        {
+            upload: true
+        }
+    );
+
+    ////////////////////////////////////////////////////
+    // Logging configuration, main log added to each
+    // request object.
+    ////////////////////////////////////////////////////
+    app.use(function (req, res, next) {
+        req.log = mainlog;
+        next();
+    });
+
+    app.use(passport.initialize());
+    app.use(passport.session());
+    app.locals.passport = passport;
+
+
+    ////////////////////////////////////////////////////
+    // Route configuration
+    ////////////////////////////////////////////////////
+    app.use(function(req, res, next){
+        req.Participants = req.app.locals.db.Participants;
+        req.Users = req.app.locals.db.Users;
+        req.Labels = req.app.locals.db.Labels;
+        req.Labs = req.app.locals.db.Labs;
+        req.nextRatingsId = req.app.locals.db.nextRatingsId;
+        req.PasswordResets = req.app.locals.db.PasswordResets;
+        req.base_url = req.protocol + '://' + req.get('Host');
+        next();
+    })
+
+    app.use(function(req, res, next) {
+        if (!req.session.unit_set) {
+            req.session.unit_set = units.US;
+        }
+        res.locals.unit_set = req.session.unit_set;
+        res.locals.ESTORE_ADMIN_EMAIL = process.env.ESTORE_ADMIN_EMAIL;
+        res.locals.units = units.make_units(res.locals.unit_set);
+        res.locals.moment = require('moment');
+        next();
+    });
+
+
+    const root = require("./routes/registration");
+    const participant = require("./routes/participant");
+    const admin = require("./routes/admin");
+    const pei = require("./routes/pei");
+    const labels = require("./routes/labels");
+    const ratings = require("./routes/ratings");
+    app.use("/", root);
+    app.use("/participant", participant);
+    app.use("/admin", admin);
+    app.use("/pei", pei);
+    app.use("/labels", labels);
+    app.use("/ratings", ratings);
+
+    root.post('/login', 
+        passport.authenticate('local', { failureRedirect: '/portal' }),
+        function(req, res) {
+            res.cookie('email', req.body.email);
+            req.log.debug("User authenticated, redirecting to landing page");
+            res.redirect('/');
+        });
+    
+    root.get('/logout', function (req, res){
+        req.logOut() ;
+        res.redirect('/portal')
+    });
+
+    root.post('/units', function(req, res) {
+        var unit_set = req.body.unit_set;
+        if (unit_set == units.US || unit_set == units.METRIC) {
+            req.session.unit_set = unit_set;
+        }
+        res.status(200).send();
+    });
+
+
+    app.use("/error", function(req, res) {
+        res.render("error", {});
+    })
+    app.use("/disabled", function(req, res) {
+        res.render("disabled", {});
+    })
+    app.use("/unauthorized", function(req, res) {
+        res.render("unauthorized", {});
+    })
+}
+
+
 
 ////////////////////////////////////////////////////
 // Database configuration
@@ -77,7 +159,11 @@ var conn = mongoose.connect(data_connection_str, {auto_reconnect:true}, function
       nextRatingsId : schemas.nextRatingsId, 
       PasswordResets : schemas.PasswordResets
     };
-    // Startup the http server once the database is connected.
+
+    session_store = new MongoStore({
+        db: mongoose.connection.db
+    });
+    configure();
     startup();
   }
 });
@@ -129,80 +215,7 @@ passport.deserializeUser(function(id, cb) {
     });
 });
 
-app.use(passport.initialize());
-app.use(passport.session());
-app.locals.passport = passport;
 
-
-////////////////////////////////////////////////////
-// Route configuration
-////////////////////////////////////////////////////
-app.use(function(req, res, next){
-    req.Participants = req.app.locals.db.Participants;
-    req.Users = req.app.locals.db.Users;
-    req.Labels = req.app.locals.db.Labels;
-    req.Labs = req.app.locals.db.Labs;
-    req.nextRatingsId = req.app.locals.db.nextRatingsId;
-    req.PasswordResets = req.app.locals.db.PasswordResets;
-    req.base_url = req.protocol + '://' + req.get('Host');
-    next();
-})
-
-app.use(function(req, res, next) {
-    if (!req.session.unit_set) {
-        req.session.unit_set = units.US;
-    }
-    res.locals.unit_set = req.session.unit_set;
-    res.locals.ESTORE_ADMIN_EMAIL = process.env.ESTORE_ADMIN_EMAIL;
-    res.locals.units = units.make_units(res.locals.unit_set);
-    res.locals.moment = require('moment');
-    next();
-});
-
-
-const root = require("./routes/registration");
-const participant = require("./routes/participant");
-const admin = require("./routes/admin");
-const pei = require("./routes/pei");
-const labels = require("./routes/labels");
-const ratings = require("./routes/ratings");
-app.use("/", root);
-app.use("/participant", participant);
-app.use("/admin", admin);
-app.use("/pei", pei);
-app.use("/labels", labels);
-app.use("/ratings", ratings);
-
-root.post('/login', 
-  passport.authenticate('local', { failureRedirect: '/portal' }),
-  function(req, res) {
-    res.cookie('email', req.body.email);
-    req.log.debug("User authenticated, redirecting to landing page");
-    res.redirect('/');
-});
-root.get('/logout', function (req, res){
-  req.logOut() ;
-  res.redirect('/portal')
-});
-
-root.post('/units', function(req, res) {
-    var unit_set = req.body.unit_set;
-    if (unit_set == units.US || unit_set == units.METRIC) {
-        req.session.unit_set = unit_set;
-    }
-    res.status(200).send();
-});
-
-
-app.use("/error", function(req, res) {
-    res.render("error", {});
-})
-app.use("/disabled", function(req, res) {
-    res.render("disabled", {});
-})
-app.use("/unauthorized", function(req, res) {
-    res.render("unauthorized", {});
-})
 
 ////////////////////////////////////////////////////
 // Startup
