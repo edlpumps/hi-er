@@ -24,6 +24,7 @@ block content
                   th Configuration
                   th PEI
                   th Energy Rating
+                  th Activation issues
               tbody
                each success in succeeded
                  tr
@@ -34,6 +35,12 @@ block content
                     +configuration_label(success.configuration)
                   td #{success.pei}
                   td #{success.results.energy_rating}
+                  td
+                   if success.pending_reasons && success.pending_reasons.length > 0
+                    each reason in success.pending_reasons
+                     p.text-warning #{reason}
+                   else
+                    p.text-success Ready
                  
            form(action="save_upload", method="post")
             button.btn.btn-primary(type="submit") Add pumps

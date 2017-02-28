@@ -247,17 +247,15 @@ router.post("/pumps/save_upload", function(req, res) {
         return;
     }
     var pumps = JSON.parse(req.body.pumps);
-    var list_now = req.body.list_pumps ? true  : false;
-    
     var saves = [];
-
     pumps.forEach(function(pump) {
         saves.push(function(done) {
+            var list_now = req.body.list_pumps ? true  : false;
             var check = model_check(pump, req.participant.pumps, req.participant);
             // list_now could be true, based on user request, but we
             // may need to override that choice, based on subscription or 
             // model number collision.
-            if (check ) {
+            if (!check.ok) {
                 list_now = false;
             }
             var published = req.participant.pumps.filter(p=>p.listed);
@@ -560,18 +558,15 @@ router.post('/pumps/:id', function(req, res) {
 });
 
 var model_check = function(pump, pumps, participant) {
-    console.log("Checking to see if this can be made active");
     // Cannot be above the subscription limit.
     var published = pumps.filter(p=>p.listed);
     if (published.length >= participant.subscription.pumps) {
-        console.log("NO - subscription level");
         return {subscription_limit:true, ok : false};
     }
 
     // Cannot share an individual model number with another active pump.
     var inds = pumps.filter(p=>p.individual_model == pump.individual_model && p.listed);
     if ( inds.length > 0 ) {
-        console.log("NO - individual model");
         return {individual_collide:true, ok : false};
     }
 
@@ -581,10 +576,8 @@ var model_check = function(pump, pumps, participant) {
             p.listed && 
             p.energy_rating != pump.energy_rating);
     if (bs.length > 0 ) {
-        console.log("NO - basic model");
         return {basic_collide:true, ok : false};
     }
-    console.log("YES");
     return {ok:true};
 }
 
