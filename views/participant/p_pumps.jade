@@ -72,7 +72,7 @@ block content
                   th ER
                   th(ng-show='app.user.participant_edit')
                 tbody
-                 tr(ng-repeat="pump in app.pump_search_results()")
+                 tr(ng-repeat="pump in app.pump_search_results() | orderBy:['basic_model','individual_model', 'listed']")
                   td
                     img(ng-show="pump.pending", height="25" width="25" ng-src="/images/pending.png")
                     img(ng-hide="pump.pending", height="25" width="25" ng-src="/images/{{pump.listed && pump.active_admin && !pump.pending ? 'active' : 'inactive'}}.png")
