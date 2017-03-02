@@ -25,6 +25,7 @@ block content
                   th.hidden-xs.hidden-sm Impeller (#{units.diameter.label})
                   th.hidden-xs.hidden-sm Nominal speed (rpm)
                   th.hidden-xs.hidden-sm Stages
+                  th.hidden-xs Exp. PEI
                   th.hidden-xs PEI
                   th ER
                 tbody
@@ -41,5 +42,10 @@ block content
                    td.hidden-xs.hidden-sm #{(pump.diameter *units.diameter.factor).toFixed(3)}
                    td.hidden-xs.hidden-sm #{pump.speed}
                    td.hidden-xs.hidden-sm #{pump.stages}
+                   td.hidden-xs 
+                    if pump.results && pump.results.pei_check && pump.results.pei_check.expected_pei !== undefined
+                     p #{pump.results.pei_check.expected_pei.toFixed(2)}
+                    else 
+                     p -
                    td.hidden-xs #{pump.pei.toFixed(2)}
                    td #{pump.energy_rating} 
