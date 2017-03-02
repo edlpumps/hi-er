@@ -147,7 +147,8 @@ router.get('/pumps', function(req, res) {
         participant : req.participant, 
         section_label :common.section_label, 
         subscription_limit :published.length >= req.participant.subscription.pumps,
-        subscription_missing :req.participant.subscription.status != 'Active'
+        subscription_missing :req.participant.subscription.status != 'Active', 
+        pump_search_query : req.session.pump_search_query
     });
 });
 
@@ -624,7 +625,10 @@ router.post("/api/pumps/delete/:id", function(req, res) {
 });
 
 
-
+router.post('/api/search', function(req, res) {
+    req.session.pump_search_query = req.body.pump_search_query;
+    res.status(200).send();
+})
 
 router.post('/api/settings', function(req, res) {
     req.log.debug("Saving participant settings");

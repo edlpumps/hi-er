@@ -5,7 +5,7 @@ block nav
      +navigation("pumps")
 block content
  div.ng-cloak(ng-app='ERParticipantApp')
-    .container(ng-controller="ERParticipantController as app",ng-init="app.units = #{JSON.stringify(units)}; app.user= #{JSON.stringify(user)}; app.participant= #{JSON.stringify(participant)}")
+    .container(ng-controller="ERParticipantController as app",ng-init="app.pump_search_query = #{JSON.stringify(pump_search_query)}; app.units = #{JSON.stringify(units)}; app.user= #{JSON.stringify(user)}; app.participant= #{JSON.stringify(participant)}")
       .modal.fade#delete(tabindex='-1', role='dialog' aria-labelledby='titleLabel', aria-hidden='true')
         .modal-dialog
           .modal-content
@@ -48,6 +48,12 @@ block content
                a.btn.btn-default.btn-space(href="/participant/pumps/download") Download pumps
           .row.solo
            .col.col-xs-12
+            .form-group
+              .icon-addon.addon-lg
+               input.form-control(id="search", ng-change="app.post_search_query();", ng-model="app.pump_search_query", placeholder="Filter by Rating ID / Basic model number / Individual model number.")
+               label.glyphicon.glyphicon-search(for="search", title="Filter pumps", rel="tooltip")
+          .row.solo
+           .col.col-xs-12
             .table-responsive
               table.table.table-striped
                 thead
@@ -66,7 +72,7 @@ block content
                   th ER
                   th(ng-show='app.user.participant_edit')
                 tbody
-                 tr(ng-repeat="pump in app.participant.pumps")
+                 tr(ng-repeat="pump in app.pump_search_results()")
                   td
                     img(ng-show="pump.pending", height="25" width="25" ng-src="/images/pending.png")
                     img(ng-hide="pump.pending", height="25" width="25" ng-src="/images/{{pump.listed && pump.active_admin && !pump.pending ? 'active' : 'inactive'}}.png")

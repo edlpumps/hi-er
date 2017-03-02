@@ -110,6 +110,12 @@ var service = app.factory('service', function($http) {
            .then(function(docs) {
                 return docs.data;
            });
+     },
+     saveSearchQuery : function (q) {
+       return $http.post('/participant/api/search', {pump_search_query:q})
+           .then(function(docs) {
+                return docs.data;
+           });
      }
 
    };
@@ -121,8 +127,25 @@ var ERParticipantController = function($scope, $location, service) {
   vm.base_url = make_base_url($location);
   vm.settings_readonly = true;
 
+  vm.post_search_query = function() {
+   service.saveSearchQuery(vm.pump_search_query);
+  }
 
-  
+  vm.pump_search_results = function() {
+    if ( !vm.pump_search_query ) return vm.participant.pumps;
+    
+    var needle = vm.pump_search_query.toLowerCase();
+    return vm.participant.pumps.filter(function(pump) {
+      var haystacks = [
+        pump.rating_id.toLowerCase(), 
+        pump.basic_model.toLowerCase(), 
+        pump.individual_model.toLowerCase()];
+      var hits = haystacks.filter(function(haystack){
+        return haystack.indexOf(needle) >= 0;
+      }).length;
+      return hits > 0;
+    });
+  }
 
   vm.refreshUsers = function(callback) {
       service.getUsers().then(function(results) {
