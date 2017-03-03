@@ -274,6 +274,7 @@ router.post("/pumps/new", function(req, res){
         var view = pump.pei_input_type == 'calculate'  ? "participant/calculate_pump" : "participant/manual_pump";
         var help = require("../public/resources/help.json");
         var toSave = req.participant.pumps.create(pump);
+        
         req.nextRatingsId(function(err, doc) {
             toSave.rating_id = hashids.encode(doc.value.seq);
             res.render(view, {
@@ -327,7 +328,12 @@ router.post("/pumps/save_upload", function(req, res) {
             // must always be the currently logged in participant.
             pump.participant = req.participant.name;
             var toSave = req.participant.pumps.create(pump);
+            
             req.participant.pumps.push(toSave);
+            toSave.revisions.push( {
+                date : new Date(),
+                note: "Pump created."
+            })
             req.nextRatingsId(function(err, doc) {
                 toSave.rating_id = hashids.encode(doc.value.seq);
                 req.log.info(toSave.rating_id + " saved, " + req.participant.pumps.length + " pumps in participant listings");
@@ -589,6 +595,10 @@ router.post("/pumps/submit", function(req, res){
     pump.date = new Date();
     
     var toSave = req.participant.pumps.create(pump);
+    toSave.revisions.push( {
+        date : new Date(),
+        note: "Pump created"
+    })
     toSave.pending = !toSave.listed;
     req.participant.pumps.push(toSave);
     req.participant.save(function(err) {
@@ -611,7 +621,10 @@ router.post("/pumps/:id/submitRevision", function(req, res){
     pump = units.convert_to_us(pump);
     pump.date = new Date();
     
-    var old = req.participant.pumps.id(pump.rating_id);
+    var old = req.participant.pumps.id(req.params.id);
+    // will retain the listed/pending status
+    delete pump.listed;
+    delete pump.pending;
     pump = Object.assign(old, pump);
     pump.revisions.push({
         note : req.body.revision_note, 

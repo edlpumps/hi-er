@@ -165,7 +165,8 @@ exports.init = function init(mongoose) {
     note_admin : String,
     revisions : [{
       date : Date, 
-      note : String
+      note : String, 
+      correction: {type:Boolean, default:true}
     }],
     results : Schema.Types.Mixed
   });

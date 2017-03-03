@@ -126,11 +126,10 @@ block content
           h2 Data Corrections / Revisions
         .panel-body
           ol 
-           li Initial upload - #{moment(pump.date).format("ll")} 
            if pump.revisions
             each revision in pump.revisions
              li
-              span #{revision.note} - #{revision.date}
+              span #{revision.note} - #{moment(revision.date).format("ll")}
           if user.participant_edit
            .row
             .col.col-xs-12
