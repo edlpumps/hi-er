@@ -418,7 +418,12 @@ var PEIController = function($scope, $location, $window, service) {
       $("input[name='pump[unit_set]']").val(vm.units.active);
       $("input[name='pump[laboratory]']").val(JSON.stringify(vm.pump.laboratory));
       new_pump_pei.submit();
-
+  }
+  vm.reviseListing = function(active) {
+      $("input[name='pump[listed]']").val(vm.pump.listed);
+      $("input[name='pump[unit_set]']").val(vm.units.active);
+      $("input[name='pump[laboratory]']").val(JSON.stringify(vm.pump.laboratory));
+      new_pump_pei.submit();
   }
 
   vm.download = function(active) {

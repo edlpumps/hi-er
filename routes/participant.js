@@ -595,6 +595,36 @@ router.post("/pumps/submit", function(req, res){
         res.redirect("/participant/pumps");
     })    
 });
+router.post("/pumps/:id/submitRevision", function(req, res){
+    if ( !req.user.participant_edit) {
+        req.log.info("Submit Revision pump attempted by unauthorized user");
+        req.log.info(req.user);
+        res.redirect("/unauthorized");
+        return;
+    }
+    var pump = req.body.pump;
+    
+    if (pump.results ) {
+        pump.results = JSON.parse(pump.results);
+    }
+    pump.laboratory = JSON.parse(pump.laboratory);
+    pump = units.convert_to_us(pump);
+    pump.date = new Date();
+    
+    var old = req.participant.pumps.id(pump.rating_id);
+    pump = Object.assign(old, pump);
+    pump.revisions.push({
+        note : req.body.revision_note, 
+        date: new Date()
+    })
+
+    old.remove();
+    var toSave = req.participant.pumps.create(pump);
+    req.participant.pumps.push(toSave);
+    req.participant.save(function(err) {
+        res.redirect("/participant/pumps");
+    })    
+});
 
 
 

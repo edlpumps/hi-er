@@ -5,7 +5,8 @@ mixin calculator(er, mode)
 
   //- add angular controller here
   .container(ng-controller="PEIController as app", ng-init="app.units = #{JSON.stringify(units)}; app.user= #{JSON.stringify(user)}; app.participant= #{JSON.stringify(participant)}; app.setup(#{er}, #{JSON.stringify(pump)}, #{JSON.stringify(mode)})").pei
-    form(action="submit", method="post", name="new_pump_pei")
+    
+    form(action=(revision?"submitRevision" : "submit"), method="post", name="new_pump_pei")
      .panel.panel-default.rating_panel
         .panel-heading(ng-show="app.standalone")
             .heading
@@ -35,7 +36,7 @@ mixin calculator(er, mode)
             input(type="hidden", name="pump[flow][bep75]", ng-value="app.pump.flow.bep75")
             input(type="hidden", name="pump[flow][bep100]", ng-value="app.pump.flow.bep100")
             input(type="hidden", name="pump[flow][bep110]", ng-value="app.pump.flow.bep110")
-        
+            
             .row
               .col.col-xs-12
                 fieldset
