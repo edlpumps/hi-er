@@ -121,8 +121,21 @@ block content
                a(href="/labels/#{participant._id}/#{pump._id}/qr?download=true") Download as SVG 
               
           
-
-            
+      .panel.panel-default
+        .panel-heading
+          h2 Data Corrections / Revisions
+        .panel-body
+          ol 
+           li Initial upload - #{moment(pump.date).format("ll")} 
+           if pump.revisions
+            each revision in pump.revisions
+             li
+              span #{revision.note} - #{revision.date}
+          if user.participant_edit
+           .row
+            .col.col-xs-12
+             a.btn.btn-warning(href="/participant/pumps/#{pump._id}/revise") Add Data Correction
+             
       if user.participant_edit
        .panel.panel-default
         .panel-heading

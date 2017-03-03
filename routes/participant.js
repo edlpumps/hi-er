@@ -187,6 +187,66 @@ router.get("/pumps/new", function(req, res){
     });
 });
 
+router.get("/pumps/:id/revise", function(req, res){
+     if ( !req.user.participant_edit) {
+        req.log.info("Revise pump attempted by unauthorized user");
+        req.log.info(req.user);
+        res.redirect("/unauthorized");
+        return;
+    }
+    var pump = JSON.parse(JSON.stringify(req.participant.pumps.id(req.params.id)));
+    pump.configuration = {value:pump.configuration};
+    var help = require("../public/resources/help.json");
+    res.render("participant/new_pump", {
+        user : req.user,
+        participant : req.participant, 
+        pump : pump, 
+        help : help, 
+        revision:true
+    });
+});
+
+router.post("/pumps/:id/revise", function(req, res){
+     if ( !req.user.participant_edit) {
+        req.log.info("Create pump attempted by unauthorized user");
+        req.log.info(req.user);
+        res.redirect("/unauthorized");
+        return;
+    }
+    var pump = req.body;
+    if ( !pump ) {
+        req.flash("errorTitle", "Internal application error");
+        req.flash("errorMessage", "Pump cannot be created - required information is missing.");
+        res.redirect("/error");
+        return;
+    }
+    
+    req.Labs.findOne({_id: pump.laboratory}, function(err, lab){
+        if ( err || !lab) {
+            req.flash("errorTitle", "Internal application error");
+            req.flash("errorMessage", "Pump cannot be created - invalid laboratory.");
+            res.redirect("/error");
+            return;
+        }
+        pump.laboratory = lab;
+        
+        var original = JSON.parse(JSON.stringify(req.participant.pumps.id(req.params.id)));
+    
+        pump = Object.assign(original, pump);
+
+        var view = pump.pei_input_type == 'calculate'  ? "participant/calculate_pump" : "participant/manual_pump";
+        var help = require("../public/resources/help.json");
+        res.render(view, {
+                    user : req.user,
+                    participant : req.participant, 
+                    pump:pump, 
+                    help:help, 
+                    revision:true
+        });
+    })
+});
+
+
 router.post("/pumps/new", function(req, res){
      if ( !req.user.participant_edit) {
         req.log.info("Create pump attempted by unauthorized user");
