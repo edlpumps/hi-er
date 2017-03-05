@@ -11,13 +11,37 @@ block content
           .modal-content
             .modal-header
               button(type='button', class='close' data-dismiss='modal' aria-hidden='hidden') &times;
-              h4.modal-title Are you sure?
+              h4.modal-title Confirm activation
             .modal-body
               p.text-warning Are you sure you want to activate this pump?  
-              p Once you activate the pump for the first time, it is considered published.  While you can always file a revision to the pump (which is visible to the public), after the pump is published it can no longer be deleted.  It will appear in public search listings, and be accessible to anyone with the it's rating identification or QR code.
+              p 
+               | Once you activate the pump for the first time, it is considered 
+               | published.  While you can always file a revision to the pump 
+               | (which is visible to the public), after the pump is published it 
+               | can no longer be deleted.  It will appear in public search 
+               | listings, and be accessible to anyone with it's rating 
+               | identification or QR code.
             .modal-footer
               div
                 button.btn.btn-danger(type="button", data-dismiss='modal', onclick="$('#pending_update_confirmed').val(true); $('#pump_form').submit()") Yes
+                button.btn.btn-default(type='button' data-dismiss='modal') Nevermind
+    .modal.fade#deactivate(tabindex='-1', role='dialog' aria-labelledby='titleLabel', aria-hidden='true')
+        .modal-dialog
+          .modal-content
+            .modal-header
+              button(type='button', class='close' data-dismiss='modal' aria-hidden='hidden') &times;
+              h4.modal-title Confirm de-activation
+            .modal-body
+              p.text-warning Are you sure you want to set this pump to inactive?  
+              p 
+               | Setting a pump to "inactive" is intended for pumps that are not 
+               | commercially available.  This listing will only be found by a 
+               | direct search by the pump's rating ID or QR code.  The pump's label
+               | page will have a message indicating that it is not commercially available.
+               
+            .modal-footer
+              div
+                button.btn.btn-danger(type="button", data-dismiss='modal', onclick="$('#inactive_update_confirmed').val(true); $('#pump_form').submit()") Yes
                 button.btn.btn-default(type='button' data-dismiss='modal') Nevermind
 
     .container(ng-controller="ERParticipantController as app",ng-init="app.user= #{JSON.stringify(user)}; app.participant= #{JSON.stringify(participant)}")
@@ -130,19 +154,36 @@ block content
         .panel-body
          form(action="/participant/pumps/#{pump._id}", id="pump_form", method="post")
           input(type="hidden", id="pending_status", name="pending", value="#{pump.pending}")
+          input(type="hidden", id="listed_status", name="listed", value="#{pump.listed}")
           input(type="hidden", id="pending_update_confirmed", name="pending_update_confirmed")
+          input(type="hidden", id="inactive_update_confirmed", name="inactive_update_confirmed")
+          input(type="hidden", id="listed_state", name="listed_state")
           script.
             $("#pump_form").submit(function() {
                 var initial = $("#pending_status").val()  === 'true';
+                var initial_listed = $("#listed_status").val()  === 'true';
                 var current = $("#listed").is(':checked');
                 var confirmed = $("#pending_update_confirmed").val()  === 'true';
-                
+                var inactive_confirmed = $("#inactive_update_confirmed").val()  === 'true';
+                $("#listed_state").val(current);
                 if ( initial == true && current == true) {
                   if ( confirmed) {
+                    
                     return true;
                   }
                   else {
                     $('#activate').modal('show');
+                    return false;
+                  }
+                }
+                if ( initial_listed == true && current == false) {
+                  if ( inactive_confirmed) {
+                    $("#listed").val(false);
+                    console.log("Listed => " + $("#listed").val());
+                    return true;
+                  }
+                  else {
+                    $('#deactivate').modal('show');
                     return false;
                   }
                 }

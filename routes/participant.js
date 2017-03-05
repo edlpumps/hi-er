@@ -547,7 +547,7 @@ router.post('/pumps/:id', function(req, res) {
     }
     var pump = req.participant.pumps.id(req.params.id);
     if ( pump ) {
-        pump.listed = req.body.listed ? true : false;
+        pump.listed = req.body.listed_state == 'true'
         var check = model_check(pump, req.participant.pumps, req.participant) ;
         if ( req.body.listed && !check.ok) {
             pump.listed = false;
