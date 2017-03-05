@@ -47,7 +47,7 @@ block content
             .col.col-lg-12.text-center
               img(src="/labels/#{participant._id}/#{pump._id}/png", style="width:100%; max-width:600px;")
 
-      if pump.revisions.length > 1
+      if pump.revisions && pump.revisions.length > 1
         .panel.panel-default
           .panel-heading
             h2 Data Corrections / Revisions
