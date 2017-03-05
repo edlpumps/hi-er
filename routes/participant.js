@@ -628,6 +628,7 @@ router.post("/pumps/:id/submitRevision", function(req, res){
     delete pump.listed;
     delete pump.pending;
     pump = Object.assign(old, pump);
+    pump.date = new Date();
     pump.revisions.push({
         note : req.body.revision_note, 
         date: new Date()
