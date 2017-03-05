@@ -635,6 +635,11 @@ router.post("/pumps/:id/submitRevision", function(req, res){
     })
 
     old.remove();
+    var check = model_check(pump, req.participant.pumps, req.participant) ;
+    if ( !check.ok) {
+        pump.listed = false;
+    } 
+    
     var toSave = req.participant.pumps.create(pump);
     req.participant.pumps.push(toSave);
     req.participant.save(function(err) {
