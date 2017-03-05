@@ -544,8 +544,7 @@ mixin calculator(er, mode)
           .panel-body(ng-show="app.step=='results'")
             .row(ng-show="app.calc_errors")
               .col.col-xs-12
-                p(ng-repeat="erro in app.calc_errors").alert.alert-danger
-                   {{erro}}
+                p(ng-repeat="erro in app.calc_errors").alert.alert-danger {{erro}}
             .row(ng-hide="app.calc_errors")
               .col.col-sm-6.text-center
                 h4 Pump Energy Index
@@ -589,8 +588,7 @@ mixin calculator(er, mode)
           .panel-body(ng-show="app.step=='results'")
             .row(ng-show="app.calc_errors")
               .col.col-xs-12
-                p(ng-repeat="erro in app.calc_errors").alert.alert-danger
-                   {{erro}}
+                p(ng-repeat="erro in app.calc_errors").alert.alert-danger {{erro}}
             .row(ng-hide="app.calc_errors")
               .col.col-sm-6.text-center
                 h4 Pump Energy Index
