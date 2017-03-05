@@ -332,7 +332,8 @@ router.post("/pumps/save_upload", function(req, res) {
             req.participant.pumps.push(toSave);
             toSave.revisions.push( {
                 date : new Date(),
-                note: "Pump created."
+                note: "Pump created.", 
+                correct:false
             })
             req.nextRatingsId(function(err, doc) {
                 toSave.rating_id = hashids.encode(doc.value.seq);
@@ -597,7 +598,8 @@ router.post("/pumps/submit", function(req, res){
     var toSave = req.participant.pumps.create(pump);
     toSave.revisions.push( {
         date : new Date(),
-        note: "Pump created"
+        note: "Pump created", 
+        correction:false
     })
     toSave.pending = !toSave.listed;
     req.participant.pumps.push(toSave);

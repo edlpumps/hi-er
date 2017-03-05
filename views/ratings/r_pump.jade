@@ -46,5 +46,16 @@ block content
            .row.solo
             .col.col-lg-12.text-center
               img(src="/labels/#{participant._id}/#{pump._id}/png", style="width:100%; max-width:600px;")
-           
+
+      if pump.revisions.length > 1
+        .panel.panel-default
+          .panel-heading
+            h2 Data Corrections / Revisions
+          .panel-body
+            ol 
+              each revision in pump.revisions
+               if revision.correction
+                li
+                  span Pump data updated - #{moment(revision.date).format("ll")}.
+            
    
