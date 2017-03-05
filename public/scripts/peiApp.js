@@ -295,7 +295,13 @@ var PEIController = function($scope, $location, $window, service) {
           vm.pump.auto = mode == "calculator";
           vm.pump.configuration = vm.configurations.filter(function(c) { return c.value == pump.configuration})[0];
           vm.pump.diameter = parseFloat(pump.diameter);
-
+          if ( vm.pump.stages ) {
+              vm.pump.stages = parseInt(vm.pump.stages);
+          }
+          if (vm.pump.doe) {
+              vm.pump.doe =vm.doe_opts.filter(function(d){return d.value==vm.pump.doe})[0];
+          }
+          console.log(pump);
           vm.go2MotorMethod();
           if ( vm.pump.motor_regulated === undefined ) vm.pump.motor_regulated = true;
           if (vm.participant) {
@@ -412,7 +418,12 @@ var PEIController = function($scope, $location, $window, service) {
       $("input[name='pump[unit_set]']").val(vm.units.active);
       $("input[name='pump[laboratory]']").val(JSON.stringify(vm.pump.laboratory));
       new_pump_pei.submit();
-
+  }
+  vm.reviseListing = function(active) {
+      $("input[name='pump[listed]']").val(vm.pump.listed);
+      $("input[name='pump[unit_set]']").val(vm.units.active);
+      $("input[name='pump[laboratory]']").val(JSON.stringify(vm.pump.laboratory));
+      new_pump_pei.submit();
   }
 
   vm.download = function(active) {

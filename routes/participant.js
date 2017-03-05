@@ -187,6 +187,66 @@ router.get("/pumps/new", function(req, res){
     });
 });
 
+router.get("/pumps/:id/revise", function(req, res){
+     if ( !req.user.participant_edit) {
+        req.log.info("Revise pump attempted by unauthorized user");
+        req.log.info(req.user);
+        res.redirect("/unauthorized");
+        return;
+    }
+    var pump = JSON.parse(JSON.stringify(req.participant.pumps.id(req.params.id)));
+    pump.configuration = {value:pump.configuration};
+    var help = require("../public/resources/help.json");
+    res.render("participant/new_pump", {
+        user : req.user,
+        participant : req.participant, 
+        pump : pump, 
+        help : help, 
+        revision:true
+    });
+});
+
+router.post("/pumps/:id/revise", function(req, res){
+     if ( !req.user.participant_edit) {
+        req.log.info("Create pump attempted by unauthorized user");
+        req.log.info(req.user);
+        res.redirect("/unauthorized");
+        return;
+    }
+    var pump = req.body;
+    if ( !pump ) {
+        req.flash("errorTitle", "Internal application error");
+        req.flash("errorMessage", "Pump cannot be created - required information is missing.");
+        res.redirect("/error");
+        return;
+    }
+    
+    req.Labs.findOne({_id: pump.laboratory}, function(err, lab){
+        if ( err || !lab) {
+            req.flash("errorTitle", "Internal application error");
+            req.flash("errorMessage", "Pump cannot be created - invalid laboratory.");
+            res.redirect("/error");
+            return;
+        }
+        pump.laboratory = lab;
+        
+        var original = JSON.parse(JSON.stringify(req.participant.pumps.id(req.params.id)));
+    
+        pump = Object.assign(original, pump);
+
+        var view = pump.pei_input_type == 'calculate'  ? "participant/calculate_pump" : "participant/manual_pump";
+        var help = require("../public/resources/help.json");
+        res.render(view, {
+                    user : req.user,
+                    participant : req.participant, 
+                    pump:pump, 
+                    help:help, 
+                    revision:true
+        });
+    })
+});
+
+
 router.post("/pumps/new", function(req, res){
      if ( !req.user.participant_edit) {
         req.log.info("Create pump attempted by unauthorized user");
@@ -214,6 +274,7 @@ router.post("/pumps/new", function(req, res){
         var view = pump.pei_input_type == 'calculate'  ? "participant/calculate_pump" : "participant/manual_pump";
         var help = require("../public/resources/help.json");
         var toSave = req.participant.pumps.create(pump);
+        
         req.nextRatingsId(function(err, doc) {
             toSave.rating_id = hashids.encode(doc.value.seq);
             res.render(view, {
@@ -267,7 +328,13 @@ router.post("/pumps/save_upload", function(req, res) {
             // must always be the currently logged in participant.
             pump.participant = req.participant.name;
             var toSave = req.participant.pumps.create(pump);
+            
             req.participant.pumps.push(toSave);
+            toSave.revisions.push( {
+                date : new Date(),
+                note: "Pump created.", 
+                correct:false
+            })
             req.nextRatingsId(function(err, doc) {
                 toSave.rating_id = hashids.encode(doc.value.seq);
                 req.log.info(toSave.rating_id + " saved, " + req.participant.pumps.length + " pumps in participant listings");
@@ -529,7 +596,51 @@ router.post("/pumps/submit", function(req, res){
     pump.date = new Date();
     
     var toSave = req.participant.pumps.create(pump);
+    toSave.revisions.push( {
+        date : new Date(),
+        note: "Pump created", 
+        correction:false
+    })
     toSave.pending = !toSave.listed;
+    req.participant.pumps.push(toSave);
+    req.participant.save(function(err) {
+        res.redirect("/participant/pumps");
+    })    
+});
+router.post("/pumps/:id/submitRevision", function(req, res){
+    if ( !req.user.participant_edit) {
+        req.log.info("Submit Revision pump attempted by unauthorized user");
+        req.log.info(req.user);
+        res.redirect("/unauthorized");
+        return;
+    }
+    var pump = req.body.pump;
+    
+    if (pump.results ) {
+        pump.results = JSON.parse(pump.results);
+    }
+    pump.laboratory = JSON.parse(pump.laboratory);
+    pump = units.convert_to_us(pump);
+    pump.date = new Date();
+    
+    var old = req.participant.pumps.id(req.params.id);
+    // will retain the listed/pending status
+    delete pump.listed;
+    delete pump.pending;
+    pump = Object.assign(old, pump);
+    pump.date = new Date();
+    pump.revisions.push({
+        note : req.body.revision_note, 
+        date: new Date()
+    })
+
+    old.remove();
+    var check = model_check(pump, req.participant.pumps, req.participant) ;
+    if ( !check.ok) {
+        pump.listed = false;
+    } 
+    
+    var toSave = req.participant.pumps.create(pump);
     req.participant.pumps.push(toSave);
     req.participant.save(function(err) {
         res.redirect("/participant/pumps");

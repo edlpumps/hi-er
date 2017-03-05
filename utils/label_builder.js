@@ -26,7 +26,7 @@ var build_label_params = function(pump, label) {
             : "- Non-Continuous Controls");
     
     var load = pump.configuration =="bare" || pump.configuration=="pump_motor" ? "CONSTANT LOAD" : "VARIABLE LOAD";
-    var datetime = label.date;
+    var datetime = label.date.getTime() < pump.date.getTime() ? pump.date : label.date;
     var locale = "en-us";
 
     var er = Math.min(pump.energy_rating, label.max);

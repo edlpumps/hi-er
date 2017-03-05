@@ -163,7 +163,11 @@ exports.init = function init(mongoose) {
     pending_reasons : [String],
     active_admin : {type:Boolean, default:true},
     note_admin : String,
-
+    revisions : [{
+      date : Date, 
+      note : String, 
+      correction: {type:Boolean, default:true}
+    }],
     results : Schema.Types.Mixed
   });
   

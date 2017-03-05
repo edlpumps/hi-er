@@ -8,10 +8,13 @@ block content
     .container.pei(ng-controller="ERNewPumpController as app",ng-init="app.units = #{JSON.stringify(units)}; app.pump = #{JSON.stringify(pump)}; app.user= #{JSON.stringify(user)}; app.participant= #{JSON.stringify(participant)}")
       .panel.panel-default.solo
         .panel-heading 
+         if revision
+          h1.text-warning Revision for pump #{pump.rating_id}
+         else
             h1 Create pump listing
 
         .panel-body
-          form(role='form', method="post", action="new", name='new_pump')
+          form(role='form', method="post", action=(revision ? "revise" : "new"), name='new_pump')
             .row
               .col.col-xs-12
                 fieldset
@@ -30,7 +33,7 @@ block content
                     label.text-primary Basic Model Designation
                     +help(help.basic_model_number, true)
                   .col.col-xs-7.col-sm-4
-                    input.form-control(name="basic_model", id="basic_model", type="text" ng-model="app.pump.basic_model")
+                    input.form-control(name="basic_model", id="basic_model", type="text" ng-model="app.pump.basic_model", readonly=(revision))
 
             .row
                 .form-group
@@ -38,8 +41,8 @@ block content
                     label.text-primary Individual Model Number
                     +help(help.individual_model_number, true)
                   .col.col-xs-7.col-sm-4
-                    input.form-control(name="individual_model", id="individual_model", type="text" ng-model="app.pump.individual_model")
-            
+                    input.form-control(name="individual_model", id="individual_model", type="text" ng-model="app.pump.individual_model", readonly=(revision))
+                    
             .row 
               .form-group
                 .col.col-xs-5
@@ -47,7 +50,6 @@ block content
                     +help(help.configuration, true)
                 .col.col-xs-7
                     select.form-control(name="configuration", data-width="auto", ng-model="app.pump.configuration", ng-options="config as config.label for config in app.configurations track by config.value")
-            
             
             .row
                 .form-group
@@ -87,6 +89,8 @@ block content
             hr           
             .row
                input(type="hidden" id="pei_type", ng-model="app.pump.pei", name="pei_input_type")
+
+
                .form-group
                   .col.col-lg-12
                     button.btn.btn-primary(type="button", ng-disabled = "app.new_missing()", ng-click="app.manual()") Next

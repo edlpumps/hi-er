@@ -5,7 +5,8 @@ mixin calculator(er, mode)
 
   //- add angular controller here
   .container(ng-controller="PEIController as app", ng-init="app.units = #{JSON.stringify(units)}; app.user= #{JSON.stringify(user)}; app.participant= #{JSON.stringify(participant)}; app.setup(#{er}, #{JSON.stringify(pump)}, #{JSON.stringify(mode)})").pei
-    form(action="submit", method="post", name="new_pump_pei")
+    
+    form(action=(revision?"submitRevision" : "submit"), method="post", name="new_pump_pei")
      .panel.panel-default.rating_panel
         .panel-heading(ng-show="app.standalone")
             .heading
@@ -13,7 +14,10 @@ mixin calculator(er, mode)
                 img(src="/images/hydraulic-institute-logo.png", style="width:80%").hidden-md.hidden-lg.hidden-sm
                 h2 Pump Energy Index (PEI) Calculator
         .panel-heading(ng-hide="app.standalone")
-            h1 Pump Energy Rating - Data entry
+            if revision
+             h1.text-warning Revision for pump #{pump.rating_id}
+            else
+             h1 Pump Energy Rating - Data entry
         
         //---------------------------------------------------------------
         //- Step 1 - Choosing Configuration
@@ -32,7 +36,7 @@ mixin calculator(er, mode)
             input(type="hidden", name="pump[flow][bep75]", ng-value="app.pump.flow.bep75")
             input(type="hidden", name="pump[flow][bep100]", ng-value="app.pump.flow.bep100")
             input(type="hidden", name="pump[flow][bep110]", ng-value="app.pump.flow.bep110")
-        
+            
             .row
               .col.col-xs-12
                 fieldset
@@ -540,8 +544,7 @@ mixin calculator(er, mode)
           .panel-body(ng-show="app.step=='results'")
             .row(ng-show="app.calc_errors")
               .col.col-xs-12
-                p(ng-repeat="erro in app.calc_errors").alert.alert-danger
-                   {{erro}}
+                p(ng-repeat="erro in app.calc_errors").alert.alert-danger {{erro}}
             .row(ng-hide="app.calc_errors")
               .col.col-sm-6.text-center
                 h4 Pump Energy Index
@@ -555,10 +558,29 @@ mixin calculator(er, mode)
             .row(ng-show="app.individual_collide")
               .col.col-xs-12
                 p.text-danger {{app.individual_collide}}
+            if revision
+              .row(ng-hide="app.calc_errors")
+                .col.col-xs-12
+                  .form-group
+                    label.text-warning Revision / Correction Note:
+                    textarea.form-control(name="revision_note", ng-model="app.revision_note")
+                    .text-warning
+                      p 
+                      | A revision note explaining the reason this change is 
+                      | being made must be entered.  This note is only visible 
+                      | to your organization, and HI administrators - not to the 
+                      | public.  Public viewers of this pump will only see a 
+                      | generic message indicating that there has been an update 
+                      | applied.
+                    
             .row
               .col.col-xs-7
                   button(type="button", ng-click="app.go2Data(true)").btn.btn-default.btn-space Back
-              .col.col-xs-5(style="text-align:right")
+              if revision
+               .col.col-xs-5(style="text-align:right")
+                button.btn.btn-warning(type="button", ng-disabled="!app.revision_note", ng-click="app.submitListing(false)") Save revision
+              else
+               .col.col-xs-5(style="text-align:right")
                   button(type="button", ng-hide="app.calc_errors", ng-click="app.submitListing(false)").btn.btn-default.btn-space Upload pump 
                   button(type="button", ng-hide="app.calc_errors || app.basic_collide || app.individual_collide", ng-click="app.submitListing(true)").btn.btn-danger.btn-space Upload and Activate pump
             
@@ -566,8 +588,7 @@ mixin calculator(er, mode)
           .panel-body(ng-show="app.step=='results'")
             .row(ng-show="app.calc_errors")
               .col.col-xs-12
-                p(ng-repeat="erro in app.calc_errors").alert.alert-danger
-                   {{erro}}
+                p(ng-repeat="erro in app.calc_errors").alert.alert-danger {{erro}}
             .row(ng-hide="app.calc_errors")
               .col.col-sm-6.text-center
                 h4 Pump Energy Index
