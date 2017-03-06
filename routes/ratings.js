@@ -15,6 +15,11 @@ router.get("/glossary", function(req, res) {
 var default_search_operators = function (search_parameters, allow_inactive) {
     var search = search_parameters || {};
     var inactive_allowed = allow_inactive || false;
+    if (!search.rating_id) {
+        // If the search does not include a rating ID, active pumps
+        // are never returned.
+        inactive_allowed = false;
+    }
     var operators = [];
     operators.push({"$unwind" : "$pumps"});
     
