@@ -86,7 +86,7 @@ var default_search_operators = function (search_parameters, allow_inactive) {
     if ( search.basic_model) {
         operators.push({ $match : {basic_model : search.basic_model}});
     }
-    if ( search.brand) {
+    if ( search.participant && search.brand) {
         operators.push({ $match : {brand : search.brand}});
     }
     if ( search ) {
