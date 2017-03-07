@@ -62,7 +62,8 @@ var PEIController = function($scope, $location, $window, service) {
   vm.data_missing = function() {
       if (!vm.pump ) return true;
       if (!vm.pump.flow) return true;
-      if (!vm.pump.flow.bep100) return true;
+      if (vm.pump.load120 && !vm.pump.flow.bep100) return true;
+      if (!vm.pump.load120 && !vm.pump.flow.bep110) return true;
       if (!vm.pump.head) return true;
       if (!vm.pump.head.bep75) return true;
       if (!vm.pump.head.bep100) return true;
@@ -308,8 +309,6 @@ var PEIController = function($scope, $location, $window, service) {
           if ( vm.pump.motor_power_rated) {
               vm.pump.motor_power_rated = (vm.pump.motor_power_rated).toFixed(2);
           }
-          console.log(vm.pump.bowl_diameter);
-          console.log(vm.pump.motor_power_rated);
           vm.go2MotorMethod();
           if ( vm.pump.motor_regulated === undefined ) vm.pump.motor_regulated = true;
           if (vm.participant) {
