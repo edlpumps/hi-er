@@ -195,6 +195,10 @@ router.get("/pumps/:id/revise", function(req, res){
         return;
     }
     var pump = JSON.parse(JSON.stringify(req.participant.pumps.id(req.params.id)));
+    if ( req.session.unit_set == units.METRIC) {
+        // pumps are stored internally in US units.
+        pump = units.convert_to_metric(pump);
+    }
     pump.configuration = {value:pump.configuration};
     var help = require("../public/resources/help.json");
     res.render("participant/new_pump", {
@@ -220,7 +224,9 @@ router.post("/pumps/:id/revise", function(req, res){
         res.redirect("/error");
         return;
     }
-    
+    if ( req.session.unit_set == units.METRIC) {
+        pump = units.convert_to_us(pump);
+    }
     req.Labs.findOne({_id: pump.laboratory}, function(err, lab){
         if ( err || !lab) {
             req.flash("errorTitle", "Internal application error");
@@ -233,7 +239,10 @@ router.post("/pumps/:id/revise", function(req, res){
         var original = JSON.parse(JSON.stringify(req.participant.pumps.id(req.params.id)));
     
         pump = Object.assign(original, pump);
-
+        if ( req.session.unit_set == units.METRIC) {
+            // pumps are stored internally in US units.
+            pump = units.convert_to_metric(pump);
+        }
         var view = pump.pei_input_type == 'calculate'  ? "participant/calculate_pump" : "participant/manual_pump";
         var help = require("../public/resources/help.json");
         res.render(view, {

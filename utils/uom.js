@@ -67,20 +67,30 @@ exports.convert_motor_rated_power_result = function(motor_rated_power) {
 var convert = function(pump, flip, round) {
       var retval = JSON.parse(JSON.stringify(pump));
       
-      retval.diameter *= Math.pow(factors.diameter, flip);
+      if ( retval.diameter ) {
+        retval.diameter *= Math.pow(factors.diameter, flip);
+      }
       
-      retval.bowl_diameter *= Math.pow(factors.diameter, flip);
-      if (round) retval.bowl_diameter = Math.round(retval.bowl_diameter);
+      if ( retval.bowl_diameter) {
+        retval.bowl_diameter *= Math.pow(factors.diameter, flip);
+        if (round) retval.bowl_diameter = Math.round(retval.bowl_diameter);
+      }
       
-      retval.motor_power_rated  *= Math.pow(factors.power, flip);
-      if (round) retval.motor_power_rated = Math.round(retval.motor_power_rated); 
+      if ( retval.motor_power_rated) {
+        retval.motor_power_rated  *= Math.pow(factors.power, flip);
+        if (round) retval.motor_power_rated = Math.round(retval.motor_power_rated); 
+      }
       
-      retval.flow.bep75 *= Math.pow(factors.flow, flip);
-      retval.flow.bep100 *= Math.pow(factors.flow, flip);
-      retval.flow.bep110 *= Math.pow(factors.flow, flip);
-      retval.head.bep75 *= Math.pow(factors.head, flip);
-      retval.head.bep100 *= Math.pow(factors.head, flip);
-      retval.head.bep110 *= Math.pow(factors.head, flip);
+      if ( retval.flow) {
+        retval.flow.bep75 *= Math.pow(factors.flow, flip);
+        retval.flow.bep100 *= Math.pow(factors.flow, flip);
+        retval.flow.bep110 *= Math.pow(factors.flow, flip);
+      }
+      if ( retval.head) {
+        retval.head.bep75 *= Math.pow(factors.head, flip);
+        retval.head.bep100 *= Math.pow(factors.head, flip);
+        retval.head.bep110 *= Math.pow(factors.head, flip);
+      }
 
       if (retval.pump_input_power) {
           retval.pump_input_power.bep75 *= Math.pow(factors.power, flip);

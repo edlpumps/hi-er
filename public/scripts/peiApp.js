@@ -154,7 +154,7 @@ var PEIController = function($scope, $location, $window, service) {
 
 
   vm.powers = function() {
-      return [250, 200, 150, 125, 100, 75, 60, 50, 40, 30, 25, 20, 15, 10, 7.5, 5, 3, 2, 1.5, 1].map(function(d) {return (d * vm.units.power.factor)});
+      return [250, 200, 150, 125, 100, 75, 60, 50, 40, 30, 25, 20, 15, 10, 7.5, 5, 3, 2, 1.5, 1].map(function(d) {return (d * vm.units.power.factor).toFixed(2)});
   }
 
 
@@ -301,7 +301,15 @@ var PEIController = function($scope, $location, $window, service) {
           if (vm.pump.doe) {
               vm.pump.doe =vm.doe_opts.filter(function(d){return d.value==vm.pump.doe})[0];
           }
-          console.log(pump);
+          
+          if ( vm.pump.bowl_diameter ) {
+              vm.pump.bowl_diameter = (vm.pump.bowl_diameter).toFixed(1);
+          }
+          if ( vm.pump.motor_power_rated) {
+              vm.pump.motor_power_rated = (vm.pump.motor_power_rated).toFixed(2);
+          }
+          console.log(vm.pump.bowl_diameter);
+          console.log(vm.pump.motor_power_rated);
           vm.go2MotorMethod();
           if ( vm.pump.motor_regulated === undefined ) vm.pump.motor_regulated = true;
           if (vm.participant) {

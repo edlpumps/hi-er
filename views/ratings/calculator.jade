@@ -308,7 +308,7 @@ mixin calculator(er, mode)
                     label.text-primary Nameplate Rated Motor Power
                     +help(help.motor_power_rated_4567, er) 
                   .col.col-xs-7.col-sm-4.col-md-2
-                    select.form-control(ng-model="app.pump.motor_power_rated", name="pump[motor_power_rated]", data-width="auto", ng-options="val as (val.toFixed(2)+' ' + app.units.power.label) for val in app.powers() track by val")
+                    select.form-control(ng-model="app.pump.motor_power_rated", name="pump[motor_power_rated]", data-width="auto", ng-options="val as (val +' ' + app.units.power.label) for val in app.powers() track by val")
                         option(value="")
 
                 hr(ng-hide="app.pump.doe.value != 'ST' && app.pump.motor_regulated =='false'")
