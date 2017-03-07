@@ -63,12 +63,12 @@ var lookup_default_motor_efficiency = function(pump, power) {
     var fix = (power % 1 === 0) ? 0 : 1;
     console.log("Fix -> " + fix);
     if (typeof power === 'string' || power instanceof String) {
-        power_normalized = parseFloat(power).toFixed(0);
+        power_normalized = parseFloat(power).toFixed(fix);
         console.log("string");
     }
     else {
 
-        power_normalized = power.toFixed(0);
+        power_normalized = power.toFixed(fix);
         console.log("value");
     }
     console.log(power_normalized);
