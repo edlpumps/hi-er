@@ -251,9 +251,14 @@ var section3_auto = function(pump) {
     section345_standard_common(pump, result);
     section345_baseline_common(pump, result)
 
+    console.log("SECTION 3 Calculation");
     result.pei = pump.pei = result.per_cl / result.per_std_calculated;
-    
+    console.log(result.pei);
+    console.log(result.per_cl);
+    console.log(result.per_std_calculated);
     calc_energy_rating(pump, result);
+    console.log(result.pei);    
+
     return result;
 }
 
