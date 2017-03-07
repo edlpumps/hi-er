@@ -309,6 +309,7 @@ var PEIController = function($scope, $location, $window, service) {
           if ( vm.pump.motor_power_rated) {
               vm.pump.motor_power_rated = (vm.pump.motor_power_rated).toFixed(2);
           }
+          
           vm.go2MotorMethod();
           if ( vm.pump.motor_regulated === undefined ) vm.pump.motor_regulated = true;
           if (vm.participant) {
@@ -316,11 +317,12 @@ var PEIController = function($scope, $location, $window, service) {
           }
       }
       else {
+          vm.pump.load120 = true;
           vm.pump.motor_regulated = true;
           vm.pump.auto = true;
       }
 
-      vm.pump.load120 = true; 
+       
       vm.standalone = !er;
       vm.mode = mode;
       vm.pump.pei_method = mode;
