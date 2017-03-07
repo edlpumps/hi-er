@@ -58,12 +58,17 @@ var lookup_baseline_c_value = function(pump) {
 var lookup_default_motor_efficiency = function(pump, power) {
     var doe = String(pump.doe);
     var power_normalized;
+    console.log("Power");
+    console.log(power);
     if (typeof power === 'string' || power instanceof String) {
         power_normalized = parseFloat(power).toFixed(0);
+        console.log("string");
     }
     else {
         power_normalized = power.toFixed(0);
+        console.log("value");
     }
+    console.log(power_normalized);
     var label = doe.toUpperCase() + "-" + power_normalized + "-" + pump.speed;
     var table = require("./default_motor_efficiencies.json");
     var retval = table[label];
