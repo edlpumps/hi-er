@@ -552,6 +552,9 @@ mixin calculator(er, mode)
               .col.col-sm-6.text-center
                 h4 Energy Rating
                 p.er_display {{app.pump.energy_rating}}
+            .row(ng-show="app.pump.results.length")
+              .col.col-xs-12
+                p(ng-repeat="warning in app.pump.warnings").alert.alert-warning {{warning}}
             .row(ng-show="app.basic_collide")
               .col.col-xs-12
                 p.text-danger {{app.basic_collide}}

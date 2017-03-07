@@ -487,17 +487,24 @@ var manual_calculation = function(pump, set_point_threshold) {
         std_percent_difference: per_diff,
         expected_pei: target_pei
     }
-    /*if ( per_diff > (1+spt) || per_diff < (1-spt)){
+    result.warnings = [];
+    var pei_diff = target_pei - result.pei;
+    if ( pei_diff <= -0.02 ) {
+        // may be too conservative
+        result.warnings.push("The calculated representative curve PEI (" + target_pei.toFixed(4) + ") is more than 0.02 less than the listed PEI.  If you are listing the pump with a conservative PEI relative to the representative curve, proceed with your listing.  If this is not your intention, verify your listing data prior to proceeding.");
+    }
+    else if ( pei_diff >= 0.02 && pei_diff <= 0.03 ) {
+        // may be too high
+        result.warnings.push("The calculated representative curve PEI (" + target_pei.toFixed(4) + ") is more than 0.02 greater than the listed PEI, please verify your representative curve data is correct before proceeding.");
+    }
+    else if (pei_diff > 0.03) {
         result.success = false;
         result.reasons = [];
-        result.reasons.push("Error, the calculated PER standard value (" + result.per_std_calculated.toFixed(2) + ") must be within 1% of the PER value derived from your inputs.  A PEI of " + target_pei.toFixed(2) + " would have been expected, given your inputs.")
+        result.reasons.push("The calculated representative curve PEI (" + target_pei.toFixed(4) + ") is more than 0.03 greater than the listed PEI.  The pump cannot be listed under this condition.  Please review your representative curve data and listed PEI.  Contact the HI Program Manager if you have questions.")
         result.pump = pump;
         return result;
-        
-    }*/
-    
+    }
     calc_energy_rating(pump, result);
-
 
     return result;
 }

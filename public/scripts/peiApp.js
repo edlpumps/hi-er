@@ -372,12 +372,12 @@ var PEIController = function($scope, $location, $window, service) {
             vm.pump.energy_savings = result.energy_savings;
             vm.pump.pei_baseline = result.pei_baseline;
             vm.pump.results = JSON.stringify(result);
+            vm.pump.warnings = result.warnings;
             vm.basic_collide = "";
             vm.individual_collide = "";
             if (!result.success) {
                 vm.calc_errors = result.reasons;
             }
-
             // Now see if this pump can be listed (only for er mode).
             if ( vm.mode == "manual" && result.success) {
                 service.model_check(vm.pump).then(function(result) {
