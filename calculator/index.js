@@ -239,11 +239,13 @@ var section3_auto = function(pump) {
     var result = {section:"3", success:true};
 
     calc_motor_powers(pump, result);
-
+    
     result.ns = calc_ns(pump);
+    console.log(result.ns);
     result.default_motor_efficiency = lookup_default_motor_efficiency(pump, pump.motor_power_rated);
     result.full_load_motor_losses = calc_full_load_motor_losses(pump, result);
-    
+    console.log(result.default_motor_efficiency);
+    console.log(result.full_load_motor_losses);
     // In auto mode, user enters pump input power, we must back-calculate the driver input power values
     calc_driver_input_powers(pump, result);
 
