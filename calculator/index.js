@@ -58,20 +58,13 @@ var lookup_baseline_c_value = function(pump) {
 var lookup_default_motor_efficiency = function(pump, power) {
     var doe = String(pump.doe);
     var power_normalized;
-    console.log("Power");
-    console.log(power);
     var fix = (power % 1 === 0) ? 0 : 1;
-    console.log("Fix -> " + fix);
     if (typeof power === 'string' || power instanceof String) {
         power_normalized = parseFloat(power).toFixed(fix);
-        console.log("string");
     }
     else {
-
         power_normalized = power.toFixed(fix);
-        console.log("value");
     }
-    console.log(power_normalized);
     var label = doe.toUpperCase() + "-" + power_normalized + "-" + pump.speed;
     var table = require("./default_motor_efficiencies.json");
     var retval = table[label];
@@ -112,9 +105,6 @@ var calc_ns = function(pump) {
 }
 
 var calc_full_load_motor_losses = function(pump, result) {
-    console.log("Motor Power Rated = " + pump.motor_power_rated);
-    console.log("result.default_motor_efficiency = " + result.default_motor_efficiency);
-    console.log("pump.motor_power_rated = " + pump.motor_power_rated);
     return pump.motor_power_rated / (result.default_motor_efficiency/100) - pump.motor_power_rated;
 }
 
@@ -252,11 +242,8 @@ var section3_auto = function(pump) {
     calc_motor_powers(pump, result);
     
     result.ns = calc_ns(pump);
-    console.log(result.ns);
     result.default_motor_efficiency = lookup_default_motor_efficiency(pump, pump.motor_power_rated);
     result.full_load_motor_losses = calc_full_load_motor_losses(pump, result);
-    console.log(result.default_motor_efficiency);
-    console.log(result.full_load_motor_losses);
     // In auto mode, user enters pump input power, we must back-calculate the driver input power values
     calc_driver_input_powers(pump, result);
 
@@ -264,13 +251,8 @@ var section3_auto = function(pump) {
     section345_standard_common(pump, result);
     section345_baseline_common(pump, result)
 
-    console.log("SECTION 3 Calculation");
     result.pei = pump.pei = result.per_cl / result.per_std_calculated;
-    console.log(result.pei);
-    console.log(result.per_cl);
-    console.log(result.per_std_calculated);
     calc_energy_rating(pump, result);
-    console.log(result.pei);    
 
     return result;
 }

@@ -376,7 +376,6 @@ var PEIController = function($scope, $location, $window, service) {
      vm.pump.unit_set = vm.units.active;
      service.calculate(vm.pump).then(function(result) {
             vm.step = "results";
-            console.log(result);
             vm.pump.pei = result.pei;
             vm.pump.energy_rating = result.energy_rating;
             vm.pump.energy_savings = result.energy_savings;
