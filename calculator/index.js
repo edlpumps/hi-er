@@ -104,6 +104,9 @@ var calc_ns = function(pump) {
 }
 
 var calc_full_load_motor_losses = function(pump, result) {
+    console.log("Motor Power Rated = " + pump.motor_power_rated);
+    console.log("result.default_motor_efficiency = " + result.default_motor_efficiency);
+    console.log("pump.motor_power_rated = " + pump.motor_power_rated);
     return pump.motor_power_rated / (result.default_motor_efficiency/100) - pump.motor_power_rated;
 }
 
