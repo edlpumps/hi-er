@@ -13,9 +13,173 @@ block content
         });
         
     })
-    
+  mixin example_table()
+   table.table
+          caption Data Correction Example
+          thead
+           tr 
+            th Rating ID
+            th Basic Model Designation
+            th Individual Model Number
+            th Energy Rating
+            th Status
+          tbody 
+           tr
+            td: strong RATING_1
+            td BASIC_MODEL_1
+            td 1X1.5X8.34
+            td 34
+            td Active
+           tr
+            td: strong RATING_2
+            td BASIC_MODEL_1
+            td 1X1.5X8.35
+            td 34
+            td Inactive
+           tr
+            td: strong RATING_3
+            td BASIC_MODEL_2
+            td 1Y1.9X3.48
+            td 21
+            td Active
+           tr
+            td: strong RATING_4
+            td BASIC_MODEL_3
+            td 2X1.4X1.0A
+            td 19
+            td Active
+           tr
+            td: strong RATING_5
+            td BASIC_MODEL_3
+            td 2X1.4X1.0B
+            td 19
+            td Active
+           tr
+            td: strong RATING_6
+            td BASIC_MODEL_3
+            td 2X1.4X1.0C
+            td 19
+            td Active
   div
     .container
+     .panel.panel-default
+      .panel-heading
+       a(name="status_explanation")
+       h1 Pump listings status
+      .panel-body
+       p
+        | Listed pumps have a status associated with them that drives whether they are visible to the public, whether they count towards
+        | your organization's subscription, and whether they can be removed from the energy ratings program entirely.
+       h3 Pending Pumps
+       p May be deleted, not visible to public, does not count towards subscription.  Data corrections cannot be applied; listing should just be deleted and re-created.
+       h3 Active Pumps
+       p Cannot be deleted, visible to all, counts towards subscription.  Data corrections can be applied.
+       h3 Inactive
+       p Cannot be deleted, only visible via direct link/QR, does not count towards subscription.  Data corrections can be applied.
+       img(src="/images/pump-status.png")
+       h3 Pump status summary
+       table.table
+        thead
+         tr
+          th Pump status
+          th Accessible from Rating ID / QR Code
+          th Searchable (by Brand / Participant)
+          th Counts towards Utility Search totals
+        tbody
+         tr
+          td: p: strong Pending
+          td: p No
+          td: p No 
+          td: p No 
+         tr
+          td: p: strong Active
+          td: p Yes
+          td: p Yes 
+          td: p Yes 
+         tr
+          td: p: strong Inactive
+          td: p Yes
+          td: p No 
+          td: p No 
+     
+     .panel.panel-default
+      .panel-heading
+        a(name="model_explanation")
+        h1 Basic Model Numbers and ER Values
+      .panel-body
+        p 
+         | Multiple pumps may be listed (active) under the same Basic Model Designation; 
+         b however they MUST all have the same ER value.
+         | Management of Basic Model and Individual Model Numbers is critical during two use cases - (1) when a pump
+         | requires data correction, and (2) when a pump has been redesigned.
+
+        h3 Use Case 1:  A pump requires data correction
+        p 
+         | This case applies to situations where the physical pump has not changed; the data is being modified due to error/omission.  
+         strong The listing is modified – and retains the same QR code and Rating ID.
+         ul 
+          li: p A user can apply a data correction to any pump that is not pending.
+          li
+           p If correction changes the ER value then:
+           ul 
+            li
+             | If this is the 
+             strong only active pump
+             | with the given Basic Model number, the pump’s state remains unchanged.
+            li 
+             | If there are 
+             strong multiple active pumps
+             | under this Basic Model number, the pump is automatically set to "Inactive", as it’s ER value differs from existing pumps with the same basic model number.
+          li: p Otherwise (the correction did not change ER value), the pump’s state remains unchanged.
+         +example_table()
+
+         h4 Example 1
+         ul 
+          li A participant revises rating RATING_3, and the ER value changes to 29. 
+          li RATING_3 remains active, as it is the only pump listed under the BASIC_MODEL_2 basic model number.
+         h4 Example 2
+         ul 
+          li A participant revises rating RATING_1, and the ER value changes to 42.
+          li 
+           | RATING_1 remains active; there is no ER conflict with any 
+           strong: u active 
+           | pumps with a basic model number of BASIC_MODEL_1, since RATING_2 is inactive
+          li Once this change is made, a participant would not be able to activate RATING_2 unless a revision was made to make its ER value 42 as well.
+         h4 Example 3
+         ul 
+          li A participant revises rating RATING_4, and the ER value changes to 23.
+          li RATING_4 will be automatically set to "Inactive", as it is in conflict with RATING_5 and RATING_6, which are active and share the BASIC_MODEL_3 designation. 
+          li Before activating RATING_4, both RATING_5 and RATING_6 must be set to inactive, or revised such that their ER value matches 23 as well.
+        h3 Use Case 2:  A pump has been redesigned
+        p This case applies when a manufacturer creates a redesign of an existing pump.  
+        p 
+         | Since this is <strong>a new physical machine</strong>, it is a <strong>new listing</strong>, with a <strong>new QR code and Rating ID</strong>.  
+         | The new design replaces the old design in commerce, and all pumps with the old ER value must be marked as <strong>inactive</strong>. 
+        p 
+         | To do this, participant uploads the new design.  The new listing cannot be activated unless all other pumps sharing 
+         | the same basic model number (with different ER values) are currently <b><i>inactive</i></b>.  
+        p Since inactive pumps are still visible via direct link or QR code, owners of the old designs can still access the ER label for their pump.  Participants can also continue to make revisions to inactive pumps.
+        +example_table()
+        h4 Example 1
+        ul
+         li A redesign of RATING_3 occurs, and the new pump is to be listed with a new ER value of 24.
+         li The new pump is intended to commercially replace RATING_3.  
+         li A new rating may be uploaded with the same BASIC_MODEL_2 designation.
+         li The new rating will be marked as PENDING and cannot be activated.  Only after RATING_3 is marked as Inactive can the new rating 7 become active.
+        h4 Example 2
+        ul 
+         li A redesign of RATING_1 occurs, and the new pump has an ER of 47.
+         li The new pump is intended to commercially replace RATING_1.  
+         li A new rating may be uploaded with the same BASIC_MODEL_1 designation.  
+         li The new rating will be marked as PENDING and cannot be activated.  Only after RATING_1 is marked as Inactive can RATING_8 be listed with an ER of 47.  
+         li <u>If</u> RATING_2, which also has the same BASIC_MODEL_1 designation, had been active, it too would need to be deactivated before the new rating could be activated. 
+        h4 Example 3
+        ul 
+         li A new pump with an ER of 23 is to be listed under the BASIC_MODEL_3 designation
+         li The new pump will be assigned a new individual model number.  
+         li The new pump <b><u>does not commercially replace</u></b> the other pumps under the BASIC_MODEL_3 designation.  
+         li In this case, the participant must list the new pump with an ER rating of 19 in order to activate it, as all active pumps under BASIC_MODEL_3 must share the same (lowest) ER value.
+         li If the participant wishes to list this individual model with an ER of 23 it would need a new/different basic model designation.
      .panel.panel-default
       .panel-heading
         h1 Glossary of terms
