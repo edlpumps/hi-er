@@ -62,6 +62,25 @@ block content
             td Active
   div
     .container
+     
+     .panel.panel-default
+      .panel-heading
+        h1 Glossary of terms
+      .panel-body
+        each entry, key in help
+          if entry.portal_help || entry.calc_help
+            a(name=key) 
+            h2 #{entry.title}
+            if entry.portal_help
+             if entry.calc_help
+               h4 Energy Rating Portal
+               
+             each line in entry.portal_help 
+                 p #{line} 
+            if entry.calc_help
+              h4 PEI Calculator
+              each line in entry.calc_help 
+                 p #{line} 
      .panel.panel-default
       .panel-heading
        a(name="status_explanation")
@@ -179,23 +198,4 @@ block content
          li The new pump will be assigned a new individual model number.  
          li The new pump <b><u>does not commercially replace</u></b> the other pumps under the BASIC_MODEL_3 designation.  
          li In this case, the participant must list the new pump with an ER rating of 19 in order to activate it, as all active pumps under BASIC_MODEL_3 must share the same (lowest) ER value.
-         li If the participant wishes to list this individual model with an ER of 23 it would need a new/different basic model designation.
-     .panel.panel-default
-      .panel-heading
-        h1 Glossary of terms
-      .panel-body
-        each entry, key in help
-          if entry.portal_help || entry.calc_help
-            a(name=key) 
-            h2 #{entry.title}
-            if entry.portal_help
-             if entry.calc_help
-               h4 Energy Rating Portal
-               
-             each line in entry.portal_help 
-                 p #{line} 
-            if entry.calc_help
-              h4 PEI Calculator
-              each line in entry.calc_help 
-                 p #{line} 
-         
+         li If the participant wishes to list this individual model with an ER of 23 it would need a new/different basic model designation.    
