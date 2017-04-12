@@ -175,6 +175,7 @@
         "driver_input_power.bep65" : {
             "column" : "AC", 
             "path" :"driver_input_power.bep75", 
+            "calc_path" : "results.driver_input_power_bep75",
             "sections" : ["3", "4", "5"],
             "bep120" : "no", 
             "unit" : "power", 
@@ -183,6 +184,7 @@
         "driver_input_power.bep75" : {
             "column" : "AA", 
             "path" :"driver_input_power.bep75", 
+            "calc_path" : "results.driver_input_power_bep75",
             "sections" : ["3", "4", "5"],
             "bep120" : "yes", 
             "unit" : "power", 
@@ -191,6 +193,7 @@
         "driver_input_power.bep90" : {
             "column" : "AD", 
             "path" :"driver_input_power.bep100", 
+            "calc_path" : "results.driver_input_power_bep100",
             "sections" : ["3", "4", "5"],
             "bep120" : "no", 
             "unit" : "power", 
@@ -200,6 +203,8 @@
             "column" : "Z", 
             "path" :"driver_input_power.bep100", 
             "path2" :"driver_input_power.bep110", 
+            "calc_path" : "results.driver_input_power_bep100",
+            "calc_path2" : "results.driver_input_power_bep110",
             "sections" : ["3", "4", "5"], 
             "unit" : "power", 
             "format": "0.00"
@@ -207,6 +212,7 @@
         "driver_input_power.bep110" : {
             "column" : "AB", 
             "path" :"driver_input_power.bep110", 
+            "calc_path" : "results.driver_input_power_bep110",
             "sections" : ["3", "4", "5"],
             "bep120" : "yes", 
             "unit" : "power", 
@@ -216,6 +222,7 @@
         "control_power_input.beq25" : {
             "column" : "AE", 
             "path" :"control_power_input.bep25", 
+            "calc_path" : "results.control_power_input_bep25",
             "sections" : ["6a", "6b", "6", "7"], 
             "unit" : "power", 
             "format": "0.00"
@@ -223,6 +230,7 @@
         "control_power_input.bep50" : {
             "column" : "AF", 
             "path" :"control_power_input.bep50", 
+            "calc_path" : "results.control_power_input_bep50",
             "sections" : ["6a", "6b", "6", "7"], 
             "unit" : "power", 
             "format": "0.00"
@@ -230,6 +238,7 @@
         "control_power_input.bep75" : {
             "column" : "AG", 
             "path" :"control_power_input.bep75", 
+            "calc_path" : "results.control_power_input_bep75",
             "sections" : ["6a", "6b", "6", "7"], 
             "unit" : "power", 
             "format": "0.00"
@@ -237,6 +246,7 @@
         "control_power_input.bep100" : {
             "column" : "AH", 
             "path" :"control_power_input.bep100", 
+            "calc_path" : "results.control_power_input_bep100",
             "sections" : ["6a", "6b", "6", "7"], 
             "unit" : "power", 
             "format": "0.00"

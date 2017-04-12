@@ -179,7 +179,6 @@ exports.build_pump_spreadsheet = function(pump, unit_set, callback) {
     const tmp = require('tmp');
     const fs = require('fs');
     const Excel = require('exceljs');
-
     var workbook = new Excel.Workbook();
     workbook.xlsx.readFile(path.join(__dirname, template.config.filename))
         .then(function() {
@@ -213,18 +212,32 @@ exports.build_pump_spreadsheet = function(pump, unit_set, callback) {
                     var prop = template.mappings[mapping];
                     var enabled = true;
                     var value = _.get(p, prop.path);
+                    
+                    var use_result_path = p.calculator && (p.section == '3' || p.section == '5' || p.section == '7');
+                    
+                    if ( use_result_path && prop.calc_path) {
+                        value = _.get(p, prop.calc_path);
+                    }
+                    var load120 = false;
+                    if ( p.load120) {
+                        load120 = p.load120 == 'true';
+                    }
                     if ( prop.bep120 ) {
                         // this property is dependent on whether the pump is tested @120BEP
-                        if ( prop.bep120 == "no" && p.load120) {
+                        if ( prop.bep120 == "no" && load120) {
                             enabled = false;
                         }
-                        else if (prop.bep120 == "yes" && !p.load120){
+                        else if (prop.bep120 == "yes" && !load120){
                             enabled = false;
                         }
                     }
-                    if ( prop.path2 && !p.load120) {
+                    if ( (prop.path2 || use_result_path && prop.calc_path2) && !p.load120) {
                         // this property gets pulled from an alternative path if pump is tested @ 120 BEP
                         value = _.get(p, prop.path2);
+                        if ( use_result_path && prop.calc_path2) {
+                             
+                            value = _.get(p, prop.calc_path2);
+                        }
                     }
                     if (mapping =="configuration") {
                         value = exports.map_config_output(value);
@@ -236,7 +249,6 @@ exports.build_pump_spreadsheet = function(pump, unit_set, callback) {
                     if ( prop.sections ) {
                         enabled = enabled && prop.sections.indexOf(p.section) >= 0;
                     } 
-                    
                     if ( enabled && value) {
                         var address = prop.column + r;
                         var cell = worksheet.getCell(address);
