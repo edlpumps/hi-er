@@ -415,7 +415,7 @@ mixin calculator(er, mode)
                          th.col-label 
                          | Values at Nominal Speed of Rotation
                          +help(help.rep_nominal_speed, er)
-                       th {{app.pump.load120 ? "@ 75% BEP" : "@ 60% BEP"}}
+                       th {{app.pump.load120 ? "@ 75% BEP" : "@ 65% BEP"}}
                        th {{app.pump.load120 ? "@ 100% BEP" : "@ 90% BEP"}}
                        th {{app.pump.load120 ? "@ 110% BEP" : "@ 100% BEP"}}
                        th(ng-show="app.bep120_visible()") @ 120% BEP
