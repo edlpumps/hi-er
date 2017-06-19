@@ -22,19 +22,16 @@ router.use(function (req, res, next) {
                 req.log.debug("Error adding participant");
                 req.log.debug(err);
                 res.redirect("/");
-            }
-            else {
+            } else {
                 if (participant.active) {
                     next();
-                }
-                else {
+                } else {
                     req.logout();
                     res.redirect("/disabled");
                 }
             }
         });
-    }
-    else {
+    } else {
         req.flash("loginMessage", "You must be logged in as an HI Participant to access this resource");
         res.redirect("/");
     }
@@ -70,8 +67,7 @@ router.get('/', function (req, res) {
             var info = JSON.parse(body);
             subscription.status = info.status || "No Account";
             subscription.pumps = info.pumps || "0";
-        }
-        else {
+        } else {
             console.log(error);
             no_store();
             return;
@@ -175,7 +171,9 @@ router.get("/pumps/new", function (req, res) {
     }
 
 
-    pump.configuration = { value: "bare" };
+    pump.configuration = {
+        value: "bare"
+    };
 
 
     var help = require("../public/resources/help.json");
@@ -199,7 +197,9 @@ router.get("/pumps/:id/revise", function (req, res) {
         // pumps are stored internally in US units.
         pump = units.convert_to_metric(pump);
     }
-    pump.configuration = { value: pump.configuration };
+    pump.configuration = {
+        value: pump.configuration
+    };
     var help = require("../public/resources/help.json");
     res.render("participant/new_pump", {
         user: req.user,
@@ -227,7 +227,9 @@ router.post("/pumps/:id/revise", function (req, res) {
     if (req.session.unit_set == units.METRIC) {
         pump = units.convert_to_us(pump);
     }
-    req.Labs.findOne({ _id: pump.laboratory }, function (err, lab) {
+    req.Labs.findOne({
+        _id: pump.laboratory
+    }, function (err, lab) {
         if (err || !lab) {
             req.flash("errorTitle", "Internal application error");
             req.flash("errorMessage", "Pump cannot be created - invalid laboratory.");
@@ -271,7 +273,9 @@ router.post("/pumps/new", function (req, res) {
         return;
     }
 
-    req.Labs.findOne({ _id: pump.laboratory }, function (err, lab) {
+    req.Labs.findOne({
+        _id: pump.laboratory
+    }, function (err, lab) {
         if (err || !lab) {
             req.flash("errorTitle", "Internal application error");
             req.flash("errorMessage", "Pump cannot be created - invalid laboratory.");
@@ -395,7 +399,11 @@ router.post("/pumps/upload", get_labels, function (req, res) {
     var workbook = new Excel.Workbook();
 
     // Load all the laboratories for this participant
-    req.Labs.find({ _id: { $in: req.participant.labs } }, function (err, labs) {
+    req.Labs.find({
+        _id: {
+            $in: req.participant.labs
+        }
+    }, function (err, labs) {
         workbook.xlsx.readFile(req.files.template.file).then(function () {
             const pumps_succeeded = [];
             const pumps_failed = [];
@@ -426,8 +434,7 @@ router.post("/pumps/upload", get_labels, function (req, res) {
                         if (prop.bep120) {
                             if (prop.bep120 == "no" && load120) {
                                 enabled = false;
-                            }
-                            else if (prop.bep120 == "yes" && !load120) {
+                            } else if (prop.bep120 == "yes" && !load120) {
                                 enabled = false;
                             }
                         }
@@ -435,8 +442,7 @@ router.post("/pumps/upload", get_labels, function (req, res) {
                             if (prop.path2 && !load120) {
                                 // this property gets pulled from an alternative path if pump is tested @ 120 BEP
                                 _.set(pump, prop.path2, value);
-                            }
-                            else {
+                            } else {
                                 _.set(pump, prop.path, value);
                             }
                         }
@@ -452,8 +458,7 @@ router.post("/pumps/upload", get_labels, function (req, res) {
                     if (pump.flow && load120) {
                         pump.flow.bep75 = pump.flow.bep100 * 0.75;
                         pump.flow.bep110 = pump.flow.bep100 * 1.1;
-                    }
-                    else if (pump.flow && !load120) {
+                    } else if (pump.flow && !load120) {
                         pump.flow.bep75 = pump.flow.bep110 * 0.65;
                         pump.flow.bep100 = pump.flow.bep110 * 0.9;
                     }
@@ -471,7 +476,7 @@ router.post("/pumps/upload", get_labels, function (req, res) {
                     delete pump.results.pump;
 
                     pump.laboratory = find_lab(pump.laboratory, labs);
-                    pump.doe = map_doe(pump.doe);
+                    pump.doe = map_doe(pump.doe.trim());
 
                     if (pump.results.success && !pump.doe) {
                         pump.results.success = false;
@@ -495,13 +500,11 @@ router.post("/pumps/upload", get_labels, function (req, res) {
                     }
                     if (pump.results.success) {
                         pumps_succeeded.push(pump);
-                    }
-                    else {
+                    } else {
                         pumps_failed.push(pump)
                     }
                     r++;
-                }
-                else {
+                } else {
                     done = true;
                 }
             }
@@ -537,10 +540,15 @@ router.get('/pumps/:id', function (req, res) {
     var pump = req.participant.pumps.id(req.params.id);
     var svg_builder = require('../utils/label_builder');
     var load = pump.configuration == "bare" || pump.configuration == "pump_motor" ? "CL" : "VL";
-    req.Labels.findOne().and([
-        { speed: pump.speed },
-        { doe: pump.doe },
-        { load: load }
+    req.Labels.findOne().and([{
+            speed: pump.speed
+        },
+        {
+            doe: pump.doe
+        },
+        {
+            load: load
+        }
     ]).exec(function (err, label) {
         var qr_svg = svg_builder.make_qr(req, req.participant, pump, label);
         var label_svg = svg_builder.make_label(req, req.participant, pump, label);
@@ -687,28 +695,39 @@ var model_check = function (pump, pumps, participant) {
     // Cannot be above the subscription limit.
     var published = pumps.filter(p => p.listed);
     if (published.length >= participant.subscription.pumps) {
-        return { subscription_limit: true, ok: false };
+        return {
+            subscription_limit: true,
+            ok: false
+        };
     }
 
     // Cannot share an individual model number with another active pump.
     var inds = pumps.filter(
         p => p.individual_model == pump.individual_model &&
-            p.listed &&
-            p.rating_id != pump.rating_id);
+        p.listed &&
+        p.rating_id != pump.rating_id);
     if (inds.length > 0) {
-        return { individual_collide: true, ok: false };
+        return {
+            individual_collide: true,
+            ok: false
+        };
     }
 
     // Among all active pumps with the same basic model, there must be none that do not have the same er.
     var bs = participant.pumps.filter(
         p => p.basic_model == pump.basic_model &&
-            p.listed &&
-            p.energy_rating != pump.energy_rating &&
-            p.rating_id != pump.rating_id);
+        p.listed &&
+        p.energy_rating != pump.energy_rating &&
+        p.rating_id != pump.rating_id);
     if (bs.length > 0) {
-        return { basic_collide: true, ok: false };
+        return {
+            basic_collide: true,
+            ok: false
+        };
     }
-    return { ok: true };
+    return {
+        ok: true
+    };
 }
 
 router.post("/api/model_check", function (req, res) {
@@ -719,7 +738,9 @@ router.post("/api/model_check", function (req, res) {
 
 router.get("/api/pumps", function (req, res) {
     res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify({ pumps: req.participant.pumps }));
+    res.end(JSON.stringify({
+        pumps: req.participant.pumps
+    }));
 });
 
 router.post("/api/pumps/delete/:id", function (req, res) {
@@ -736,9 +757,10 @@ router.post("/api/pumps/delete/:id", function (req, res) {
         if (err) {
             req.log.debug("Error getting user to delete");
             req.log.debug(err);
-            res.status(500).send({ error: err });
-        }
-        else {
+            res.status(500).send({
+                error: err
+            });
+        } else {
             res.status(200).send("Pump removed");
         }
     });
@@ -761,28 +783,31 @@ router.post('/api/settings', function (req, res) {
     req.Participants.findById(req.participant._id, function (err, participant) {
         if (err) {
             re.log.error(err);
-            res.status(500).send({ error: err });
+            res.status(500).send({
+                error: err
+            });
             return;
-        }
-        else if (participant) {
+        } else if (participant) {
             participant.name = req.body.participant.name;
             participant.address = req.body.participant.address;
             participant.contact = req.body.participant.contact;
             participant.save(function (err) {
                 if (err) {
                     re.log.error(err);
-                    res.status(500).send({ error: err });
+                    res.status(500).send({
+                        error: err
+                    });
                     return;
-                }
-                else {
+                } else {
                     req.log.debug("Saved participant settings successfully");
                     res.status(200).send("ok");
                 }
             })
-        }
-        else {
+        } else {
             req.log.debug("Saved participant settings failed - couldn't find participant with ID " + req.participant._id);
-            res.status(401).send({ error: err });
+            res.status(401).send({
+                error: err
+            });
             return;
         }
     });
@@ -802,20 +827,22 @@ router.post('/api/labs/:id', function (req, res) {
     if (existing >= 0 && !available) {
         req.participant.labs.splice(existing, 1);
         changed = true;
-    }
-    else if (existing < 0 && available) {
+    } else if (existing < 0 && available) {
         req.participant.labs.push(lab);
         changed = true;
     }
 
     var respond = function (err) {
         if (err) {
-            res.status(500).send({ error: err });
-        }
-        else {
+            res.status(500).send({
+                error: err
+            });
+        } else {
             req.log.debug("Saved lab state successfully");
             res.setHeader('Content-Type', 'application/json');
-            res.end(JSON.stringify({ labs: req.participant.labs }));
+            res.end(JSON.stringify({
+                labs: req.participant.labs
+            }));
         }
     }
 
@@ -825,29 +852,48 @@ router.post('/api/labs/:id', function (req, res) {
 router.get("/api/active_labs", function (req, res) {
     req.log.debug("Returning participant labs");
     var list = req.participant.labs.map(lab => ObjectId(lab));
-    req.Labs.find({ '_id': { $in: list } }, function (err, docs) {
-        if (err) {
-            res.status(500).send({ error: err });
+    req.Labs.find({
+        '_id': {
+            $in: list
         }
-        else {
+    }, function (err, docs) {
+        if (err) {
+            res.status(500).send({
+                error: err
+            });
+        } else {
             res.setHeader('Content-Type', 'application/json');
-            res.end(JSON.stringify({ labs: docs }));
+            res.end(JSON.stringify({
+                labs: docs
+            }));
         }
     });
 });
 
 router.get("/api/users", function (req, res) {
     req.log.debug("Returning user listings for participating organization");
-    req.Users.find(
-        { participant: req.participant._id },
-        { name: true, email: true, _id: true, needsActivation: true, activationKey: true, participant_admin: true, participant_edit: true, participant_view: true },
+    req.Users.find({
+            participant: req.participant._id
+        }, {
+            name: true,
+            email: true,
+            _id: true,
+            needsActivation: true,
+            activationKey: true,
+            participant_admin: true,
+            participant_edit: true,
+            participant_view: true
+        },
         function (err, users) {
             if (err) {
-                res.status(500).send({ error: err });
-            }
-            else {
+                res.status(500).send({
+                    error: err
+                });
+            } else {
                 res.setHeader('Content-Type', 'application/json');
-                res.end(JSON.stringify({ users: users }));
+                res.end(JSON.stringify({
+                    users: users
+                }));
             }
         }
     )

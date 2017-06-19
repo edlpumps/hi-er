@@ -574,6 +574,10 @@ exports.calculate = function (pump, labels) {
     if (!pump) {
         return build_error("Pump object must be specified");
     }
+    if (!pump.doe) {
+        return build_error("Pump DOE designation must be present");
+    }
+    pump.doe = pump.doe.trim()
     if (pump.auto) {
         retval = auto_calculators[pump.section](pump);
     } else {
@@ -586,6 +590,7 @@ exports.calculate = function (pump, labels) {
     }
 
     if (!labels) return retval;
+
     var configuration = pump.configuration.value || pump.configuration;
     var load = configuration == "bare" || configuration.value == "pump_motor" ? "CL" : "VL";
     var range = labels.filter(function (label) {
