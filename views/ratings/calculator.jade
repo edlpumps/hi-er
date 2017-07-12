@@ -584,8 +584,11 @@ mixin calculator(er, mode)
                 button.btn.btn-warning(type="button", ng-disabled="!app.revision_note", ng-click="app.submitListing(false)") Save revision
               else
                .col.col-xs-5(style="text-align:right")
-                  button(type="button", ng-hide="app.calc_errors", ng-click="app.submitListing(false)").btn.btn-default.btn-space Upload pump 
-                  button(type="button", ng-hide="app.calc_errors || app.basic_collide || app.individual_collide", ng-click="app.submitListing(true)").btn.btn-danger.btn-space Upload and Activate pump
+                  button(type="button", ng-hide="app.calc_errors", ng-click="app.submitListing(false)").btn.btn-primary.btn-space Upload pump 
+                  button(type="button", ng-hide="app.calc_errors || app.basic_collide || app.individual_collide", ng-click="app.submitListing(true)").btn.btn-default.btn-space Upload and Activate pump
+            .row
+             .col.col-xs-12(style='padding-top:20px')
+              .well Once pumps are activated, they are visible to the public and all changes are done through a public revision process.  Alternatively, you can simply upload the pump, which will place the pump in the "pending" state until you activate it later. Pending pumps are not seen by the public users.
             
         else
           .panel-body(ng-show="app.step=='results'")
