@@ -5,38 +5,40 @@ var mailer = require('../utils/mailer');
 
 
 
-exports.deleteUser = function(req, res) {
-    req.Users.findOne({_id: req.params.id}, function(err, user){
-        if ( err ) {
+exports.deleteUser = function (req, res) {
+    req.Users.findOne({
+        _id: req.params.id
+    }, function (err, user) {
+        if (err) {
             req.log.debug("Error getting user to delete");
             req.log.debug(err);
-            res.status(500).send({error:err});
-        }
-        else if (!user ) {
+            res.status(500).send({
+                error: err
+            });
+        } else if (!user) {
             res.status(200).send("User doesn't exist");
-        }
-        else if (!req.user.admin && !user.participant.equals(req.participant._id)) {
+        } else if (!req.user.admin && !user.participant.equals(req.participant._id)) {
             req.log.info("Deletion attempt on user from another participating org");
             req.log.info(req.participant._id);
             req.log.info(user.participant);
             res.status(403).send("Cannot delete user from another participating organization");
-        }
-        else if (req.user.admin && !user.admin) {
+        } else if (req.user.admin && !user.admin) {
             req.log.info("Deletion attempt by administrator on participant user");
             res.status(403).send("Cannot delete user from a participating organization");
-        }
-        else if (!req.user.admin && !req.user.participant_admin) {
+        } else if (!req.user.admin && !req.user.participant_admin) {
             req.log.info("Deletion attempt by unauthorized user");
             res.status(403).send("Cannot delete user unless you are a HI or Participant administrator");
-        }
-        else {
-            req.Users.remove({_id:req.params.id}, function(err) {
-                if ( err ) {
+        } else {
+            req.Users.remove({
+                _id: req.params.id
+            }, function (err) {
+                if (err) {
                     req.log.debug("Error removing user");
                     req.log.debug(err);
-                    res.status(500).send({error:err});
-                }
-                else {
+                    res.status(500).send({
+                        error: err
+                    });
+                } else {
                     mailer.sendDeletionNotification(user, req.user);
 
                     res.status(200).send("User removed");
@@ -46,9 +48,9 @@ exports.deleteUser = function(req, res) {
     });
 };
 
-exports.addUser = function(req, res) {
+exports.addUser = function (req, res) {
 
-    if ( !req.user.admin && !req.user.participant_admin) {
+    if (!req.user.admin && !req.user.participant_admin) {
         req.log.info("Add user attempted by unauthorized user");
         res.status(403).send("Cannot add user unless you are a HI or Participant administrator");
         return;
@@ -68,84 +70,101 @@ exports.addUser = function(req, res) {
         user.participant_view = req.body.user.participant_view;
     }
     user.activationKey = uuid.v1();
-    
-    if ( !user.name || !user.name.first || !user.name.last) {
+
+    if (!user.name || !user.name.first || !user.name.last) {
         res.status(400).send("User must have first and last name");
         return;
     }
-    
+
     var validator = require("email-validator");
     if (!user.email || !validator.validate(user.email)) {
         res.status(400).send("User must have valid email address");
         return;
     }
     var regex = new RegExp("^" + user.email + "$", "i");
-    req.Users.find({email: regex}, function(err, users){
-        if ( users && users.length > 0) {
+    req.Users.find({
+        email: regex
+    }, function (err, users) {
+        if (users && users.length > 0) {
             res.status(400).send("User already exists");
             return;
         }
-        user.save(function(err, saved) {
-            if ( err) {
-                res.status(500).send({error:err});
-            }
-            else {
+        user.save(function (err, saved) {
+            if (err) {
+                res.status(500).send({
+                    error: err
+                });
+            } else {
                 mailer.sendAuthenticationEmail(req.base_url, user, req.user);
                 res.setHeader('Content-Type', 'application/json');
-                res.end(JSON.stringify({ user: saved}));
+                res.end(JSON.stringify({
+                    user: saved
+                }));
             }
         });
     })
 };
 
 
-exports.saveUser = function(req, res) {
-    if ( !req.user.admin && !req.user.participant_admin) {
+exports.saveUser = function (req, res) {
+    if (!req.user.admin && !req.user.participant_admin) {
         req.log.info("Save user attempted by unauthorized user");
         res.status(403).send("Cannot save user unless you are a HI or Participant administrator");
         return;
     }
     var user = req.body.user;
     var regex = new RegExp("^" + user.email + "$", "i");
-    req.Users.update({email: regex}, 
-        {$set : {name : user.name, participant_admin:user.participant_admin, participant_edit:user.participant_edit}},
-        function(err, users){
-            if ( err) {
-            res.status(500).send({error:err});
+    req.Users.update({
+            email: regex
+        }, {
+            $set: {
+                name: user.name,
+                participant_admin: user.participant_admin,
+                participant_edit: user.participant_edit
             }
-            else {
+        },
+        function (err, users) {
+            if (err) {
+                res.status(500).send({
+                    error: err
+                });
+            } else {
                 res.setHeader('Content-Type', 'application/json');
-                res.end(JSON.stringify({ user: user}));
+                res.end(JSON.stringify({
+                    user: user
+                }));
             }
         });
 }
-exports.labs = function(req, res) {
-    req.Labs.find(
-        {}, 
-        function(err, labs){
-            if ( err ) {
-                res.status(500).send({ error: err });
-            }
-            else {
+exports.labs = function (req, res) {
+    req.Labs.find({},
+        function (err, labs) {
+            if (err) {
+                res.status(500).send({
+                    error: err
+                });
+            } else {
                 res.setHeader('Content-Type', 'application/json');
-                res.end(JSON.stringify({ labs: labs}));
+                res.end(JSON.stringify({
+                    labs: labs
+                }));
             }
         }
     )
 }
 
-exports.map_boolean_input = function(input) {
+exports.map_boolean_input = function (input) {
     if (input) {
         var entered = input.toLowerCase();
         // yes, y, true, T
-        if ( entered.indexOf("y") >= 0 || entered.indexOf("t") >= 0) return true;
+        if (entered.indexOf("y") >= 0 || entered.indexOf("t") >= 0) return true;
     }
     return false;
 }
-exports.map_boolean_output = function(value) {
+exports.map_boolean_output = function (value) {
     return value ? "Yes" : "No";
 }
-exports.map_config_input = function(input) {
+exports.map_config_input = function (input) {
     /*
     Bare pump
     Bare pump + motor
@@ -153,18 +172,16 @@ exports.map_config_input = function(input) {
     Bare pump + motor + non-continuous control
     */
     var result = "bare";
-    if ( input.toLowerCase().indexOf("non") >= 0) {
+    if (input.toLowerCase().indexOf("non") >= 0) {
         result = "pump_motor_nc";
-    }
-    else if (input.toLowerCase().indexOf("contin") >= 0) {
+    } else if (input.toLowerCase().indexOf("contin") >= 0) {
         result = "pump_motor_cc";
-    }
-    else if (input.toLowerCase().indexOf("motor") >= 0) {
+    } else if (input.toLowerCase().indexOf("motor") >= 0) {
         result = "pump_motor";
     }
     return result;
 }
-exports.map_config_output = function(value) {
+exports.map_config_output = function (value) {
     if (value == "bare") return "Bare pump";
     else if (value == "pump_motor") return "Bare pump + motor";
     else if (value == "pump_motor_cc") return "Bare pump + motor + continuous control";
@@ -172,7 +189,7 @@ exports.map_config_output = function(value) {
     else return null;
 }
 
-exports.build_pump_spreadsheet = function(pump, unit_set, callback) {
+exports.build_pump_spreadsheet = function (pump, unit_set, callback) {
     const _ = require('lodash');
     const template = require('./template_map.json');
     const path = require('path');
@@ -181,12 +198,11 @@ exports.build_pump_spreadsheet = function(pump, unit_set, callback) {
     const Excel = require('exceljs');
     var workbook = new Excel.Workbook();
     workbook.xlsx.readFile(path.join(__dirname, template.config.filename))
-        .then(function() {
+        .then(function () {
             var pumps = [];
             if (pump instanceof Array) {
                 pumps = pump;
-            }
-            else {
+            } else {
                 pumps.push(pump);
             }
 
@@ -194,110 +210,109 @@ exports.build_pump_spreadsheet = function(pump, unit_set, callback) {
             var worksheet = workbook.getWorksheet(1);
 
             var unit_row = template.config.unit_row;
-            for ( var mapping in template.mappings ) {
+            for (var mapping in template.mappings) {
                 var prop = template.mappings[mapping];
-                if ( prop.unit ) {
+                if (prop.unit) {
                     var address = prop.column + unit_row;
                     var cell = worksheet.getCell(address);
                     cell.value = units.labels[prop.unit][unit_set];
                 }
             }
-            
-            pumps.forEach(function(p) {
-                if ( unit_set == units.METRIC) {
+
+            pumps.forEach(function (p) {
+                if (unit_set == units.METRIC) {
                     // pumps are stored internally in US units.
                     p = units.convert_to_metric(p);
                 }
-                for ( var mapping in template.mappings ) {
+                for (var mapping in template.mappings) {
                     var prop = template.mappings[mapping];
                     var enabled = true;
                     var value = _.get(p, prop.path);
-                    
+
                     var use_result_path = p.calculator && (p.section == '3' || p.section == '5' || p.section == '7');
-                    
-                    if ( use_result_path && prop.calc_path) {
+
+                    if (use_result_path && prop.calc_path) {
                         value = _.get(p, prop.calc_path);
                     }
                     var load120 = false;
-                    if ( p.load120) {
-                        load120 = p.load120 == 'true';
+                    if (p.load120) {
+                        load120 = p.load120 === true || p.load120 == 'true';
                     }
-                    if ( prop.bep120 ) {
+                    if (prop.bep120) {
                         // this property is dependent on whether the pump is tested @120BEP
-                        if ( prop.bep120 == "no" && load120) {
+                        if (prop.bep120 == "no" && load120) {
                             enabled = false;
-                        }
-                        else if (prop.bep120 == "yes" && !load120){
+                        } else if (prop.bep120 == "yes" && !load120) {
                             enabled = false;
                         }
                     }
-                    if ( (prop.path2 || use_result_path && prop.calc_path2) && !p.load120) {
+                    if ((prop.path2 || use_result_path && prop.calc_path2) && !p.load120) {
                         // this property gets pulled from an alternative path if pump is tested @ 120 BEP
                         value = _.get(p, prop.path2);
-                        if ( use_result_path && prop.calc_path2) {
-                             
+                        if (use_result_path && prop.calc_path2) {
+
                             value = _.get(p, prop.calc_path2);
                         }
                     }
-                    if (mapping =="configuration") {
+                    if (mapping == "configuration") {
                         value = exports.map_config_output(value);
                     }
-                    if ( prop.boolean) {
+                    if (prop.boolean) {
                         value = exports.map_boolean_output(value);
                     }
-                    
-                    if ( prop.sections ) {
+
+                    if (prop.sections) {
                         enabled = enabled && prop.sections.indexOf(p.section) >= 0;
-                    } 
-                    if ( enabled && value) {
+                    }
+                    if (enabled && value) {
                         var address = prop.column + r;
                         var cell = worksheet.getCell(address);
-                        if ("format" in prop){
-                            cell.numFmt= prop.format
+                        if ("format" in prop) {
+                            cell.numFmt = prop.format
                             var v = parseFloat(value);
-                            if ( !isNaN(v) ) {
+                            if (!isNaN(v)) {
                                 value = v;
                             }
                             cell.value = value;
-                        }
-                        else {
+                        } else {
                             cell.value = value;
                         }
-                        
+
                     }
                 }
                 r++;
             });
 
-            tmp.file(function(err, path, fd, cleanupCallback) {
+            tmp.file(function (err, path, fd, cleanupCallback) {
                 if (err) throw err;
-                workbook.xlsx.writeFile(path).then(function() {
+                workbook.xlsx.writeFile(path).then(function () {
                     callback(null, path, cleanupCallback);
-                    
+
                 });
-            }, {postfix:".xlsx"});
+            }, {
+                postfix: ".xlsx"
+            });
 
         });
     return null;
 }
 
-exports.section_label = function(section) {
-      if (!section) return undefined;
-      switch(section) {
-          case "3":
+exports.section_label = function (section) {
+    if (!section) return undefined;
+    switch (section) {
+        case "3":
             return "Section III";
-          case "4":
+        case "4":
             return "Section IV";
-          case "5":
+        case "5":
             return "Section V";
-          case "6a":
+        case "6a":
             return "Section VI-a";
-          case "6b":
+        case "6b":
             return "Section VI-b";
-          case "7":
+        case "7":
             return "Section VII";
-          default:
+        default:
             return undefined;
-      }
-  }
-
+    }
+}
