@@ -126,7 +126,15 @@ var part_load_loss = function (ratio) {
 }
 
 var calc_ns = function (pump) {
-    return (pump.speed * Math.sqrt(pump.flow.bep100) / Math.pow(pump.head.bep100 / pump.stages, 0.75));
+    var flow = pump.flow.bep100;
+    var head = pump.head.bep100;
+
+    if (pump.load120 === false || pump.load120 == 'false' || !pump.load120) {
+        // The 100% point is actually in the 110 slot
+        flow = pump.flow.bep110;
+        head = pump.head.bep110;
+    }
+    return (pump.speed * Math.sqrt(flow) / Math.pow(head / pump.stages, 0.75));
 }
 
 var calc_full_load_motor_losses = function (pump, result) {
