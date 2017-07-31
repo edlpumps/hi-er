@@ -108,12 +108,13 @@ var build_error = function (error, pump) {
 }
 
 var calculate_efficiency = function (pump, result, c, coefficients) {
+    var flow = flow100(pump);
     var LN = Math.log;
     var terms = [
-        coefficients[0] * Math.pow(LN(pump.flow.bep100), 2),
-        coefficients[1] * LN(result.ns) * LN(pump.flow.bep100),
+        coefficients[0] * Math.pow(LN(flow), 2),
+        coefficients[1] * LN(result.ns) * LN(flow),
         coefficients[2] * Math.pow(LN(result.ns), 2),
-        coefficients[3] * LN(pump.flow.bep100),
+        coefficients[3] * LN(flow),
         coefficients[4] * LN(result.ns), -(coefficients[5] + c)
     ]
     return terms.reduce(function (a, b) {
@@ -123,6 +124,23 @@ var calculate_efficiency = function (pump, result, c, coefficients) {
 
 var part_load_loss = function (ratio) {
     return -0.4508 * Math.pow(ratio, 3) + 1.2399 * Math.pow(ratio, 2) - 0.4301 * ratio + 0.641;
+}
+
+var flow100 = function (pump) {
+    var retval = pump.flow.bep100;
+    if (pump.load120 === false || pump.load120 == 'false' || !pump.load120) {
+        // The 100% point is actually in the 110 slot
+        retval = pump.flow.bep110;
+    }
+    return retval;
+}
+var head100 = function (pump) {
+    var retval = pump.head.bep100;
+    if (pump.load120 === false || pump.load120 == 'false' || !pump.load120) {
+        // The 100% point is actually in the 110 slot
+        retval = pump.head.bep110;
+    }
+    return retval;
 }
 
 var calc_ns = function (pump) {
@@ -419,6 +437,14 @@ var section6b_auto = function (pump) {
 }
 
 
+var powerInput100 = function (pump) {
+    var retval = pump.pump_input_power.bep100;
+    if (pump.load120 === false || pump.load120 == 'false' || !pump.load120) {
+        // The 100% point is actually in the 110 slot
+        retval = pump.pump_input_power.bep110;
+    }
+    return retval;
+}
 
 var section7_auto = function (pump) {
     var result = {
@@ -439,16 +465,16 @@ var section7_auto = function (pump) {
     /////////////////////////////////////////////////////////
     // variable load pump input power calculations
     /////////////////////////////////////////////////////////
-    let flow = pump.flow.bep100;
-    let power = pump.pump_input_power.bep100;
-    let ppi = function (flow, power, p) {
-        return (0.8 * (Math.pow(p * flow, 3)) / (Math.pow(flow, 3)) + 0.2 * ((p * flow) / flow)) * power
+    let flow = flow100(pump);
+    let power = powerInput100(pump);
+    let ppi = function (_flow, _power, p) {
+        return (0.8 * (Math.pow(p * _flow, 3)) / (Math.pow(_flow, 3)) + 0.2 * ((p * _flow) / _flow)) * _power
     }
 
     result.vl_pump_power_input_bep25 = ppi(flow, power, 0.25);
     result.vl_pump_power_input_bep50 = ppi(flow, power, 0.50);
     result.vl_pump_power_input_bep75 = ppi(flow, power, 0.75);
-    result.vl_pump_power_input_bep100 = pump.pump_input_power.bep100;
+    result.vl_pump_power_input_bep100 = power;
     /////////////////////////////////////////////////////////
 
     /////////////////////////////////////////////////////////
@@ -689,13 +715,15 @@ var check_pump_input_power = function (pump, missing, test_120) {
 
 
 var calc_target_inputs = function (pump) {
+    var flow = flow100(pump);
+    var head = flow100(head);
     return {
-        flow_25: pump.flow.bep100 * 0.25,
-        flow_50: pump.flow.bep100 * 0.50,
-        flow_75: pump.flow.bep100 * 0.75,
-        head_25: (0.8 * Math.pow(pump.flow.bep100 * 0.25, 2) / Math.pow(pump.flow.bep100, 2) + 0.2) * pump.head.bep100,
-        head_50: (0.8 * Math.pow(pump.flow.bep100 * 0.50, 2) / Math.pow(pump.flow.bep100, 2) + 0.2) * pump.head.bep100,
-        head_75: (0.8 * Math.pow(pump.flow.bep100 * 0.75, 2) / Math.pow(pump.flow.bep100, 2) + 0.2) * pump.head.bep100
+        flow_25: flow * 0.25,
+        flow_50: flow * 0.50,
+        flow_75: flow * 0.75,
+        head_25: (0.8 * Math.pow(flow * 0.25, 2) / Math.pow(flow, 2) + 0.2) * head,
+        head_50: (0.8 * Math.pow(flow * 0.50, 2) / Math.pow(flow, 2) + 0.2) * head,
+        head_75: (0.8 * Math.pow(flow * 0.75, 2) / Math.pow(flow, 2) + 0.2) * head
     }
 }
 var check_measured_inputs = function (pump, missing) {
