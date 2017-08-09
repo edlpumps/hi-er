@@ -716,7 +716,7 @@ var check_pump_input_power = function (pump, missing, test_120) {
 
 var calc_target_inputs = function (pump) {
     var flow = flow100(pump);
-    var head = flow100(head);
+    var head = head100(pump);
     return {
         flow_25: flow * 0.25,
         flow_50: flow * 0.50,
