@@ -439,10 +439,13 @@ var section6b_auto = function (pump) {
 
 var powerInput100 = function (pump) {
     var retval = pump.pump_input_power.bep100;
-    if (pump.load120 === false || pump.load120 == 'false' || !pump.load120) {
-        // The 100% point is actually in the 110 slot
-        retval = pump.pump_input_power.bep110;
-    }
+    /* if (pump.load120 === false || pump.load120 == 'false' || !pump.load120) {
+         // The 100% point is actually in the 110 slot
+         retval = pump.pump_input_power.bep110;
+         console.log(`@ ${retval}`)
+     } else {
+         console.log(`+ ${retval}`)
+     }*/
     return retval;
 }
 
