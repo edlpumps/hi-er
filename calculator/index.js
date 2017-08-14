@@ -439,14 +439,24 @@ var section6b_auto = function (pump) {
 
 var powerInput100 = function (pump) {
     var retval = pump.pump_input_power.bep100;
-    /* if (pump.load120 === false || pump.load120 == 'false' || !pump.load120) {
-         // The 100% point is actually in the 110 slot
-         retval = pump.pump_input_power.bep110;
-         console.log(`@ ${retval}`)
-     } else {
-         console.log(`+ ${retval}`)
-     }*/
+    if (pump.load120 === false || pump.load120 == 'false' || !pump.load120) {
+        // The 100% point is actually in the 110 slot
+        retval = pump.pump_input_power.bep110;
+        console.log(`@ ${retval}`)
+    }
     return retval;
+}
+
+var pump_power_input_motor_power_ratio = function (pump, result) {
+    var retval = result.pump_power_input_motor_power_ratio_bep100;
+    if (pump.load120 === false || pump.load120 == 'false' || !pump.load120) {
+        // The 100% point is actually in the 110 slot
+        retval = result.pump_power_input_motor_power_ratio_bep110;
+        console.log(retval);
+    }
+    console.log(retval);
+    return retval;
+
 }
 
 var section7_auto = function (pump) {
@@ -501,7 +511,7 @@ var section7_auto = function (pump) {
     result.mc_part_load_loss_factor_bep25 = poly3(loss_coeffs, result.vl_pump_power_input_motor_power_ratio_bep25);
     result.mc_part_load_loss_factor_bep50 = poly3(loss_coeffs, result.vl_pump_power_input_motor_power_ratio_bep50);
     result.mc_part_load_loss_factor_bep75 = poly3(loss_coeffs, result.vl_pump_power_input_motor_power_ratio_bep75);
-    result.mc_part_load_loss_factor_bep100 = poly3(loss_coeffs, result.pump_power_input_motor_power_ratio_bep100);
+    result.mc_part_load_loss_factor_bep100 = poly3(loss_coeffs, pump_power_input_motor_power_ratio(pump, result));
 
     var loss = result.full_load_motor_losses;
     if (parseFloat(pump.motor_efficiency)) {
@@ -536,6 +546,7 @@ var section7_auto = function (pump) {
 
     calc_energy_rating(pump, result);
 
+    //console.log(JSON.stringify(result, null, 2));
 
     return result;
 }
