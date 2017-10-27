@@ -278,8 +278,6 @@ router.post("/participant/:id", function (req, res) {
     })
 })
 
-
-
 router.get("/sendactivation/:id", function (req, res) {
     req.Users.findOne({
         _id: req.params.id
