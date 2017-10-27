@@ -1,4 +1,6 @@
-require('dotenv').config({silent: true});
+require('dotenv').config({
+    silent: true
+});
 
 const path = require('path');
 const http = require('http');
@@ -17,13 +19,16 @@ const schemas = require("./schemas");
 const units = require('./utils/uom');
 const MongoStore = require('connect-mongo')(session);
 var session_store = null;
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3003;
 const data_connection_str = process.env.MONGO_CONNECTION_DATA;
 
 const passport = require('passport');
 const Strategy = require('passport-local').Strategy;
-var mainlog = bunyan.createLogger({name: 'hi', level:process.env.LOG_LEVEL});
-    
+var mainlog = bunyan.createLogger({
+    name: 'hi',
+    level: process.env.LOG_LEVEL
+});
+
 
 ////////////////////////////////////////////////////
 // Basic express configuration
@@ -33,7 +38,7 @@ app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 
 
-var configure = function() {
+var configure = function () {
     app.use(favicon(__dirname + '/public/images/favicon.ico'));
     app.use(require('less-middleware')(__dirname + '/public'));
     app.use(express.static(__dirname + '/public'));
@@ -47,11 +52,9 @@ var configure = function() {
 
     app.use(helmet());
     app.use(flash());
-    busboy.extend(app,
-        {
-            upload: true
-        }
-    );
+    busboy.extend(app, {
+        upload: true
+    });
 
     ////////////////////////////////////////////////////
     // Logging configuration, main log added to each
@@ -70,7 +73,7 @@ var configure = function() {
     ////////////////////////////////////////////////////
     // Route configuration
     ////////////////////////////////////////////////////
-    app.use(function(req, res, next){
+    app.use(function (req, res, next) {
         req.Participants = req.app.locals.db.Participants;
         req.Users = req.app.locals.db.Users;
         req.Labels = req.app.locals.db.Labels;
@@ -81,7 +84,7 @@ var configure = function() {
         next();
     })
 
-    app.use(function(req, res, next) {
+    app.use(function (req, res, next) {
         if (!req.session.unit_set) {
             req.session.unit_set = units.US;
         }
@@ -106,20 +109,22 @@ var configure = function() {
     app.use("/labels", labels);
     app.use("/ratings", ratings);
 
-    root.post('/login', 
-        passport.authenticate('local', { failureRedirect: '/portal' }),
-        function(req, res) {
+    root.post('/login',
+        passport.authenticate('local', {
+            failureRedirect: '/portal'
+        }),
+        function (req, res) {
             res.cookie('email', req.body.email);
             req.log.debug("User authenticated, redirecting to landing page");
             res.redirect('/');
         });
-    
-    root.get('/logout', function (req, res){
-        req.logOut() ;
+
+    root.get('/logout', function (req, res) {
+        req.logOut();
         res.redirect('/portal')
     });
 
-    root.post('/units', function(req, res) {
+    root.post('/units', function (req, res) {
         var unit_set = req.body.unit_set;
         if (unit_set == units.US || unit_set == units.METRIC) {
             req.session.unit_set = unit_set;
@@ -128,13 +133,13 @@ var configure = function() {
     });
 
 
-    app.use("/error", function(req, res) {
+    app.use("/error", function (req, res) {
         res.render("error", {});
     })
-    app.use("/disabled", function(req, res) {
+    app.use("/disabled", function (req, res) {
         res.render("disabled", {});
     })
-    app.use("/unauthorized", function(req, res) {
+    app.use("/unauthorized", function (req, res) {
         res.render("unauthorized", {});
     })
 }
@@ -144,44 +149,46 @@ var configure = function() {
 ////////////////////////////////////////////////////
 // Database configuration
 ////////////////////////////////////////////////////
-var conn = mongoose.connect(data_connection_str, {auto_reconnect:true}, function(err, res) {
-  if (err) {
-    mainlog.fatal("Could not connect to mongo database at %s", data_connection_str)
-  }
-  else {
-    mainlog.info("Connected to mongo database at %s", data_connection_str);
-    schemas.init(mongoose);
-    app.locals.db = {
-      Users: schemas.Users,
-      Participants: schemas.Participants,
-      Labels : schemas.Labels, 
-      Labs : schemas.Labs,
-      nextRatingsId : schemas.nextRatingsId, 
-      PasswordResets : schemas.PasswordResets
-    };
+var conn = mongoose.connect(data_connection_str, {
+    auto_reconnect: true
+}, function (err, res) {
+    if (err) {
+        mainlog.fatal("Could not connect to mongo database at %s", data_connection_str)
+    } else {
+        mainlog.info("Connected to mongo database at %s", data_connection_str);
+        schemas.init(mongoose);
+        app.locals.db = {
+            Users: schemas.Users,
+            Participants: schemas.Participants,
+            Labels: schemas.Labels,
+            Labs: schemas.Labs,
+            nextRatingsId: schemas.nextRatingsId,
+            PasswordResets: schemas.PasswordResets
+        };
 
-    session_store = new MongoStore({
-        db: mongoose.connection.db
-    });
-    configure();
-    startup();
-  }
+        session_store = new MongoStore({
+            db: mongoose.connection.db
+        });
+        configure();
+        startup();
+    }
 });
 
 
 ////////////////////////////////////////////////////
 // Authentication
 ////////////////////////////////////////////////////
-passport.use(new Strategy (
-    {
+passport.use(new Strategy({
         usernameField: 'email',
-        passReqToCallback : true 
-    },  
+        passReqToCallback: true
+    },
     function (req, email, password, done) {
         var regex = new RegExp("^" + email + "$", "i");
         console.log(regex);
-        app.locals.db.Users.findOne({email:regex}, function(err, user) {
-            if ( err ) {
+        app.locals.db.Users.findOne({
+            email: regex
+        }, function (err, user) {
+            if (err) {
                 mainlog.info("Authentication of " + email + " failed (error)");
                 mainlog.error(err);
                 return done(err);
@@ -195,8 +202,7 @@ passport.use(new Strategy (
                 }
                 mainlog.info("Authenticated " + email + " successfully");
                 return done(null, user);
-            }
-            else {
+            } else {
                 mainlog.info("Authentication of " + email + " failed (user unknown)");
                 return done(null, false, req.flash('loginMessage', "Authentication failed"));
             }
@@ -204,13 +210,13 @@ passport.use(new Strategy (
     }
 ));
 
-passport.serializeUser(function(user, cb) {
+passport.serializeUser(function (user, cb) {
     cb(null, user._id);
 });
 
-passport.deserializeUser(function(id, cb) {
-    app.locals.db.Users.findById(id, function(err, user) {
-        if ( err ) return cb(err);
+passport.deserializeUser(function (id, cb) {
+    app.locals.db.Users.findById(id, function (err, user) {
+        if (err) return cb(err);
         return cb(null, user);
     });
 });
@@ -220,7 +226,7 @@ passport.deserializeUser(function(id, cb) {
 ////////////////////////////////////////////////////
 // Startup
 ////////////////////////////////////////////////////
-var startup = function(){
+var startup = function () {
     mainlog.info("HI Energy Rating application startup -- %s", process.env.NODE_ENV);
     http.createServer(app).listen(port);
 }
