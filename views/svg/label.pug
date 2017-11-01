@@ -9,23 +9,25 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
     
     rect(x="0", y="0", rx="0", ry="0", width="620", height="720", style="fill:#FFFFFF;;stroke: #222222;;stroke-width:1;")
     image(x="25", y="15", height="100px", width="565px", xlink:href=logo)
-    line(x1="21", y1="25", x2="21", y2="300", stroke-width="2", stroke="#000000")
-    line(x1="595", y1="25", x2="595", y2="300", stroke-width="2", stroke="#000000")
+    line(x1="21", y1="25", x2="21", y2="310", stroke-width="2", stroke="#000000")
+    line(x1="595", y1="25", x2="595", y2="310", stroke-width="2", stroke="#000000")
 
     text(x="30", y="150", style="font-family: 'Arimo'; font-weight:bold", font-size="16", text-anchor="start", fill="black") #{participant}
     text(x="330", y="150", style="font-family: 'Arimo'; font-weight:bold", font-size="16", text-anchor="start", fill="black") #{doe}   Pump Type
 
     text(x="30", y="180", style="font-family: 'Arimo'", font-size="16", text-anchor="start", fill="black") Model #:
     text(x="30", y="210", style="font-family: 'Arimo'", font-size="16", text-anchor="start", fill="black") Nominal Speed:
+    text(x="30", y="240", style="font-family: 'Arimo'", font-size="16", text-anchor="start", fill="black") PEI:
 
     text(x="110", y="180", style="font-family: 'Arimo';font-weight:bold", font-size="16", text-anchor="start", fill="black") #{basic_model}
     text(x="155", y="210", style="font-family: 'Arimo';font-weight:bold", font-size="16", text-anchor="start", fill="black") #{speed}
+    text(x="95", y="240", style="font-family: 'Arimo';font-weight:bold", font-size="16", text-anchor="start", fill="black") #{pei}
 
     text(x="330", y="180", style="font-family: 'Arimo'; font-weight:bold", font-size="16", text-anchor="start", fill="black") #{pm}
     text(x="330", y="210", style="font-family: 'Arimo'; font-weight:bold", font-size="16", text-anchor="start", fill="black") #{config}
 
-    rect(x="30", y="250", rx="0", ry="0", width="555", height="50", style="fill:#8dc73f;;stroke: #8dc73f;stroke-width:1;")
-    text(x="45", y="285", style="font-family: 'Arimo', Helvetica; font-style:italic; font-weight:bold", font-size="30", text-anchor="start", fill="white") #{load}
+    rect(x="30", y="260", rx="0", ry="0", width="555", height="50", style="fill:#8dc73f;;stroke: #8dc73f;stroke-width:1;")
+    text(x="45", y="295", style="font-family: 'Arimo', Helvetica; font-style:italic; font-weight:bold", font-size="30", text-anchor="start", fill="white") #{load}
 
     - var tick = 0;
     - var scale_width = 500;
