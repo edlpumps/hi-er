@@ -196,8 +196,11 @@ router.get('/participant/:id/pumps', function (req, res) {
 })
 
 router.get('/participant/:id/pumps/:pump_id', function (req, res) {
+    console.log("Getting participant");
     req.Participants.findById(req.params.id, function (err, participant) {
+        console.log("Getting Pump");
         var pump = participant.pumps.id(req.params.pump_id);
+        console.log("Rendering");
         res.render("admin/a_pump", {
             user: req.user,
             participant: participant,
