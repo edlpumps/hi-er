@@ -26,6 +26,7 @@ var build_label_params = function (pump, label) {
             "- Non-Continuous Controls");
 
     var load = pump.configuration == "bare" || pump.configuration == "pump_motor" ? "CONSTANT LOAD" : "VARIABLE LOAD";
+    var load_abbr = pump.configuration == "bare" || pump.configuration == "pump_motor" ? "CL" : "VL";
     var datetime = label.date.getTime() < pump.date.getTime() ? pump.date : label.date;
     var locale = "en-us";
 
@@ -52,7 +53,8 @@ var build_label_params = function (pump, label) {
         rating_id: pump.rating_id,
         bar_width: distance * 500 - 1,
         er_pos: pos,
-        logo: hi_logo_data_uri
+        logo: hi_logo_data_uri,
+        load_abbr: load_abbr
     };
 
 
