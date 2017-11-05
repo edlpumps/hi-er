@@ -46,6 +46,7 @@ var build_label_params = function (pump, label) {
         config: config,
         participant: pump.participant,
         basic_model: pump.basic_model,
+        brand: pump.brand,
         speed: pump.speed,
         load: load,
         er: pump.energy_rating,
