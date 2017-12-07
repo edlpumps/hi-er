@@ -1,4 +1,3 @@
-
 const nodemailer = require('nodemailer');
 const pug = require('pug');
 const path = require('path');
@@ -27,16 +26,24 @@ const reset_template = pug.compileFile(reset_template_file);
 const reset_template_pt_file = path.join(__dirname, "../views/registration/password-email-plain.pug");
 const reset_template_pt = pug.compileFile(reset_template_pt_file);
 
+
+const listings_template_file = path.join(__dirname, "../views/subscribers/email.pug");
+const listings_template = pug.compileFile(listings_template_file);
+
+const listings_template_pt_file = path.join(__dirname, "../views/subscribers/email-plain.pug");
+const listings_template_pt = pug.compileFile(listings_template_pt_file);
+
+
 var smtpConfig = {
     host: process.env.SMTP,
     port: process.env.SMTP_PORT || 25,
-    secure: process.env.SMTP_SECURE || false, 
+    secure: process.env.SMTP_SECURE || false,
     auth: {
         user: process.env.SMTP_USERNAME,
         pass: process.env.SMTP_PASSWORD
-    }, 
+    },
     tls: {
-        rejectUnauthorized:false
+        rejectUnauthorized: false
     }
 };
 
@@ -46,9 +53,9 @@ var make_mail_options = function(recipient, subject, template_params, html, text
     var sender = process.env.SMTP_SENDING_ADDRESS;
     var recipient = process.env.LIVE_EMAIL ? recipient : process.env.SMTP_RECIPIENT_OVERRIDE;
     var mailOptions = {
-        from: sender, 
-        to: recipient, 
-        subject: subject, 
+        from: sender,
+        to: recipient,
+        subject: subject,
         html: html(template_params),
         text: text(template_params)
     };
@@ -57,83 +64,95 @@ var make_mail_options = function(recipient, subject, template_params, html, text
     }
     return mailOptions;
 }
-exports.sendAuthenticationEmail = function (base_url, user, creator) {
+exports.sendAuthenticationEmail = function(base_url, user, creator) {
     var activation_link = base_url + '/activate/' + user.activationKey;
     var template_params = {
-            user:user, 
-            creator:creator, 
-            activation_link:activation_link, 
-            base_url:base_url
-        };
-    
+        user: user,
+        creator: creator,
+        activation_link: activation_link,
+        base_url: base_url
+    };
+
     var mailOptions = make_mail_options(user.email, "HI Energy Rating Portal - Account Activation", template_params, activation_template, activation_template_pt);
 
-    transporter.sendMail(mailOptions, function(error, info){
-        if(error){
+    transporter.sendMail(mailOptions, function(error, info) {
+        if (error) {
             console.log("Could not send email using the following user:")
             console.log(process.env.SMTP_USERNAME)
             return console.log(error);
-        }
-        else {
+        } else {
             console.log("Email sent successfully");
         }
     });
 }
-exports.sendPasswordReset = function (base_url, reset, user) {
+exports.sendPasswordReset = function(base_url, reset, user) {
     var template_params = {
-        reset_link:base_url + '/reset/' + reset._id, 
-        base_url:base_url, 
-        user : user
+        reset_link: base_url + '/reset/' + reset._id,
+        base_url: base_url,
+        user: user
     };
-    
+
     var mailOptions = make_mail_options(reset.email, "HI Energy Rating Portal - Password Reset", template_params, reset_template, reset_template_pt);
 
-    transporter.sendMail(mailOptions, function(error, info){
-        if(error){
+    transporter.sendMail(mailOptions, function(error, info) {
+        if (error) {
             console.log("Could not send email using the following user:")
             console.log(process.env.SMTP_USERNAME)
             return console.log(error);
-        }
-        else {
+        } else {
             console.log("Email sent to successfully");
         }
     });
 }
 
-exports.sendDeletionNotification = function (deleted, actor) {
+exports.sendDeletionNotification = function(deleted, actor) {
     var template_params = {
-        deleted : deleted,
-        actor : actor
+        deleted: deleted,
+        actor: actor
     };
-    
+
     var mailOptions = make_mail_options(deleted.email, "HI Energy Rating Portal - Account Deletion", template_params, delete_template, delete_template_pt);
 
-    transporter.sendMail(mailOptions, function(error, info){
-        if(error){
+    transporter.sendMail(mailOptions, function(error, info) {
+        if (error) {
             console.log("Could not send email using the following user:")
             console.log(process.env.SMTP_USERNAME)
             return console.log(error);
-        }
-        else {
+        } else {
             console.log("Email sent to successfully");
         }
     });
 }
 
-exports.sendEStoreSetup = function (recipient, participant) {
-    var template_params = {
-        participant:participant
-    };
-    
-    var mailOptions = make_mail_options(recipient, "HI Energy Rating Portal - New Account", template_params, estore_template, estore_template_pt);
+exports.sendListings = function(recipient, csv) {
+    var template_params = {};
 
-    transporter.sendMail(mailOptions, function(error, info){
-        if(error){
+    var mailOptions = make_mail_options(recipient, "HI Energy Rating Portal - Energy Rating Listings", template_params, listings_template, listings_template_pt);
+
+    transporter.sendMail(mailOptions, function(error, info) {
+        if (error) {
             console.log("Could not send email using the following user:")
             console.log(process.env.SMTP_USERNAME)
             return console.log(error);
+        } else {
+            console.log("Email sent to successfully");
         }
-        else {
+    });
+}
+
+exports.sendEStoreSetup = function(recipient, participant) {
+    var template_params = {
+        participant: participant
+    };
+
+    var mailOptions = make_mail_options(recipient, "HI Energy Rating Portal - New Account", template_params, estore_template, estore_template_pt);
+
+    transporter.sendMail(mailOptions, function(error, info) {
+        if (error) {
+            console.log("Could not send email using the following user:")
+            console.log(process.env.SMTP_USERNAME)
+            return console.log(error);
+        } else {
             console.log("Email sent to successfully");
         }
     });

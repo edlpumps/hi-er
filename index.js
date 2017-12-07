@@ -38,7 +38,7 @@ app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 
 
-var configure = function () {
+var configure = function() {
     app.use(favicon(__dirname + '/public/images/favicon.ico'));
     app.use(require('less-middleware')(__dirname + '/public'));
     app.use(express.static(__dirname + '/public'));
@@ -60,7 +60,7 @@ var configure = function () {
     // Logging configuration, main log added to each
     // request object.
     ////////////////////////////////////////////////////
-    app.use(function (req, res, next) {
+    app.use(function(req, res, next) {
         req.log = mainlog;
         next();
     });
@@ -73,18 +73,19 @@ var configure = function () {
     ////////////////////////////////////////////////////
     // Route configuration
     ////////////////////////////////////////////////////
-    app.use(function (req, res, next) {
+    app.use(function(req, res, next) {
         req.Participants = req.app.locals.db.Participants;
         req.Users = req.app.locals.db.Users;
         req.Labels = req.app.locals.db.Labels;
         req.Labs = req.app.locals.db.Labs;
+        req.Subscribers = req.app.locals.db.Subscribers;
         req.nextRatingsId = req.app.locals.db.nextRatingsId;
         req.PasswordResets = req.app.locals.db.PasswordResets;
         req.base_url = req.protocol + '://' + req.get('Host');
         next();
     })
 
-    app.use(function (req, res, next) {
+    app.use(function(req, res, next) {
         if (!req.session.unit_set) {
             req.session.unit_set = units.US;
         }
@@ -113,18 +114,18 @@ var configure = function () {
         passport.authenticate('local', {
             failureRedirect: '/portal'
         }),
-        function (req, res) {
+        function(req, res) {
             res.cookie('email', req.body.email);
             req.log.debug("User authenticated, redirecting to landing page");
             res.redirect('/');
         });
 
-    root.get('/logout', function (req, res) {
+    root.get('/logout', function(req, res) {
         req.logOut();
         res.redirect('/portal')
     });
 
-    root.post('/units', function (req, res) {
+    root.post('/units', function(req, res) {
         var unit_set = req.body.unit_set;
         if (unit_set == units.US || unit_set == units.METRIC) {
             req.session.unit_set = unit_set;
@@ -133,13 +134,13 @@ var configure = function () {
     });
 
 
-    app.use("/error", function (req, res) {
+    app.use("/error", function(req, res) {
         res.render("error", {});
     })
-    app.use("/disabled", function (req, res) {
+    app.use("/disabled", function(req, res) {
         res.render("disabled", {});
     })
-    app.use("/unauthorized", function (req, res) {
+    app.use("/unauthorized", function(req, res) {
         res.render("unauthorized", {});
     })
 }
@@ -151,7 +152,7 @@ var configure = function () {
 ////////////////////////////////////////////////////
 var conn = mongoose.connect(data_connection_str, {
     auto_reconnect: true
-}, function (err, res) {
+}, function(err, res) {
     if (err) {
         mainlog.fatal("Could not connect to mongo database at %s", data_connection_str)
     } else {
@@ -162,6 +163,7 @@ var conn = mongoose.connect(data_connection_str, {
             Participants: schemas.Participants,
             Labels: schemas.Labels,
             Labs: schemas.Labs,
+            Subscribers: schemas.Subscribers,
             nextRatingsId: schemas.nextRatingsId,
             PasswordResets: schemas.PasswordResets
         };
@@ -182,12 +184,12 @@ passport.use(new Strategy({
         usernameField: 'email',
         passReqToCallback: true
     },
-    function (req, email, password, done) {
+    function(req, email, password, done) {
         var regex = new RegExp("^" + email + "$", "i");
         console.log(regex);
         app.locals.db.Users.findOne({
             email: regex
-        }, function (err, user) {
+        }, function(err, user) {
             if (err) {
                 mainlog.info("Authentication of " + email + " failed (error)");
                 mainlog.error(err);
@@ -210,12 +212,12 @@ passport.use(new Strategy({
     }
 ));
 
-passport.serializeUser(function (user, cb) {
+passport.serializeUser(function(user, cb) {
     cb(null, user._id);
 });
 
-passport.deserializeUser(function (id, cb) {
-    app.locals.db.Users.findById(id, function (err, user) {
+passport.deserializeUser(function(id, cb) {
+    app.locals.db.Users.findById(id, function(err, user) {
         if (err) return cb(err);
         return cb(null, user);
     });
@@ -226,7 +228,28 @@ passport.deserializeUser(function (id, cb) {
 ////////////////////////////////////////////////////
 // Startup
 ////////////////////////////////////////////////////
-var startup = function () {
-    mainlog.info("HI Energy Rating application startup -- %s", process.env.NODE_ENV);
+var startup = function() {
+    mainlog.info("HI Energy Rating application startup -- %s, port %s", process.env.NODE_ENV, port);
     http.createServer(app).listen(port);
 }
+
+var push_emails = function() {
+    mailer.sendListings('scott.frees@gmail.com');
+}
+
+var mailer = require('./utils/mailer');
+var sched = require('node-schedule');
+var daily = new sched.RecurrenceRule();
+daily.hour = 13;
+daily.minute = 0;
+
+var weekly = new sched.RecurrenceRule();
+weekly.dayOfWeek = 5;
+weekly.hour = 14;
+weekly.minute = 30;
+
+var twiceAMonth = "45 15 7,15 * *"
+
+sched.scheduleJob(daily, push_emails);
+sched.scheduleJob(weekly, push_emails);
+sched.scheduleJob(twiceAMonth, 'America/New_York', push_emails);

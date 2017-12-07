@@ -40,6 +40,8 @@
     "momentjs": "2.0.0",
     "mongoose": "4.6.0",
     "multer": "1.2.0",
+    "node-schedule": "^1.2.5",
+    "node-schedule-tz": "^1.2.1-4",
     "nodemailer": "2.7.0",
     "passport": "0.3.2",
     "passport-local": "1.0.0",

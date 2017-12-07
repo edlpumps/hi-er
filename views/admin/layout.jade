@@ -41,6 +41,10 @@ html.ng-cloak(ng-app='ERAdminApp')
                     a(href="/admin/labs") 
                      .glyphicon.glyphicon-scale.margin-right
                      | Laboratories
+                  li(class=(active == 'subscribers' ? 'active' : ''))
+                    a(href="/admin/subscriber") 
+                     .glyphicon.glyphicon-send.margin-right
+                     | Subscribers
                   li(class=(active == 'labels' ? 'active' : ''))
                     a(href="/admin/labels") 
                      .glyphicon.glyphicon-wrench.margin-right

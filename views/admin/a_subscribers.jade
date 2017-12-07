@@ -1,0 +1,94 @@
+extends layout
+include ../common/user_list
+
+block nav
+   +navigation("subscribers")
+block content
+    
+    .container(ng-controller="ERSubscriberController as app",ng-init="app.user= #{JSON.stringify(user)}")
+        
+
+        .panel.panel-default
+            .panel-heading
+                h2 
+                 .pull-right
+                   button(type="button", ng-click="app.showAddSubscriber()").btn.btn-primary New Subscriber
+                 | Subscribers
+            .panel-body
+                .row
+                  .col.col-sm-12
+                   .table-responsive
+                    table.table.table-striped
+                        thead
+                            tr
+                                th Organization 
+                                th.hidden-xs Frequency
+                                th.hidden-xs Last Sent
+                                th Recipients
+                                th
+                        tbody
+                            tr(ng-repeat="subscriber in app.subscribers")
+                                td {{subscriber.organization}}
+                                td.hidden-xs 
+                                  span(ng-show='subscriber.interval_days == 1') Daily
+                                  span(ng-show='subscriber.interval_days == 7') Weekly
+                                  span(ng-show='subscriber.interval_days == 15') Twice a month
+                                td.hidden-xs 
+                                  span(ng-show='subscriber.last_email_date') {{subscriber.last_email_date}}
+                                  span(ng-show='!subscriber.last_email_date') Never
+                                td {{subscriber.recipients.length}}
+                                td 
+                                  .btn-group
+                                    button(type="button", ng-click="app.showEditSubscriber(subscriber)").btn.btn-default View/Edit
+                                    button(type="button", ng-click="app.removeSubscriber(subscriber)").btn.btn-danger Delete
+            .panel-footer
+              p.text-muted Subscribers that receive weekly emails will receive their emails on Mondays.  Subscribers receiving two emails per month will receive emails on the 1st and 15th day of each month.
+
+
+        .modal.fade#add(tabindex='-1', role='dialog' aria-labelledby='titleLabel', aria-hidden='true')
+              .modal-dialog
+                  .modal-content
+                      .modal-header
+                          button(type='button', class='close' data-dismiss='modal' aria-hidden='hidden') &times;
+                          h4.modal-title#titleLabel Add New Subscriber
+                      .modal-body
+                          form(role='form' name='new_lab')
+                              .row
+                                  .col-sm-12
+                                      .form-group
+                                          label Organization:
+                                          input.form-control.input-sm(ng-model='app.active_subscriber.organization', required)
+                              .row
+                                  .col-sm-12
+                                      .form-group
+                                          label Email Frequency:
+                                          select.form-control.input-sm(ng-model='app.active_subscriber.interval_days', required)
+                                            option(value='1') Daily
+                                            option(value='7') Once a week
+                                            option(value='15') Twice a month
+                                          .help-block
+                                            p Weekly emails are sent on Mondays. Subscribers receiving two emails per month will receive emails on the 1st and 15th day of each month.
+                              .row
+                                  .col-sm-9
+                                      .form-group
+                                          label Add Email Recipients:
+                                          input.form-control.input-sm(ng-model='app.new_recipient')
+                                  .col-sm-3
+                                      .form-group
+                                        button.btn.btn-primary(type='button', ng-click='app.addRecipient()', style='margin-top:20px') Add
+                              .row
+                                  .col-sm-12
+                                      h4 Email Recipients 
+                                      ul.list-group
+                                        li.list-group-item(ng-repeat='r in app.active_subscriber.recipients') 
+                                          .pull-right: button.btn.btn-link(ng-click='app.removeRecipient($index)') remove
+                                          | {{r}}
+
+
+                                          
+                      .modal-footer
+                          div
+                              button.btn.btn-primary(type='button' ng-click='app.addSubscriber()') 
+                                span(ng-show='app.active_subscriber._id') Save Subscriber
+                                span(ng-show='!app.active_subscriber._id') Add Subscriber
+                              button.btn.btn-default(type='button' data-dismiss='modal') Cancel
