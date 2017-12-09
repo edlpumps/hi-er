@@ -357,15 +357,15 @@ var push_emails = function(interval) {
 var mailer = require('./utils/mailer');
 var sched = require('node-schedule');
 var daily = new sched.RecurrenceRule();
-daily.hour = 14;
-daily.minute = 3;
+daily.hour = 15;
+daily.minute = 0;
 
 var weekly = new sched.RecurrenceRule();
-weekly.dayOfWeek = 6;
-weekly.hour = 14;
-weekly.minute = 46;
+weekly.dayOfWeek = 1;
+weekly.hour = 10;
+weekly.minute = 00;
 
-var twiceAMonth = "52 14 8 * *"
+var twiceAMonth = "0 11 1,15 * *"
 
 sched.scheduleJob(daily, push_daily);
 sched.scheduleJob(weekly, push_weekly);
