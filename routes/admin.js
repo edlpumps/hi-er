@@ -307,9 +307,7 @@ router.get("/api/subscriber", function(req, res) {
         }));
     });
 })
-router.get("/api/subscriber/:id", function(req, res) {
 
-})
 // add
 router.put("/api/subscriber", function(req, res) {
     var sub = new req.Subscribers(req.body);

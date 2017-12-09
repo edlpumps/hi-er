@@ -128,7 +128,10 @@ exports.sendListings = function(recipient, csv) {
     var template_params = {};
 
     var mailOptions = make_mail_options(recipient, "HI Energy Rating Portal - Energy Rating Listings", template_params, listings_template, listings_template_pt);
-
+    mailOptions.attachments = [{
+        filename: 'energy_ratings.xlsx',
+        content: csv
+    }]
     transporter.sendMail(mailOptions, function(error, info) {
         if (error) {
             console.log("Could not send email using the following user:")

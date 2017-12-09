@@ -13,7 +13,7 @@ const cookieParser = require('cookie-parser');
 const flash = require('express-flash')
 const helmet = require('helmet');
 const bunyan = require('bunyan');
-
+const moment = require('moment');
 const mongoose = require("mongoose");
 const schemas = require("./schemas");
 const units = require('./utils/uom');
@@ -173,6 +173,9 @@ var conn = mongoose.connect(data_connection_str, {
         });
         configure();
         startup();
+
+
+        push_emails();
     }
 });
 
@@ -233,23 +236,137 @@ var startup = function() {
     http.createServer(app).listen(port);
 }
 
-var push_emails = function() {
-    mailer.sendListings('scott.frees@gmail.com');
+var push_daily = function() {
+    push_emails(1);
+}
+var push_weekly = function() {
+    push_emails(7);
+}
+var push_twice_a_month = function() {
+    push_emails(15);
+}
+var push_emails = function(interval) {
+    let params = require('./search').params;
+    var operators = params();
+    let headers = [
+        'rating_id',
+        'data',
+        'participant',
+        'basic_model',
+        'individual_model',
+        'brand',
+        'lab',
+        'configuration',
+        'doe',
+        'diameter',
+        'speed',
+        'stages',
+        'flow_bep',
+        'head_bep',
+        'driver_input_power_bep',
+        'control_power_input_bep',
+        'control_power_input_bep',
+        'pei',
+        'energy_rating'
+    ]
+    let filter = function(key) {
+        return headers.indexOf(key) >= 0;
+    }
+    let sorter = function(a, b) {
+        let i = headers.indexOf(a.value);
+        let j = headers.indexOf(b.value);
+        return i - j;
+    }
+    let headings = {
+        rating_id: "Rating ID",
+        participant: "Participant",
+        configuration: "Configuration",
+        basic_model: "Basic model designation",
+        individual_model: "Manufacturer's model designation",
+        brand: 'Brand',
+        diameter: 'Full impeller diameter',
+        speed: 'Nominal Speed',
+        lab: 'HI Approved laboratory',
+        stages: 'Stages',
+        doe: 'DOE product category',
+        energy_rating: 'Pump Energy Rating',
+        flow_bep: 'BEP Flow rate',
+        head_bep: 'BEP Head',
+        driver_input_power_bep: 'BEP Driver input power',
+        control_power_input_bep: 'BEP Control input power',
+        motor_power_rated: 'Rated motor power',
+        pei: 'Pump Energy Index',
+        date: 'Date listed'
+    }
+    app.locals.db.Participants.aggregate(operators).exec(function(err, docs) {
+        docs.forEach(function(pump) {
+            pump.flow_bep = pump.load120 ? pump.flow.bep100 : pump.flow.bep110;
+            pump.head_bep = pump.load120 ? pump.head.bep100 : pump.head.bep110;
+            if (pump.driver_input_power) {
+                pump.driver_input_power_bep =
+                    pump.load120 ? pump.driver_input_power.bep100 : pump.driver_input_power.bep110;
+                if (pump.driver_input_power_bep) {
+                    pump.driver_input_power_bep = pump.driver_input_power_bep.toFixed(2);
+                }
+            }
+            if (pump.control_power_input) {
+                pump.control_power_input_bep = pump.control_power_input.bep100;
+                if (pump.control_power_input_bep) {
+                    pump.control_power_input_bep = pump.control_power_input_bep.toFixed(2);
+                }
+            }
+            pump.motor_power_rated = pump.motor_power_rated ? pump.motor_power_rated : pump.motor_power_rated_results
+            pump.date = moment(pump.date).format("DD MMM YYYY")
+            pump.lab = pump.laboratory.name + " - " + pump.laboratory.code;
+
+            pump.diameter = pump.diameter.toFixed(3);
+            pump.flow_bep = pump.flow_bep.toFixed(2);
+            pump.head_bep = pump.head_bep.toFixed(2);
+            pump.motor_power_rated = pump.motor_power_rated.toFixed(2);
+
+        })
+        let toxl = require('jsonexcel');
+        let fs = require('fs');
+        let buffer = toxl(docs, { sort: sorter, headings: headings, filter: filter });
+
+
+        app.locals.db.Subscribers.find({ interval_days: interval }, function(err, subs) {
+            let recips = [];
+            if (subs) {
+                subs.forEach(function(s) {
+                    recips = recips.concat(s.recipients);
+                })
+            }
+            recips.forEach(function(recip) {
+                mailer.sendListings(recip, buffer);
+            })
+
+            /*fs.writeFile("example.xlsx", buffer, "binary", function(err) {
+                 if (err) {
+                     console.log(err);
+                 } else {
+                     console.log("Saved excel file to example.xlsx");
+                 }
+             });*/
+        })
+
+
+    });
 }
 
 var mailer = require('./utils/mailer');
 var sched = require('node-schedule');
 var daily = new sched.RecurrenceRule();
-daily.hour = 13;
-daily.minute = 0;
+daily.hour = 14;
+daily.minute = 3;
 
 var weekly = new sched.RecurrenceRule();
-weekly.dayOfWeek = 5;
+weekly.dayOfWeek = 6;
 weekly.hour = 14;
-weekly.minute = 30;
+weekly.minute = 46;
 
-var twiceAMonth = "45 15 7,15 * *"
+var twiceAMonth = "52 14 8 * *"
 
-sched.scheduleJob(daily, push_emails);
-sched.scheduleJob(weekly, push_emails);
-sched.scheduleJob(twiceAMonth, 'America/New_York', push_emails);
+sched.scheduleJob(daily, push_daily);
+sched.scheduleJob(weekly, push_weekly);
+sched.scheduleJob(twiceAMonth, push_twice_a_month);

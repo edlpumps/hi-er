@@ -3,164 +3,50 @@
 const express = require('express');
 const passport = require('passport');
 const router = express.Router();
+var default_search_operators = require('../search').params;
+
 
 router.get("/glossary", function(req, res) {
     var help = require('../public/resources/help.json')
     res.render("ratings/glossary", {
-                help : help
+        help: help
     });
 });
 
 
-var default_search_operators = function (search_parameters, allow_inactive) {
-    var search = search_parameters || {};
-    var inactive_allowed = allow_inactive || false;
-    if (!search.rating_id) {
-        // If the search does not include a rating ID, active pumps
-        // are never returned.
-        inactive_allowed = false;
-    }
-    var operators = [];
-    operators.push({"$unwind" : "$pumps"});
-    
-    operators.push(
-     { $group : { 
-        _id : "$pumps._id",  
-        rating_id : {$first: "$pumps.rating_id"},
-        participant_id : {$first: "$_id"},
-        participant : {$first: "$pumps.participant"},
-        participant_active : {$first: "$active"},
-        participant_status : {$first: "$subscription.status"},
-        configuration : {$first: "$pumps.configuration"},
-        basic_model : {$first: "$pumps.basic_model"},
-        individual_model : {$first: "$pumps.individual_model"},
-        brand : {$first: "$pumps.brand"},
-        diameter : {$first: "$pumps.diameter"},
-        speed : {$first: "$pumps.speed"},
-        laboratory : {$first: "$pumps.laboratory"},
-        stages : {$first: "$pumps.stages"},
-        doe : {$first: "$pumps.doe"},
-        pei : {$first: "$pumps.pei"},
-        energy_rating : {$first: "$pumps.energy_rating"},
-        energy_savings : {$first: "$pumps.energy_savings"},
-        listed : {$first: "$pumps.listed"},
-        pending : {$first: { $ifNull: [ "$pumps.pending", false ] }},
-        active_admin : {$first: "$pumps.active_admin"}, 
-     } 
-    });
 
-    var criteria = [
-                {doe : {$ne: null}},
-                {rating_id: {$ne:null}},
-                {participant: {$ne:null}},
-                {participant_active: {$eq:true}},
-                {participant_status: {$eq:'Active'}},
-                {configuration: {$ne:null}},
-                {basic_model: {$ne:null}},
-                {diameter: {$ne:null}},
-                {speed: {$ne:null}},
-                {laboratory: {$ne:null}},
-                {stages: {$ne:null}},
-                {doe: {$ne:null}},
-                {pei: {$ne:null}},
-                {energy_rating: {$ne:null}},
-                {energy_savings: {$ne:null}},
-                {active_admin: {$eq:true}}, 
-                {pending: {$eq:false}}
-            ];
-    if (!inactive_allowed) {
-        criteria.push({listed: {$eq:true}});
-    }
-
-    operators.push(
-        { $match : {
-            $and : criteria
-        }}
-    );
-    if ( search.rating_id) {
-        operators.push({ $match : {rating_id : search.rating_id}});
-    }
-    if ( search.participant) {
-        operators.push({ $match : {participant : search.participant}});
-    }
-    if ( search.basic_model) {
-        operators.push({ $match : {basic_model : search.basic_model}});
-    }
-    if ( search.participant && search.brand) {
-        operators.push({ $match : {brand : search.brand}});
-    }
-    if ( search ) {
-        var configs = [];
-        if ( search.cl ) {
-            configs.push({configuration : "bare"});
-            configs.push({configuration : "pump_motor"});
-        }
-        if ( search.vl ) {
-            configs.push({configuration : "pump_motor_cc"});
-            configs.push({configuration : "pump_motor_nc"});
-        }
-        if ( configs.length > 0 ) {
-            operators.push({$match: {$or : configs}});
-        }
-
-        var does = [];
-        if ( search.esfm ) {
-            does.push({doe : "ESFM"});
-        }
-        if ( search.escc ) {
-            does.push({doe : "ESCC"});
-        }
-        if ( search.il) {
-            does.push({doe : "IL"});
-        }
-        if (search.rsv) {
-            does.push({doe : "RSV"});
-        }
-        if (search.st) {
-            does.push({doe : "ST"});
-        }
-        if ( does.length > 0 ) {
-            operators.push({$match: {$or : does}});
-        }
-
-        var min_er = search.min_er || 0;
-        var max_er = search.max_er || 100;
-        operators.push({$match : { energy_rating: { $gte: min_er, $lte: max_er } }});
-    }
-    return operators;
-}
 router.get('/search', function(req, res) {
     var operators = default_search_operators(undefined, true);
     var search_params = req.session.search;
-    if (!search_params ) {
+    if (!search_params) {
         search_params = {};
         search_params.fresh = true;
     }
-   
+
     res.render("ratings/search", {
-        search : search_params
+        search: search_params
     });
 });
 router.get('/api/participants', function(req, res) {
-    req.Participants.find({$and: [{active:true, 'subscription.status':'Active'}]}, function(err, docs) {
+    req.Participants.find({ $and: [{ active: true, 'subscription.status': 'Active' }] }, function(err, docs) {
         res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify({ participants: docs.filter(p => p.active).map(p => p.name)}));
+        res.end(JSON.stringify({ participants: docs.filter(p => p.active).map(p => p.name) }));
     });
 });
 
 router.get('/api/brands', function(req, res) {
     var name = req.query.name;
     var query = {};
-    if ( name ) {
-        query = {name:name};
+    if (name) {
+        query = { name: name };
     }
     req.Participants.find(query, function(err, participants) {
         var brands = [];
-        participants.forEach(function(p){
+        participants.forEach(function(p) {
             brands = brands.concat(p.pumps.map(p => p.brand));
         });
         res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify({ brands: Array.from(new Set(brands))}));
+        res.end(JSON.stringify({ brands: Array.from(new Set(brands)) }));
     });
 })
 
@@ -171,7 +57,7 @@ router.get('/home', function(req, res) {
 router.get('/utilities', function(req, res) {
     var operators = default_search_operators(undefined, false);
     var search_params = req.session.search;
-    if (!search_params ) {
+    if (!search_params) {
         search_params = {};
         search_params.cl = true;
         search_params.vl = true;
@@ -188,17 +74,17 @@ router.get('/utilities', function(req, res) {
         search_params.max_er = 100;
         search_params.fresh = true;
     }
-    
-   
+
+
 
     res.render("ratings/utilities", {
-        search : search_params
+        search: search_params
     });
 });
 
 router.get("/:id", function(req, res) {
-    req.Participants.findOne({pumps : {$elemMatch: {'rating_id': req.params.id}}}, function(err, participant) {
-        if ( !err && participant ) {
+    req.Participants.findOne({ pumps: { $elemMatch: { 'rating_id': req.params.id } } }, function(err, participant) {
+        if (!err && participant) {
 
             var pump = participant.pumps.filter(p => p.rating_id == req.params.id)[0];
             if (!pump || !participant.active || pump.pending || !pump.active_admin || participant.subscription.status != 'Active') {
@@ -208,18 +94,17 @@ router.get("/:id", function(req, res) {
                 return;
             }
             res.render("ratings/r_pump", {
-                pump : pump, 
-                participant : participant,
-                pump_drawing : pump.doe? pump.doe.toLowerCase() +  ".png" : ""
+                pump: pump,
+                participant: participant,
+                pump_drawing: pump.doe ? pump.doe.toLowerCase() + ".png" : ""
             });
-        }
-        else {
+        } else {
             req.flash("errorTitle", "Not found");
             req.flash("errorMessage", err ? err : "This pump does not exist.");
             res.redirect("/error");
         }
     })
-   
+
 });
 
 
@@ -230,49 +115,49 @@ router.post("/count", function(req, res) {
 
     // limit search parameters
     var search_params = {
-        esfm : req.session.search.esfm,
-        escc : req.session.search.escc,
-        il : req.session.search.il,
-        rsv : req.session.search.rsv,
-        st : req.session.search.st,
-        cl : req.session.search.cl,
-        vl : req.session.search.vl,
-        max_er : req.session.search.max_er,
-        min_er : req.session.search.min_er
+        esfm: req.session.search.esfm,
+        escc: req.session.search.escc,
+        il: req.session.search.il,
+        rsv: req.session.search.rsv,
+        st: req.session.search.st,
+        cl: req.session.search.cl,
+        vl: req.session.search.vl,
+        max_er: req.session.search.max_er,
+        min_er: req.session.search.min_er
     }
 
     var operators = default_search_operators(search_params, false);
     req.Participants.aggregate(operators).exec(function(err, docs) {
         res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify({ pumps: docs.length}));
+        res.end(JSON.stringify({ pumps: docs.length }));
     });
 });
 
 router.post("/search", function(req, res) {
     req.session.search = req.body.search;
-    
+
     // Per HI request, you cannot search unless participant, basic_model or rating_id is specified.
-    if ( !req.session.search.rating_id && !req.session.search.participant && !req.session.search.basic_model && !req.session.search.brand) {
+    if (!req.session.search.rating_id && !req.session.search.participant && !req.session.search.basic_model && !req.session.search.brand) {
         res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify({ pumps: []}));
+        res.end(JSON.stringify({ pumps: [] }));
         return;
     }
-   
+
     req.session.search.fresh = false;
 
     //prevent any other search parameters from being applied.
     var search_params = {
-        rating_id : req.session.search.rating_id, 
-        participant : req.session.search.participant, 
-        basic_model : req.session.search.basic_model,
-        brand : req.session.search.brand
+        rating_id: req.session.search.rating_id,
+        participant: req.session.search.participant,
+        basic_model: req.session.search.basic_model,
+        brand: req.session.search.brand
 
     }
-    
+
     var operators = default_search_operators(search_params, true);
     req.Participants.aggregate(operators).exec(function(err, docs) {
         res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify({ pumps: docs}));
+        res.end(JSON.stringify({ pumps: docs }));
     });
 });
 
