@@ -23,7 +23,7 @@ block content
                             tr
                                 th Organization 
                                 th.hidden-xs Frequency
-                                th.hidden-xs Last Sent
+                                //-th.hidden-xs Last Sent
                                 th Recipients
                                 th
                         tbody
@@ -33,7 +33,7 @@ block content
                                   span(ng-show='subscriber.interval_days == 1') Daily
                                   span(ng-show='subscriber.interval_days == 7') Weekly
                                   span(ng-show='subscriber.interval_days == 15') Twice a month
-                                td.hidden-xs 
+                                //- td.hidden-xs 
                                   span(ng-show='subscriber.last_email_date') {{subscriber.last_email_date}}
                                   span(ng-show='!subscriber.last_email_date') Never
                                 td {{subscriber.recipients.length}}
