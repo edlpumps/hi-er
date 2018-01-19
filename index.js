@@ -38,7 +38,7 @@ app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 
 
-var configure = function() {
+var configure = function () {
     app.use(favicon(__dirname + '/public/images/favicon.ico'));
     app.use(require('less-middleware')(__dirname + '/public'));
     app.use(express.static(__dirname + '/public'));
@@ -60,7 +60,7 @@ var configure = function() {
     // Logging configuration, main log added to each
     // request object.
     ////////////////////////////////////////////////////
-    app.use(function(req, res, next) {
+    app.use(function (req, res, next) {
         req.log = mainlog;
         next();
     });
@@ -73,7 +73,7 @@ var configure = function() {
     ////////////////////////////////////////////////////
     // Route configuration
     ////////////////////////////////////////////////////
-    app.use(function(req, res, next) {
+    app.use(function (req, res, next) {
         req.Participants = req.app.locals.db.Participants;
         req.Users = req.app.locals.db.Users;
         req.Labels = req.app.locals.db.Labels;
@@ -85,7 +85,7 @@ var configure = function() {
         next();
     })
 
-    app.use(function(req, res, next) {
+    app.use(function (req, res, next) {
         if (!req.session.unit_set) {
             req.session.unit_set = units.US;
         }
@@ -114,18 +114,18 @@ var configure = function() {
         passport.authenticate('local', {
             failureRedirect: '/portal'
         }),
-        function(req, res) {
+        function (req, res) {
             res.cookie('email', req.body.email);
             req.log.debug("User authenticated, redirecting to landing page");
             res.redirect('/');
         });
 
-    root.get('/logout', function(req, res) {
+    root.get('/logout', function (req, res) {
         req.logOut();
         res.redirect('/portal')
     });
 
-    root.post('/units', function(req, res) {
+    root.post('/units', function (req, res) {
         var unit_set = req.body.unit_set;
         if (unit_set == units.US || unit_set == units.METRIC) {
             req.session.unit_set = unit_set;
@@ -134,13 +134,13 @@ var configure = function() {
     });
 
 
-    app.use("/error", function(req, res) {
+    app.use("/error", function (req, res) {
         res.render("error", {});
     })
-    app.use("/disabled", function(req, res) {
+    app.use("/disabled", function (req, res) {
         res.render("disabled", {});
     })
-    app.use("/unauthorized", function(req, res) {
+    app.use("/unauthorized", function (req, res) {
         res.render("unauthorized", {});
     })
 }
@@ -152,7 +152,7 @@ var configure = function() {
 ////////////////////////////////////////////////////
 var conn = mongoose.connect(data_connection_str, {
     auto_reconnect: true
-}, function(err, res) {
+}, function (err, res) {
     if (err) {
         mainlog.fatal("Could not connect to mongo database at %s", data_connection_str)
     } else {
@@ -175,7 +175,7 @@ var conn = mongoose.connect(data_connection_str, {
         startup();
 
 
-        push_emails();
+        //   push_emails(1);
     }
 });
 
@@ -184,15 +184,15 @@ var conn = mongoose.connect(data_connection_str, {
 // Authentication
 ////////////////////////////////////////////////////
 passport.use(new Strategy({
-        usernameField: 'email',
-        passReqToCallback: true
-    },
-    function(req, email, password, done) {
+    usernameField: 'email',
+    passReqToCallback: true
+},
+    function (req, email, password, done) {
         var regex = new RegExp("^" + email + "$", "i");
         console.log(regex);
         app.locals.db.Users.findOne({
             email: regex
-        }, function(err, user) {
+        }, function (err, user) {
             if (err) {
                 mainlog.info("Authentication of " + email + " failed (error)");
                 mainlog.error(err);
@@ -215,12 +215,12 @@ passport.use(new Strategy({
     }
 ));
 
-passport.serializeUser(function(user, cb) {
+passport.serializeUser(function (user, cb) {
     cb(null, user._id);
 });
 
-passport.deserializeUser(function(id, cb) {
-    app.locals.db.Users.findById(id, function(err, user) {
+passport.deserializeUser(function (id, cb) {
+    app.locals.db.Users.findById(id, function (err, user) {
         if (err) return cb(err);
         return cb(null, user);
     });
@@ -231,26 +231,27 @@ passport.deserializeUser(function(id, cb) {
 ////////////////////////////////////////////////////
 // Startup
 ////////////////////////////////////////////////////
-var startup = function() {
+var startup = function () {
     mainlog.info("HI Energy Rating application startup -- %s, port %s", process.env.NODE_ENV, port);
     http.createServer(app).listen(port);
 }
 
-var push_daily = function() {
+var push_daily = function () {
     push_emails(1);
 }
-var push_weekly = function() {
+var push_weekly = function () {
     push_emails(7);
 }
-var push_twice_a_month = function() {
+var push_twice_a_month = function () {
     push_emails(15);
 }
-var push_emails = function(interval) {
+
+
+var push_emails = function (interval) {
     let params = require('./search').params;
     var operators = params();
     let headers = [
         'rating_id',
-        'data',
         'participant',
         'basic_model',
         'individual_model',
@@ -266,13 +267,14 @@ var push_emails = function(interval) {
         'driver_input_power_bep',
         'control_power_input_bep',
         'control_power_input_bep',
+        'motor_power_rated',
         'pei',
         'energy_rating'
     ]
-    let filter = function(key) {
+    let filter = function (key) {
         return headers.indexOf(key) >= 0;
     }
-    let sorter = function(a, b) {
+    let sorter = function (a, b) {
         let i = headers.indexOf(a.value);
         let j = headers.indexOf(b.value);
         return i - j;
@@ -298,8 +300,8 @@ var push_emails = function(interval) {
         pei: 'Pump Energy Index',
         date: 'Date listed'
     }
-    app.locals.db.Participants.aggregate(operators).exec(function(err, docs) {
-        docs.forEach(function(pump) {
+    app.locals.db.Participants.aggregate(operators).exec(function (err, docs) {
+        docs.forEach(function (pump) {
             pump.flow_bep = pump.load120 ? pump.flow.bep100 : pump.flow.bep110;
             pump.head_bep = pump.load120 ? pump.head.bep100 : pump.head.bep110;
             if (pump.driver_input_power) {
@@ -315,6 +317,7 @@ var push_emails = function(interval) {
                     pump.control_power_input_bep = pump.control_power_input_bep.toFixed(2);
                 }
             }
+            pump.pei = pump.pei.toFixed(2);
             pump.motor_power_rated = pump.motor_power_rated ? pump.motor_power_rated : pump.motor_power_rated_results
             pump.date = moment(pump.date).format("DD MMM YYYY")
             pump.lab = pump.laboratory.name + " - " + pump.laboratory.code;
@@ -330,14 +333,14 @@ var push_emails = function(interval) {
         let buffer = toxl(docs, { sort: sorter, headings: headings, filter: filter });
 
 
-        app.locals.db.Subscribers.find({ interval_days: interval }, function(err, subs) {
+        app.locals.db.Subscribers.find({ interval_days: interval }, function (err, subs) {
             let recips = [];
             if (subs) {
-                subs.forEach(function(s) {
+                subs.forEach(function (s) {
                     recips = recips.concat(s.recipients);
                 })
             }
-            recips.forEach(function(recip) {
+            recips.forEach(function (recip) {
                 mailer.sendListings(recip, buffer);
             })
 
@@ -370,3 +373,5 @@ var twiceAMonth = "0 11 1,15 * *"
 sched.scheduleJob(daily, push_daily);
 sched.scheduleJob(weekly, push_weekly);
 sched.scheduleJob(twiceAMonth, push_twice_a_month);
+
+
