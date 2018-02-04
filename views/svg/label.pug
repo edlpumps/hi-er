@@ -13,16 +13,16 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
     line(x1="595", y1="25", x2="595", y2="310", stroke-width="2", stroke="#000000")
 
     text(x="30", y="150", style="font-family: 'Arimo'; font-weight:bold", font-size="16", text-anchor="start", fill="black") #{brand}
-    text(x="330", y="150", style="font-family: 'Arimo'; font-weight:bold", font-size="16", text-anchor="start", fill="black") #{doe}   Pump Type
+    text(x="330", y="150", style="font-family: 'Arimo'; font-weight:bold", font-size="16", text-anchor="start", fill="black") #{doe} Pump Type
 
     text(x="30", y="180", style="font-family: 'Arimo'", font-size="16", text-anchor="start", fill="black") Model #:
     text(x="30", y="210", style="font-family: 'Arimo'", font-size="16", text-anchor="start", fill="black") Nominal Speed:
-    text(x="30", y="240", style="font-family: 'Arimo'", font-size="16", text-anchor="start", fill="black") PEI:
+    text(x="30", y="240", style="font-family: 'Arimo'", font-size="16", text-anchor="start", fill="black") PEI
     text(x="57", y="245", style="font-family: 'Arimo'", font-size="10", text-anchor="start", fill="black") #{load_abbr}
 
     text(x="110", y="180", style="font-family: 'Arimo';font-weight:bold", font-size="16", text-anchor="start", fill="black") #{basic_model}
     text(x="155", y="210", style="font-family: 'Arimo';font-weight:bold", font-size="16", text-anchor="start", fill="black") #{speed}
-    text(x="95", y="240", style="font-family: 'Arimo';font-weight:bold", font-size="16", text-anchor="start", fill="black") #{pei}
+    text(x="110", y="240", style="font-family: 'Arimo';font-weight:bold", font-size="16", text-anchor="start", fill="black") #{pei}
 
     text(x="330", y="180", style="font-family: 'Arimo'; font-weight:bold", font-size="16", text-anchor="start", fill="black") #{pm}
     text(x="330", y="210", style="font-family: 'Arimo'; font-weight:bold", font-size="16", text-anchor="start", fill="black") #{config}
@@ -39,8 +39,10 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
     while tick < 101
         - var y1 = tick % 100 == 0 ? 450 : 480
         - var y2 = tick % 25 == 0 ? 510 : 495
+        - var major = (tick % 100 == 0) || ( tick %25 == 0)
         - var color = tick % 25 == 0 ? 'black' : 'grey'
-        line(x1=x, y1=y1, x2=x, y2=y2, stroke-width='2', stroke=color)
+        if major
+          line(x1=x, y1=y1, x2=x, y2=y2, stroke-width='2', stroke=color)
 
         - x += tick_distance
         - tick ++
@@ -66,7 +68,7 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
     
     text(x="20", y="640", style="font-family: 'Arimo';", font-size="16", text-anchor="start", fill="black") power (kw) and dividing by 100.  Multiplying power savings by operating hours and 
     
-    text(x="20", y="660", style="font-family: 'Arimo';", font-size="16", text-anchor="start", fill="black") cost of energy will yeild estimated cost.
+    text(x="20", y="660", style="font-family: 'Arimo';", font-size="16", text-anchor="start", fill="black") cost of energy will yield estimated cost.
     
     +footer(700)
 
