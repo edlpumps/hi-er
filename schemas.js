@@ -8,16 +8,23 @@ exports.init = function init(mongoose) {
 
     exports.Counters = counters;
 
-    exports.nextRatingsId = function (callback) {
-        var ret = counters.collection.findAndModify({
-                name: "ratings"
-            }, {}, {
-                $inc: {
-                    seq: 1
+
+
+    exports.getNextRatingsId = async () => {
+        return new Promise((resolve, reject) => {
+            var ret = counters.collection.findAndModify({
+                    name: "ratings"
+                }, {}, {
+                    $inc: {
+                        seq: 1
+                    }
+                }, {},
+                (err, doc) => {
+                    if (err) reject(err);
+                    else resolve(doc)
                 }
-            }, {},
-            callback
-        );
+            );
+        })
     }
 
 

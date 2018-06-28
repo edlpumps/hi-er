@@ -80,7 +80,7 @@ var configure = function () {
         req.Labels = req.app.locals.db.Labels;
         req.Labs = req.app.locals.db.Labs;
         req.Subscribers = req.app.locals.db.Subscribers;
-        req.nextRatingsId = req.app.locals.db.nextRatingsId;
+        req.getNextRatingsId = req.app.locals.db.getNextRatingsId;
         req.PasswordResets = req.app.locals.db.PasswordResets;
         req.base_url = req.protocol + '://' + req.get('Host');
         next();
@@ -166,7 +166,7 @@ var conn = mongoose.connect(data_connection_str, {
             Labels: schemas.Labels,
             Labs: schemas.Labs,
             Subscribers: schemas.Subscribers,
-            nextRatingsId: schemas.nextRatingsId,
+            getNextRatingsId: schemas.getNextRatingsId,
             PasswordResets: schemas.PasswordResets
         };
 

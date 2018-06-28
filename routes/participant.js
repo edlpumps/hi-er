@@ -165,15 +165,18 @@ router.get('/pumps', aw(async (req, res) => {
 
 
 
-router.get("/pumps/new", function (req, res) {
+router.get("/pumps/new", aw(async (req, res) => {
     if (!req.user.participant_edit) {
         req.log.info("New pump attempted by unauthorized user");
         req.log.info(req.user);
         res.redirect("/unauthorized");
         return;
     }
-    var published = req.participant.pumps.filter(p => p.listed);
-    if (published.length >= req.participant.subscription.pumps) {
+    const published = await req.Pumps.count({
+        participant: req.participant._id,
+        listed: true
+    }).exec();
+    if (published >= req.participant.subscription.pumps) {
         req.flash("errorTitle", "Subscription limit");
         req.flash("errorMessage", "You cannot list additional pumps until you've updated your subscription level.");
         res.redirect("/error");
@@ -198,16 +201,17 @@ router.get("/pumps/new", function (req, res) {
         pump: pump,
         help: help
     });
-});
+}));
 
-router.get("/pumps/:id/revise", function (req, res) {
+router.get("/pumps/:id/revise", aw(async (req, res) => {
     if (!req.user.participant_edit) {
         req.log.info("Revise pump attempted by unauthorized user");
         req.log.info(req.user);
         res.redirect("/unauthorized");
         return;
     }
-    var pump = JSON.parse(JSON.stringify(req.participant.pumps.id(req.params.id)));
+    let pump = await req.Pumps.findById(req.params.id).exec();
+    pump = JSON.parse(JSON.stringify(pump));
     if (req.session.unit_set == units.METRIC) {
         // pumps are stored internally in US units.
         pump = units.convert_to_metric(pump);
@@ -216,6 +220,7 @@ router.get("/pumps/:id/revise", function (req, res) {
         value: pump.configuration
     };
     var help = require("../public/resources/help.json");
+    console.log(pump);
     res.render("participant/new_pump", {
         user: req.user,
         participant: req.participant,
@@ -223,16 +228,16 @@ router.get("/pumps/:id/revise", function (req, res) {
         help: help,
         revision: true
     });
-});
+}));
 
-router.post("/pumps/:id/revise", function (req, res) {
+router.post("/pumps/:id/revise", aw(async (req, res) => {
     if (!req.user.participant_edit) {
         req.log.info("Create pump attempted by unauthorized user");
         req.log.info(req.user);
         res.redirect("/unauthorized");
         return;
     }
-    var pump = req.body;
+    let pump = req.body;
     if (!pump) {
         req.flash("errorTitle", "Internal application error");
         req.flash("errorMessage", "Pump cannot be created - required information is missing.");
@@ -242,44 +247,48 @@ router.post("/pumps/:id/revise", function (req, res) {
     if (req.session.unit_set == units.METRIC) {
         pump = units.convert_to_us(pump);
     }
-    req.Labs.findOne({
+    const lab = await req.Labs.findOne({
         _id: pump.laboratory
-    }, function (err, lab) {
-        if (err || !lab) {
-            req.flash("errorTitle", "Internal application error");
-            req.flash("errorMessage", "Pump cannot be created - invalid laboratory.");
-            res.redirect("/error");
-            return;
-        }
-        pump.laboratory = lab;
+    }).exec();
+    if (!lab) {
+        req.flash("errorTitle", "Internal application error");
+        req.flash("errorMessage", "Pump cannot be created - invalid laboratory.");
+        res.redirect("/error");
+        return;
+    }
+    pump.laboratory = lab;
+    delete pump._id;
 
-        var original = JSON.parse(JSON.stringify(req.participant.pumps.id(req.params.id)));
-
-        pump = Object.assign(original, pump);
-        if (req.session.unit_set == units.METRIC) {
-            // pumps are stored internally in US units.
-            pump = units.convert_to_metric(pump);
-        }
-        var view = pump.pei_input_type == 'calculate' ? "participant/calculate_pump" : "participant/manual_pump";
-        var help = require("../public/resources/help.json");
-        res.render(view, {
-            user: req.user,
-            participant: req.participant,
-            pump: pump,
-            help: help,
-            revision: true
-        });
-    })
-});
+    const original = await req.Pumps.findById(req.params.id).lean().exec();
 
 
-router.post("/pumps/new", function (req, res) {
+
+    pump = Object.assign(original, pump);
+    if (req.session.unit_set == units.METRIC) {
+        // pumps are stored internally in US units.
+        pump = units.convert_to_metric(pump);
+    }
+    var view = pump.pei_input_type == 'calculate' ? "participant/calculate_pump" : "participant/manual_pump";
+    var help = require("../public/resources/help.json");
+    res.render(view, {
+        user: req.user,
+        participant: req.participant,
+        pump: pump,
+        help: help,
+        revision: true
+    });
+
+}));
+
+
+router.post("/pumps/new", aw(async (req, res) => {
     if (!req.user.participant_edit) {
         req.log.info("Create pump attempted by unauthorized user");
         req.log.info(req.user);
         res.redirect("/unauthorized");
         return;
     }
+
     var pump = req.body;
     if (!pump) {
         req.flash("errorTitle", "Internal application error");
@@ -287,34 +296,30 @@ router.post("/pumps/new", function (req, res) {
         res.redirect("/error");
         return;
     }
-
-    req.Labs.findOne({
+    const lab = await req.Labs.findOne({
         _id: pump.laboratory
-    }, function (err, lab) {
-        if (err || !lab) {
-            req.flash("errorTitle", "Internal application error");
-            req.flash("errorMessage", "Pump cannot be created - invalid laboratory.");
-            res.redirect("/error");
-            return;
-        }
-        pump.laboratory = lab;
+    }).exec();
 
-        var view = pump.pei_input_type == 'calculate' ? "participant/calculate_pump" : "participant/manual_pump";
-        var help = require("../public/resources/help.json");
-        var toSave = req.participant.pumps.create(pump);
-
-        req.nextRatingsId(function (err, doc) {
-            toSave.rating_id = hashids.encode(doc.value.seq);
-            res.render(view, {
-                user: req.user,
-                participant: req.participant,
-                pump: toSave,
-                help: help
-            });
-        });
-    })
-
-});
+    if (!lab) {
+        req.flash("errorTitle", "Internal application error");
+        req.flash("errorMessage", "Pump cannot be created - invalid laboratory.");
+        res.redirect("/error");
+        return;
+    }
+    const nextId = await req.getNextRatingsId();
+    pump.laboratory = lab;
+    pump.participant = req.participant._id;
+    pump.rating_id = hashids.encode(nextId.value.seq);
+    const view = pump.pei_input_type == 'calculate' ? "participant/calculate_pump" : "participant/manual_pump";
+    const help = require("../public/resources/help.json");
+    const new_pump = await req.Pumps.create(pump);
+    res.render(view, {
+        user: req.user,
+        participant: req.participant,
+        pump: new_pump,
+        help: help
+    });
+}));
 
 router.get("/pumps/upload", function (req, res) {
     const template = require('./template_map.json');
@@ -329,7 +334,7 @@ router.get("/pumps/upload", function (req, res) {
     });
 })
 
-router.post("/pumps/save_upload", function (req, res) {
+router.post("/pumps/save_upload", aw(async (req, res) => {
     if (!req.user.participant_edit) {
         req.log.info("Submit pump attempted by unauthorized user");
         req.log.info(req.user);
@@ -337,48 +342,37 @@ router.post("/pumps/save_upload", function (req, res) {
         return;
     }
     var pumps = JSON.parse(req.body.pumps);
-    var saves = [];
-    pumps.forEach(function (pump) {
-        saves.push(function (done) {
-            var list_now = req.body.list_pumps ? true : false;
-            var check = model_check(pump, req.participant.pumps, req.participant);
-            // list_now could be true, based on user request, but we
-            // may need to override that choice, based on subscription or 
-            // model number collision.
-            if (!check.ok) {
-                list_now = false;
-            }
-            var published = req.participant.pumps.filter(p => p.listed);
-            pump.date = new Date();
-            pump.pending = !list_now;
-            pump.listed = list_now;
-            // Ignore what's in the spreadsheet - the participant name attached to the pump
-            // must always be the currently logged in participant.
-            pump.participant = req.participant._id;
-            var toSave = req.participant.pumps.create(pump);
+    for (const pump of pumps) {
+        let list_now = req.body.list_pumps ? true : false;
+        const check = await model_check(req, pump, req.participant, pumps);
+        // list_now could be true, based on user request, but we
+        // may need to override that choice, based on subscription or 
+        // model number collision.
+        if (!check.ok) {
+            list_now = false;
+        }
+        pump.date = new Date();
+        pump.pending = !list_now;
+        pump.listed = list_now;
+        pump.participant = req.participant._id;
+        // Ignore what's in the spreadsheet - the participant name attached to the pump
+        // must always be the currently logged in participant.
 
-            req.participant.pumps.push(toSave);
-            toSave.revisions.push({
-                date: new Date(),
-                note: "Pump created.",
-                correct: false
-            })
-            req.nextRatingsId(function (err, doc) {
-                toSave.rating_id = hashids.encode(doc.value.seq);
-                req.log.info(toSave.rating_id + " saved, " + req.participant.pumps.length + " pumps in participant listings");
-                done();
-            });
-
+        const toSave = new req.Pumps(pump);
+        toSave.revisions.push({
+            date: new Date(),
+            note: "Pump created.",
+            correct: false
         })
-    })
+        const nextId = await req.getNextRatingsId();
+        toSave.rating_id = hashids.encode(nextId.value.seq);
+        req.log.info(toSave.rating_id + " saved");
 
-    async.parallel(saves, function () {
-        req.participant.save(function (err) {
-            res.redirect("/participant/pumps");
-        })
+        await toSave.save();
+    }
+    res.redirect("/participant/pumps");
 
-    })
-});
+}));
 
 
 var find_lab = function (imported, labs) {
@@ -406,7 +400,7 @@ var get_labels = function (req, res, next) {
     });
 }
 
-router.post("/pumps/upload", get_labels, function (req, res) {
+router.post("/pumps/upload", get_labels, aw(async (req, res) => {
     if (!req.files || !req.files.template) {
         res.send('No files were uploaded.');
         return;
@@ -414,133 +408,130 @@ router.post("/pumps/upload", get_labels, function (req, res) {
     var workbook = new Excel.Workbook();
 
     // Load all the laboratories for this participant
-    req.Labs.find({
+    const labs = await req.Labs.find({
         _id: {
             $in: req.participant.labs
         }
-    }, function (err, labs) {
-        workbook.xlsx.readFile(req.files.template.file).then(function () {
-            const pumps_succeeded = [];
-            const pumps_failed = [];
-            const template = require('./template_map.json');
-            var r = template.config.first_row;
-            var worksheet = workbook.getWorksheet(1);
-            var first_cell = null;
-            var done = false;
-            while (!done) {
-                first_cell = worksheet.getCell(template.mappings.basic_model.column + r)
-                if (first_cell.value) {
-                    var pump = {}
-                    pump.row = r;
-                    var load120Cell = worksheet.getCell(template.mappings.bep120.column + r);
-                    var load120 = common.map_boolean_input(load120Cell.value);
+    }).exec();
+    await workbook.xlsx.readFile(req.files.template.file);
+    const pumps_succeeded = [];
+    const pumps_failed = [];
+    const template = require('./template_map.json');
+    var r = template.config.first_row;
+    var worksheet = workbook.getWorksheet(1);
+    var first_cell = null;
+    var done = false;
+    while (!done) {
+        first_cell = worksheet.getCell(template.mappings.basic_model.column + r)
+        if (first_cell.value) {
+            var pump = {}
+            pump.row = r;
+            var load120Cell = worksheet.getCell(template.mappings.bep120.column + r);
+            var load120 = common.map_boolean_input(load120Cell.value);
 
-                    for (var mapping in template.mappings) {
-                        var prop = template.mappings[mapping];
-                        var cell = worksheet.getCell(prop.column + r);
-                        var value = cell.value;
-                        var enabled = true;
-                        if (mapping == "configuration") {
-                            value = common.map_config_input(cell.value);
-                        }
-                        if (prop.boolean) {
-                            value = common.map_boolean_input(cell.value);
-                        }
-                        if (prop.bep120) {
-                            if (prop.bep120 == "no" && load120) {
-                                enabled = false;
-                            } else if (prop.bep120 == "yes" && !load120) {
-                                enabled = false;
-                            }
-                        }
-                        if (enabled && !prop.output_only) {
-                            if (prop.path2 && !load120) {
-                                // this property gets pulled from an alternative path if pump is tested @ 120 BEP
-                                _.set(pump, prop.path2, value);
-                            } else {
-                                _.set(pump, prop.path, value);
-                            }
-                        }
+            for (var mapping in template.mappings) {
+                var prop = template.mappings[mapping];
+                var cell = worksheet.getCell(prop.column + r);
+                var value = cell.value;
+                var enabled = true;
+                if (mapping == "configuration") {
+                    value = common.map_config_input(cell.value);
+                }
+                if (prop.boolean) {
+                    value = common.map_boolean_input(cell.value);
+                }
+                if (prop.bep120) {
+                    if (prop.bep120 == "no" && load120) {
+                        enabled = false;
+                    } else if (prop.bep120 == "yes" && !load120) {
+                        enabled = false;
                     }
-
-                    // strip out driver/control if not used.
-                    if (!pump.driver_input_power.bep100) {
-                        delete pump.driver_input_power;
-                    }
-                    if (!pump.control_power_input.bep100) {
-                        delete pump.control_power_input;
-                    }
-                    if (pump.flow && load120) {
-                        pump.flow.bep75 = pump.flow.bep100 * 0.75;
-                        pump.flow.bep110 = pump.flow.bep100 * 1.1;
-                    } else if (pump.flow && !load120) {
-                        pump.flow.bep75 = pump.flow.bep110 * 0.65;
-                        pump.flow.bep100 = pump.flow.bep110 * 0.9;
-                    }
-
-
-                    pump.unit_set = req.session.unit_set;
-                    pump = units.convert_to_us(pump);
-
-                    var calculator = require("../calculator");
-                    var results = calculator.calculate(pump, req.current_labels);
-                    pump.results = results;
-                    pump.energy_rating = pump.results.energy_rating;
-                    pump.energy_savings = pump.results.energy_savings;
-                    pump.pei_baseline = pump.results.pei_baseline;
-                    delete pump.results.pump;
-
-                    pump.laboratory = find_lab(pump.laboratory, labs);
-                    pump.doe = map_doe(pump.doe.trim());
-
-                    if (pump.results.success && !pump.doe) {
-                        pump.results.success = false;
-                        if (!pump.results.reasons) pump.results.reasons = [];
-                        pump.results.reasons.push("The pump must have a recognized DOE category.")
-                    }
-
-                    if (pump.results.success && !pump.laboratory) {
-                        pump.results.success = false;
-                        if (!pump.results.reasons) pump.results.reasons = [];
-                        pump.results.reasons.push("The laboratory specified for this pump is not one of your organization's active HI Laboratories.")
-                    }
-
-                    var mcheck = model_check(pump, req.participant.pumps.concat(pumps_succeeded), req.participant);
-                    if (!mcheck.ok && !pump.pending_reasons) pump.pending_reasons = [];
-                    if (pump.results.success && mcheck.individual_collide) {
-                        pump.pending_reasons.push("This pump cannot be listed because there is already a pump listed with individual model number " + pump.individual_model)
-                    }
-                    if (pump.results.success && mcheck.basic_collide) {
-                        pump.pending_reasons.push("This pump cannot be listed because there are already pump(s) listed under this basic model (" + pump.basic_model + ") with a conflicting Energy Rating value")
-                    }
-                    if (pump.results.success) {
-                        pumps_succeeded.push(pump);
+                }
+                if (enabled && !prop.output_only) {
+                    if (prop.path2 && !load120) {
+                        // this property gets pulled from an alternative path if pump is tested @ 120 BEP
+                        _.set(pump, prop.path2, value);
                     } else {
-                        pumps_failed.push(pump)
+                        _.set(pump, prop.path, value);
                     }
-                    r++;
-                } else {
-                    done = true;
                 }
             }
-            res.render("participant/upload_confirm", {
-                user: req.user,
-                participant: req.participant,
-                succeeded: pumps_succeeded,
-                failed: pumps_failed
-            });
-        });
 
+            // strip out driver/control if not used.
+            if (!pump.driver_input_power.bep100) {
+                delete pump.driver_input_power;
+            }
+            if (!pump.control_power_input.bep100) {
+                delete pump.control_power_input;
+            }
+            if (pump.flow && load120) {
+                pump.flow.bep75 = pump.flow.bep100 * 0.75;
+                pump.flow.bep110 = pump.flow.bep100 * 1.1;
+            } else if (pump.flow && !load120) {
+                pump.flow.bep75 = pump.flow.bep110 * 0.65;
+                pump.flow.bep100 = pump.flow.bep110 * 0.9;
+            }
+
+
+            pump.unit_set = req.session.unit_set;
+            pump = units.convert_to_us(pump);
+
+            var calculator = require("../calculator");
+            var results = calculator.calculate(pump, req.current_labels);
+            pump.results = results;
+            pump.energy_rating = pump.results.energy_rating;
+            pump.energy_savings = pump.results.energy_savings;
+            pump.pei_baseline = pump.results.pei_baseline;
+            delete pump.results.pump;
+
+            pump.laboratory = find_lab(pump.laboratory, labs);
+            pump.doe = map_doe(pump.doe.trim());
+            pump.participant = req.participant._id;
+            if (pump.results.success && !pump.doe) {
+                pump.results.success = false;
+                if (!pump.results.reasons) pump.results.reasons = [];
+                pump.results.reasons.push("The pump must have a recognized DOE category.")
+            }
+
+            if (pump.results.success && !pump.laboratory) {
+                pump.results.success = false;
+                if (!pump.results.reasons) pump.results.reasons = [];
+                pump.results.reasons.push("The laboratory specified for this pump is not one of your organization's active HI Laboratories.")
+            }
+
+            const mcheck = await model_check(req, pump, req.participant, pumps_succeeded);
+            if (!mcheck.ok && !pump.pending_reasons) pump.pending_reasons = [];
+            if (pump.results.success && mcheck.individual_collide) {
+                pump.pending_reasons.push("This pump cannot be listed because there is already a pump listed with individual model number " + pump.individual_model)
+            }
+            if (pump.results.success && mcheck.basic_collide) {
+                pump.pending_reasons.push("This pump cannot be listed because there are already pump(s) listed under this basic model (" + pump.basic_model + ") with a conflicting Energy Rating value")
+            }
+            if (pump.results.success) {
+                pumps_succeeded.push(pump);
+            } else {
+                pumps_failed.push(pump)
+            }
+            r++;
+        } else {
+            done = true;
+        }
+    }
+    res.render("participant/upload_confirm", {
+        user: req.user,
+        participant: req.participant,
+        succeeded: pumps_succeeded,
+        failed: pumps_failed
     });
 
 
 
+}));
 
-
-
-})
-router.get('/pumps/download', function (req, res) {
-    var pumps = JSON.parse(JSON.stringify(req.participant.pumps));
+router.get('/pumps/download', aw(async (req, res) => {
+    const pumps = await req.Pumps.find({
+        participant: req.participant._id
+    }).populate('participant').lean().exec();
 
     common.build_pump_spreadsheet(pumps, req.session.unit_set, function (error, file, cleanup) {
         res.download(file, 'Pump Listings.xlsx', function (err) {
@@ -548,14 +539,23 @@ router.get('/pumps/download', function (req, res) {
         });
     });
 
-});
+}));
 
-router.get('/pumps/:id', function (req, res) {
+router.get('/pumps/:id', aw(async (req, res) => {
     req.log.debug("Rendering participant portal (pump id = " + req.params.id);
-    var pump = req.participant.pumps.id(req.params.id);
+
+    const pump = await req.Pumps.findOne({
+        _id: req.params.id
+    }).exec();
+    const published = await req.Pumps.count({
+        participant: req.participant._id,
+        listed: true
+    });
+
     var svg_builder = require('../utils/label_builder');
     var load = pump.configuration == "bare" || pump.configuration == "pump_motor" ? "CL" : "VL";
-    req.Labels.findOne().and([{
+
+    const label = await req.Labels.findOne().and([{
             speed: pump.speed
         },
         {
@@ -564,27 +564,26 @@ router.get('/pumps/:id', function (req, res) {
         {
             load: load
         }
-    ]).exec(function (err, label) {
-        var qr_svg = svg_builder.make_qr(req, req.participant, pump, label);
-        var label_svg = svg_builder.make_label(req, req.participant, pump, label);
-        var published = req.participant.pumps.filter(p => p.listed);
-        res.render("participant/p_pump", {
-            user: req.user,
-            subscription_limit: published.length >= req.participant.subscription.pumps,
-            participant: req.participant,
-            pump: pump,
-            pump_drawing: pump.doe ? pump.doe.toLowerCase() + ".png" : "",
-            section_label: common.section_label,
-            can_activate: model_check(pump, req.participant.pumps, req.participant),
-            label_svg: label_svg,
-            qr_svg: qr_svg
-        });
+    ]).exec();
+    var qr_svg = svg_builder.make_qr(req, req.participant, pump, label);
+    var label_svg = svg_builder.make_label(req, req.participant, pump, label);
+    res.render("participant/p_pump", {
+        user: req.user,
+        subscription_limit: published >= req.participant.subscription.pumps,
+        participant: req.participant,
+        pump: pump,
+        pump_drawing: pump.doe ? pump.doe.toLowerCase() + ".png" : "",
+        section_label: common.section_label,
+        can_activate: await model_check(req, pump, req.participant),
+        label_svg: label_svg,
+        qr_svg: qr_svg
     });
-});
+
+}));
 
 
-router.get('/pumps/:id/download', function (req, res) {
-    var pump = req.participant.pumps.id(req.params.id);
+router.get('/pumps/:id/download', aw(async (req, res) => {
+    let pump = await req.Pumps.findById(req.params.id).populate('participant').lean().exec();
     pump = JSON.parse(JSON.stringify(pump));
     common.build_pump_spreadsheet(pump, req.session.unit_set, function (error, file, cleanup) {
         res.download(file, 'Pump Listings.xlsx', function (err) {
@@ -593,7 +592,7 @@ router.get('/pumps/:id/download', function (req, res) {
     });
 
 
-});
+}));
 
 
 
@@ -611,7 +610,7 @@ router.get('/purchase', function (req, res) {
 
 
 
-router.post("/pumps/submit", function (req, res) {
+router.post("/pumps/submit", aw(async (req, res) => {
     if (!req.user.participant_edit) {
         req.log.info("Submit pump attempted by unauthorized user");
         req.log.info(req.user);
@@ -626,27 +625,27 @@ router.post("/pumps/submit", function (req, res) {
     pump.laboratory = JSON.parse(pump.laboratory);
     pump = units.convert_to_us(pump);
     pump.date = new Date();
+    pump.participant = req.participant._id;
 
-    var toSave = req.participant.pumps.create(pump);
+    const toSave = new req.Pumps(pump);
     toSave.revisions.push({
         date: new Date(),
         note: "Pump created",
         correction: false
     })
     toSave.pending = !toSave.listed;
-    req.participant.pumps.push(toSave);
-    req.participant.save(function (err) {
-        res.redirect("/participant/pumps");
-    })
-});
-router.post("/pumps/:id/submitRevision", function (req, res) {
+    await toSave.save();
+    res.redirect("/participant/pumps");
+}));
+router.post("/pumps/:id/submitRevision", aw(async (req, res) => {
     if (!req.user.participant_edit) {
         req.log.info("Submit Revision pump attempted by unauthorized user");
         req.log.info(req.user);
         res.redirect("/unauthorized");
         return;
     }
-    var pump = req.body.pump;
+    const old = await req.Pumps.findById(req.params.id).exec();
+    let pump = req.body.pump;
 
     if (pump.results) {
         pump.results = JSON.parse(pump.results);
@@ -655,61 +654,65 @@ router.post("/pumps/:id/submitRevision", function (req, res) {
     pump = units.convert_to_us(pump);
     pump.date = new Date();
 
-    var old = req.participant.pumps.id(req.params.id);
     // will retain the listed/pending status
     delete pump.listed;
     delete pump.pending;
     pump = Object.assign(old, pump);
     pump.date = new Date();
+    pump.participant = req.participant._id;
     pump.revisions.push({
         note: req.body.revision_note,
         date: new Date()
     })
 
-    old.remove();
-    var check = model_check(pump, req.participant.pumps, req.participant);
+    const check = await model_check(req, pump, req.participant);
     if (!check.ok) {
         pump.listed = false;
     }
-
-    var toSave = req.participant.pumps.create(pump);
-    req.participant.pumps.push(toSave);
-    req.participant.save(function (err) {
-        res.redirect("/participant/pumps");
-    })
-});
-
+    delete pump._id;
+    await req.Pumps.update({
+        _id: req.params.id
+    }, pump);
+    res.redirect("/participant/pumps");
+}));
 
 
-router.post('/pumps/:id', function (req, res) {
+
+router.post('/pumps/:id', aw(async (req, res) => {
     if (!req.user.participant_edit) {
         req.log.info("Save pump attempted by unauthorized user");
         req.log.info(req.user);
         res.redirect("/unauthorized");
         return;
     }
-    var pump = req.participant.pumps.id(req.params.id);
+    const pump = await req.Pumps.findById(req.params.id).exec();
     if (pump) {
         pump.listed = req.body.listed_state == 'true'
-        var check = model_check(pump, req.participant.pumps, req.participant);
+        const check = await model_check(req, pump, req.participant);
         if (req.body.listed && !check.ok) {
             pump.listed = false;
         }
         if (pump.listed) pump.pending = false;
     }
-    req.participant.save(function (err) {
+    pump.save(function (err) {
         if (err) {
             req.log.error(err);
         }
         res.redirect("/participant/pumps");
     })
 
-});
+}));
 
-var model_check = function (pump, pumps, participant) {
+const model_check = async (req, pump, participant, additional_pumps) => {
     // Cannot be above the subscription limit.
-    var published = pumps.filter(p => p.listed);
-    if (published.length >= participant.subscription.pumps) {
+
+    let published = await req.Pumps.count({
+        participant: participant._id,
+        listed: true
+    });
+    if (additional_pumps) published += additional_pumps.length
+
+    if (published >= participant.subscription.pumps) {
         return {
             subscription_limit: true,
             ok: false
@@ -717,11 +720,23 @@ var model_check = function (pump, pumps, participant) {
     }
 
     // Cannot share an individual model number with another active pump.
-    var inds = pumps.filter(
-        p => p.individual_model == pump.individual_model &&
-        p.listed &&
-        p.rating_id != pump.rating_id);
-    if (inds.length > 0) {
+    let inds = await req.Pumps.count({
+        participant: participant._id,
+        individual_model: pump.individual_model,
+        listed: true,
+        rating_id: {
+            $ne: pump.rating_id
+        }
+    });
+
+    if (additional_pumps) {
+        inds += additional_pumps.filter(
+            p => p.individual_model == pump.individual_model &&
+            p.listed &&
+            p.rating_id != pump.rating_id).length;
+    }
+
+    if (inds > 0) {
         return {
             individual_collide: true,
             ok: false
@@ -729,12 +744,27 @@ var model_check = function (pump, pumps, participant) {
     }
 
     // Among all active pumps with the same basic model, there must be none that do not have the same er.
-    var bs = participant.pumps.filter(
-        p => p.basic_model == pump.basic_model &&
-        p.listed &&
-        p.energy_rating != pump.energy_rating &&
-        p.rating_id != pump.rating_id);
-    if (bs.length > 0) {
+    let ers = await req.Pumps.count({
+        participant: participant._id,
+        basic_model: pump.basic_model,
+        listed: true,
+        energy_rating: {
+            $ne: pump.energy_rating
+        },
+        rating_id: {
+            $ne: pump.rating_id
+        }
+    });
+
+    if (additional_pumps) {
+        ers += additional_pumps.filter(
+            p => p.basic_model == pump.basic_model &&
+            p.listed &&
+            p.energy_rating != pump.energy_rating &&
+            p.rating_id != pump.rating_id).length;
+    }
+
+    if (ers > 0) {
         return {
             basic_collide: true,
             ok: false
@@ -747,7 +777,7 @@ var model_check = function (pump, pumps, participant) {
 
 router.post("/api/model_check", function (req, res) {
     var newPump = req.body.pump;
-    res.status(200).send(JSON.stringify(model_check(newPump, req.participant.pumps, req.participant)));
+    res.status(200).send(JSON.stringify(model_check(req, newPump, req.participant)));
 });
 
 
@@ -766,28 +796,20 @@ router.get("/api/pumps", aw(async (req, res) => {
     }));
 }));
 
-router.post("/api/pumps/delete/:id", function (req, res) {
+router.post("/api/pumps/delete/:id", aw(async (req, res) => {
     if (!req.user.participant_edit) {
         req.log.info("Delete pump attempted by unauthorized user");
         req.log.info(req.user);
         res.status(403).send("Cannot delete pump without edit role");
         return;
     }
-    var pump = req.participant.pumps.id(req.params.id);
 
-    if (pump && pump.pending) pump.remove();
-    req.participant.save(function (err) {
-        if (err) {
-            req.log.debug("Error getting user to delete");
-            req.log.debug(err);
-            res.status(500).send({
-                error: err
-            });
-        } else {
-            res.status(200).send("Pump removed");
-        }
+    await req.Pumps.remove({
+        _id: req.params.id,
+        pending: true
     });
-});
+    res.status(200).send("Pump removed");
+}));
 
 
 router.post('/api/search', function (req, res) {
