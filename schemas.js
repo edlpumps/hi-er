@@ -1,5 +1,4 @@
 var Schema = require('mongoose').Schema;
-
 exports.init = function init(mongoose) {
 
     var counters = mongoose.model('counters', {
@@ -9,8 +8,14 @@ exports.init = function init(mongoose) {
 
     exports.Counters = counters;
 
-    exports.nextRatingsId = function(callback) {
-        var ret = counters.collection.findAndModify({ name: "ratings" }, {}, { $inc: { seq: 1 } }, {},
+    exports.nextRatingsId = function (callback) {
+        var ret = counters.collection.findAndModify({
+                name: "ratings"
+            }, {}, {
+                $inc: {
+                    seq: 1
+                }
+            }, {},
             callback
         );
     }
@@ -19,11 +24,17 @@ exports.init = function init(mongoose) {
 
     var resetSchema = {
         email: String,
-        expire: { type: Date, index: { expireAfterSeconds: 60 * 60 * 24 }, default: new Date() }
+        expire: {
+            type: Date,
+            index: {
+                expireAfterSeconds: 60 * 60 * 24
+            },
+            default: new Date()
+        }
     }
 
     var PasswordResets = mongoose.model('password_resets', resetSchema, "password_resets");
-    PasswordResets.ensureIndexes(function(err) {
+    PasswordResets.ensureIndexes(function (err) {
 
     })
     exports.PasswordResets = PasswordResets;
@@ -39,11 +50,23 @@ exports.init = function init(mongoose) {
         password: String,
         salt: String,
         activationKey: String,
-        needsActivation: { type: Boolean, default: false },
+        needsActivation: {
+            type: Boolean,
+            default: false
+        },
         admin: Boolean,
-        participant_admin: { type: Boolean, default: false },
-        participant_edit: { type: Boolean, default: false },
-        participant_view: { type: Boolean, default: true },
+        participant_admin: {
+            type: Boolean,
+            default: false
+        },
+        participant_edit: {
+            type: Boolean,
+            default: false
+        },
+        participant_view: {
+            type: Boolean,
+            default: true
+        },
         participant: Schema.Types.ObjectId,
     }, "users");
 
@@ -75,15 +98,71 @@ exports.init = function init(mongoose) {
     var subscribers = mongoose.model('subscribers', subscriber_schema, "subscribers");
     exports.Subscribers = subscribers;
 
+
+
+
+    var participants = mongoose.model('participants', {
+        name: String,
+        address: {
+            street: String,
+            street2: String,
+            city: String,
+            state: String,
+            zip: String,
+            country: String
+        },
+        contact: {
+            name: {
+                first: String,
+                last: String
+            },
+            phone: String,
+            email: String
+        },
+        active: Boolean,
+        //pumps: [pumpSchema],
+        labs: [Schema.Types.ObjectId],
+        purchasing: {
+            name: String,
+            phone: String,
+            email: String
+        },
+        subscription: {
+            pumps: {
+                type: String,
+                default: "0"
+            },
+            status: {
+                type: String,
+                default: "No Account"
+            }
+        }
+
+
+    }, "participants");
+
+    exports.Participants = participants;
+
+
     var pumpSchema = new Schema({
+        participant: {
+            type: Schema.Types.ObjectId,
+            ref: 'participants'
+        },
+        p: {
+            type: Schema.Types.ObjectId,
+            ref: 'participants'
+        },
         date: Date,
         auto: Boolean,
         rating_id: String,
-        participant: String,
         configuration: String,
         brand: String,
         basic_model: String,
-        individual_model: { type: String, default: "N/A" },
+        individual_model: {
+            type: String,
+            default: "N/A"
+        },
         diameter: Number,
         speed: Number,
         laboratory: {
@@ -107,7 +186,10 @@ exports.init = function init(mongoose) {
         motor_regulated: Boolean,
         motor_power_rated: Number,
         motor_efficiency: Number,
-        load120: { type: Boolean, default: true },
+        load120: {
+            type: Boolean,
+            default: true
+        },
 
         pei: Number,
         pei_baseline: Number,
@@ -150,68 +232,76 @@ exports.init = function init(mongoose) {
         },
         measured_control_flow_input: {
             bep25: Number,
-            bep50: Number,
-            bep75: Number,
-            bep100: Number
+            bep5init: Number,
+            bep7init: Number,
+            bep1init0: Number
         },
-        measured_control_head_input: {
-            bep25: Number,
-            bep50: Number,
-            bep75: Number,
-            bep100: Number
+        measuredinitcontrol_head_input: {
+            bep2init: Number,
+            bep5init: Number,
+            bep7init: Number,
+            bep1init0: Number
         },
 
 
         listed: Boolean,
         // defaulting pending for false for backwards compatibility (beta testers already listed)
-        pending: { type: Boolean, default: false },
+        pending: {
+            type: Boolean,
+            default: false
+        },
         pending_reasons: [String],
-        active_admin: { type: Boolean, default: true },
+        active_admin: {
+            type: Boolean,
+            default: true
+        },
         note_admin: String,
         revisions: [{
             date: Date,
             note: String,
-            correction: { type: Boolean, default: true }
+            correction: {
+                type: Boolean,
+                default: true
+            }
         }],
         results: Schema.Types.Mixed
     });
 
 
-    var participants = mongoose.model('participants', {
-        name: String,
-        address: {
-            street: String,
-            street2: String,
-            city: String,
-            state: String,
-            zip: String,
-            country: String
-        },
-        contact: {
-            name: {
-                first: String,
-                last: String
-            },
-            phone: String,
-            email: String
-        },
-        active: Boolean,
-        pumps: [pumpSchema],
-        labs: [Schema.Types.ObjectId],
-        purchasing: {
-            name: String,
-            phone: String,
-            email: String
-        },
-        subscription: {
-            pumps: { type: String, default: "0" },
-            status: { type: String, default: "No Account" }
+
+    pumpSchema.statics.countsByParticipant = async (listed, participants) => {
+        const pipeline = [];
+        if (listed !== undefined) {
+            pipeline.push({
+                $match: {
+                    listed: listed
+                }
+            })
         }
-
-
-    }, "participants");
-
-    exports.Participants = participants;
+        pipeline.push({
+            $group: {
+                _id: '$participant',
+                count: {
+                    $sum: 1
+                }
+            }
+        })
+        const result = await Pumps.aggregate(pipeline);
+        if (participants) {
+            participants.forEach(p => p.pumpCount = 0)
+            for (const count of result) {
+                const i = participants.map(p => p._id.toString()).indexOf(count._id.toString());
+                console.log(i);
+                if (i >= 0) {
+                    participants[i].pumpCount = count.count;
+                }
+            }
+            return participants;
+        } else
+            return result;
+    }
+    const Pumps = mongoose.model('pumps', pumpSchema);
+    exports.Pumps = Pumps;
 
 
     var label = mongoose.model('labels', {
@@ -225,7 +315,7 @@ exports.init = function init(mongoose) {
 
     exports.Labels = label;
 
-    counters.count({}, function(err, count) {
+    counters.count({}, function (err, count) {
         if (count == 0) {
             var counter = new counters();
             counter.name = "ratings";
@@ -235,15 +325,15 @@ exports.init = function init(mongoose) {
         }
     })
 
-    label.count({}, function(err, count) {
+    label.count({}, function (err, count) {
         if (count == 0) {
             console.log("Bootstrapping labels...");
             var loads = ["CL", "VL"];
             var does = ["ESCC", "ESFM", "IL", "RSV", "ST"];
             var speeds = [1800, 3600];
-            loads.forEach(function(load) {
-                does.forEach(function(doe) {
-                    speeds.forEach(function(speed) {
+            loads.forEach(function (load) {
+                does.forEach(function (doe) {
+                    speeds.forEach(function (speed) {
                         var lab = new label();
                         lab.load = load;
                         lab.doe = doe;
@@ -258,4 +348,7 @@ exports.init = function init(mongoose) {
         }
 
     })
+
+
+
 }

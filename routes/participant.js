@@ -12,11 +12,12 @@ const tmp = require('tmp');
 const _ = require('lodash');
 const async = require('async');
 const request = require('request');
+const aw = require('./async_wrap');
 
 // All resources served from here are restricted to participants.
 router.use(function (req, res, next) {
     if (req.user && req.user.participant) {
-        req.app.locals.db.Participants.findById(req.user.participant, function (err, participant) {
+        req.app.locals.db.Participants.findById(req.user.participant).exec(function (err, participant) {
             req.participant = participant;
             if (err) {
                 req.log.debug("Error adding participant");
@@ -38,7 +39,7 @@ router.use(function (req, res, next) {
 });
 
 
-router.get('/', function (req, res) {
+router.get('/', aw(async (req, res) => {
     var no_store = function () {
         req.log.error("ESTORE_URL or ESTORE_AUTH_KEY is missing in the environment variables - cannot poll estore!");
         req.flash("errorTitle", "E-Store unavailable");
@@ -51,12 +52,19 @@ router.get('/', function (req, res) {
         return;
     }
 
-    var options = {
+    const options = {
         url: process.env.ESTORE_URL + "/" + req.participant._id,
         headers: {
             authorization: 'Bearer ' + process.env.ESTORE_AUTH_KEY
         }
     };
+    console.log(req.participant._id);
+    const listed = await req.Pumps.count({
+        participant: req.participant._id,
+        // listed: true
+    }).exec()
+    console.log(listed);
+
 
     function callback(error, response, body) {
         var subscription = {
@@ -77,13 +85,14 @@ router.get('/', function (req, res) {
         // save the new subscription information in the participant
         res.render("participant/p_home", {
             user: req.user,
-            participant: req.participant
+            participant: req.participant,
+            listed: listed
         });
     }
 
     request(options, callback);
 
-});
+}));
 
 
 router.get('/template', function (req, res) {
@@ -133,20 +142,26 @@ router.get('/labs', function (req, res) {
 
 
 
-router.get('/pumps', function (req, res) {
+router.get('/pumps', aw(async (req, res) => {
     req.log.debug("Rendering participant portal (pumps)");
-
-    var published = req.participant.pumps.filter(p => p.listed);
-
+    const pumps = await req.Pumps.find({
+        participant: req.participant._id
+    }).sort({
+        basic_model: 1,
+        individual_model: 1
+    }).lean().exec();
+    const published = pumps.filter(p => p.listed);
     res.render("participant/p_pumps", {
         user: req.user,
+        //pumps: pumps,
+        //published: published,
         participant: req.participant,
         section_label: common.section_label,
         subscription_limit: published.length >= req.participant.subscription.pumps,
         subscription_missing: req.participant.subscription.status != 'Active',
         pump_search_query: req.session.pump_search_query
     });
-});
+}));
 
 
 
@@ -339,7 +354,7 @@ router.post("/pumps/save_upload", function (req, res) {
             pump.listed = list_now;
             // Ignore what's in the spreadsheet - the participant name attached to the pump
             // must always be the currently logged in participant.
-            pump.participant = req.participant.name;
+            pump.participant = req.participant._id;
             var toSave = req.participant.pumps.create(pump);
 
             req.participant.pumps.push(toSave);
@@ -736,12 +751,20 @@ router.post("/api/model_check", function (req, res) {
 });
 
 
-router.get("/api/pumps", function (req, res) {
+router.get("/api/pumps", aw(async (req, res) => {
+    const pumps = await req.Pumps.find({
+        participant: req.participant._id
+    }).sort({
+        basic_model: 1,
+        individual_model: 1
+    }).lean().exec();
+
     res.setHeader('Content-Type', 'application/json');
+
     res.end(JSON.stringify({
-        pumps: req.participant.pumps
+        pumps: pumps
     }));
-});
+}));
 
 router.post("/api/pumps/delete/:id", function (req, res) {
     if (!req.user.participant_edit) {

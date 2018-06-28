@@ -1,14 +1,13 @@
 const express = require('express');
-const passport = require('passport');
 const router = express.Router();
-const units = require('../utils/uom');
 const request = require('request');
 const common = require('./common');
-var mailer = require('../utils/mailer');
+const mailer = require('../utils/mailer');
+const aw = require('./async_wrap');
 module.exports = router;
 
 // All resources served from here are restricted to administrators.
-router.use(function(req, res, next) {
+router.use(function (req, res, next) {
     if (req.user && req.user.admin) {
         next();
     } else {
@@ -18,14 +17,14 @@ router.use(function(req, res, next) {
 });
 
 
-router.get('/', function(req, res) {
+router.get('/', function (req, res) {
     res.render("admin/a_home", {
         user: req.user
     });
 });
 
-router.get('/labels', function(req, res) {
-    req.Labels.find({}, function(err, labels) {
+router.get('/labels', function (req, res) {
+    req.Labels.find({}, function (err, labels) {
         res.render("admin/a_labels", {
             user: req.user,
             labels: labels
@@ -34,22 +33,22 @@ router.get('/labels', function(req, res) {
 
 });
 
-router.get('/participants', function(req, res) {
+router.get('/participants', function (req, res) {
     req.log.debug("Rendering administration portal - participants page");
     res.render("admin/a_participants", {
         user: req.user,
     });
 });
-router.get('/labs', function(req, res) {
+router.get('/labs', function (req, res) {
     req.log.debug("Rendering administration portal - labs page");
     res.render("admin/a_labs", {
         user: req.user,
     });
 });
 
-router.get('/participant/:id', function(req, res) {
+router.get('/participant/:id', function (req, res) {
     req.log.debug("Rendering participant info page for administrative portal");
-    req.Participants.findById(req.params.id, function(err, participant) {
+    req.Participants.findById(req.params.id, function (err, participant) {
         if (err) {
             req.log.error(err);
             req.flash("errorTitle", "Internal application error");
@@ -79,10 +78,10 @@ router.get('/participant/:id', function(req, res) {
                     subscription.pumps = info.pumps || "0";
                     participant.subscription = subscription;
                 }
-                participant.save(function(err, doc) {
+                participant.save(function (err, doc) {
                     req.Users.find({
                         participant: req.params.id
-                    }, function(err, users) {
+                    }, function (err, users) {
                         if (err) {
                             req.log.error(err);
                             req.flash("errorTitle", "Internal application error");
@@ -113,8 +112,8 @@ router.get('/participant/:id', function(req, res) {
 
 
 
-router.get('/participant/:id/delete', function(req, res) {
-    req.Participants.findById(req.params.id, function(err, participant) {
+router.get('/participant/:id/delete', function (req, res) {
+    req.Participants.findById(req.params.id, function (err, participant) {
         if (err) {
             req.log.error(err);
             req.flash("errorTitle", "Internal application error");
@@ -138,14 +137,14 @@ router.get('/participant/:id/delete', function(req, res) {
     })
 })
 
-router.post('/participant/:id/delete', function(req, res) {
+router.post('/participant/:id/delete', function (req, res) {
     if (req.body.confirm !== "DELETE COMPLETELY") {
         req.flash("errorTitle", "Cannot delete this participant as requested");
         req.flash("errorMessage", "You may have entered the text challenge incorrectly - please use your browser's back button to try again.");
         res.redirect("/error");
         return;
     }
-    req.Participants.findByIdAndRemove(req.params.id, function(err) {
+    req.Participants.findByIdAndRemove(req.params.id, function (err) {
         if (err) {
             req.log.error(err);
             req.flash("errorTitle", "Cannot delete this participant as requested");
@@ -156,7 +155,7 @@ router.post('/participant/:id/delete', function(req, res) {
 
         req.Users.remove({
             participant: req.params.id
-        }, function(err) {
+        }, function (err) {
             if (err) {
                 req.log.error(err);
                 req.flash("errorTitle", "Cannot delete this participant as requested");
@@ -170,87 +169,79 @@ router.post('/participant/:id/delete', function(req, res) {
     })
 })
 
-router.get('/participant/:id/pumps', function(req, res) {
+router.get('/participant/:id/pumps', aw(async (req, res) => {
+    const participant = await req.Participants.findById(req.params.id).exec();
+    const pumps = await req.Pumps.find({
+        participant: req.params.id
+    }).sort({
+        basic_model: 1,
+        individual_model: 1
+    }).lean().exec();
+
     req.log.debug("Rendering participant pumps page for administrative portal");
-    req.Participants.findById(req.params.id, function(err, participant) {
-        res.render("admin/a_pumps", {
-            user: req.user,
-            pumps: participant.pumps,
-            participant: participant,
-            getConfigLabel: function(config) {
-                switch (config) {
-                    case "bare":
-                        return "Bare Pump";
-                    case "pump_motor":
-                        return "Pump + Motor";
-                    case "pump_motor_cc":
-                        return "Pump + Motor w/ Continuous Controls";
-                    case "pump_motor_nc":
-                        return "Pump + Motor w/ Non-continuous Controls";
-                    default:
-                        "N/A";
-                }
+    res.render("admin/a_pumps", {
+        user: req.user,
+        pumps: pumps,
+        participant: participant,
+        getConfigLabel: function (config) {
+            switch (config) {
+                case "bare":
+                    return "Bare Pump";
+                case "pump_motor":
+                    return "Pump + Motor";
+                case "pump_motor_cc":
+                    return "Pump + Motor w/ Continuous Controls";
+                case "pump_motor_nc":
+                    return "Pump + Motor w/ Non-continuous Controls";
+                default:
+                    "N/A";
             }
-        });
-    });
-})
-
-router.get('/participant/:id/pumps/:pump_id', function(req, res) {
-    console.log("Getting participant");
-    req.Participants.findById(req.params.id, function(err, participant) {
-        console.log("Getting Pump");
-        var pump = participant.pumps.id(req.params.pump_id);
-        console.log("Rendering");
-        res.render("admin/a_pump", {
-            user: req.user,
-            participant: participant,
-            pump: pump,
-            pump_drawing: pump.doe ? pump.doe.toLowerCase() + ".png" : "",
-            section_label: common.section_label
-        });
-    });
-})
-
-router.get('/participant/:id/pumps/:pump_id/download', function(req, res) {
-    req.Participants.findById(req.params.id, function(err, participant) {
-        var pump = participant.pumps.id(req.params.pump_id);
-        pump = JSON.parse(JSON.stringify(pump));
-        common.build_pump_spreadsheet(pump, req.session.unit_set, function(error, file, cleanup) {
-            res.download(file, 'Pump Listings.xlsx', function(err) {
-                cleanup();
-            });
-        });
-    });
-});
-
-
-router.post('/participant/:id/pumps/:pump_id', function(req, res) {
-    req.Participants.findById(req.params.id, function(err, participant) {
-        var pump = participant.pumps.id(req.params.pump_id);
-        if (pump) {
-            pump.active_admin = req.body.active_admin ? true : false;
-            pump.note_admin = req.body.note_admin;
         }
-        participant.save(function(err) {
-            if (err) {
-                req.log.error(err);
-            }
-            res.render("admin/a_pump", {
-                user: req.user,
-                participant: participant,
-                pump: pump,
-                pump_drawing: pump.doe ? pump.doe.toLowerCase() + ".png" : "",
-                section_label: common.section_label
-            });
-        })
     });
+}));
 
-});
+router.get('/participant/:id/pumps/:pump_id', aw(async (req, res) => {
+    const participant = await req.Participants.findById(req.params.id).exec();
+    const pump = await req.Pumps.findById(req.params.pump_id).lean().exec();
+    res.render("admin/a_pump", {
+        user: req.user,
+        participant: participant,
+        pump: pump,
+        pump_drawing: pump.doe ? pump.doe.toLowerCase() + ".png" : "",
+        section_label: common.section_label
+    });
+}));
+
+router.get('/participant/:id/pumps/:pump_id/download', aw(async (req, res) => {
+    const pump = await req.Pumps.findById(req.params.pump_id).populate('participant').exec();
+    const p = JSON.parse(JSON.stringify(pump));
+    common.build_pump_spreadsheet(p, req.session.unit_set, function (error, file, cleanup) {
+        res.download(file, 'Pump Listings.xlsx', function (err) {
+            cleanup();
+        });
+    });
+}));
 
 
-router.post("/participant/:id", function(req, res) {
+router.post('/participant/:id/pumps/:pump_id', aw(async (req, res) => {
+    const participant = await req.Participants.findById(req.params.id).exec();
+    const pump = await req.Pumps.findById(req.params.pump_id).exec();
+    pump.active_admin = req.body.active_admin ? true : false;
+    pump.note_admin = req.body.note_admin;
+    await pump.save();
+    res.render("admin/a_pump", {
+        user: req.user,
+        participant: participant,
+        pump: pump,
+        pump_drawing: pump.doe ? pump.doe.toLowerCase() + ".png" : "",
+        section_label: common.section_label
+    });
+}));
+
+
+router.post("/participant/:id", function (req, res) {
     req.log.debug("Saving participant info administrative portal");
-    req.Participants.findById(req.params.id, function(err, participant) {
+    req.Participants.findById(req.params.id, function (err, participant) {
         if (err) {
             req.log.error(err);
             req.flash("errorTitle", "Internal application error");
@@ -265,7 +256,7 @@ router.post("/participant/:id", function(req, res) {
             } else {
                 participant.active = true;
             }
-            participant.save(function(err, participant) {
+            participant.save(function (err, participant) {
                 res.redirect("/admin/participants");
             })
 
@@ -281,10 +272,10 @@ router.post("/participant/:id", function(req, res) {
     })
 })
 
-router.get("/sendactivation/:id", function(req, res) {
+router.get("/sendactivation/:id", function (req, res) {
     req.Users.findOne({
         _id: req.params.id
-    }, function(err, user) {
+    }, function (err, user) {
         mailer.sendAuthenticationEmail(req.base_url, user, req.user);
         res.render("admin/activation_sent", {
             user: req.user
@@ -293,14 +284,14 @@ router.get("/sendactivation/:id", function(req, res) {
 })
 
 
-router.get("/subscriber", function(req, res) {
+router.get("/subscriber", function (req, res) {
     res.render("admin/a_subscribers", {
         user: req.user,
     });
 })
 
-router.get("/api/subscriber", function(req, res) {
-    req.Subscribers.find({}, function(err, subs) {
+router.get("/api/subscriber", function (req, res) {
+    req.Subscribers.find({}, function (err, subs) {
         res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify({
             subscribers: subs
@@ -309,10 +300,10 @@ router.get("/api/subscriber", function(req, res) {
 })
 
 // add
-router.put("/api/subscriber", function(req, res) {
+router.put("/api/subscriber", function (req, res) {
     var sub = new req.Subscribers(req.body);
 
-    sub.save(function(err) {
+    sub.save(function (err) {
         if (err) {
             console.log(err);
             res.status(500).send();
@@ -322,10 +313,14 @@ router.put("/api/subscriber", function(req, res) {
     })
 })
 // edit
-router.post("/api/subscriber", function(req, res) {
+router.post("/api/subscriber", function (req, res) {
     var sub = req.body;
 
-    req.Subscribers.update({ _id: sub._id }, { $set: sub }, function(err, result) {
+    req.Subscribers.update({
+        _id: sub._id
+    }, {
+        $set: sub
+    }, function (err, result) {
         if (err) {
             console.log(err);
             res.status(500).send();
@@ -337,8 +332,10 @@ router.post("/api/subscriber", function(req, res) {
         }
     })
 })
-router.delete("/api/subscriber/:id", function(req, res) {
-    req.Subscribers.remove({ _id: req.params.id }, function(err) {
+router.delete("/api/subscriber/:id", function (req, res) {
+    req.Subscribers.remove({
+        _id: req.params.id
+    }, function (err) {
         if (err) {
             console.log(err);
             res.status(500).send();
@@ -349,13 +346,13 @@ router.delete("/api/subscriber/:id", function(req, res) {
     });
 })
 
-router.post("/api/labels/", function(req, res) {
+router.post("/api/labels/", function (req, res) {
     req.log.debug("Saving labels - administrative portal");
-    req.body.labels.filter(l => l.modified).forEach(function(label) {
+    req.body.labels.filter(l => l.modified).forEach(function (label) {
         label.date = Date.now();
     })
-    req.Labels.remove({}, function() {
-        req.Labels.insertMany(req.body.labels, function(err, documents) {
+    req.Labels.remove({}, function () {
+        req.Labels.insertMany(req.body.labels, function (err, documents) {
             res.setHeader('Content-Type', 'application/json');
             res.end(JSON.stringify({
                 labels: documents
@@ -366,7 +363,7 @@ router.post("/api/labels/", function(req, res) {
 })
 
 
-router.get("/api/users", function(req, res) {
+router.get("/api/users", function (req, res) {
     req.log.debug("Returning user listings");
     req.Users.find({
             admin: true
@@ -377,7 +374,7 @@ router.get("/api/users", function(req, res) {
             needsActivation: true,
             activationKey: true
         },
-        function(err, users) {
+        function (err, users) {
             if (err) {
                 res.status(500).send({
                     error: err
@@ -394,25 +391,18 @@ router.get("/api/users", function(req, res) {
 
 router.get("/api/labs", common.labs);
 
-router.get("/api/participants", function(req, res) {
+router.get("/api/participants", aw(async (req, res) => {
     req.log.debug("Returning participant listings");
-    req.Participants.find({},
-        function(err, participants) {
-            if (err) {
-                res.status(500).send({
-                    error: err
-                });
-            } else {
-                res.setHeader('Content-Type', 'application/json');
-                res.end(JSON.stringify({
-                    participants: participants
-                }));
-            }
-        }
-    )
-});
+    let participants = await req.Participants.find({}).sort({
+        name: 1
+    }).lean().exec();
+    participants = await req.Pumps.countsByParticipant(true, participants);
+    res.json({
+        participants: participants
+    });
+}));
 
-router.post("/api/labs/add", function(req, res) {
+router.post("/api/labs/add", function (req, res) {
 
     var newLab = req.body.lab;
     if (!newLab.code || !newLab.name) {
@@ -423,13 +413,13 @@ router.post("/api/labs/add", function(req, res) {
 
     req.Labs.find({
         code: newLab.code
-    }, function(err, labs) {
+    }, function (err, labs) {
         if (labs && labs.length > 0) {
             res.status(400).send("Lab already exists");
             return;
         }
         var lab = new req.Labs(newLab);
-        lab.save(function(err, saved) {
+        lab.save(function (err, saved) {
             if (err) {
                 res.status(500).send({
                     error: err
@@ -444,7 +434,7 @@ router.post("/api/labs/add", function(req, res) {
     })
 });
 
-router.post("/api/labs/save", function(req, res) {
+router.post("/api/labs/save", function (req, res) {
     var lab = req.body.lab;
     req.Labs.update({
             code: lab.code
@@ -454,7 +444,7 @@ router.post("/api/labs/save", function(req, res) {
                 address: lab.address
             }
         },
-        function(err, labs) {
+        function (err, labs) {
             if (err) {
                 res.status(500).send({
                     error: err
@@ -468,10 +458,10 @@ router.post("/api/labs/save", function(req, res) {
         });
 });
 
-router.post("/api/labs/delete/:id", function(req, res) {
+router.post("/api/labs/delete/:id", function (req, res) {
     req.Labs.findOne({
         _id: req.params.id
-    }, function(err, lab) {
+    }, function (err, lab) {
         if (err) {
             req.log.debug("Error getting lab to delete");
             req.log.debug(err);
@@ -483,7 +473,7 @@ router.post("/api/labs/delete/:id", function(req, res) {
         } else {
             req.Labs.remove({
                 _id: req.params.id
-            }, function(err) {
+            }, function (err) {
                 if (err) {
                     req.log.debug("Error removing lab");
                     req.log.debug(err);

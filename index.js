@@ -75,6 +75,7 @@ var configure = function () {
     ////////////////////////////////////////////////////
     app.use(function (req, res, next) {
         req.Participants = req.app.locals.db.Participants;
+        req.Pumps = req.app.locals.db.Pumps;
         req.Users = req.app.locals.db.Users;
         req.Labels = req.app.locals.db.Labels;
         req.Labs = req.app.locals.db.Labs;
@@ -161,6 +162,7 @@ var conn = mongoose.connect(data_connection_str, {
         app.locals.db = {
             Users: schemas.Users,
             Participants: schemas.Participants,
+            Pumps: schemas.Pumps,
             Labels: schemas.Labels,
             Labs: schemas.Labs,
             Subscribers: schemas.Subscribers,
@@ -184,9 +186,9 @@ var conn = mongoose.connect(data_connection_str, {
 // Authentication
 ////////////////////////////////////////////////////
 passport.use(new Strategy({
-    usernameField: 'email',
-    passReqToCallback: true
-},
+        usernameField: 'email',
+        passReqToCallback: true
+    },
     function (req, email, password, done) {
         var regex = new RegExp("^" + email + "$", "i");
         console.log(regex);
@@ -330,10 +332,16 @@ var push_emails = function (interval) {
         })
         let toxl = require('jsonexcel');
         let fs = require('fs');
-        let buffer = toxl(docs, { sort: sorter, headings: headings, filter: filter });
+        let buffer = toxl(docs, {
+            sort: sorter,
+            headings: headings,
+            filter: filter
+        });
 
 
-        app.locals.db.Subscribers.find({ interval_days: interval }, function (err, subs) {
+        app.locals.db.Subscribers.find({
+            interval_days: interval
+        }, function (err, subs) {
             let recips = [];
             if (subs) {
                 subs.forEach(function (s) {
@@ -373,5 +381,3 @@ var twiceAMonth = "0 11 1,15 * *"
 sched.scheduleJob(daily, push_daily);
 sched.scheduleJob(weekly, push_weekly);
 sched.scheduleJob(twiceAMonth, push_twice_a_month);
-
-

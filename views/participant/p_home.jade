@@ -9,7 +9,7 @@ block nav
     
 block content
   div.ng-cloak(ng-app='ERParticipantApp')
-    .container(ng-controller="ERParticipantController as app",ng-init="app.user= #{JSON.stringify(user)}; app.participant= #{JSON.stringify(participant)}")
+    .container(ng-controller="ERParticipantController as app",ng-init="app.user= #{JSON.stringify(user)}; app.participant= #{JSON.stringify(participant)}; app.listedCount = #{listed}")
 
         form(name="settingsForm",ng-submit="app.saveParticipant(settingsForm.$valid)", novalidate)
              .panel.panel-default
@@ -133,7 +133,7 @@ block content
                        | ).
                     div(ng-show="app.participant.subscription.status == 'Active'")
                         h4 
-                         | {{app.listed()}} 
+                         | {{app.listedCount}} 
                          span(ng-show="app.participant.subscription.pumps != 'U'") of {{app.participant.subscription.pumps}} available pump listings are being used.
                          span(ng-hide="app.participant.subscription.pumps != 'U'") pumps listed (Unlimited pumps allowed).
                         p 

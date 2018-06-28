@@ -40,7 +40,7 @@
     "lodash": "4.17.2",
     "moment": "^2.19.3",
     "momentjs": "2.0.0",
-    "mongoose": "4.6.0",
+    "mongoose": "^4.7.1",
     "multer": "1.2.0",
     "node-schedule": "^1.2.5",
     "node-schedule-tz": "^1.2.1-4",

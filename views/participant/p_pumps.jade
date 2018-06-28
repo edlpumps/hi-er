@@ -5,7 +5,7 @@ block nav
      +navigation("pumps")
 block content
  div.ng-cloak(ng-app='ERParticipantApp')
-    .container(ng-controller="ERParticipantController as app",ng-init="app.pump_search_query = #{JSON.stringify(pump_search_query)}; app.units = #{JSON.stringify(units)}; app.user= #{JSON.stringify(user)}; app.participant= #{JSON.stringify(participant)}")
+    .container(ng-controller="ERParticipantController as app",ng-init="app.pump_search_query = #{JSON.stringify(pump_search_query)}; app.units = #{JSON.stringify(units)}; app.user= #{JSON.stringify(user)}; app.participant= #{JSON.stringify(participant)};")
       .modal.fade#delete(tabindex='-1', role='dialog' aria-labelledby='titleLabel', aria-hidden='true')
         .modal-dialog
           .modal-content

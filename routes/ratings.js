@@ -1,12 +1,11 @@
 "use strict";
 
 const express = require('express');
-const passport = require('passport');
 const router = express.Router();
-var default_search_operators = require('../search').params;
+const default_search_operators = require('../search').params;
+const aw = require('./async_wrap');
 
-
-router.get("/glossary", function(req, res) {
+router.get("/glossary", function (req, res) {
     var help = require('../public/resources/help.json')
     res.render("ratings/glossary", {
         help: help
@@ -15,7 +14,7 @@ router.get("/glossary", function(req, res) {
 
 
 
-router.get('/search', function(req, res) {
+router.get('/search', function (req, res) {
     var operators = default_search_operators(undefined, true);
     var search_params = req.session.search;
     if (!search_params) {
@@ -27,34 +26,45 @@ router.get('/search', function(req, res) {
         search: search_params
     });
 });
-router.get('/api/participants', function(req, res) {
-    req.Participants.find({ $and: [{ active: true, 'subscription.status': 'Active' }] }, function(err, docs) {
+router.get('/api/participants', function (req, res) {
+    req.Participants.find({
+        $and: [{
+            active: true,
+            'subscription.status': 'Active'
+        }]
+    }, function (err, docs) {
         res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify({ participants: docs.filter(p => p.active).map(p => p.name) }));
+        res.end(JSON.stringify({
+            participants: docs.filter(p => p.active).map(p => p.name)
+        }));
     });
 });
 
-router.get('/api/brands', function(req, res) {
+router.get('/api/brands', function (req, res) {
     var name = req.query.name;
     var query = {};
     if (name) {
-        query = { name: name };
+        query = {
+            name: name
+        };
     }
-    req.Participants.find(query, function(err, participants) {
+    req.Participants.find(query, function (err, participants) {
         var brands = [];
-        participants.forEach(function(p) {
+        participants.forEach(function (p) {
             brands = brands.concat(p.pumps.map(p => p.brand));
         });
         res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify({ brands: Array.from(new Set(brands)) }));
+        res.end(JSON.stringify({
+            brands: Array.from(new Set(brands))
+        }));
     });
 })
 
-router.get('/home', function(req, res) {
+router.get('/home', function (req, res) {
     res.render("ratings/home", {});
 });
 
-router.get('/utilities', function(req, res) {
+router.get('/utilities', function (req, res) {
     var operators = default_search_operators(undefined, false);
     var search_params = req.session.search;
     if (!search_params) {
@@ -82,34 +92,31 @@ router.get('/utilities', function(req, res) {
     });
 });
 
-router.get("/:id", function(req, res) {
-    req.Participants.findOne({ pumps: { $elemMatch: { 'rating_id': req.params.id } } }, function(err, participant) {
-        if (!err && participant) {
-
-            var pump = participant.pumps.filter(p => p.rating_id == req.params.id)[0];
-            if (!pump || !participant.active || pump.pending || !pump.active_admin || participant.subscription.status != 'Active') {
-                req.flash("errorTitle", "Not Available");
-                req.flash("errorMessage", "No pump corresponding to this ID is listed in the Hydraulic Institute Energy Ratings Program");
-                res.redirect("/error");
-                return;
-            }
-            res.render("ratings/r_pump", {
-                pump: pump,
-                participant: participant,
-                pump_drawing: pump.doe ? pump.doe.toLowerCase() + ".png" : ""
-            });
-        } else {
-            req.flash("errorTitle", "Not found");
-            req.flash("errorMessage", err ? err : "This pump does not exist.");
-            res.redirect("/error");
-        }
-    })
-
-});
+router.get("/:id", aw(async (req, res) => {
+    const pump = await req.Pumps.findOne({
+        rating_id: req.params.id
+    }).populate('participant').exec();
+    if (!pump) {
+        req.flash("errorTitle", "Not found");
+        req.flash("errorMessage", err ? err : "This pump does not exist.");
+        return res.redirect("/error");
+    }
+    if (!pump || !pump.participant.active || pump.pending || !pump.active_admin || pump.participant.subscription.status != 'Active') {
+        req.flash("errorTitle", "Not Available");
+        req.flash("errorMessage", "No pump corresponding to this ID is listed in the Hydraulic Institute Energy Ratings Program");
+        res.redirect("/error");
+        return;
+    }
+    res.render("ratings/r_pump", {
+        pump: pump,
+        participant: pump.participant,
+        pump_drawing: pump.doe ? pump.doe.toLowerCase() + ".png" : ""
+    });
+}));
 
 
 
-router.post("/count", function(req, res) {
+router.post("/count", function (req, res) {
     req.session.search = req.body.search;
     req.session.search.fresh = false;
 
@@ -127,19 +134,23 @@ router.post("/count", function(req, res) {
     }
 
     var operators = default_search_operators(search_params, false);
-    req.Participants.aggregate(operators).exec(function(err, docs) {
+    req.Participants.aggregate(operators).exec(function (err, docs) {
         res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify({ pumps: docs.length }));
+        res.end(JSON.stringify({
+            pumps: docs.length
+        }));
     });
 });
 
-router.post("/search", function(req, res) {
+router.post("/search", function (req, res) {
     req.session.search = req.body.search;
 
     // Per HI request, you cannot search unless participant, basic_model or rating_id is specified.
     if (!req.session.search.rating_id && !req.session.search.participant && !req.session.search.basic_model && !req.session.search.brand) {
         res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify({ pumps: [] }));
+        res.end(JSON.stringify({
+            pumps: []
+        }));
         return;
     }
 
@@ -155,9 +166,11 @@ router.post("/search", function(req, res) {
     }
 
     var operators = default_search_operators(search_params, true);
-    req.Participants.aggregate(operators).exec(function(err, docs) {
+    req.Participants.aggregate(operators).exec(function (err, docs) {
         res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify({ pumps: docs }));
+        res.end(JSON.stringify({
+            pumps: docs
+        }));
     });
 });
 
