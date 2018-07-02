@@ -47,10 +47,7 @@ router.get('/', aw(async (req, res) => {
         res.redirect("/error");
         req.logout();
     }
-    if (!process.env.ESTORE_URL || !process.env.ESTORE_AUTH_KEY) {
-        no_store();
-        return;
-    }
+
 
     const listed = await req.Pumps.count({
         participant: req.participant._id,
@@ -70,6 +67,11 @@ router.get('/', aw(async (req, res) => {
         req.participant.subscription.pumps = 10000;
         await req.participant.save();
         return response();
+    }
+
+    if (!process.env.ESTORE_URL || !process.env.ESTORE_AUTH_KEY) {
+        no_store();
+        return;
     }
 
     const options = {

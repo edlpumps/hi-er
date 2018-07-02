@@ -64,8 +64,8 @@ const clean = async () => {
             pumps: undefined
         }
     }, {
-            multi: true
-        });
+        multi: true
+    });
     console.log("Gone.")
     console.log(result);
     mongoose.connection.close()
