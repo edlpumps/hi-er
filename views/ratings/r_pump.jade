@@ -15,7 +15,7 @@ block content
            img(src="/images/hydraulic-institute-logo.png", width="600").hidden-xs
            img(src="/images/hydraulic-institute-logo.png", style="width:80%").hidden-md.hidden-lg.hidden-sm
              
-           h2 #{pump.brand} #{pump.brand ? ' / ' : ''} #{pump.basic_model} #{pump.individual_model}
+           h2 #{pump.brand} #{pump.brand ? ' / ' : ''} #{pump.basic_model}
            h4 #{pump.participant.name}
             
         .panel-body
@@ -24,9 +24,12 @@ block content
            .col.col-sm-5.text-center
             .row
               .col.col-sm-6.text-center
-                h4 Pump Energy Index
+                h4 
+                  | Pump Energy Index
+                  sub #{pump.configuration == 'bare' || pump.configuration == 'pump_motor' ? "CL" : "VL"}
                 p.pei_display #{pump.pei.toFixed(2)}
                 p.pei_baseline Baseline:  #{pump.pei_baseline.toFixed(2)}
+                
               .col.col-sm-6.text-center
                 h4 Energy Rating
                 p.er_display #{pump.energy_rating}

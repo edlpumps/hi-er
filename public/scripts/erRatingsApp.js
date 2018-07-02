@@ -82,6 +82,11 @@ var ERRatingsController = function ($scope, $location, service, $http) {
     if (!vm.search.participant) {
       vm.search.brand = "";
     }
+    if (!vm.search.cl && !vm.search.vl) {
+      vm.search_error = "At least one load type must be specified (CL, VL, or both)";
+      return;
+    }
+    console.log(vm.search)
     vm.pumps_error = false;
     service.search(vm.search).then(function (results) {
       vm.pumps = results.data.pumps;
@@ -135,6 +140,7 @@ var ERRatingsController = function ($scope, $location, service, $http) {
       vm.search_error = "At least one DOE designation must be specified";
       return;
     }
+
     vm.counting = true;
     service.count(vm.search).then(function (results) {
       vm.counting = false;

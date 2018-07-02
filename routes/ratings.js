@@ -173,11 +173,18 @@ router.post("/search", function (req, res) {
         rating_id: req.session.search.rating_id,
         participant: req.session.search.participant,
         basic_model: req.session.search.basic_model,
-        brand: req.session.search.brand
-
+        brand: req.session.search.brand,
+        cl: req.session.search.cl,
+        vl: req.session.search.vl
     }
 
     var operators = default_search_operators(search_params, true);
+    operators.push({
+        $sort: {
+            basic_model: 1,
+            individual_model: 1
+        }
+    })
     req.Pumps.aggregate(operators).exec(function (err, docs) {
         res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify({

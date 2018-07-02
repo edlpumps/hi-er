@@ -102,7 +102,10 @@ exports.params = function (search_parameters, allow_inactive) {
     if (search.basic_model) {
         operators.push({
             $match: {
-                basic_model: search.basic_model
+                basic_model: {
+                    $regex: new RegExp(search.basic_model, "ig")
+                }
+
             }
         });
     }

@@ -35,13 +35,28 @@ block content
                .col.col-sm-6
                  select.form-control(ng-model="app.search.brand", ng-options="p for p in app.brands")
              .form-group
+               label.col-sm-3.control-label Load
+               .col.col-sm-6
+                 ul.list-group
+                    li.list-group-item
+                      .checkbox
+                        label
+                            input(type="checkbox", ng-model="app.search.cl", ng-change="app.countPumps()") 
+                            | Constant Load
+                    li.list-group-item
+                      .checkbox
+                        label
+                            input(type="checkbox", ng-model="app.search.vl", ng-change="app.countPumps()") 
+                            | Variable Load
+             .form-group
               label.col-sm-3.control-label 
                
               .col.col-sm-5
-               button.btn.btn-primary(type="button", ng-click="app.getPumps(); app.searched = true") Search for Rated Pumps
-
+               button.btn.btn-primary(ng-hide='app.search_error', type="button", ng-click="app.getPumps(); app.searched = true") Search for Rated Pumps
+            
          p.alert.alert-warning(ng-show="app.pumps_error") {{app.pumps_error}}
-         .panel.panel-default(ng-show="(app.pumps.length > 0 || app.searched) && !app.pumps_error")
+         p.alert.alert-warning(ng-show="app.search_error") {{app.search_error}}
+         .panel.panel-default(ng-show="(app.pumps.length > 0 || app.searched) && !app.pumps_error && !app.search_error")
            .panel-heading
              h1 Results ({{app.pumps.length}})
            ul.list-group
@@ -52,15 +67,18 @@ block content
                         .col.col-xs-8.col-sm-6
                            h3 {{pump.brand}} {{pump.brand ? ' / ' : ''}} {{pump.basic_model}}
                            p: b Manufacturer's model number:  {{pump.individual_model}} 
-                           p {{pump.participant}}
+                           p {{pump.joined_participant.name}}
                            p {{pump.doe}} - {{app.getConfigLabel(pump.configuration)}}
                         .col.hidden-xs.col-sm-4(style="padding-top:20px")
                            p Diameter:  {{pump.diameter * app.units.diameter.factor | number:3}} {{app.units.diameter.label}}
                            p Speed:  {{pump.speed}} rpm
                            p {{pump.stages}} stages
+                           p {{pump.configuration == 'bare' || pump.configuration == 'pump_motor' ? "Constant Load (CL)" : "Variable Load (VL)"}}
                         .col.col-xs-4.col-sm-2.energy_badge
                            .small(style="padding-top:20px; margin-bottom:0px") Energy Rating
                            h2(style="margin-top:0px") {{pump.energy_rating}}
+                           .small(style="padding-top:20px; margin-bottom:0px") PEI
+                           h4(style='margin-top:0px') {{pump.pei.toFixed(2)}}
 
 
                  
