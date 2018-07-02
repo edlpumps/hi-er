@@ -59,14 +59,15 @@ const clean = async () => {
     });
 
     schemas.init(mongoose);
-    await schemas.Participants.update({}, {
+    const result = await schemas.Participants.update({}, {
         $set: {
             pumps: undefined
         }
     }, {
-        multi: true
-    });
+            multi: true
+        });
     console.log("Gone.")
+    console.log(result);
     mongoose.connection.close()
 }
 
@@ -94,5 +95,5 @@ const fix = async () => {
 
 //copy();
 //verify();
-//clean();
-fix();
+clean();
+//fix();

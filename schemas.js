@@ -13,8 +13,8 @@ exports.init = function init(mongoose) {
     exports.getNextRatingsId = async () => {
         return new Promise((resolve, reject) => {
             var ret = counters.collection.findAndModify({
-                    name: "ratings"
-                }, {}, {
+                name: "ratings"
+            }, {}, {
                     $inc: {
                         seq: 1
                     }
@@ -107,48 +107,6 @@ exports.init = function init(mongoose) {
 
 
 
-
-    var participants = mongoose.model('participants', {
-        name: String,
-        address: {
-            street: String,
-            street2: String,
-            city: String,
-            state: String,
-            zip: String,
-            country: String
-        },
-        contact: {
-            name: {
-                first: String,
-                last: String
-            },
-            phone: String,
-            email: String
-        },
-        active: Boolean,
-        //pumps: [pumpSchema],
-        labs: [Schema.Types.ObjectId],
-        purchasing: {
-            name: String,
-            phone: String,
-            email: String
-        },
-        subscription: {
-            pumps: {
-                type: String,
-                default: "0"
-            },
-            status: {
-                type: String,
-                default: "No Account"
-            }
-        }
-
-
-    }, "participants");
-
-    exports.Participants = participants;
 
 
     var pumpSchema = new Schema({
@@ -309,6 +267,50 @@ exports.init = function init(mongoose) {
     }
     const Pumps = mongoose.model('pumps', pumpSchema);
     exports.Pumps = Pumps;
+
+
+
+    var participants = mongoose.model('participants', {
+        name: String,
+        address: {
+            street: String,
+            street2: String,
+            city: String,
+            state: String,
+            zip: String,
+            country: String
+        },
+        contact: {
+            name: {
+                first: String,
+                last: String
+            },
+            phone: String,
+            email: String
+        },
+        active: Boolean,
+        pumps: [pumpSchema],
+        labs: [Schema.Types.ObjectId],
+        purchasing: {
+            name: String,
+            phone: String,
+            email: String
+        },
+        subscription: {
+            pumps: {
+                type: String,
+                default: "0"
+            },
+            status: {
+                type: String,
+                default: "No Account"
+            }
+        }
+
+
+    }, "participants");
+
+    exports.Participants = participants;
 
 
     var label = mongoose.model('labels', {
