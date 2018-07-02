@@ -40,25 +40,26 @@ router.get('/api/participants', function (req, res) {
     });
 });
 
-router.get('/api/brands', function (req, res) {
+router.get('/api/brands', aw(async (req, res) => {
     var name = req.query.name;
     var query = {};
+
     if (name) {
-        query = {
+        const participant = await req.Participants.findOne({
             name: name
-        };
+        }).exec();
+        if (participant) {
+            query['participant'] = participant._id;
+        }
     }
-    req.Participants.find(query, function (err, participants) {
-        var brands = [];
-        participants.forEach(function (p) {
-            brands = brands.concat(p.pumps.map(p => p.brand));
-        });
+    req.Pumps.find(query, function (err, pumps) {
+        var brands = pumps.map(p => p.brand);
         res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify({
             brands: Array.from(new Set(brands))
         }));
     });
-})
+}));
 
 router.get('/home', function (req, res) {
     res.render("ratings/home", {});
@@ -134,10 +135,21 @@ router.post("/count", function (req, res) {
     }
 
     var operators = default_search_operators(search_params, false);
-    req.Participants.aggregate(operators).exec(function (err, docs) {
+
+    operators.push({
+        $count: 'count'
+    });
+    req.Pumps.aggregate(operators).exec(function (err, docs) {
+        if (err) {
+            console.log(err);
+        }
+        let count = 0;
+        if (docs.length) {
+            count = docs[0].count;
+        }
         res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify({
-            pumps: docs.length
+            pumps: count
         }));
     });
 });
@@ -166,7 +178,7 @@ router.post("/search", function (req, res) {
     }
 
     var operators = default_search_operators(search_params, true);
-    req.Participants.aggregate(operators).exec(function (err, docs) {
+    req.Pumps.aggregate(operators).exec(function (err, docs) {
         res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify({
             pumps: docs

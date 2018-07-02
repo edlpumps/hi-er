@@ -46,68 +46,61 @@ router.get('/labs', function (req, res) {
     });
 });
 
-router.get('/participant/:id', function (req, res) {
+router.get('/participant/:id', aw(async (req, res) => {
     req.log.debug("Rendering participant info page for administrative portal");
-    req.Participants.findById(req.params.id, function (err, participant) {
-        if (err) {
-            req.log.error(err);
-            req.flash("errorTitle", "Internal application error");
-            req.flash("errorMessage", "Database lookup (participant) failed.");
-            res.redirect("/error");
-            return;
+    const participant = await req.Participants.findById(req.params.id).exec();
+    if (!participant) {
+        req.log.error(err);
+        req.flash("errorTitle", "Not found");
+        req.flash("errorMessage", "This participant does not exist.");
+        res.redirect("/error");
+        return;
+    }
+    req.log.debug("Lookup of participant succeeded - " + participant.name);
+
+    const response = async () => {
+        const users = await req.Users.find({
+            participant: req.params.id
+        }).exec();
+        res.render("admin/a_participant", {
+            user: req.user,
+            participant: participant,
+            users: users
+        });
+    }
+
+    if (process.env.ESTORE_OVERRIDE) {
+        participant.subscription.status = 'Active';
+        participant.subscription.pumps = 10000;
+        await participant.save();
+        return response();
+    }
+    // refresh estore status
+    const options = {
+        url: process.env.ESTORE_URL + "/" + participant._id,
+        headers: {
+            authorization: 'Bearer ' + process.env.ESTORE_AUTH_KEY
         }
-        if (participant) {
-            req.log.debug("Lookup of participant succeeded - " + participant.name);
+    };
 
-            // refresh estore status
-            var options = {
-                url: process.env.ESTORE_URL + "/" + participant._id,
-                headers: {
-                    authorization: 'Bearer ' + process.env.ESTORE_AUTH_KEY
-                }
-            };
-
-            function callback(error, response, body) {
-                var subscription = {
-                    status: "No Account",
-                    pumps: 0
-                }
-                if (!error) {
-                    var info = JSON.parse(body);
-                    subscription.status = info.status || "No Account";
-                    subscription.pumps = info.pumps || "0";
-                    participant.subscription = subscription;
-                }
-                participant.save(function (err, doc) {
-                    req.Users.find({
-                        participant: req.params.id
-                    }, function (err, users) {
-                        if (err) {
-                            req.log.error(err);
-                            req.flash("errorTitle", "Internal application error");
-                            req.flash("errorMessage", "Database lookup (users) failed.");
-                            res.redirect("/error");
-                            return;
-                        }
-                        res.render("admin/a_participant", {
-                            user: req.user,
-                            participant: participant,
-                            users: users
-                        });
-                    })
-                });
-            }
-            request(options, callback);
-        } else {
-            req.log.error(err);
-            req.flash("errorTitle", "Not found");
-            req.flash("errorMessage", "This participant does not exist.");
-            res.redirect("/error");
-            return;
+    const callback = async (error, response, body) => {
+        var subscription = {
+            status: "No Account",
+            pumps: 0
         }
+        if (!error) {
+            var info = JSON.parse(body);
+            subscription.status = info.status || "No Account";
+            subscription.pumps = info.pumps || "0";
+            participant.subscription = subscription;
+        }
+        await participant.save();
+        response();
+    }
+    request(options, callback);
 
-    })
-})
+
+}));
 
 
 

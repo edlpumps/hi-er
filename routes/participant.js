@@ -52,16 +52,33 @@ router.get('/', aw(async (req, res) => {
         return;
     }
 
+    const listed = await req.Pumps.count({
+        participant: req.participant._id,
+        // listed: true
+    }).exec()
+
+    const response = () => {
+        res.render("participant/p_home", {
+            user: req.user,
+            participant: req.participant,
+            listed: listed
+        });
+    }
+
+    if (process.env.ESTORE_OVERRIDE) {
+        req.participant.subscription.status = 'Active';
+        req.participant.subscription.pumps = 10000;
+        await req.participant.save();
+        return response();
+    }
+
     const options = {
         url: process.env.ESTORE_URL + "/" + req.participant._id,
         headers: {
             authorization: 'Bearer ' + process.env.ESTORE_AUTH_KEY
         }
     };
-    const listed = await req.Pumps.count({
-        participant: req.participant._id,
-        // listed: true
-    }).exec()
+
 
 
     function callback(error, response, body) {
@@ -81,11 +98,8 @@ router.get('/', aw(async (req, res) => {
         req.participant.subscription = subscription;
         req.participant.save();
         // save the new subscription information in the participant
-        res.render("participant/p_home", {
-            user: req.user,
-            participant: req.participant,
-            listed: listed
-        });
+        response();
+
     }
 
     request(options, callback);
@@ -553,14 +567,14 @@ router.get('/pumps/:id', aw(async (req, res) => {
     var load = pump.configuration == "bare" || pump.configuration == "pump_motor" ? "CL" : "VL";
 
     const label = await req.Labels.findOne().and([{
-        speed: pump.speed
-    },
-    {
-        doe: pump.doe
-    },
-    {
-        load: load
-    }
+            speed: pump.speed
+        },
+        {
+            doe: pump.doe
+        },
+        {
+            load: load
+        }
     ]).exec();
     var qr_svg = svg_builder.make_qr(req, req.participant, pump, label);
     var label_svg = svg_builder.make_label(req, req.participant, pump, label);
@@ -737,8 +751,8 @@ const model_check = async (req, pump, participant, additional_pumps) => {
     if (additional_pumps) {
         inds += additional_pumps.filter(
             p => p.individual_model == pump.individual_model &&
-                p.listed &&
-                p.rating_id != pump.rating_id).length;
+            p.listed &&
+            p.rating_id != pump.rating_id).length;
     }
 
     if (inds > 0) {
@@ -764,9 +778,9 @@ const model_check = async (req, pump, participant, additional_pumps) => {
     if (additional_pumps) {
         ers += additional_pumps.filter(
             p => p.basic_model == pump.basic_model &&
-                p.listed &&
-                p.energy_rating != pump.energy_rating &&
-                p.rating_id != pump.rating_id).length;
+            p.listed &&
+            p.energy_rating != pump.energy_rating &&
+            p.rating_id != pump.rating_id).length;
     }
 
     if (ers > 0) {
@@ -923,8 +937,8 @@ router.get("/api/active_labs", function (req, res) {
 router.get("/api/users", function (req, res) {
     req.log.debug("Returning user listings for participating organization");
     req.Users.find({
-        participant: req.participant._id
-    }, {
+            participant: req.participant._id
+        }, {
             name: true,
             email: true,
             _id: true,

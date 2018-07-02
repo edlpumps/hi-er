@@ -302,7 +302,7 @@ var push_emails = function (interval) {
         pei: 'Pump Energy Index',
         date: 'Date listed'
     }
-    app.locals.db.Participants.aggregate(operators).exec(function (err, docs) {
+    app.locals.db.Pumps.aggregate(operators).exec(function (err, docs) {
         docs.forEach(function (pump) {
             pump.flow_bep = pump.load120 ? pump.flow.bep100 : pump.flow.bep110;
             pump.head_bep = pump.load120 ? pump.head.bep100 : pump.head.bep110;
