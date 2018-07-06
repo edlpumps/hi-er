@@ -17,7 +17,7 @@ router.get("/glossary", function (req, res) {
 router.get('/search', function (req, res) {
     var operators = default_search_operators(undefined, true);
     var search_params = req.session.search;
-    const invalid = search_params && !search_params.cl && !search_params.vl && !search_params.esfm && !search_params.il && !search_params.rsv && !search_params.st) {
+    const invalid = search_params && !search_params.cl && !search_params.vl && !search_params.esfm && !search_params.il && !search_params.rsv && !search_params.st;
     if (!search_params || invalid) {
         search_params = {
             min_er: 0,
