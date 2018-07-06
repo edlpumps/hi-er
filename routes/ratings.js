@@ -17,7 +17,8 @@ router.get("/glossary", function (req, res) {
 router.get('/search', function (req, res) {
     var operators = default_search_operators(undefined, true);
     var search_params = req.session.search;
-    if (!search_params) {
+    const invalid = search_params && !search_params.cl && !search_params.vl && !search_params.esfm && !search_params.il && !search_params.rsv && !search_params.st) {
+    if (!search_params || invalid) {
         search_params = {
             min_er: 0,
             max_er: 100,
@@ -31,6 +32,9 @@ router.get('/search', function (req, res) {
         };
         search_params.fresh = true;
     }
+
+
+
 
     res.render("ratings/search", {
         search: search_params
