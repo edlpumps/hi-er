@@ -114,7 +114,7 @@ var ERRatingsController = function ($scope, $location, service, $http) {
   vm.countPumps = function () {
     vm.search_error = "";
     console.log(vm.search);
-    if (!vm.search) {
+    if (!vm.search || vm.search.fresh) {
       vm.search = {
         min_er: 0,
         max_er: 100,
