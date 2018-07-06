@@ -18,7 +18,17 @@ router.get('/search', function (req, res) {
     var operators = default_search_operators(undefined, true);
     var search_params = req.session.search;
     if (!search_params) {
-        search_params = {};
+        search_params = {
+            min_er: 0,
+            max_er: 100,
+            cl: true,
+            vl: true,
+            esfm: true,
+            escc: true,
+            il: true,
+            rsv: true,
+            st: true
+        };
         search_params.fresh = true;
     }
 
