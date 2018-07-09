@@ -1,0 +1,87 @@
+extends ../layout
+
+include ../../common/pump_page
+
+block nav
+     +navigation("certificates")
+
+block content
+    .container
+      
+      .panel.panel-default.rating_panel
+        .panel-heading 
+          
+          .heading
+           img(src="/images/hydraulic-institute-logo.png", width="600").hidden-xs
+           img(src="/images/hydraulic-institute-logo.png", style="width:80%").hidden-md.hidden-lg.hidden-sm
+             
+           h2 #{pump.brand} #{pump.brand ? ' / ' : ''} #{pump.basic_model}
+           h4 #{pump.participant.name}
+            
+        .panel-body
+
+          h1 Create ER Certificate from Pump #{pump.rating_id}
+          hr
+          form.form(action=`/ratings/certificates/input/${pump.rating_id}`, method='post')
+            h3 Packager Information
+            .row
+                .col.col-sm-6
+                    .form-group
+                        label(for='packager[name]') Name 
+                        input.form-control(type='text', name='packager[name]', placeholder='Packager name', value=certificate.packager.name, required)
+                .col.col-sm-6
+                    .form-group
+                        label(for='packager[company]') Company Name
+                        input.form-control(type='text', name='packager[company]', placeholder='Packager Company name', value=certificate.packager.company, required)
+            .row
+                .col.col-sm-6
+                    .form-group
+                        label(for='packager[email]') Email Address
+                        input.form-control(type='email', name='packager[email]', placeholder='Packager email address', value=certificate.packager.email, required)
+            hr
+            h3 Installation Site Information
+            .row
+                .col.col-sm-6
+                    .form-group
+                        label(for='installation_site[name]') Name
+                            input.form-control(type='text', name='installation_site[name]', value=certificate.installation_site.name)
+            .row
+                .col.col-sm-6
+                    .form-group
+                        label(for='installation_site[address][street]') Street
+                        input.form-control(type='text', name='installation_site[address][street]', value=certificate.installation_site.address.street)
+            .row
+                .col.col-sm-6
+                    .form-group
+                        label(for='installation_site[address][city]') City / Town
+                        input.form-control(type='text', name='installation_site[address][city]', value=certificate.installation_site.address.city)
+            .row
+                .col.col-sm-6
+                    .form-group
+                        label(for='installation_site[address][state]') State / Region
+                        input.form-control(type='text', name='installation_site[address][state]', value=certificate.installation_site.address.state)
+                .col.col-sm-4
+                    .form-group
+                        label(for='installation_site[address][zip]') Code / Zip
+                        input.form-control(type='text', name='installation_site[address][zip]', value=certificate.installation_site.address.zip)
+            .row
+                .col.col-sm-6
+                    .form-group
+                        label(for='installation_site[address][country]') Country
+                        input.form-control(type='text', name='installation_site[address][country]', value=certificate.installation_site.address.country)
+            hr
+            h3 Configuration Options
+            .row(style='margin-top:1em')
+                .col.col-sm-2
+                    input.switchBox(type="checkbox", name="poles", id="poles", checked = certificate.poles, data-on-text="Yes", data-off-text='No')
+                .col.col-sm-10
+                    p Are you adding a 2 Pole or 4 Pole motor regulated by the US DOE at 10 CFR 431.25(g) excluding Fire Pump electric motors? 
+            .row(style='margin-top:1em')
+                .col.col-sm-2
+                    input.switchBox(type="checkbox", name="vfd", id="vfd", checked = certificate.vfd, data-on-text="Yes", data-off-text='No')
+                .col.col-sm-10
+                    p Are you adding a variable frequency drive?
+
+            hr(style='margin-top:2em')
+            .row: .col.col-xs-12
+                button.btn.btn-danger(type='submit') Continue

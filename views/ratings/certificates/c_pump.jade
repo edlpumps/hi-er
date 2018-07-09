@@ -1,0 +1,67 @@
+extends ../layout
+
+include ../../common/pump_page
+
+block nav
+     +navigation("certificates")
+
+block content
+    .container
+      
+      .panel.panel-default.rating_panel
+        .panel-heading 
+          
+          .heading
+           div.pull-right(style='margin:2em')
+            a.btn.btn-danger(href=`/ratings/certificates/create/${pump.rating_id}`) Create ER Certificate 
+           img(src="/images/hydraulic-institute-logo.png", width="600").hidden-xs
+           img(src="/images/hydraulic-institute-logo.png", style="width:80%").hidden-md.hidden-lg.hidden-sm
+             
+           h2 #{pump.brand} #{pump.brand ? ' / ' : ''} #{pump.basic_model}
+           h4 #{pump.participant.name}
+            
+        .panel-body
+
+          .row
+
+           .col.col-sm-5.text-center
+            .row
+              .col.col-sm-6.text-center
+                h4 
+                  | Pump Energy Index
+                  sub #{pump.configuration == 'bare' || pump.configuration == 'pump_motor' ? "CL" : "VL"}
+                p.pei_display #{pump.pei.toFixed(2)}
+                p.pei_baseline Baseline:  #{pump.pei_baseline.toFixed(2)}
+                
+              .col.col-sm-6.text-center
+                h4 Energy Rating
+                p.er_display #{pump.energy_rating}
+            .row
+              .col.col-sm-12.text-center
+               img(src="/images/doe/#{pump_drawing}").hidden-xs
+               img(src="/images/doe/#{pump_drawing}", style="width:90%").hidden-md.hidden-lg.hidden-sm
+           .col.col-sm-7
+             +pump_page_info(pump)
+
+                
+      
+      .panel.panel-default
+        .panel-heading 
+            h1 Energy Rating Label
+        .panel-body
+           .row.solo
+            .col.col-lg-12.text-center
+              img(src="/labels/#{participant._id}/#{pump._id}/png", style="width:100%; max-width:600px;")
+
+      if pump.revisions && pump.revisions.length > 1
+        .panel.panel-default
+          .panel-heading
+            h2 Data Corrections / Revisions
+          .panel-body
+            ol 
+              each revision in pump.revisions
+               if revision.correction
+                li
+                  span Pump data updated - #{moment(revision.date).format("ll")}.
+            
+   

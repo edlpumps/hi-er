@@ -1,0 +1,74 @@
+extends ../layout
+block nav
+     +navigation("certificates")
+block styles
+    style.
+        .tile {
+            padding-left:5em;
+            padding-right:5em;
+        }
+block content
+    .container#vue(v-cloak, data-units=(JSON.stringify(units)), data-search=(JSON.stringify(search)), data-participants=(JSON.stringify(participants)))
+        form.form-horizontal
+         .panel.panel-default.hi-panel-search.rating_panel
+          .panel-heading
+              .heading
+                img(src="/images/hydraulic-institute-logo.png", width="600").hidden-xs
+                img(src="/images/hydraulic-institute-logo.png", style="width:80%").hidden-md.hidden-lg.hidden-sm
+                
+          .panel-body
+             .form-group
+               label.col-sm-3.control-label Rating ID
+               .col.col-sm-6
+                 input.form-control(v-model="search.rating_id", type="text")
+             .form-group
+               label.col-sm-3.control-label Basic Model Number
+               .col.col-sm-6
+                 input.form-control(v-model="search.basic_model", type="text")
+             .form-group
+               label.col-sm-3.control-label Participating Organization
+               .col.col-sm-6
+                 select.form-control(v-model="search.participant", v-on:change="load_brands()")
+                  option(value="")
+                  option(v-for='p in participants', v-bind:value='p') {{p}}
+             .form-group(v-show="search.participant && brands.length")
+               label.col-sm-3.control-label Brand
+               .col.col-sm-6
+                 select.form-control(v-model="search.brand")
+                    option(v-for='p in brands', v-bind:value='p') {{p}}
+             .form-group(v-if='search_valid', style='text-align:center; padding:2em')
+                button.btn.btn-primary(type="button", v-on:click="search_pumps();") Search for Rated Pumps
+             .form-group(v-else, style='text-align:center; padding:2em')
+                p.alert.alert-warning You must enter at least one of the following:  Rating ID, Basic Model Number, Brand, or Participant
+         .panel.panel-default(v-show="(pumps.length > 0 || searched) && search_valid")
+           .panel-heading
+             h1 Results ({{pumps.length}})
+           ul.list-group
+           
+              li(v-for="pump in pumps").list-group-item.rating_listing
+                a(v-bind:href="'/ratings/certificates/er-pump/'+pump.rating_id").listing
+                    .row
+                        .col.col-xs-7.col-sm-5
+                           h3 {{pump.brand}} {{pump.brand ? ' / ' : ''}} {{pump.basic_model}}
+                           p: b Manufacturer's model no.:  {{pump.individual_model}} 
+                           p {{pump.joined_participant.name}}
+                           p {{pump.doe}} - {{getConfigLabel(pump.configuration)}}
+                        .col.hidden-xs.col.hidden-sm.col-md-3(style="padding-top:20px")
+                           p Diameter:  {{(pump.diameter * units.diameter.factor).toFixed(3)}} {{units.diameter.label}}
+                           p Speed:  {{pump.speed}} rpm
+                           p {{pump.stages}} stages
+                           p {{pump.configuration == 'bare' || pump.configuration == 'pump_motor' ? "Constant Load (CL)" : "Variable Load (VL)"}}
+                        .col.hidden-xs.col-sm-2.energy_badge
+                           .small(style="padding-top:20px; margin-bottom:0px") Energy Rating
+                           h2(style="margin-top:0px") {{pump.energy_rating}}
+                           .small(style="padding-top:20px; margin-bottom:0px") PEI
+                           h4(style='margin-top:0px') {{pump.pei.toFixed(2)}}
+                        .col.hidden-xs.col.col-sm-2(style='padding-top:2em')
+                            a.btn.btn-danger(v-bind:href=`'/ratings/certificates/create/'+pump.rating_id`) Create ER Certificate 
+                        .col.hidden-sm.hidden-md.hidden-lg.hidden-xs.col.col-xs-3(style='padding-top:2em')
+                            a.btn.btn-danger(v-bind:href=`'/ratings/certificates/create/'+pump.rating_id`) + ER Cert.
+
+
+                 
+    script(src="/scripts/certificates/create.js")
+    

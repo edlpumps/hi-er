@@ -1,0 +1,114 @@
+extends ../layout
+
+include ../../common/pump_page
+
+block nav
+     +navigation("certificates")
+
+block content
+    .container
+      
+      .panel.panel-default.rating_panel
+        .panel-heading 
+          
+          .heading
+           img(src="/images/hydraulic-institute-logo.png", width="600").hidden-xs
+           img(src="/images/hydraulic-institute-logo.png", style="width:80%").hidden-md.hidden-lg.hidden-sm
+             
+           h2 #{pump.brand} #{pump.brand ? ' / ' : ''} #{pump.basic_model}
+           h4 #{pump.participant.name}
+            
+        .panel-body
+
+          h1 Create ER Certificate from Pump #{pump.rating_id}
+          hr
+          form.form(action=`/ratings/certificates/purchase/${pump.rating_id}`, method='post')
+            h3 Packager Information
+            p
+             | #{certificate.packager.name}
+             br
+             | #{certificate.packager.company}
+             br
+             | #{certificate.packager.email}
+            
+            if certificate.installation_site.name 
+                hr
+                h3 Installation Site Information
+                p
+                 | #{certificate.installation_site.name}
+                if certificate.installation_site.address
+                p 
+                    | #{certificate.installation_site.address.street}
+                    br
+                    | #{certificate.installation_site.address.city}, #{certificate.installation_site.address.state} div certificate.installation_site.address.zip
+                    br
+                    | #{certificate.installation_site.address.country}
+            
+           
+            hr
+            if certificate.invalid
+                p.alert.alert-danger #{certificate.invalid_reason}
+            else
+                .row
+                    .col.col-sm-6
+                        h1 Original pump data
+                        .row    
+                            .col.col-xs-6: label Pump Model number
+                            .col.col-xs-6: span #{pump.basic_model}
+                        .row    
+                            .col.col-xs-6: label Rating ID
+                            .col.col-xs-6: span #{pump.rating_id}
+                        .row    
+                            .col.col-xs-6: label DOE Product Category
+                            .col.col-xs-6: span #{pump.doe}
+                        .row    
+                            .col.col-xs-6: label PEI
+                            .col.col-xs-6: span #{pump.pei}
+                        .row    
+                            .col.col-xs-6: label Energy Rating
+                            .col.col-xs-6: span #{pump.energy_rating}
+                    .col.col-sm-6
+                        h1 Extended certificate data
+                        .row    
+                            .col.col-xs-6: label PEI
+                            .col.col-xs-6: span #{certificate.pei}
+                        .row    
+                            .col.col-xs-6: label Energy Rating
+                            .col.col-xs-6: span #{certificate.energy_rating}
+                        
+                        if ( (certificate.calculation_type == '3-to-5' || certificate.calculation_type == '3-to-7'))
+                            .row    
+                                .col.col-xs-6: label Motor Manufacturer
+                                .col.col-xs-6: span #{certificate.motor.manufacturer}
+                            .row    
+                                .col.col-xs-6: label Motor Motor Model Number
+                                .col.col-xs-6: span #{certificate.motor.model}
+                            
+                        if ( (certificate.calculation_type == '3-to-5' || certificate.calculation_type == '3-to-7') && pump.doe != 'st')
+                            .row    
+                                .col.col-xs-6: label Nameplate Efficiency
+                                .col.col-xs-6: span #{certificate.motor.efficiency}
+                            .row    
+                                .col.col-xs-6: label Motor Nameplate Power
+                                .col.col-xs-6: span #{certificate.motor.power}
+                        if ( (certificate.calculation_type == '3-to-7' || certificate.calculation_type == '4-to-7' || certificate.calculation_type == '5-to-7'))
+                            .row    P
+                                .col.col-xs-6: label VFD Manufacturer
+                                .col.col-xs-6: span #{certificate.vfd.manufacturer}
+                            .row    
+                                .col.col-xs-6: label VFD Model Number
+                                .col.col-xs-6: span #{certificate.vfd.model}
+                            .row    
+                                .col.col-xs-6: label VFD nameplate Power
+                                .col.col-xs-6: span #{certificate.vfd.power}
+
+                hr
+                .row:.col.col-sm-5
+                    .form-group
+                        label How many certificates?
+                        input.form-control(type='number', min='1', name='certificate[quantity]', value='1')
+
+                hr(style='margin-top:2em')
+                .row: .col.col-xs-12
+                    a(href=`/ratings/certificates/input/${pump.rating_id}`).btn.btn-default Back
+                    button.btn.btn-danger(type='submit').btn-space Purchase Certificate(s)

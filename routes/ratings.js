@@ -5,12 +5,16 @@ const router = express.Router();
 const default_search_operators = require('../search').params;
 const aw = require('./async_wrap');
 
+router.use('/certificates', require('./certificates'));
+
 router.get("/glossary", function (req, res) {
     var help = require('../public/resources/help.json')
     res.render("ratings/glossary", {
         help: help
     });
 });
+
+
 
 
 
@@ -111,11 +115,7 @@ router.get("/:id", aw(async (req, res) => {
     const pump = await req.Pumps.findOne({
         rating_id: req.params.id
     }).populate('participant').exec();
-    if (!pump) {
-        req.flash("errorTitle", "Not found");
-        req.flash("errorMessage", err ? err : "This pump does not exist.");
-        return res.redirect("/error");
-    }
+
     if (!pump || !pump.participant.active || pump.pending || !pump.active_admin || pump.participant.subscription.status != 'Active') {
         req.flash("errorTitle", "Not Available");
         req.flash("errorMessage", "No pump corresponding to this ID is listed in the Hydraulic Institute Energy Ratings Program");
@@ -133,6 +133,7 @@ router.get("/:id", aw(async (req, res) => {
 
 router.post("/count", function (req, res) {
     req.session.search = req.body.search;
+
     req.session.search.fresh = false;
 
     // limit search parameters
@@ -170,7 +171,7 @@ router.post("/count", function (req, res) {
 
 router.post("/search", function (req, res) {
     req.session.search = req.body.search;
-
+    req.session.csearch = req.body.search;
     // Per HI request, you cannot search unless participant, basic_model or rating_id is specified.
     if (!req.session.search.rating_id && !req.session.search.participant && !req.session.search.basic_model && !req.session.search.brand) {
         res.setHeader('Content-Type', 'application/json');

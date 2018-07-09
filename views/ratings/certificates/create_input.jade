@@ -1,0 +1,101 @@
+extends ../layout
+
+include ../../common/pump_page
+
+block nav
+     +navigation("certificates")
+
+block content
+    .container
+      
+      .panel.panel-default.rating_panel
+        .panel-heading 
+          
+          .heading
+           img(src="/images/hydraulic-institute-logo.png", width="600").hidden-xs
+           img(src="/images/hydraulic-institute-logo.png", style="width:80%").hidden-md.hidden-lg.hidden-sm
+             
+           h2 #{pump.brand} #{pump.brand ? ' / ' : ''} #{pump.basic_model}
+           h4 #{pump.participant.name}
+            
+        .panel-body
+
+          h1 Create ER Certificate from Pump #{pump.rating_id}
+          hr
+          form.form(action=`/ratings/certificates/calculate/${pump.rating_id}`, method='post')
+            h3 Packager Information
+            p
+             | #{certificate.packager.name}
+             br
+             | #{certificate.packager.company}
+             br
+             | #{certificate.packager.email}
+            
+            if certificate.installation_site.name 
+                hr
+                h3 Installation Site Information
+                p
+                 | #{certificate.installation_site.name}
+                if certificate.installation_site.address
+                p 
+                    | #{certificate.installation_site.address.street}
+                    br
+                    | #{certificate.installation_site.address.city}, #{certificate.installation_site.address.state} div certificate.installation_site.address.zip
+                    br
+                    | #{certificate.installation_site.address.country}
+            
+           
+            hr
+            if certificate.invalid
+                p.alert.alert-danger #{certificate.invalid_reason}
+            else
+                - var ct = 'Section III to Section V'
+                if (certificate.calculation_type == '3-to-7')
+                    - ct = 'Section III to Section VII'
+                else if (certificate.calculation_type == '4-to-7')
+                    - ct = 'Section IV to Section VII'
+                else if (certificate.calculation_type == '5-to-7')
+                    - ct = 'Section V to Section VII'
+                
+                h3 Data input  - #{ct} - #{certificate.calculation_type}
+                if ( (certificate.calculation_type == '3-to-5' || certificate.calculation_type == '3-to-7'))
+                    .row
+                        .col.col-sm-6
+                            .form-group
+                                label(for='certificate[motor][manufacturer]') Extended Motor Manufacturer 
+                                input.form-control(type='text', name='certificate[motor][manufacturer]', placeholder='Motor manufacturer', value=certificate.motor.manufacturer, required)
+                        .col.col-sm-6
+                            .form-group
+                                label(for='certificate[motor][model]') Extended Motor Model Number 
+                                input.form-control(type='text', name='certificate[motor][model]', placeholder='Motor model number', value=certificate.motor.model, required)
+                if ( (certificate.calculation_type == '3-to-5' || certificate.calculation_type == '3-to-7') && pump.doe != 'st')
+                    .row
+                        .col.col-sm-6
+                            .form-group
+                                label(for='certificate[motor][efficiency]') Extended Nameplate Efficiency
+                                input.form-control(type='number', min='0', max='100', name='certificate[motor][efficiency]', placeholder='Motor Nameplate Efficiencey', value=certificate.motor.efficiency, required)
+                        .col.col-sm-6
+                            .form-group
+                                label(for='certificate[motor][power]') Extended Nameplate Power
+                                input.form-control(type='number', min='0', name='certificate[motor][power]', placeholder='Motor Nameplate Power', value=certificate.motor.power, required)
+                if (certificate.calculation_type == '3-to-7')
+                    hr
+                if ( (certificate.calculation_type == '3-to-7' || certificate.calculation_type == '4-to-7' || certificate.calculation_type == '5-to-7'))
+                    .row
+                        .col.col-sm-6
+                            .form-group
+                                label(for='certificate[driver][manufacturer]') Extended VFD Manufacturer 
+                                input.form-control(type='text', name='certificate[driver][manufacturer]', placeholder='VFD manufacturer', value=certificate.driver.manufacturer, required)
+                        .col.col-sm-6
+                            .form-group
+                                label(for='certificate[driver][model]') Extended VFD Model Number 
+                                input.form-control(type='text', name='certificate[driver][model]', placeholder='VFD model number', value=certificate.driver.model, required)
+                    .row
+                        .col.col-sm-6
+                            .form-group
+                                label(for='certificate[driver][power]') Extended Nameplate Power
+                                input.form-control(type='number', min='0', name='certificate[driver][power]', placeholder='VFD Nameplate Power', value=certificate.driver.power, required)
+                hr(style='margin-top:2em')
+                .row: .col.col-xs-12
+                    a(href=`/ratings/certificates/create/${pump.rating_id}`).btn.btn-default Back
+                    button.btn.btn-danger(type='submit').btn-space Create Certificate
