@@ -81,6 +81,8 @@ var configure = function () {
         req.Labs = req.app.locals.db.Labs;
         req.Subscribers = req.app.locals.db.Subscribers;
         req.getNextRatingsId = req.app.locals.db.getNextRatingsId;
+        req.getNextCertificateOrderNumber = req.app.locals.db.getNextCertificateOrderNumber;
+        req.getNextCertificateNumber = req.app.locals.db.getNextCertificateNumber;
         req.PasswordResets = req.app.locals.db.PasswordResets;
         req.base_url = req.protocol + '://' + req.get('Host');
         next();
@@ -167,6 +169,8 @@ var conn = mongoose.connect(data_connection_str, {
             Labs: schemas.Labs,
             Subscribers: schemas.Subscribers,
             getNextRatingsId: schemas.getNextRatingsId,
+            getNextCertificateOrderNumber: schemas.getNextCertificateOrderNumber,
+            getNextCertificateNumber: schemas.getNextCertificateNumber,
             PasswordResets: schemas.PasswordResets
         };
 

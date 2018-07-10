@@ -21,32 +21,48 @@ router.get('/search', aw(async (req, res) => {
     res.render("ratings/certificates/search", {});
 }))
 
+const load_certificate = async (req, pumpId) => {
+    const blank = {
+        packager: {},
+        installation_site: {
+            address: {}
+        },
+        motor: {
+            manufacturer: '',
+            model: '',
+            efficiency: 0,
+            power: 0
+        },
+        vfd: {
+            manufacturer: '',
+            model: '',
+            power: 0
+        }
+    }
+    const pump = await req.Pumps.findOne({
+        rating_id: req.params.id
+    }).populate('participant').exec();
+    if (!pump) return blank;
+    if (req.session.active_certificate && req.session.active_certificate.pump == pumpId) {
+        return req.session.active_certificate;
+    }
+    if (req.certificate_cart && req.certificate_cart.length) {
+        const matches = req.certificate_cart.filter(c => c.pump == pumpId);
+        if (matches.length) {
+            return matches[0];
+        }
+    }
+    return blank;
+}
 router.get('/create/:id', aw(async (req, res) => {
     const pump = await req.Pumps.findOne({
         rating_id: req.params.id
     }).populate('participant').exec();
-    console.log(req.session.active_certificate)
     res.render("ratings/certificates/create_start", {
         pump: pump,
         participant: pump.participant,
         pump_drawing: pump.doe ? pump.doe.toLowerCase() + ".png" : "",
-        certificate: req.session.active_certificate ? req.session.active_certificate : {
-            packager: {},
-            installation_site: {
-                address: {}
-            },
-            motor: {
-                manufacturer: '',
-                model: '',
-                efficiency: 0,
-                power: 0
-            },
-            vfd: {
-                manufacturer: '',
-                model: '',
-                power: 0
-            }
-        }
+        certificate: await load_certificate(req, req.params.id)
     });
 }));
 
@@ -95,6 +111,24 @@ const get_calculation_type = (certificate, pump, motor, vfd) => {
     }
 }
 
+
+router.get('/input/:id', aw(async (req, res) => {
+    const certificate = await load_certificate(req, req.params.id)
+    if (req.params.id != certificate.pump) {
+        return res.redirect(`/ratings/certificates/create/${req.params.id}`)
+    }
+
+    const pump = await req.Pumps.findOne({
+        rating_id: req.params.id
+    }).populate('participant').exec();
+
+
+    res.render("ratings/certificates/create_input", {
+        pump: pump,
+        participant: pump.participant,
+        certificate: certificate
+    });
+}));
 router.post('/input/:id', aw(async (req, res) => {
     const pump = await req.Pumps.findOne({
         rating_id: req.params.id
@@ -146,17 +180,45 @@ router.post('/purchase/:id', aw(async (req, res) => {
     }).populate('participant').exec();
     const certificate = req.session.active_certificate
     certificate.quantity = req.body.certificate.quantity
+    certificate.pump_record = pump;
     req.session.active_certificate = certificate
 
     if (!req.session.certificate_cart) {
         req.session.certificate_cart = [];
     }
+    certificate.number = await req.getNextCertificateOrderNumber();
     req.session.certificate_cart.push(JSON.parse(JSON.stringify(certificate)));
+    console.log(req.session.certificate_cart);
     res.redirect('/ratings/certificates/cart');
 }));
 
+router.get('/cart/delete/:number', aw(async (req, res) => {
+    if (!req.session.certificate_cart) {
+        req.session.certificate_cart = [];
+    }
+    req.session.certificate_cart = req.session.certificate_cart.filter(c => c.number != req.params.number);
+    res.redirect('/ratings/certificates/cart');
+}))
+
 router.get("/cart", aw(async (req, res) => {
+    console.log(req.session.certificate_cart);
     res.render("ratings/certificates/cart", {
+        cart: req.session.certificate_cart
+    });
+}));
+
+
+router.get("/checkout", aw(async (req, res) => {
+    console.log(req.session.certificate_cart);
+    res.render("ratings/certificates/estore-standin", {
+        cart: req.session.certificate_cart
+    });
+}));
+
+
+router.get("/purchased", aw(async (req, res) => {
+    console.log(req.session.certificate_cart);
+    res.render("ratings/certificates/purchased", {
         cart: req.session.certificate_cart
     });
 }));

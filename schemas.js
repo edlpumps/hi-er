@@ -13,8 +13,8 @@ exports.init = function init(mongoose) {
     exports.getNextRatingsId = async () => {
         return new Promise((resolve, reject) => {
             var ret = counters.collection.findAndModify({
-                name: "ratings"
-            }, {}, {
+                    name: "ratings"
+                }, {}, {
                     $inc: {
                         seq: 1
                     }
@@ -22,6 +22,38 @@ exports.init = function init(mongoose) {
                 (err, doc) => {
                     if (err) reject(err);
                     else resolve(doc)
+                }
+            );
+        })
+    }
+    exports.getNextCertificateOrderNumber = async () => {
+        return new Promise((resolve, reject) => {
+            var ret = counters.collection.findAndModify({
+                    name: "certificate_orders"
+                }, {}, {
+                    $inc: {
+                        seq: 1
+                    }
+                }, {},
+                (err, doc) => {
+                    if (err) reject(err);
+                    else resolve(doc.value.seq)
+                }
+            );
+        })
+    }
+    exports.getNextCertificateNumber = async () => {
+        return new Promise((resolve, reject) => {
+            var ret = counters.collection.findAndModify({
+                    name: "certificates"
+                }, {}, {
+                    $inc: {
+                        seq: 1
+                    }
+                }, {},
+                (err, doc) => {
+                    if (err) reject(err);
+                    else resolve(doc.value.seq)
                 }
             );
         })
@@ -105,9 +137,42 @@ exports.init = function init(mongoose) {
     var subscribers = mongoose.model('subscribers', subscriber_schema, "subscribers");
     exports.Subscribers = subscribers;
 
-
-
-
+    /*
+    const certificateOrderSchema = new Schema({
+        packager: {
+            name: String,
+            company: String,
+            email: String,
+        },
+        installation_site: {
+            name: String,
+            address: {
+                street: String,
+                city: String,
+                state: String,
+                zip: String,
+                country: String
+            }
+        },
+        pump: {
+            type: Schema.Types.ObjectId,
+            ref: 'pumps'
+        },
+        motor: {
+            manufacturer: String,
+            model: String,
+            efficiency: Number,
+            power: Number,
+        },
+        driver: {
+            manufacturer: String,
+            model: String,
+            power: number
+        },
+        pei: Number,
+        energy_rating: Number
+    })
+*/
 
     var pumpSchema = new Schema({
         participant: {
@@ -324,10 +389,34 @@ exports.init = function init(mongoose) {
 
     exports.Labels = label;
 
-    counters.count({}, function (err, count) {
+    counters.count({
+        name: 'ratings'
+    }, function (err, count) {
         if (count == 0) {
             var counter = new counters();
             counter.name = "ratings";
+            counter.seq = 0;
+            counter.save();
+            console.log("Bootstrapping counters");
+        }
+    })
+    counters.count({
+        name: 'certificate_orders'
+    }, function (err, count) {
+        if (count == 0) {
+            var counter = new counters();
+            counter.name = "certificate_orders";
+            counter.seq = 0;
+            counter.save();
+            console.log("Bootstrapping counters");
+        }
+    })
+    counters.count({
+        name: 'certificates'
+    }, function (err, count) {
+        if (count == 0) {
+            var counter = new counters();
+            counter.name = "certificates";
             counter.seq = 0;
             counter.save();
             console.log("Bootstrapping counters");

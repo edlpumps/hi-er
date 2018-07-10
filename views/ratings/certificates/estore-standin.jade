@@ -1,0 +1,32 @@
+extends ../layout
+block nav
+     +navigation("certificates")
+block styles
+    style.
+        .tile {
+            padding-left:5em;
+            padding-right:5em;
+        }
+block content
+    .container#vue(v-cloak, data-units=(JSON.stringify(units)))
+        form.form-horizontal
+         .panel.panel-default.hi-panel-search.rating_panel
+          .panel-heading
+              .heading
+                img(src="/images/hydraulic-institute-logo.png", width="600").hidden-xs
+                img(src="/images/hydraulic-institute-logo.png", style="width:80%").hidden-md.hidden-lg.hidden-sm
+                
+          .panel-body
+                h1 MAKE THIS A POST
+                p.alert.alert-warning
+                    | This is only a placeholder, instead of going to this page, the user would be sent to the EStore.
+                    | Click the "Purchase" button below to continue the workflow as if you've purchased the certificates.
+                p
+                    a.btn.btn-info(href='/ratings/certificates/purchased') Purchase
+                                    
+                
+              
+                
+                 
+    
+    

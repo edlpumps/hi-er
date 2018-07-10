@@ -18,7 +18,49 @@ block content
                 
           .panel-body
                 h1 Certificate Shopping Card
-                pre #{JSON.stringify(cart, null, 2)}
+                p.help-block You can purchase these certificates now, or return to the ER Certificate search to create more.  Please note that the certificates will not be listed until your purchase is complete.
+                if  !cart || cart.length == 0
+                    p.alert.alert-warning You have no certificates in your cart.
+                else
+                    table.table 
+                        thead 
+                            tr
+                                th Packager
+                                th Pump
+                                th Original ER
+                                th Motor
+                                th VFD
+                                th Exended ER
+                                th Quantity
+                                th 
+                        tbody
+                            each certificate in cart
+                                tr
+                                    td #{certificate.packager.name} / #{certificate.packager.company}
+                                    td 
+                                        if certificate.pump_record
+                                            span #{certificate.pump_record.basic_model} / #{certificate.pump_record.rating_id}
+                                    td
+                                        if certificate.pump_record
+                                            span #{certificate.pump_record.energy_rating}
+                                    td 
+                                        if certificate.poles 
+                                            span #{certificate.motor.model} / #{certificate.motor.manufacturer}
+                                    td 
+                                        if certificate.vfd
+                                            span #{certificate.driver.model} / #{certificate.driver.manufacturer}
+                                    td #{certificate.energy_rating}
+                                    td #{certificate.quantity}
+                                    td 
+                                        a.btn.btn-danger(href='/ratings/certificates/cart/delete/#{certificate.number}') Delete
+
+                    section
+                        hr
+                        .pull-right
+                            a.btn.btn-success(href='/ratings/certificates/checkout') Checkout
+                                    
+                
+              
                 
                  
     

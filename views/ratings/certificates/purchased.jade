@@ -1,0 +1,28 @@
+extends ../layout
+block nav
+     +navigation("certificates")
+block styles
+    style.
+        .tile {
+            padding-left:5em;
+            padding-right:5em;
+        }
+block content
+    .container#vue(v-cloak, data-units=(JSON.stringify(units)))
+        form.form-horizontal
+         .panel.panel-default.hi-panel-search.rating_panel
+          .panel-heading
+              .heading
+                img(src="/images/hydraulic-institute-logo.png", width="600").hidden-xs
+                img(src="/images/hydraulic-institute-logo.png", style="width:80%").hidden-md.hidden-lg.hidden-sm
+                
+          .panel-body
+                h1 There will be a list here with each individual certificate, which can be downloaded in bulk.
+                h1 The zip file will contain on PDF and one SVG for each certificate number.
+                h1 The zip file will also contain an excel file with certificate numbers and the details for easy lookup.
+                h1 The certificates will now be available in the estore.    
+              
+                
+                 
+    
+    
