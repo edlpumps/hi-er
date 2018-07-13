@@ -54,10 +54,9 @@ block content
                             td #{certificate.energy_rating}
                             td #{certificate.quantity}
                 
-            p
-                button.btn.btn-danger Download Certificates
-            p.alert.alert-info DOWNLOAD IS NOT IMPLEMENTED YET.  The plan is to click this button to download a zip file containing pdf certificates.  File names will be the certificate number with pdf file extension.  
-
+            p   
+                - var zip = "/ratings/certificates/purchased/" + transaction._id + "/zip"
+                a.btn.btn-danger(href=zip) Download Certificates
 
                 
                  

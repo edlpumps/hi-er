@@ -1,10 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const default_search_operators = require('../search').params;
 const aw = require('./async_wrap');
 const debug = require('debug')('certificates');
 const Hashids = require('hashids');
 const hashids = new Hashids("hydraulic institute", 10, 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789');
+const path = require('path');
+const pdf = require('html-pdf');
+const pug = require('pug');
+const archiver = require('archiver');
+
+const moment = require('moment');
+
 
 router.get('/', aw(async (req, res) => {
     res.render("ratings/certificates/index", {});
@@ -279,6 +285,39 @@ router.get("/purchased/:transactionId", aw(async (req, res) => {
     });
 }));
 
+const add_to_zip = async (archive, certificate) => {
+    const pdf_stream = await make_pdf(certificate);
+    archive.append(pdf_stream, {
+        name: `${certificate.certificate_number}.pdf`
+    });
+}
+
+router.get("/purchased/:transactionId/zip", aw(async (req, res) => {
+    var archive = archiver('zip', {
+        zlib: {
+            level: 9
+        }
+    });
+    const ct = await req.CertificateTransactions.findById(req.params.transactionId).exec();
+    if (!ct || ct.state != 'completed') {
+        res.sendStatus(404, 'Transaction not found');
+        return;
+    }
+    const certificates = await req.Certificates.find({
+        transaction: ct._id
+    }).populate('pump').exec();
+
+    for (const certificate of certificates) {
+        await add_to_zip(archive, certificate);
+    }
+    archive.finalize();
+    res.writeHead(200, {
+        'Content-Type': 'application/zip',
+        'Content-Disposition': `attachment; filename=${req.params.transactionId}.zip`
+    });
+    archive.pipe(res);
+}));
+
 router.get("/er-pump/:id", aw(async (req, res) => {
     const pump = await req.Pumps.findOne({
         rating_id: req.params.id
@@ -301,13 +340,53 @@ router.get("/certificate/:cnumber", aw(async (req, res) => {
     const ct = await req.Certificates.findOne({
         certificate_number: req.params.cnumber
     }).populate('pump').exec();
-    console.log(ct)
     if (!ct) {
         return res.sendStatus(404, 'Certificate not found');
     }
     res.render("ratings/certificates/certificate", {
         certificate: ct
     });
+}));
+
+const make_pdf = async (certificate) => {
+    const template = pug.compileFile(path.join(__dirname, '../views/ratings/certificates/certificate-pdf.jade'))
+    const html = template({
+        certificate: certificate,
+        moment: moment
+    })
+
+    const options = {
+        format: 'Letter',
+        header: {
+            height: '20px',
+        },
+        footer: {
+            height: '1in',
+        },
+    };
+    return new Promise((resolve, reject) => {
+        pdf.create(html, options).toStream(function (err, stream) {
+            if (err) reject(err);
+            else resolve(stream)
+        });
+    });
+
+}
+router.get("/certificate/:cnumber/pdf", aw(async (req, res) => {
+    const ct = await req.Certificates.findOne({
+        certificate_number: req.params.cnumber
+    }).populate('pump').exec();
+
+    if (!ct) {
+        return res.sendStatus(404, 'Certificate not found');
+    }
+
+    const pdf_stream = await make_pdf(ct);
+    res.writeHead(200, {
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': `inline; filename=${ct.certificate_number}.pdf`
+    });
+    pdf_stream.pipe(res);
 }));
 
 
