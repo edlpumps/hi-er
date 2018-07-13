@@ -40,10 +40,16 @@ block content
                 button.btn.btn-primary(type="button", v-on:click="search_pumps();") Search for Rated Pumps
              .form-group(v-else, style='text-align:center; padding:2em')
                 p.alert.alert-warning You must enter at least one of the following:  Rating ID, Basic Model Number, Brand, or Participant
-         .panel.panel-default(v-show="(pumps.length > 0 || searched) && search_valid")
+         .panel.panel-default(v-show="(pumps.length > 0 || searching || searched) && search_valid")
            .panel-heading
-             h1 Results ({{pumps.length}})
-           ul.list-group
+             h1 
+              | Results 
+              span(v-if='!searching') ({{pumps.length}})
+           .panel-body(v-if='searching')
+            p.text-center 
+              img(src='/images/loading-bar.gif')
+              span.help-block Searching... please wait
+           ul.list-group(v-if='!searching')
            
               li(v-for="pump in pumps").list-group-item.rating_listing
                 a(v-bind:href="'/ratings/certificates/er-pump/'+pump.rating_id").listing

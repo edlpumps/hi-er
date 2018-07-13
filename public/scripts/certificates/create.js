@@ -8,6 +8,7 @@ new Vue({
             participant: "",
             brand: "",
         },
+        searching: false,
         pumps: [],
         participants: [],
         brands: [],
@@ -57,6 +58,7 @@ new Vue({
     methods: {
         search_pumps() {
             let v = this;
+            this.searching = true;
             $.ajax({
                 method: 'post',
                 url: '/ratings/search',
@@ -67,10 +69,12 @@ new Vue({
                     'Content-Type': 'application/json'
                 },
             }).fail(function (err, body) {
+                v.searching = false;
                 v.error_message = 'Print failed'
             }).done(function (data) {
                 v.pumps = data.pumps;
                 v.searched = true;
+                v.searching = false;
             });
         },
         load_brands() {
