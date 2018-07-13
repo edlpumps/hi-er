@@ -86,13 +86,16 @@ var ERRatingsController = function ($scope, $location, service, $http) {
       vm.search_error = "At least one load type must be specified (CL, VL, or both)";
       return;
     }
-    console.log(vm.search)
+
     vm.pumps_error = false;
+    vm.searching = true;
     service.search(vm.search).then(function (results) {
+      vm.searching = false;
       vm.pumps = results.data.pumps;
       vm.pumps_error = false;
     }).catch(function (error) {
       vm.pumps_error = true;
+      vm.searching = false;
       console.error(error);
     });
   }
@@ -127,7 +130,7 @@ var ERRatingsController = function ($scope, $location, service, $http) {
         st: true
       }
     }
-    console.log(vm.search);
+
     if (!vm.search.min_er) {
       vm.search.min_er = 0;
     }

@@ -25,7 +25,7 @@ block content
             .row
               .col.col-sm-6.text-center
                 h4 
-                  | Pump Energy Index
+                  | PEI
                   sub #{pump.configuration == 'bare' || pump.configuration == 'pump_motor' ? "CL" : "VL"}
                 p.pei_display #{pump.pei.toFixed(2)}
                 p.pei_baseline Baseline:  #{pump.pei_baseline.toFixed(2)}

@@ -17,11 +17,48 @@ block content
                 img(src="/images/hydraulic-institute-logo.png", style="width:80%").hidden-md.hidden-lg.hidden-sm
                 
           .panel-body
-                h1 There will be a list here with each individual certificate, which can be downloaded in bulk.
-                h1 The zip file will contain on PDF and one SVG for each certificate number.
-                h1 The zip file will also contain an excel file with certificate numbers and the details for easy lookup.
-                h1 The certificates will now be available in the estore.    
-              
+            h1 Purchased Certificates
+            p.help-block You may download your certificates using the controls below.  
+
+            p.alert.alert-warning 
+                span Your transaction ID is 
+                code #{transaction._id} 
+                br
+                b Please retain this ID for your records, it is the only way you can retrieve the certificates at a future time.
+           
+            table.table 
+                thead 
+                    tr
+                        th Certificate Number
+                        th Packager
+                        th Pump
+                        th Original ER
+                        th Motor
+                        th VFD
+                        th Exended ER
+                tbody
+                     each certificate in purchased
+                        tr  
+                            td: a(href=`/ratings/certificates/certificate/${certificate.certificate_number}`, target='_blank') #{certificate.certificate_number}
+                            td #{certificate.packager.name} / #{certificate.packager.company}
+                            td 
+                                span #{certificate.pump.basic_model} / #{certificate.pump.rating_id}
+                            td
+                                span #{certificate.pump.energy_rating}
+                            td 
+                                if certificate.motor && certificate.motor.model
+                                    span #{certificate.motor.model} / #{certificate.motor.manufacturer}
+                            td 
+                                if certificate.vfd
+                                    span #{certificate.vfd.model} / #{certificate.vfd.manufacturer}
+                            td #{certificate.energy_rating}
+                            td #{certificate.quantity}
+                
+            p
+                button.btn.btn-danger Download Certificates
+            p.alert.alert-info DOWNLOAD IS NOT FUNCTION YET.  The plan is to click this button to download a zip file containing pdf and svg certificates - 2 files per certificate.  File names will be the certificate number with pdf/svg file extension.  We can also include a spreadsheet that lets the purchaser quickly see which certificates relate to which pumps/extensions.
+
+
                 
                  
     

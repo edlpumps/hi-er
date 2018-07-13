@@ -48,6 +48,7 @@ block content
             hr
             if certificate.invalid
                 p.alert.alert-danger #{certificate.invalid_reason}
+                p: a(href=`/ratings/certificates/create/${pump.rating_id}`).btn.btn-default Back
             else
                 - var ct = 'Section III to Section V'
                 if (certificate.calculation_type == '3-to-7')

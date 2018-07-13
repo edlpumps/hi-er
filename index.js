@@ -80,6 +80,8 @@ var configure = function () {
         req.Labels = req.app.locals.db.Labels;
         req.Labs = req.app.locals.db.Labs;
         req.Subscribers = req.app.locals.db.Subscribers;
+        req.Certificates = req.app.locals.db.Certificates;
+        req.CertificateTransactions = req.app.locals.db.CertificateTransactions
         req.getNextRatingsId = req.app.locals.db.getNextRatingsId;
         req.getNextCertificateOrderNumber = req.app.locals.db.getNextCertificateOrderNumber;
         req.getNextCertificateNumber = req.app.locals.db.getNextCertificateNumber;
@@ -168,6 +170,8 @@ var conn = mongoose.connect(data_connection_str, {
             Labels: schemas.Labels,
             Labs: schemas.Labs,
             Subscribers: schemas.Subscribers,
+            Certificates: schemas.Certificates,
+            CertificateTransactions: schemas.CertificateTransactions,
             getNextRatingsId: schemas.getNextRatingsId,
             getNextCertificateOrderNumber: schemas.getNextCertificateOrderNumber,
             getNextCertificateNumber: schemas.getNextCertificateNumber,

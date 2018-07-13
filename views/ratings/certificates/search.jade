@@ -8,15 +8,88 @@ block styles
             padding-right:5em;
         }
 block content
-   .container
+    .container#vue(v-cloak, data-units=(JSON.stringify(units)), data-search=(JSON.stringify(search)), data-companies=(JSON.stringify(companies)))
         form.form-horizontal
          .panel.panel-default.hi-panel-search.rating_panel
           .panel-heading
               .heading
                 img(src="/images/hydraulic-institute-logo.png", width="600").hidden-xs
                 img(src="/images/hydraulic-institute-logo.png", style="width:80%").hidden-md.hidden-lg.hidden-sm
-                
+          .panel-body
+             .form-group
+               label.col-sm-3.control-label Certificate Number
+               .col.col-sm-6
+                 input.form-control(v-model="search.cnumber", type="text")
+             .form-group
+               label.col-sm-3.control-label Packager
+               .col.col-sm-6
+                 select.form-control(v-model="search.company")
+                  option(value="")
+                  each c in companies
+                    option(value=c) #{c}
+             .form-group(v-if='search_valid', style='text-align:center; padding:2em')
+                button.btn.btn-primary(type="button", v-on:click="search_certificates();") Search for Certificates
+             .form-group(v-else, style='text-align:center; padding:2em')
+                p.alert.alert-warning You must enter at least one of the following:  Certificate number or Packager
+         .panel.panel-default(v-show="(certificates.length > 0 || searched) && search_valid")
           .panel-body
             .row
-              .col.col-sm-12
-                h1 Search for certificates...
+                .col.col-sm-12
+                    span.help-block(style='padding-bottom:0;margin-bottom:0px') {{certificates_pager.items}} Certificates found
+                    br
+                    ul.pagination.pagination-sm.justify-content-center(style='margin-top:0px;', v-if=`certificates_pager.total_pages > 1`)
+                        li.page-item.clickable: span.page-link(v-on:click=`certificates_pager.page--`) &laquo;
+                        li.page-item.clickable(v-for=`page in certificates_pager.pages`, v-bind:class=`{active: certificates_pager.page == page, pegged: page == 0 || page == certificates_pager.totalPages-1}`, v-on:click=`certificates_pager.page = page`): span.page-link {{page+1}}
+                        li.page-item.clickable: span.page-link(v-on:click=`certificates_pager.page++`) &raquo;
+                   
+                
+           ul.list-group
+              li(v-for="certificate in certificates", v-on:click='window.location = "/ratings/certificates/certificate/"+certificate.certificate_number').list-group-item.rating_listing
+                
+                    .row.listing
+                        .col.col-xs-7.col-sm-5
+                           h3 
+                            span
+                                b Serial #: 
+                                a(v-bind:href="'/ratings/certificates/certificate/'+certificate.certificate_number") {{certificate.certificate_number}}
+                           h3 
+                            span {{certificate.pump.brand}} {{certificate.pump.brand ? ' / ' : ''}} {{certificate.pump.basic_model}}
+                            br
+                            span Issuer: {{certificate.packager.company}} 
+                           p
+                            span 
+                                b Rating ID:  
+                                a(v-bind:href="'/ratings/' + certificate.pump.rating_id", target="_blank") {{certificate.pump.rating_id}}
+                         .col.hidden-xs.col.hidden-sm.col-md-3(style="padding-top:20px")
+                           p(v-if='certificate.motor && certificate.motor.model')
+                            span 
+                                b Motor Manufacturer: 
+                                | {{certificate.motor.manufacturer}}
+                            br
+                            span 
+                                b Motor Model #: 
+                                | {{certificate.motor.model}}
+                           p(v-if='certificate.vfd && certificate.vfd.model')
+                            span 
+                                b VFD Manufactuer:  
+                                | {{certificate.vfd.manufacturer}}
+                            br
+                            span 
+                                b VFD Model #:  
+                                | {{certificate.vfd.model}}
+                           
+                           
+                           
+                        .col.col-sm-2.energy_badge(style='border-right: thin solid rgb(221, 221, 221)')
+                           .small(style="padding-top:20px; margin-bottom:0px") Energy Rating
+                           h2(style="margin-top:0px") {{certificate.pump.energy_rating}}
+                           .small(style="padding-top:20px; margin-bottom:0px") PEI
+                           h4(style='margin-top:0px') {{certificate.pump.pei.toFixed(2)}}
+                        .col.col-sm-2.energy_badge
+                           .small(style="padding-top:20px; margin-bottom:0px") Extended Energy Rating
+                           h2(style="margin-top:0px") {{certificate.energy_rating}}
+                           .small(style="padding-top:20px; margin-bottom:0px") Extended PEI
+                           h4(style='margin-top:0px') {{certificate.pei.toFixed(2)}}
+                        
+    script(src="/scripts/certificates/search.js")
+    

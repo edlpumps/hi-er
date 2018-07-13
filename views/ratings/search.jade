@@ -56,10 +56,16 @@ block content
             
          p.alert.alert-warning(ng-show="app.pumps_error") {{app.pumps_error}}
          p.alert.alert-warning(ng-show="app.search_error") {{app.search_error}}
-         .panel.panel-default(ng-show="(app.pumps.length > 0 || app.searched) && !app.pumps_error && !app.search_error")
+         .panel.panel-default(ng-show="(!app.pumps_error && !app.search_error")
            .panel-heading
-             h1 Results ({{app.pumps.length}})
-           ul.list-group
+             h1 
+              | Results 
+              span(ng-show='!app.searching') ({{app.pumps.length}})
+           .panel-body(ng-show='app.searching')
+            p.text-center 
+              img(src='/images/loading-bar.gif')
+              span.help-block Searching... please wait
+           ul.list-group(ng-show='!app.searching')
            
               li(ng-repeat="pump in app.pumps").list-group-item.rating_listing
                 a(href="/ratings/{{pump.rating_id}}").listing

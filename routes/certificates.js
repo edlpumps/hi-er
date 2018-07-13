@@ -3,7 +3,8 @@ const router = express.Router();
 const default_search_operators = require('../search').params;
 const aw = require('./async_wrap');
 const debug = require('debug')('certificates');
-
+const Hashids = require('hashids');
+const hashids = new Hashids("hydraulic institute", 10, 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789');
 
 router.get('/', aw(async (req, res) => {
     res.render("ratings/certificates/index", {});
@@ -15,10 +16,6 @@ router.get('/create', aw(async (req, res) => {
         participants: participants.map(p => p.name),
         search: req.session.csearch ? req.session.csearch : {}
     });
-}))
-
-router.get('/search', aw(async (req, res) => {
-    res.render("ratings/certificates/search", {});
 }))
 
 const load_certificate = async (req, pumpId) => {
@@ -33,7 +30,9 @@ const load_certificate = async (req, pumpId) => {
             efficiency: 0,
             power: 0
         },
-        vfd: {
+        poles: true,
+        vfd: false,
+        driver: {
             manufacturer: '',
             model: '',
             power: 0
@@ -136,9 +135,15 @@ router.post('/input/:id', aw(async (req, res) => {
     const certificate = req.body;
     certificate.pump = req.params.id;
 
-    if (!certificate.poles && !certificate.driver) {
+    if (!certificate.poles && !certificate.vfd) {
         certificate.invalid = true;
-        certificate.invaild_reason = 'You must add a motor or VFD, or both.'
+        certificate.invalid_reason = 'You must add a motor or VFD, or both.'
+        res.render("ratings/certificates/create_input", {
+            pump: pump,
+            participant: pump.participant,
+            certificate: certificate
+        });
+        return;
     } else {
 
         get_calculation_type(certificate, pump, certificate.poles !== undefined, certificate.vfd !== undefined);
@@ -188,7 +193,6 @@ router.post('/purchase/:id', aw(async (req, res) => {
     }
     certificate.number = await req.getNextCertificateOrderNumber();
     req.session.certificate_cart.push(JSON.parse(JSON.stringify(certificate)));
-    console.log(req.session.certificate_cart);
     res.redirect('/ratings/certificates/cart');
 }));
 
@@ -201,7 +205,7 @@ router.get('/cart/delete/:number', aw(async (req, res) => {
 }))
 
 router.get("/cart", aw(async (req, res) => {
-    console.log(req.session.certificate_cart);
+
     res.render("ratings/certificates/cart", {
         cart: req.session.certificate_cart
     });
@@ -209,17 +213,69 @@ router.get("/cart", aw(async (req, res) => {
 
 
 router.get("/checkout", aw(async (req, res) => {
-    console.log(req.session.certificate_cart);
+    const ct = await req.CertificateTransactions.create({
+        date: new Date(),
+        state: 'pending'
+    });
+    if (!req.session.certificate_transactions) {
+        req.session.certificate_transactions = [];
+    }
+    req.session.certificate_transactions.push(ct);
     res.render("ratings/certificates/estore-standin", {
-        cart: req.session.certificate_cart
+        cart: req.session.certificate_cart,
+        transaction: ct
     });
 }));
 
+router.post("/purchased/:transactionId", aw(async (req, res) => {
+    const ct = await req.CertificateTransactions.findById(req.params.transactionId).exec();
+    if (!ct) {
+        res.sendStatus(404, 'Transaction not found');
+        return;
+    }
+    // MUST CHECK AUTHENTICATION
+    console.log("POSTED FROM HI ESTORE - CHECK CREDENTIALS")
+    const d = new Date();
+    const purchased = [];
+    for (const c of req.session.certificate_cart) {
+        for (let i = 0; i < c.quantity; i++) {
+            const nextId = await req.getNextCertificateNumber();
+            const cnumber = hashids.encode(nextId);
+            const certificate = await req.Certificates.create({
+                packager: c.packager,
+                installation_site: c.installation_site,
+                pump: c.pump_record._id,
+                motor: c.motor,
+                vfd: c.driver,
+                pei: c.pei,
+                energy_rating: c.energy_rating,
+                certificate_number: cnumber,
+                date: d,
+                transaction: ct._id
+            });
+            purchased.push(certificate);
+        }
+    }
+    ct.state = 'completed';
+    req.session.certificate_cart = [];
+    await ct.save();
+    req.session.purchased = purchased;
+    res.redirect(`/ratings/certificates/purchased/${ct._id}`)
+}))
 
-router.get("/purchased", aw(async (req, res) => {
-    console.log(req.session.certificate_cart);
+router.get("/purchased/:transactionId", aw(async (req, res) => {
+    const ct = await req.CertificateTransactions.findById(req.params.transactionId).exec();
+    if (!ct || ct.state != 'completed') {
+        res.sendStatus(404, 'Transaction not found');
+        return;
+    }
+    req.session.purchased = await req.Certificates.find({
+        transaction: ct._id
+    }).populate('pump').exec();
+
     res.render("ratings/certificates/purchased", {
-        cart: req.session.certificate_cart
+        purchased: req.session.purchased,
+        transaction: ct
     });
 }));
 
@@ -238,6 +294,57 @@ router.get("/er-pump/:id", aw(async (req, res) => {
         pump: pump,
         participant: pump.participant,
         pump_drawing: pump.doe ? pump.doe.toLowerCase() + ".png" : ""
+    });
+}));
+
+router.get("/certificate/:cnumber", aw(async (req, res) => {
+    const ct = await req.Certificates.findOne({
+        certificate_number: req.params.cnumber
+    }).populate('pump').exec();
+    console.log(ct)
+    if (!ct) {
+        return res.sendStatus(404, 'Certificate not found');
+    }
+    res.render("ratings/certificates/certificate", {
+        certificate: ct
+    });
+}));
+
+
+router.get('/search', aw(async (req, res) => {
+    const packagers = await req.Certificates.aggregate([{
+        $group: {
+            _id: '$packager.company'
+        }
+    }]);
+    const companies = packagers.map(p => p._id);
+    res.render("ratings/certificates/search", {
+        companies: companies,
+        search: req.session.csearch
+    });
+}))
+
+
+router.post("/search/:skip/:limit", aw(async (req, res) => {
+    const search = req.body.search;
+    req.session.csearch = search;
+    const skip = parseInt(req.params.skip);
+    const limit = parseInt(req.params.limit);
+
+    const q = {
+
+    }
+    if (search.company) {
+        q['packager.company'] = search.company;
+    }
+    if (search.cnumber) {
+        q.certificate_number = search.cnumber
+    }
+    const certificates = await req.Certificates.find(q).skip(skip).limit(limit).populate('pump').populate('pump.participant').exec();
+    const count = await req.Certificates.count(q);
+    res.json({
+        certificates: certificates,
+        total: count
     });
 }));
 

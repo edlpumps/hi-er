@@ -9,7 +9,7 @@ block styles
         }
 block content
     .container#vue(v-cloak, data-units=(JSON.stringify(units)))
-        form.form-horizontal
+        
          .panel.panel-default.hi-panel-search.rating_panel
           .panel-heading
               .heading
@@ -17,12 +17,23 @@ block content
                 img(src="/images/hydraulic-institute-logo.png", style="width:80%").hidden-md.hidden-lg.hidden-sm
                 
           .panel-body
-                h1 MAKE THIS A POST
+            form(action=`/ratings/certificates/purchased/${transaction._id}`, method='post')
                 p.alert.alert-warning
                     | This is only a placeholder, instead of going to this page, the user would be sent to the EStore.
                     | Click the "Purchase" button below to continue the workflow as if you've purchased the certificates.
+
                 p
-                    a.btn.btn-info(href='/ratings/certificates/purchased') Purchase
+                    b Implementation / Integration plan:  
+                    span 
+                        | The EStore will receive a transaction ID and number of certificates being purchased.  The transaction
+                        | ID will be important for the user to hold onto - perhaps the EStore can email it to them so they have it.  It
+                        | will also be displayed on the next page.
+                p 
+                    | Once the purchase is complete, the EStore will need to make an HTTP post to 
+                    code /ratings/certificates/purchased/[transaction id]
+                    |  with an authentication code in the HTTP body.
+                p
+                    button.btn.btn-info(type='submit') Purchase
                                     
                 
               

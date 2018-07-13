@@ -1,0 +1,90 @@
+extends ../layout
+
+include ../../common/pump_page
+
+block nav
+     +navigation("certificates")
+
+block content
+    .container
+      
+      .panel.panel-default.rating_panel
+        .panel-heading 
+          
+          .heading
+           img(src="/images/hydraulic-institute-logo.png", width="600").hidden-xs
+           img(src="/images/hydraulic-institute-logo.png", style="width:80%").hidden-md.hidden-lg.hidden-sm
+           h1 EXTENDED PRODUCT CERTIFICATE
+          
+            
+        .panel-body
+
+          .row
+
+           .col.col-sm-6.text-center
+                h2 ER-Listed Basic Model
+                p #{certificate.pump.participant.name}
+                p #{certificate.pump.brand}
+                p #{certificate.pump.doe}
+                p Model #: #{certificate.pump.basic_model}
+           .col.col-sm-6.text-center(style='border-left:thick rgb(221, 221, 221) solid')
+                h2 Extended Products Added
+                p(style='margin-bottom:2em')
+                    if certificate.motor.model
+                        span Motor 
+                    if certificate.motor.model && certificate.vfd.model
+                        span / 
+                    if certificate.vfd.model
+                        span VFD
+                
+                if certificate.motor.model
+                    p
+                        span Motor Manufacturer:  #{certificate.motor.manufacturer}
+                        br
+                        span Motor Model #: #{certificate.motor.model} 
+                        br
+                        span Motor Nameplate Efficiency #: #{certificate.motor.efficiency} 
+                        br
+                        span Motor Nameplate Power #: #{certificate.motor.power} 
+                if certificate.vfd.model
+                    p
+                        span VFD Manufacturer:  #{certificate.vfd.manufacturer}
+                        br
+                        span VFD Model #: #{certificate.vfd.model} 
+                        br
+                        span VFD Nameplate Efficiency #: #{certificate.vfd.efficiency} 
+                        br
+                        span VFD Nameplate Power #: #{certificate.vfd.power} 
+          .row
+            .col.col-sm-6.text-center
+                div
+                  p: b ER-Listed Basic Model
+                  h1 
+                    | PEI
+                    sub #{certificate.pump.configuration == 'bare' || certificate.pump.configuration == 'pump_motor' ? "CL" : "VL"}
+                    span :  #{certificate.pump.pei.toFixed(2)}
+                  p(style='margin-top:2em'): b ER-Listed Basic Model
+                  h1 ENERGY RATING
+                  p.er_display #{certificate.pump.energy_rating}
+            .col.col-sm-6.text-center(style='border-left:thick rgb(221, 221, 221) solid')
+                div
+                  p: b Calculated Extended Product
+                  h1 
+                    | PEI
+                    sub #{certificate.pump.configuration == 'bare' || certificate.pump.configuration == 'pump_motor' ? "CL" : "VL"}
+                    span :  #{certificate.pei.toFixed(2)}
+                
+                  p(style='margin-top:2em'): b Extended Product
+                  h1 ENERGY RATING
+                  p.er_display #{certificate.energy_rating}
+
+          .row(style='margin-top:2em')
+            .col.col-sm-12.text-center
+                span Serial Number:  #{certificate.certificate_number}
+                br
+                span Issuer Name:  #{certificate.packager.company}
+                br
+                span Issuance Date: #{moment(certificate.date).format('MMMM D, YYYY')}
+                
+            
+           

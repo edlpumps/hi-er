@@ -137,8 +137,15 @@ exports.init = function init(mongoose) {
     var subscribers = mongoose.model('subscribers', subscriber_schema, "subscribers");
     exports.Subscribers = subscribers;
 
-    /*
-    const certificateOrderSchema = new Schema({
+    const certificateTransaction = new Schema({
+        date: Date,
+        state: String
+    })
+
+    var certificate_transactions = mongoose.model('certificate_transactions', certificateTransaction, "certificate_transactions");
+    exports.CertificateTransactions = certificate_transactions;
+
+    const certificateSchema = new Schema({
         packager: {
             name: String,
             company: String,
@@ -164,15 +171,25 @@ exports.init = function init(mongoose) {
             efficiency: Number,
             power: Number,
         },
-        driver: {
+        vfd: {
             manufacturer: String,
             model: String,
-            power: number
+            power: Number
         },
         pei: Number,
-        energy_rating: Number
-    })
-*/
+        energy_rating: Number,
+        certificate_number: String,
+        date: Date,
+        transaction: {
+            type: Schema.Types.ObjectId,
+            ref: 'certificate_transactions'
+        }
+    });
+
+
+    var certificates = mongoose.model('certificates', certificateSchema, "certificates");
+    exports.Certificates = certificates;
+
 
     var pumpSchema = new Schema({
         participant: {
@@ -419,7 +436,7 @@ exports.init = function init(mongoose) {
             counter.name = "certificates";
             counter.seq = 0;
             counter.save();
-            console.log("Bootstrapping counters");
+
         }
     })
 

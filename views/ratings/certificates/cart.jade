@@ -17,7 +17,7 @@ block content
                 img(src="/images/hydraulic-institute-logo.png", style="width:80%").hidden-md.hidden-lg.hidden-sm
                 
           .panel-body
-                h1 Certificate Shopping Card
+                h1 Certificate Shopping Cart
                 p.help-block You can purchase these certificates now, or return to the ER Certificate search to create more.  Please note that the certificates will not be listed until your purchase is complete.
                 if  !cart || cart.length == 0
                     p.alert.alert-warning You have no certificates in your cart.
@@ -57,7 +57,8 @@ block content
                     section
                         hr
                         .pull-right
-                            a.btn.btn-success(href='/ratings/certificates/checkout') Checkout
+                            a.btn.btn-default(href='/ratings/certificates/search') Create more certificates
+                            a.btn.btn-success(href='/ratings/certificates/checkout').btn-space Checkout
                                     
                 
               
