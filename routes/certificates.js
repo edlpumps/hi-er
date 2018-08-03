@@ -285,6 +285,30 @@ router.get("/purchased/:transactionId", aw(async (req, res) => {
     });
 }));
 
+const make_pdf = async (certificate) => {
+    const template = pug.compileFile(path.join(__dirname, '../views/ratings/certificates/certificate-pdf.jade'))
+    const html = template({
+        certificate: certificate,
+        moment: moment
+    })
+
+    const options = {
+        format: 'Letter',
+        header: {
+            height: '20px',
+        },
+        footer: {
+            height: '1in',
+        },
+    };
+    return new Promise((resolve, reject) => {
+        pdf.create(html, options).toStream(function (err, stream) {
+            if (err) reject(err);
+            else resolve(stream)
+        });
+    });
+
+}
 const add_to_zip = async (archive, certificate) => {
     const pdf_stream = await make_pdf(certificate);
     archive.append(pdf_stream, {
@@ -348,46 +372,7 @@ router.get("/certificate/:cnumber", aw(async (req, res) => {
     });
 }));
 
-const make_pdf = async (certificate) => {
-    const template = pug.compileFile(path.join(__dirname, '../views/ratings/certificates/certificate-pdf.jade'))
-    const html = template({
-        certificate: certificate,
-        moment: moment
-    })
 
-    const options = {
-        format: 'Letter',
-        header: {
-            height: '20px',
-        },
-        footer: {
-            height: '1in',
-        },
-    };
-    return new Promise((resolve, reject) => {
-        pdf.create(html, options).toStream(function (err, stream) {
-            if (err) reject(err);
-            else resolve(stream)
-        });
-    });
-
-}
-router.get("/certificate/:cnumber/pdf", aw(async (req, res) => {
-    const ct = await req.Certificates.findOne({
-        certificate_number: req.params.cnumber
-    }).populate('pump').exec();
-
-    if (!ct) {
-        return res.sendStatus(404, 'Certificate not found');
-    }
-
-    const pdf_stream = await make_pdf(ct);
-    res.writeHead(200, {
-        'Content-Type': 'application/pdf',
-        'Content-Disposition': `inline; filename=${ct.certificate_number}.pdf`
-    });
-    pdf_stream.pipe(res);
-}));
 
 
 router.get('/search', aw(async (req, res) => {
