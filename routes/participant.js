@@ -436,6 +436,7 @@ router.post("/pumps/upload", get_labels, aw(async (req, res) => {
     var done = false;
     while (!done) {
         first_cell = worksheet.getCell(template.mappings.basic_model.column + r)
+
         if (first_cell.value) {
             var pump = {}
             pump.row = r;
@@ -526,6 +527,7 @@ router.post("/pumps/upload", get_labels, aw(async (req, res) => {
                 pumps_failed.push(pump)
             }
             r++;
+            console.log(pump);
         } else {
             done = true;
         }
