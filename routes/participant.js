@@ -18,6 +18,9 @@ router.use(function (req, res, next) {
     if (req.user && req.user.participant) {
         req.app.locals.db.Participants.findById(req.user.participant, function (err, participant) {
             req.participant = participant;
+            if (!req.participant.pumps) {
+                req.participant.pumps = [];
+            }
             if (err) {
                 req.log.debug("Error adding participant");
                 req.log.debug(err);
