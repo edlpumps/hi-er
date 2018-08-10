@@ -54,7 +54,7 @@ router.get('/', aw(async (req, res) => {
         // listed: true
     }).exec()
 
-    const response = () => {
+    const response_handler = () => {
         res.render("participant/p_home", {
             user: req.user,
             participant: req.participant,
@@ -66,7 +66,7 @@ router.get('/', aw(async (req, res) => {
         req.participant.subscription.status = 'Active';
         req.participant.subscription.pumps = 10000;
         await req.participant.save();
-        return response();
+        return response_handler();
     }
 
     if (!process.env.ESTORE_URL || !process.env.ESTORE_AUTH_KEY) {
@@ -100,7 +100,7 @@ router.get('/', aw(async (req, res) => {
         req.participant.subscription = subscription;
         req.participant.save();
         // save the new subscription information in the participant
-        response();
+        response_handler();
 
     }
 
