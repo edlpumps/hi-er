@@ -184,7 +184,9 @@ var conn = mongoose.connect(data_connection_str, {
         configure();
         startup();
 
-
+        console.log("----------------------------------------------");
+        console.log(process.version);
+        console.log("-----------------------------------------------")
         //   push_emails(1);
     }
 });
@@ -199,7 +201,7 @@ passport.use(new Strategy({
     },
     function (req, email, password, done) {
         var regex = new RegExp("^" + email + "$", "i");
-        console.log(regex);
+
         app.locals.db.Users.findOne({
             email: regex
         }, function (err, user) {
