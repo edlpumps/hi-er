@@ -58,7 +58,7 @@ router.get('/participant/:id', aw(async (req, res) => {
     }
     req.log.debug("Lookup of participant succeeded - " + participant.name);
 
-    const response = async () => {
+    const response_handler = async () => {
         const users = await req.Users.find({
             participant: req.params.id
         }).exec();
@@ -73,7 +73,7 @@ router.get('/participant/:id', aw(async (req, res) => {
         participant.subscription.status = 'Active';
         participant.subscription.pumps = 10000;
         await participant.save();
-        return response();
+        return response_handler();
     }
     // refresh estore status
     const options = {
@@ -95,7 +95,7 @@ router.get('/participant/:id', aw(async (req, res) => {
             participant.subscription = subscription;
         }
         await participant.save();
-        response();
+        response_handler();
     }
     request(options, callback);
 
