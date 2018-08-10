@@ -216,14 +216,17 @@ var ERParticipantController = function ($scope, $location, service) {
   }
 
   vm.refreshPumps = function (callback) {
+    vm.searching_pumps = true;
     service.getPumps().then(function (results) {
       vm.pumps = results.pumps;
       vm.pumps_error = false;
+      vm.searching_pumps = false;
       if (callback) {
         callback();
       }
     }).catch(function (error) {
       vm.pumps_error = true;
+      vm.searching_pumps = false;
       console.error(error);
     });
   }

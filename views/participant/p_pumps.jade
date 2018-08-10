@@ -55,7 +55,10 @@ block content
                label.glyphicon.glyphicon-search(for="search", title="Filter pumps", rel="tooltip")
           .row.solo
            .col.col-xs-12
-            .table-responsive
+            p.text-center(ng-show='app.searching_pumps')
+              img(src='/images/loading-bar.gif')
+              span.help-block Searching... please wait
+            .table-responsive(ng-show='!app.searching_pumps')
               table.table.table-striped
                 thead
                  tr 

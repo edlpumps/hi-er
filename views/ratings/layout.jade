@@ -59,10 +59,11 @@ html
                     a(href="/ratings/utilities")
                      .glyphicon.glyphicon-stats.margin-right
                      | Utility search
-                  li(class=(active == 'certificates' ? 'active' : ''))
-                    a(href="/ratings/certificates")
-                     .glyphicon.glyphicon-unchecked.margin-right
-                     | ER Certificates
+                  if process.env.CERTIFICATES_ENABLED 
+                    li(class=(active == 'certificates' ? 'active' : ''))
+                      a(href="/ratings/certificates")
+                        .glyphicon.glyphicon-unchecked.margin-right
+                        | ER Certificates
                 ul.nav.navbar-nav.navbar-right
                   +unit_switch()
                   li
