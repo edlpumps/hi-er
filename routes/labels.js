@@ -49,11 +49,45 @@ router.get('/:participant_id/:id/svg', function (req, res) {
     });
 });
 
+router.get('/:participant_id/:id/svg-sm', function (req, res) {
+    render_svg(req, res, svg_builder.make_sm_label, function (err, svg, pump) {
+        if (err) {
+            res.status(500).send(err);
+            return;
+        }
+        if (req.query.download) {
+            res.setHeader('Content-disposition', 'attachment; filename=Energy Rating Label - ' + pump.rating_id + '.svg');
+        }
+        res.setHeader('Content-Type', 'image/svg+xml');
+        res.send(svg);
+    });
+});
+
 
 
 
 router.get('/:participant_id/:id/png', function (req, res) {
     render_svg(req, res, svg_builder.make_label, function (err, svg, pump) {
+        if (err) {
+            res.status(500).send(err);
+            return;
+        }
+
+        svg2png(svg, {})
+            .then(function (png_buffer) {
+                if (req.query.download) {
+                    res.setHeader('Content-disposition', 'attachment; filename=Energy Rating Label - ' + pump.rating_id + '.png');
+                }
+                res.setHeader('Content-Type', 'image/png');
+                res.setHeader('Content-Length', png_buffer.length);
+                res.status(200).send(png_buffer);
+            })
+            .catch(e => res.status(500).send(e));
+    });
+});
+
+router.get('/:participant_id/:id/png-sm', function (req, res) {
+    render_svg(req, res, svg_builder.make_sm_label, function (err, svg, pump) {
         if (err) {
             res.status(500).send(err);
             return;

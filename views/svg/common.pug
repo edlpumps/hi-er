@@ -1,5 +1,6 @@
 
-mixin footer (y)
-    text(x="20", y=y, style="font-family: 'Arimo'; font-weight:bold", font-size="16", text-anchor="start", fill="black")  #{rating_id}
-    text(x="308", y=y, style="font-family: 'Arimo'; font-weight:bold", font-size="16", text-anchor="middle", fill="black") er.pumps.org
-    text(x="595", y=y, style="font-family: 'Arimo'; font-weight:bold", font-size="16", text-anchor="end", fill="black") #{date}
+mixin footer (left, right, y, size)
+    - var fsize = size || 16
+    text(x=left, y=y, style="font-family: 'Arimo';", font-size=fsize, text-anchor="start", fill="black")  #{rating_id}
+    text(x="308", y=y, style="font-family: 'Arimo';", font-size=fsize, text-anchor="middle", fill="black") er.pumps.org
+    text(x=right, y=y, style="font-family: 'Arimo';", font-size=fsize, text-anchor="end", fill="black") #{date}
