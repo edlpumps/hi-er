@@ -4,7 +4,10 @@ const fs = require('fs');
 const path = require('path');
 const certcalc = require('../certificate_calculator');
 const N4ZXMQ = require('./certificate-testcases/N4ZXMQ.json');
-
+const Y4PPD4 = require('./certificate-testcases/Y4PPD4.json');
+const NQ693Q = require('./certificate-testcases/NQ693Q.json');
+const B47K95 = require('./certificate-testcases/B47K95.json');
+const N43EE4 = require('./certificate-testcases/N43EE4.json');
 const assert_precision = (target, value, tolerance) => {
     const t = tolerance || 0.001;
     const diff = Math.abs(target - value);
@@ -25,114 +28,178 @@ describe('Input checks', function () {
         assert.equal(N4ZXMQ.results.default_motor_efficiency, 95);
         done();
     });
+
+    it('Y4PPD4', function (done) {
+        assert.equal(Y4PPD4.doe, 'ST');
+        assert.equal(Y4PPD4.pei, 0.81);
+        assert.equal(Y4PPD4.results.per_std, 67.3183703703704);
+        assert.equal(Y4PPD4.pei_baseline, 1.0557627684026);
+        assert.equal(Y4PPD4.speed, 3600);
+        assert.equal(Y4PPD4.driver_input_power.bep100, 55.2);
+        assert.equal(Y4PPD4.flow.bep100, 349.830508474576);
+        assert.equal(Y4PPD4.motor_power_rated, 75);
+        assert.equal(Y4PPD4.motor_regulated, undefined);
+        assert.equal(Y4PPD4.results.default_motor_efficiency, 81.5);
+        done();
+    });
+    it('NQ693Q', function (done) {
+        assert.equal(NQ693Q.doe, 'IL');
+        assert.equal(NQ693Q.pei, 0.92);
+        assert.equal(NQ693Q.results.per_std, 41.100599673913);
+        assert.equal(NQ693Q.pei_baseline, 1.14896043469693);
+        assert.equal(NQ693Q.speed, 3600);
+        assert.equal(NQ693Q.driver_input_power.bep100, 39.9458);
+        assert.equal(NQ693Q.driver_input_power.bep110, 44.2452);
+        assert.equal(NQ693Q.flow.bep100, 374.62);
+        assert.equal(NQ693Q.flow.bep110, 249.4900);
+        assert.equal(NQ693Q.motor_power_rated, 50);
+        assert.equal(NQ693Q.motor_regulated, undefined);
+        assert.equal(NQ693Q.results.default_motor_efficiency, 93);
+        done();
+    });
+    it('B47K95', function (done) {
+        assert.equal(B47K95.doe, 'RSV');
+        assert.equal(B47K95.pei, 0.92);
+        assert.equal(B47K95.results.per_std, 60.3562826086956);
+        assert.equal(B47K95.pei_baseline, 1);
+        assert.equal(B47K95.speed, 1800);
+        assert.equal(B47K95.driver_input_power.bep100, 56.2);
+        assert.equal(B47K95.flow.bep100, 349.830508474576);
+        assert.equal(B47K95.motor_power_rated, 75);
+        assert.equal(B47K95.motor_regulated, 1);
+        assert.equal(B47K95.results.default_motor_efficiency, 95);
+        done();
+    });
+    it('N43EE4', function (done) {
+        assert.equal(N43EE4.doe, 'IL');
+        assert.equal(N43EE4.pei, 0.92);
+        assert.equal(N43EE4.results.per_std, 41.102012576087);
+        assert.equal(N43EE4.pei_baseline, 1.14896043469693);
+        assert.equal(N43EE4.speed, 3600);
+        assert.equal(N43EE4.driver_input_power.bep100, 39.947);
+        assert.equal(N43EE4.driver_input_power.bep110, 44.2496);
+        assert.equal(N43EE4.flow.bep100, 374.62);
+        assert.equal(N43EE4.flow.bep110, 249.49);
+        assert.equal(N43EE4.motor_power_rated, 50);
+        assert.equal(N43EE4.motor_regulated, undefined);
+        assert.equal(N43EE4.results.default_motor_efficiency, 93);
+        done();
+    });
 });
 
-describe('Section 5 -> 7', function () {
-    describe('N4ZXMQ', function (done) {
-        let c;
-        before(function (done) {
-            c = certcalc.calculate_5_to_7(N4ZXMQ)
-            done();
-        });
-        it('Full load nameplate motor losses', function () {
-            assert_precision(c.full_load_nameplate_motor_losses, 3.9474)
-        });
-        it('Standard pump input to motor power ratio at 100% BEP flow', function () {
-            assert_precision(c.std_pump_input_to_motor_at_100_bep_flow, 0.6992)
-        });
-        it('Standard motor part load loss factor at 100% BEP', function () {
-            assert_precision(c.std_motor_part_load_loss_factor_at_100_bep, 0.7923)
-        });
-        it('Nameplate motor part load losses at 100% BEP', function () {
-            assert_precision(c.nameplate_motor_part_load_losses_at_100_bep, 3.12767)
-        });
-        it('Pump input power at 100% BEP', function () {
-            assert_precision(c.pump_input_power_at_100_bep, 52.07233)
-        });
-        it('Variable load pump input power at 25% BEP', function () {
-            assert_precision(c.variable_load_pump_input_power_at_25_bep, 3.25452)
-        })
-        it('Variable load pump input power at 50% BEP', function () {
-            assert_precision(c.variable_load_pump_input_power_at_50_bep, 10.41447)
-        })
-        it('Variable load pump input power at 75% BEP', function () {
-            assert_precision(c.variable_load_pump_input_power_at_75_bep, 25.38526)
-        })
+describe('Section 4-5 -> 7', function () {
+    const tests = [N4ZXMQ, Y4PPD4, NQ693Q, B47K95, N43EE4];
+    for (const pump of tests) {
+        describe(pump.rating_id, function (done) {
+            let c;
+            before(function (done) {
+                c = certcalc.calculate_4_5_to_7(pump)
+                done();
+            });
+            /**** CHANGE NAME ONLY 4/5*/
+            it('Full load nameplate motor losses', function () {
+                assert_precision(c.full_load_nameplate_motor_losses, pump.certificate_7.full_load_nameplate_motor_losses)
+            });
+            /**********  */
+            it('Standard pump input to motor power ratio at 100% BEP flow', function () {
+                assert_precision(c.std_pump_input_to_motor_at_100_bep_flow, pump.certificate_7.std_pump_input_to_motor_at_100_bep_flow)
+            });
+            it('Standard motor part load loss factor at 100% BEP', function () {
+                assert_precision(c.std_motor_part_load_loss_factor_at_100_bep, pump.certificate_7.std_motor_part_load_loss_factor_at_100_bep)
+            });
+            /**** CHANGE NAME ONLY 4/5*/
+            it('Nameplate motor part load losses at 100% BEP', function () {
+                assert_precision(c.nameplate_motor_part_load_losses_at_100_bep, pump.certificate_7.nameplate_motor_part_load_losses_at_100_bep)
+            });
+            /**********  */
+            it('Pump input power at 100% BEP', function () {
+                assert_precision(c.pump_input_power_at_100_bep, pump.certificate_7.pump_input_power_at_100_bep)
+            });
+            it('Variable load pump input power at 25% BEP', function () {
+                assert_precision(c.variable_load_pump_input_power_at_25_bep, pump.certificate_7.variable_load_pump_input_power_at_25_bep)
+            })
+            it('Variable load pump input power at 50% BEP', function () {
+                assert_precision(c.variable_load_pump_input_power_at_50_bep, pump.certificate_7.variable_load_pump_input_power_at_50_bep)
+            })
+            it('Variable load pump input power at 75% BEP', function () {
+                assert_precision(c.variable_load_pump_input_power_at_75_bep, pump.certificate_7.variable_load_pump_input_power_at_75_bep)
+            })
+            /**** CHANGE NAME ONLY 4/5*/
+            it('Motor power ratio at 25% BEP', function () {
+                assert_precision(c.motor_power_ratio_at_25_bep, pump.certificate_7.motor_power_ratio_at_25_bep)
+            })
+            it('Motor power ratio at 50% BEP', function () {
+                assert_precision(c.motor_power_ratio_at_50_bep, pump.certificate_7.motor_power_ratio_at_50_bep)
+            })
+            it('Motor power ratio at 75% BEP', function () {
+                assert_precision(c.motor_power_ratio_at_75_bep, pump.certificate_7.motor_power_ratio_at_75_bep)
+            });
+            it('Motor power ratio at 100% BEP', function () {
+                assert_precision(c.motor_power_ratio_at_100_bep, pump.certificate_7.motor_power_ratio_at_100_bep)
+            });
+            /**********  */
+            it('Coefficient A', function () {
+                assert_precision(c.coeff_A, pump.certificate_7.coeff_A)
+            })
+            it('Coefficient B', function () {
+                assert_precision(c.coeff_B, pump.certificate_7.coeff_B)
+            })
+            it('Coefficient C', function () {
+                assert_precision(c.coeff_C, pump.certificate_7.coeff_C)
+            })
+            it('Motor and control part load loss factor at 25% BEP', function () {
+                assert_precision(c.motor_and_control_part_load_loss_factor_at_25_bep, pump.certificate_7.motor_and_control_part_load_loss_factor_at_25_bep)
+            });
+            it('Motor and control part load loss factor at 50% BEP', function () {
+                assert_precision(c.motor_and_control_part_load_loss_factor_at_50_bep, pump.certificate_7.motor_and_control_part_load_loss_factor_at_50_bep)
+            });
+            it('Motor and control part load loss factor at 75% BEP', function () {
+                assert_precision(c.motor_and_control_part_load_loss_factor_at_75_bep, pump.certificate_7.motor_and_control_part_load_loss_factor_at_75_bep)
+            });
+            it('Motor and control part load loss factor at 100% BEP', function () {
+                assert_precision(c.motor_and_control_part_load_loss_factor_at_100_bep, pump.certificate_7.motor_and_control_part_load_loss_factor_at_100_bep)
+            });
 
-        it('Motor power ratio at 25% BEP', function () {
-            assert_precision(c.motor_power_ratio_at_25_bep, 0.04339)
-        })
-        it('Motor power ratio at 50% BEP', function () {
-            assert_precision(c.motor_power_ratio_at_50_bep, 0.13886)
-        })
-        it('Motor power ratio at 75% BEP', function () {
-            assert_precision(c.motor_power_ratio_at_75_bep, 0.33847)
-        });
-        it('Motor power ratio at 100% BEP', function () {
-            assert_precision(c.motor_power_ratio_at_100_bep, 0.69430)
-        });
+            it('Motor and control default part load loss at 25% BEP', function () {
+                assert_precision(c.motor_and_control_default_part_load_loss_at_25_bep, pump.certificate_7.motor_and_control_default_part_load_loss_at_25_bep)
+            });
+            it('Motor and control default part load loss at 50% BEP', function () {
+                assert_precision(c.motor_and_control_default_part_load_loss_at_50_bep, pump.certificate_7.motor_and_control_default_part_load_loss_at_50_bep)
+            });
+            it('Motor and control default part load loss at 75% BEP', function () {
+                assert_precision(c.motor_and_control_default_part_load_loss_at_75_bep, pump.certificate_7.motor_and_control_default_part_load_loss_at_75_bep)
+            });
+            it('Motor and control default part load loss at 100% BEP', function () {
+                assert_precision(c.motor_and_control_default_part_load_loss_at_100_bep, pump.certificate_7.motor_and_control_default_part_load_loss_at_100_bep)
+            });
 
-        it('Coefficient A', function () {
-            assert_precision(c.coeff_A, -0.8914)
-        })
-        it('Coefficient B', function () {
-            assert_precision(c.coeff_B, 2.8846)
-        })
-        it('Coefficient C', function () {
-            assert_precision(c.coeff_C, 0.2625)
-        })
-        it('Motor and control part load loss factor at 25% BEP', function () {
-            assert_precision(c.motor_and_control_part_load_loss_factor_at_25_bep, 0.38599)
-        });
-        it('Motor and control part load loss factor at 50% BEP', function () {
-            assert_precision(c.motor_and_control_part_load_loss_factor_at_50_bep, 0.64587)
-        });
-        it('Motor and control part load loss factor at 75% BEP', function () {
-            assert_precision(c.motor_and_control_part_load_loss_factor_at_75_bep, 1.13673)
-        });
-        it('Motor and control part load loss factor at 100% BEP', function () {
-            assert_precision(c.motor_and_control_part_load_loss_factor_at_100_bep, 1.83557)
-        });
+            it('Driver power input to motor at 25% BEP', function () {
+                assert_precision(c.driver_power_input_to_motor_at_25_bep, pump.certificate_7.driver_power_input_to_motor_at_25_bep)
+            });
+            it('Driver power input to motor at 50% BEP', function () {
+                assert_precision(c.driver_power_input_to_motor_at_50_bep, pump.certificate_7.driver_power_input_to_motor_at_50_bep)
+            });
+            it('Driver power input to motor at 75% BEP', function () {
+                assert_precision(c.driver_power_input_to_motor_at_75_bep, pump.certificate_7.driver_power_input_to_motor_at_75_bep)
+            });
+            it('Driver power input to motor at 100% BEP', function () {
+                assert_precision(c.driver_power_input_to_motor_at_100_bep, pump.certificate_7.driver_power_input_to_motor_at_100_bep)
+            });
 
-        it('Motor and control default part load loss at 25% BEP', function () {
-            assert_precision(c.motor_and_control_default_part_load_loss_at_25_bep, 1.5237)
-        });
-        it('Motor and control default part load loss at 50% BEP', function () {
-            assert_precision(c.motor_and_control_default_part_load_loss_at_50_bep, 2.5495)
-        });
-        it('Motor and control default part load loss at 75% BEP', function () {
-            assert_precision(c.motor_and_control_default_part_load_loss_at_75_bep, 4.4871)
-        });
-        it('Motor and control default part load loss at 100% BEP', function () {
-            assert_precision(c.motor_and_control_default_part_load_loss_at_100_bep, 7.2457)
-        });
+            it('Variable load Pump Energy Rating', function () {
+                assert_precision(c.variable_load_energy_rating, pump.certificate_7.variable_load_energy_rating)
+            });
 
-        it('Driver power input to motor at 25% BEP', function () {
-            assert_precision(c.driver_power_input_to_motor_at_25_bep, 4.7782)
-        });
-        it('Driver power input to motor at 50% BEP', function () {
-            assert_precision(c.driver_power_input_to_motor_at_50_bep, 12.9639)
-        });
-        it('Driver power input to motor at 75% BEP', function () {
-            assert_precision(c.driver_power_input_to_motor_at_75_bep, 29.8724)
-        });
-        it('Driver power input to motor at 100% BEP', function () {
-            assert_precision(c.driver_power_input_to_motor_at_100_bep, 59.3180)
-        });
+            it('Variable load Pump Energy Index', function () {
+                assert_precision(c.variable_load_energy_index, pump.certificate_7.variable_load_energy_index)
+            });
 
-        it('Variable load Pump Energy Rating', function () {
-            assert_precision(c.variable_load_energy_rating, 26.733)
-        });
-
-        it('Variable load Pump Energy Index', function () {
-            assert_precision(c.variable_load_energy_index, 0.45)
-        });
-
-        it('Energy Rating', function () {
-            assert_precision(c.energy_rating, 55)
-        });
+            it('Energy Rating', function () {
+                assert_precision(c.energy_rating, pump.certificate_7.energy_rating)
+            });
 
 
 
-    });
+        });
+    }
 });

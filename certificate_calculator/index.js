@@ -8,16 +8,18 @@ assign_coefficient = (N, C) => {
     else
         return C[3]
 }
-exports.calculate_5_to_7 = (pump) => {
+exports.calculate_4_5_to_7 = (pump) => {
     const certificate = {}
     debug(`Begin 5-7 certificate calculation on pump ${pump.rating_id}`)
     //Full load nameplate motor losses
     certificate.full_load_nameplate_motor_losses = (pump.motor_power_rated / (pump.results.default_motor_efficiency / 100) - pump.motor_power_rated);
+    certificate.full_load_default_motor_losses = (pump.motor_power_rated / (pump.results.default_motor_efficiency / 100) - pump.motor_power_rated);
     debug(`Full load nameplate motor losses = ${certificate.full_load_nameplate_motor_losses}`);
 
     // Standard pump input to motor power ratio at 100% BEP flow
     // =IF(L6/(N6+Q6)>=1,1,L6/(N6+Q6))
-    const L = pump.driver_input_power.bep100;
+    const load120 = (pump.load120 != 0);
+    const L = load120 ? pump.driver_input_power.bep100 : pump.driver_input_power.bep110;
     const N = pump.motor_power_rated;
     const Q = certificate.full_load_nameplate_motor_losses
     const v = L / (N + Q);
@@ -96,7 +98,8 @@ exports.calculate_5_to_7 = (pump) => {
         (0.25 * certificate.driver_power_input_to_motor_at_75_bep) +
         (0.25 * certificate.driver_power_input_to_motor_at_100_bep);
 
-    certificate.variable_load_energy_index = Math.round(certificate.variable_load_energy_rating / pump.results.per_std * 100) / 100;
+    certificate.variable_load_energy_index = (certificate.variable_load_energy_rating / pump.results.per_std * 100) / 100;
+
     certificate.energy_rating = Math.round((pump.pei_baseline - certificate.variable_load_energy_index) * 100);
     return certificate;
 }

@@ -1,12 +1,12 @@
 {
-    "rating_id": "N4ZXMQ",
+    "rating_id": "B47K95",
     "participant": "xxx",
-    "brand": "1",
-    "basic_model": "B1",
+    "brand": "3",
+    "basic_model": "B3",
     "doe": "RSV",
     "configuration": "pump_motor",
     "diameter": "6",
-    "section": "5",
+    "section": "4",
     "stages": "3",
     "speed": "1800",
     "motor_regulated": "1",
@@ -17,8 +17,9 @@
         "energy_savings": "6",
         "energy_rating": "8",
         "pei_check": {
-            "expected_pei": 0.904456072029882,
-            "std_percent_difference": 0.983104426119437
+            "expected_pei": 0.921041452323829,
+            "std_percent_difference": 1.00113201339547
+
         },
         "pei_baseline": "1",
         "per_baseline_calculated": 60.2880357446464,
@@ -61,13 +62,13 @@
         "std_pump_efficiency": 64.51924163383,
         "standard_c_value": 129.63,
         "pei": 0.92,
-        "per_std": 59.2694347826087,
-        "per_cl": 54.52788,
+        "per_std": 60.3562826086956,
+        "per_cl": 55.52778,
         "full_load_motor_losses": 3.94736842105263,
         "default_motor_efficiency": 95,
         "ns": 820.706578533983,
         "success": 1,
-        "section": "5"
+        "section": "4"
     },
     "energy_rating": "8",
     "energy_savings": "6",
@@ -76,9 +77,9 @@
     "active_admin": "1",
     "pending": "1",
     "driver_input_power": {
-        "bep75": 52.8,
-        "bep100": 55.2,
-        "bep110": 55.6
+        "bep75": 53.8,
+        "bep100": 56.2,
+        "bep110": 56.6
     },
     "head": {
         "bep100": 424.429761562769,
@@ -106,34 +107,38 @@
 
     "certificate_7": {
         "full_load_nameplate_motor_losses": 3.9474,
-        "std_pump_input_to_motor_at_100_bep_flow": 0.6992,
-        "std_motor_part_load_loss_factor_at_100_bep": 0.7923,
-        "nameplate_motor_part_load_losses_at_100_bep": 3.12767,
-        "pump_input_power_at_100_bep": 52.07233,
-        "variable_load_pump_input_power_at_25_bep": 3.25452,
-        "variable_load_pump_input_power_at_50_bep": 10.41447,
-        "variable_load_pump_input_power_at_75_bep": 25.38526,
-        "motor_power_ratio_at_25_bep": 0.04339,
-        "motor_power_ratio_at_50_bep": 0.13886,
-        "motor_power_ratio_at_75_bep": 0.33847,
-        "motor_power_ratio_at_100_bep": 0.69430,
+        "std_pump_input_to_motor_at_100_bep_flow": 0.711866666666667,
+        "std_motor_part_load_loss_factor_at_100_bep": 0.8005,
+        "nameplate_motor_part_load_losses_at_100_bep": 3.15998,
+        "pump_input_power_at_100_bep": 53.04002,
+        "variable_load_pump_input_power_at_25_bep": 3.31500,
+        "variable_load_pump_input_power_at_50_bep": 10.60800,
+        "variable_load_pump_input_power_at_75_bep": 25.85701,
+        "motor_power_ratio_at_25_bep": 0.04420,
+        "motor_power_ratio_at_50_bep": 0.14144,
+        "motor_power_ratio_at_75_bep": 0.34476,
+        "motor_power_ratio_at_100_bep": 0.70720,
         "coeff_A": -0.8914,
         "coeff_B": 2.8846,
         "coeff_C": 0.2625,
-        "motor_and_control_part_load_loss_factor_at_25_bep": 0.38599,
-        "motor_and_control_part_load_loss_factor_at_50_bep": 0.64587,
-        "motor_and_control_part_load_loss_factor_at_75_bep": 1.13673,
-        "motor_and_control_part_load_loss_factor_at_100_bep": 1.83557,
-        "motor_and_control_default_part_load_loss_at_25_bep": 1.5237,
-        "motor_and_control_default_part_load_loss_at_50_bep": 2.5495,
-        "motor_and_control_default_part_load_loss_at_75_bep": 4.4871,
-        "motor_and_control_default_part_load_loss_at_100_bep": 7.2457,
-        "driver_power_input_to_motor_at_25_bep": 4.7782,
-        "driver_power_input_to_motor_at_50_bep": 12.9639,
-        "driver_power_input_to_motor_at_75_bep": 29.8724,
-        "driver_power_input_to_motor_at_100_bep": 59.3180,
-        "variable_load_energy_rating": 26.733,
-        "variable_load_energy_index": 0.45104,
+        "motor_and_control_part_load_loss_factor_at_25_bep": 0.38826,
+        "motor_and_control_part_load_loss_factor_at_50_bep": 0.65267,
+        "motor_and_control_part_load_loss_factor_at_75_bep": 1.15104,
+        "motor_and_control_part_load_loss_factor_at_100_bep": 1.85667,
+        "motor_and_control_default_part_load_loss_at_25_bep": 1.5326,
+        "motor_and_control_default_part_load_loss_at_50_bep": 2.5763,
+        "motor_and_control_default_part_load_loss_at_75_bep": 4.5436,
+        "motor_and_control_default_part_load_loss_at_100_bep": 7.3290,
+        "driver_power_input_to_motor_at_25_bep": 4.8476,
+        "driver_power_input_to_motor_at_50_bep": 13.1843,
+        "driver_power_input_to_motor_at_75_bep": 30.4006
+
+            ,
+        "driver_power_input_to_motor_at_100_bep": 60.3690
+
+            ,
+        "variable_load_energy_rating": 27.2004,
+        "variable_load_energy_index": 0.4507,
         "energy_rating": 55
     }
 }
