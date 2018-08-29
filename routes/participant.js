@@ -513,8 +513,10 @@ router.post("/pumps/upload", get_labels, aw(async (req, res) => {
                 pump.results.reasons.push("The laboratory specified for this pump is not one of your organization's active HI Laboratories.")
             }
 
-            const mcheck = await model_check(req, pump, req.participant, pumps_succeeded);
-            if (!mcheck.ok && !pump.pending_reasons) pump.pending_reasons = [];
+            if (pump.results.success) {
+                const mcheck = await model_check(req, pump, req.participant, pumps_succeeded);
+                if (!mcheck.ok && !pump.pending_reasons) pump.pending_reasons = [];
+            }
             if (pump.results.success && mcheck.individual_collide) {
                 pump.pending_reasons.push("This pump cannot be listed because there is already a pump listed with individual model number " + pump.individual_model)
             }
@@ -590,8 +592,8 @@ router.get('/pumps/:id', aw(async (req, res) => {
         pump_drawing: pump.doe ? pump.doe.toLowerCase() + ".png" : "",
         section_label: common.section_label,
         can_activate: await model_check(req, pump, req.participant),
-        label_svg: label_svg,
-        qr_svg: qr_svg
+            label_svg: label_svg,
+            qr_svg: qr_svg
     });
 
 }));
