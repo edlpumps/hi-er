@@ -83,6 +83,9 @@ block content
                             .row    
                                 .col.col-xs-6: label Motor Motor Model Number
                                 .col.col-xs-6: span #{certificate.motor.model}
+                            .row
+                                .col.col-xs-6: label Motor Type
+                                .col.col-xs-6: span #{certificate.motor.motor_type}
                             
                         if ( (certificate.calculation_type == '3-to-5' || certificate.calculation_type == '3-to-7') && pump.doe != 'st')
                             .row    

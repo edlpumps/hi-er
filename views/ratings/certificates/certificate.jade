@@ -43,18 +43,21 @@ block content
                         br
                         span Motor Model #: #{certificate.motor.model} 
                         br
-                        span Motor Nameplate Efficiency #: #{certificate.motor.efficiency} 
+                        span Motor Nameplate Efficiency: #{certificate.motor.efficiency} 
                         br
-                        span Motor Nameplate Power #: #{certificate.motor.power} 
+                        span Motor Nameplate Power: #{certificate.motor.power} 
+                        if certificate.motor.motor_type
+                                br
+                                span Motor Type: #{certificate.motor.motor_type} 
                 if certificate.vfd.model
                     p
                         span VFD Manufacturer:  #{certificate.vfd.manufacturer}
                         br
                         span VFD Model #: #{certificate.vfd.model} 
                         br
-                        span VFD Nameplate Efficiency #: #{certificate.vfd.efficiency} 
+                        span VFD Nameplate Efficiency: #{certificate.vfd.efficiency} 
                         br
-                        span VFD Nameplate Power #: #{certificate.vfd.power} 
+                        span VFD Nameplate Power: #{certificate.vfd.power} 
           .row
             .col.col-sm-6.text-center
                 div

@@ -247,6 +247,7 @@ router.post("/purchased/:transactionId", aw(async (req, res) => {
         for (let i = 0; i < c.quantity; i++) {
             const nextId = await req.getNextCertificateNumber();
             const cnumber = hashids.encode(nextId);
+
             const certificate = await req.Certificates.create({
                 packager: c.packager,
                 installation_site: c.installation_site,

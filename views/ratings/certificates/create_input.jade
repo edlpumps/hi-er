@@ -80,6 +80,13 @@ block content
                                 label(for='certificate[motor][power]') Extended Nameplate Power
                                 input.form-control(type='number', min='0', name='certificate[motor][power]', placeholder='Motor Nameplate Power', value=certificate.motor.power, required)
                 if (certificate.calculation_type == '3-to-7')
+                     .row
+                        .col.col-sm-6
+                            .form-group
+                                label(for='certificate[motor][motor_type]') Extended Motor Type
+                                select.form-control(name='certificate[motor][motor_type]', value=certificate.motor.motor_type, required)
+                                    option(value='open') Open
+                                    option(value='enclosed') Enclosed
                     hr
                 if ( (certificate.calculation_type == '3-to-7' || certificate.calculation_type == '4-to-7' || certificate.calculation_type == '5-to-7'))
                     .row

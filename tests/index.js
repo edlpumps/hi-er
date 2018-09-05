@@ -8,6 +8,7 @@ const Y4PPD4 = require('./certificate-testcases/Y4PPD4.json');
 const NQ693Q = require('./certificate-testcases/NQ693Q.json');
 const B47K95 = require('./certificate-testcases/B47K95.json');
 const N43EE4 = require('./certificate-testcases/N43EE4.json');
+const X4KK74 = require('./certificate-testcases/X4KK74.json');
 const assert_precision = (target, value, tolerance) => {
     const t = tolerance || 0.001;
     const diff = Math.abs(target - value);
@@ -83,6 +84,20 @@ describe('Input checks', function () {
         assert.equal(N43EE4.motor_power_rated, 50);
         assert.equal(N43EE4.motor_regulated, undefined);
         assert.equal(N43EE4.results.default_motor_efficiency, 93);
+        done();
+    });
+    it('X4KK74', function (done) {
+        assert.equal(X4KK74.doe, 'ESFM');
+        assert.equal(X4KK74.pei, 0.95);
+        assert.equal(X4KK74.results.per_std, 104.165021052632);
+        assert.equal(X4KK74.pei_baseline, 1.07904337594123);
+        assert.equal(X4KK74.speed, 1800);
+        assert.equal(X4KK74.driver_input_power.bep100, 102);
+        assert.equal(X4KK74.flow.bep100, 1986);
+        assert.equal(X4KK74.motor_power_rated, 125);
+        assert.equal(X4KK74.motor_regulated, undefined);
+        assert.equal(X4KK74.results.default_motor_efficiency, 95.4);
+        assert.equal(X4KK74.certificate_7.motor.motor_type, 'enclosed');
         done();
     });
 });
@@ -200,6 +215,35 @@ describe('Section 4-5 -> 7', function () {
 
 
 
+        });
+    }
+});
+
+describe('Section 3 -> 7', function () {
+    const tests = [X4KK74];
+    for (const pump of tests) {
+        describe(pump.rating_id, function (done) {
+            let c;
+            before(function (done) {
+                c = certcalc.calculate_3_to_7(pump, {
+                    motor: pump.certificate_7.motor
+                })
+                done();
+            });
+            it('minimum_efficiency_extended', function () {
+                assert_precision(c.minimum_efficiency_extended, pump.certificate_7.minimum_efficiency_extended)
+            });
+            it('minimum_efficiency_extended_check', function () {
+                console.log(c.minimum_efficiency_extended_check);
+                console.log(pump.certificate_7.minimum_efficiency_extended_check);
+                assert(c.minimum_efficiency_extended_check === pump.certificate_7.minimum_efficiency_extended_check)
+            });
+            it('default_efficiency_bands', function () {
+                assert_precision(c.default_efficiency_bands, pump.certificate_7.default_efficiency_bands)
+            });
+            it('motor_efficiency_equivalent_bands', function () {
+                assert_precision(c.motor_efficiency_equivalent_bands, pump.certificate_7.motor_efficiency_equivalent_bands)
+            });
         });
     }
 });

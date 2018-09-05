@@ -1,6 +1,6 @@
 const debug = require('debug')('cert-calc');
-
-
+const minimum_motors = require('./minimum_motor');
+const bands = require('./bands');
 assign_coefficient = (N, C) => {
     if (N <= 5) return C[0];
     else if (N <= 20) return C[1];
@@ -8,9 +8,38 @@ assign_coefficient = (N, C) => {
     else
         return C[3]
 }
+const band = (efficiency) => {
+    let result = -1;
+    for (const b of bands) {
+        if (b.key <= efficiency) {
+            result = b.band
+        } else {
+            break;
+        }
+    }
+    return result;
+}
+exports.calculate_3_to_7 = (pump, certificate) => {
+    debug(`Begin 3-7 certificate calculation on pump ${pump.rating_id}`)
+    const motor_lookup = `${certificate.motor.motor_type}${pump.doe.toUpperCase()}-${pump.motor_power_rated}-${pump.speed}`;
+    certificate.minimum_efficiency_extended = minimum_motors[motor_lookup];
+    if (pump.doe === 'st') {
+        certificate.minimum_efficiency_extended_check = true;
+    } else {
+        certificate.minimum_efficiency_extended_check = certificate.minimum_efficiency_extended <= certificate.motor.efficiency;
+    }
+    if (!certificate.minimum_efficiency_extended_check) {
+        return certificate;
+    }
+
+    const min_band = band(certificate.minimum_efficiency_extended);
+    const actual_band = band(certificate.motor.efficiency);
+    certificate.default_efficiency_bands = actual_band - min_band;
+    return certificate;
+}
 exports.calculate_4_5_to_7 = (pump) => {
     const certificate = {}
-    debug(`Begin 5-7 certificate calculation on pump ${pump.rating_id}`)
+    debug(`Begin 4/5-7 certificate calculation on pump ${pump.rating_id}`)
     //Full load nameplate motor losses
     certificate.full_load_nameplate_motor_losses = (pump.motor_power_rated / (pump.results.default_motor_efficiency / 100) - pump.motor_power_rated);
     certificate.full_load_default_motor_losses = (pump.motor_power_rated / (pump.results.default_motor_efficiency / 100) - pump.motor_power_rated);

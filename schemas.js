@@ -170,6 +170,7 @@ exports.init = function init(mongoose) {
             model: String,
             efficiency: Number,
             power: Number,
+            motor_type: String,
         },
         vfd: {
             manufacturer: String,
