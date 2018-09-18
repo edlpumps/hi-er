@@ -19,6 +19,28 @@ const band = (efficiency) => {
     }
     return result;
 }
+const band_number = (efficiency) => {
+    let result = -1;
+    let band_number = 0;
+    for (const b of bands) {
+        if (b.key <= efficiency) {
+            result = band_number
+        } else {
+            break;
+        }
+        band_number++;
+    }
+    return result;
+}
+const band_by_number = (number) => {
+    return bands[number];
+}
+
+const COEFF_A = [-0.4658, -1.3198, -1.5122, -0.8914];
+const COEFF_B = [1.4965, 2.9551, 3.0777, 2.8846];
+const COEFF_C = [0.5303, 0.1052, 0.1847, 0.2625];
+
+
 exports.calculate_3_to_7 = (pump, certificate) => {
     debug(`Begin 3-7 certificate calculation on pump ${pump.rating_id}`)
     const motor_lookup = `${certificate.motor.motor_type}${pump.doe.toUpperCase()}-${pump.motor_power_rated}-${pump.speed}`;
@@ -35,6 +57,51 @@ exports.calculate_3_to_7 = (pump, certificate) => {
     const min_band = band(certificate.minimum_efficiency_extended);
     const actual_band = band(certificate.motor.efficiency);
     certificate.default_efficiency_bands = actual_band - min_band;
+
+    if (pump.doe === 'st') {
+        certificate.motor_efficiency_equivalent_bands = pump.results.default_motor_efficiency;
+    } else {
+        const default_band_number = band_number(pump.results.default_motor_efficiency);
+        certificate.motor_efficiency_equivalent_bands = band_by_number(default_band_number + certificate.default_efficiency_bands).key;
+    }
+
+    const P = pump.driver_input_power.bep100;
+    const Q = pump.flow.bep100;
+    const R = pump.motor_power_rated;
+    const S = pump.results.default_motor_efficiency;
+    const Y = (R / (S / 100)) - R;
+    let Z = P / (R + Y);
+    if (Z > 1) Z = 1;
+
+    const AA = (-0.4508 * (Z * Z * Z)) + (1.2399 * (Z * Z)) - (0.4301 * Z) + 0.641;
+    const AB = AA * Y;
+    const AC = P - AB;
+    const AD = ((0.8 * Math.pow(0.25 * Q, 3) / Math.pow(Q, 3)) + (0.2 * 0.25 * Q / Q)) * AC;
+    const AE = ((0.8 * Math.pow(0.50 * Q, 3) / Math.pow(Q, 3)) + (0.2 * 0.50 * Q / Q)) * AC;
+    const AF = ((0.8 * Math.pow(0.75 * Q, 3) / Math.pow(Q, 3)) + (0.2 * 0.75 * Q / Q)) * AC;
+
+    let AG = Math.min(AD / R, 1);
+    let AH = Math.min(AE / R, 1);
+    let AI = Math.min(AF / R, 1);
+    let AJ = Math.min(AC / R, 1);
+
+    certificate.coeff_A = assign_coefficient(R, COEFF_A);
+    certificate.coeff_B = assign_coefficient(R, COEFF_B);
+    certificate.coeff_C = assign_coefficient(R, COEFF_C);
+
+
+    certificate.full_load_default_motor_losses = Y;
+    certificate.std_pump_input_to_motor_at_100_bep_flow = Z;
+    certificate.std_motor_part_load_loss_factor_at_100_bep = AA;
+    certificate.nameplate_motor_part_load_losses_at_100_bep = AB;
+    certificate.pump_input_power_at_100_bep = AC;
+    certificate.variable_load_pump_input_power_at_25_bep = AD;
+    certificate.variable_load_pump_input_power_at_50_bep = AE;
+    certificate.variable_load_pump_input_power_at_75_bep = AF;
+    certificate.motor_power_ratio_at_25_bep = AG;
+    certificate.motor_power_ratio_at_50_bep = AH;
+    certificate.motor_power_ratio_at_75_bep = AI;
+    certificate.motor_power_ratio_at_100_bep = AJ;
     return certificate;
 }
 exports.calculate_4_5_to_7 = (pump) => {
@@ -96,12 +163,10 @@ exports.calculate_4_5_to_7 = (pump) => {
 
     // Coefficient A, B, and C
     // =IF($N6<=5, -0.4658, IF($N6<=20,-1.3198, IF($N6<=50,-1.5122, IF($N6>50,-0.8914))))
-    const A = [-0.4658, -1.3198, -1.5122, -0.8914];
-    const B = [1.4965, 2.9551, 3.0777, 2.8846];
-    const C = [0.5303, 0.1052, 0.1847, 0.2625];
-    certificate.coeff_A = assign_coefficient(N, A);
-    certificate.coeff_B = assign_coefficient(N, B);
-    certificate.coeff_C = assign_coefficient(N, C);
+
+    certificate.coeff_A = assign_coefficient(N, COEFF_A);
+    certificate.coeff_B = assign_coefficient(N, COEFF_B);
+    certificate.coeff_C = assign_coefficient(N, COEFF_C);
 
     // Motor and control part load loss factor at 25% BEP
     certificate.motor_and_control_part_load_loss_factor_at_25_bep = (certificate.coeff_A * Y ** 2) + (certificate.coeff_B * Y) + certificate.coeff_C
