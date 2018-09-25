@@ -69,6 +69,7 @@ exports.calculate_3_to_7 = (pump, certificate) => {
     const Q = pump.flow.bep100;
     const R = pump.motor_power_rated;
     const S = pump.results.default_motor_efficiency;
+    const X = certificate.motor_efficiency_equivalent_bands;
     const Y = (R / (S / 100)) - R;
     let Z = P / (R + Y);
     if (Z > 1) Z = 1;
@@ -85,10 +86,17 @@ exports.calculate_3_to_7 = (pump, certificate) => {
     let AI = Math.min(AF / R, 1);
     let AJ = Math.min(AC / R, 1);
 
-    certificate.coeff_A = assign_coefficient(R, COEFF_A);
-    certificate.coeff_B = assign_coefficient(R, COEFF_B);
-    certificate.coeff_C = assign_coefficient(R, COEFF_C);
+    const AK = certificate.coeff_A = assign_coefficient(R, COEFF_A);
+    const AL = certificate.coeff_B = assign_coefficient(R, COEFF_B);
+    const AM = certificate.coeff_C = assign_coefficient(R, COEFF_C);
 
+    const AN = (AK * AG * AG) + AL * AG + AM;
+    const AO = (AK * AH * AH) + AL * AH + AM;
+
+    const AP = (AK * AI * AI) + AL * AI + AM;
+    const AQ = (AK * AJ * AJ) + AL * AJ + AM;
+
+    const AR = (R / (X / 100)) - R;
 
     certificate.full_load_default_motor_losses = Y;
     certificate.std_pump_input_to_motor_at_100_bep_flow = Z;
@@ -102,6 +110,32 @@ exports.calculate_3_to_7 = (pump, certificate) => {
     certificate.motor_power_ratio_at_50_bep = AH;
     certificate.motor_power_ratio_at_75_bep = AI;
     certificate.motor_power_ratio_at_100_bep = AJ;
+
+    certificate.motor_and_control_part_load_loss_factor_at_25_bep = AN;
+    certificate.motor_and_control_part_load_loss_factor_at_50_bep = AO;
+    certificate.motor_and_control_part_load_loss_factor_at_75_bep = AP;
+    certificate.motor_and_control_part_load_loss_factor_at_100_bep = AQ;
+
+    certificate.full_load_nameplate_motor_losses = AR;
+    const AS = certificate.motor_and_control_default_part_load_loss_at_25_bep = AN * AR;
+    const AT = certificate.motor_and_control_default_part_load_loss_at_50_bep = AO * AR;
+    const AU = certificate.motor_and_control_default_part_load_loss_at_75_bep = AP * AR;
+    const AV = certificate.motor_and_control_default_part_load_loss_at_100_bep = AQ * AR;
+
+    const AW = certificate.driver_power_input_to_motor_at_25_bep = AD + AS;
+    const AX = certificate.driver_power_input_to_motor_at_50_bep = AE + AT;
+    const AY = certificate.driver_power_input_to_motor_at_75_bep = AF + AU;
+    const AZ = certificate.driver_power_input_to_motor_at_100_bep = AC + AV;
+
+    certificate.variable_load_energy_rating = (0.25 * AW) +
+        (0.25 * AX) +
+        (0.25 * AY) +
+        (0.25 * AZ);
+
+    certificate.variable_load_energy_index = (certificate.variable_load_energy_rating / pump.results.per_std * 100) / 100;
+
+    certificate.energy_rating = Math.round((pump.pei_baseline - certificate.variable_load_energy_index) * 100);
+
     return certificate;
 }
 exports.calculate_4_5_to_7 = (pump) => {

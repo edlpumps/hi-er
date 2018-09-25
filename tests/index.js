@@ -297,7 +297,67 @@ describe('Section 3 -> 7', function () {
             })
             it('Coefficient C', function () {
                 assert_precision(c.coeff_C, pump.certificate_7.coeff_C)
-            })
+            });
+
+
+            it('Motor and control part load loss factor at 25% BEP', function () {
+                assert_precision(c.motor_and_control_part_load_loss_factor_at_25_bep, pump.certificate_7.motor_and_control_part_load_loss_factor_at_25_bep)
+            });
+            it('Motor and control part load loss factor at 50% BEP', function () {
+                assert_precision(c.motor_and_control_part_load_loss_factor_at_50_bep, pump.certificate_7.motor_and_control_part_load_loss_factor_at_50_bep)
+            });
+            it('Motor and control part load loss factor at 75% BEP', function () {
+                assert_precision(c.motor_and_control_part_load_loss_factor_at_75_bep, pump.certificate_7.motor_and_control_part_load_loss_factor_at_75_bep)
+            });
+            it('Motor and control part load loss factor at 100% BEP', function () {
+                assert_precision(c.motor_and_control_part_load_loss_factor_at_100_bep, pump.certificate_7.motor_and_control_part_load_loss_factor_at_100_bep)
+            });
+
+            it('Full load nameplate motor losses', function () {
+                assert_precision(c.full_load_nameplate_motor_losses, pump.certificate_7.full_load_nameplate_motor_losses)
+            });
+
+            it('Motor and control default part load loss at 25% BEP', function () {
+                assert_precision(c.motor_and_control_default_part_load_loss_at_25_bep, pump.certificate_7.motor_and_control_default_part_load_loss_at_25_bep)
+            });
+            it('Motor and control default part load loss at 50% BEP', function () {
+                assert_precision(c.motor_and_control_default_part_load_loss_at_50_bep, pump.certificate_7.motor_and_control_default_part_load_loss_at_50_bep)
+            });
+            it('Motor and control default part load loss at 75% BEP', function () {
+                assert_precision(c.motor_and_control_default_part_load_loss_at_75_bep, pump.certificate_7.motor_and_control_default_part_load_loss_at_75_bep)
+            });
+            it('Motor and control default part load loss at 100% BEP', function () {
+                assert_precision(c.motor_and_control_default_part_load_loss_at_100_bep, pump.certificate_7.motor_and_control_default_part_load_loss_at_100_bep)
+            });
+
+            it('Driver power input to motor at 25% BEP', function () {
+                assert_precision(c.driver_power_input_to_motor_at_25_bep, pump.certificate_7.driver_power_input_to_motor_at_25_bep)
+            });
+            it('Driver power input to motor at 50% BEP', function () {
+                assert_precision(c.driver_power_input_to_motor_at_50_bep, pump.certificate_7.driver_power_input_to_motor_at_50_bep)
+            });
+            it('Driver power input to motor at 75% BEP', function () {
+                assert_precision(c.driver_power_input_to_motor_at_75_bep, pump.certificate_7.driver_power_input_to_motor_at_75_bep)
+            });
+            it('Driver power input to motor at 100% BEP', function () {
+                assert_precision(c.driver_power_input_to_motor_at_100_bep, pump.certificate_7.driver_power_input_to_motor_at_100_bep)
+            });
+
+
+            it('Variable load Pump Energy Rating', function () {
+                assert_precision(c.variable_load_energy_rating, pump.certificate_7.variable_load_energy_rating)
+            });
+
+            it('Variable load Pump Energy Index', function () {
+                assert_precision(c.variable_load_energy_index, pump.certificate_7.variable_load_energy_index)
+            });
+
+            it('Energy Rating', function () {
+                assert_precision(c.energy_rating, pump.certificate_7.energy_rating)
+            });
+
+
+
         });
     }
 });
