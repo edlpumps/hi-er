@@ -40,7 +40,51 @@ const COEFF_A = [-0.4658, -1.3198, -1.5122, -0.8914];
 const COEFF_B = [1.4965, 2.9551, 3.0777, 2.8846];
 const COEFF_C = [0.5303, 0.1052, 0.1847, 0.2625];
 
+exports.calculate_3_to_5 = (pump, certificate) => {
+    debug(`Begin 3-5 certificate calculation on pump ${pump.rating_id}`)
+    const motor_lookup = `${certificate.motor.motor_type}${pump.doe.toUpperCase()}-${pump.motor_power_rated}-${pump.speed}`;
 
+    const T = minimum_motors[motor_lookup];
+
+    // START HERE...
+
+    certificate.minimum_efficiency_extended = T;
+    certificate.minimum_efficiency_extended_check = U;
+    certificate.default_efficiency_bands = V;
+    certificate.motor_efficiency_equivalent_bands = Z;
+    certificate.full_load_default_motor_losses = AA;
+    certificate.std_pump_input_to_motor_at_75_bep_flow = AB;
+    certificate.std_pump_input_to_motor_at_100_bep_flow = AC;
+    certificate.std_pump_input_to_motor_at_110_bep_flow = AD;
+    certificate.std_motor_part_load_loss_factor_at_75_bep = AE;
+    certificate.std_motor_part_load_loss_factor_at_100_bep = AF;
+    certificate.std_motor_part_load_loss_factor_at_110_bep = AG;
+
+    certificate.std_motor_part_load_loss_at_75_bep = AH;
+    certificate.std_motor_part_load_loss_at_100_bep = AI;
+    certificate.std_motor_part_load_loss_at_110_bep = AJ;
+
+    certificate.pump_input_power_at_75_bep = AK;
+    certificate.pump_input_power_at_100_bep = AL;
+    certificate.pump_input_power_at_110_bep = AM;
+    certificate.full_load_motor_losses_equivelant_bands_above_normal = AN;
+    certificate.pump_input_to_motor_power_ratio_at_75_bep = AO;
+    certificate.pump_input_to_motor_power_ratio_at_100_bep = AP;
+    certificate.pump_input_to_motor_power_ratio_at_110_bep = AQ;
+    certificate.motor_part_load_loss_factor_at_75_bep = AR;
+    certificate.motor_part_load_loss_factor_at_100_bep = AS;
+    certificate.motor_part_load_loss_factor_at_110_bep = AT;
+    certificate.nameplate_motor_part_load_losses_at_75_bep = AU;
+    certificate.nameplate_motor_part_load_losses_at_100_bep = AV;
+    certificate.nameplate_motor_part_load_losses_at_110_bep = AW;
+    certificate.driver_power_input_to_motor_at_75_bep = AX;
+    certificate.driver_power_input_to_motor_at_100_bep = AY;
+    certificate.driver_power_input_to_motor_at_110_bep = AZ;
+    certificate.constant_load_energy_rating = BA;
+    certificate.constant_load_energy_index = BB;
+    certificate.energy_rating = BD;
+    return certificate;
+}
 exports.calculate_3_to_7 = (pump, certificate) => {
     debug(`Begin 3-7 certificate calculation on pump ${pump.rating_id}`)
     const motor_lookup = `${certificate.motor.motor_type}${pump.doe.toUpperCase()}-${pump.motor_power_rated}-${pump.speed}`;

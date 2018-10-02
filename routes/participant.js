@@ -592,8 +592,8 @@ router.get('/pumps/:id', aw(async (req, res) => {
         pump_drawing: pump.doe ? pump.doe.toLowerCase() + ".png" : "",
         section_label: common.section_label,
         can_activate: await model_check(req, pump, req.participant),
-            label_svg: label_svg,
-            qr_svg: qr_svg
+        label_svg: label_svg,
+        qr_svg: qr_svg
     });
 
 }));
@@ -904,6 +904,7 @@ router.post('/api/labs/:id', function (req, res) {
 
     var respond = function (err) {
         if (err) {
+            console.log(err);
             res.status(500).send({
                 error: err
             });
