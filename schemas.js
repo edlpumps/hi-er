@@ -122,6 +122,8 @@ exports.init = function init(mongoose) {
             postal: String,
             country: String
         }
+    }, {
+        usePushEach: true
     })
     var labs = mongoose.model('labs', lab_schema, "labs");
 
@@ -133,6 +135,8 @@ exports.init = function init(mongoose) {
         recipients: [String],
         last_email_date: Date,
         interval_days: Number
+    }, {
+        usePushEach: true
     });
     var subscribers = mongoose.model('subscribers', subscriber_schema, "subscribers");
     exports.Subscribers = subscribers;
@@ -140,6 +144,8 @@ exports.init = function init(mongoose) {
     const certificateTransaction = new Schema({
         date: Date,
         state: String
+    }, {
+        usePushEach: true
     })
 
     var certificate_transactions = mongoose.model('certificate_transactions', certificateTransaction, "certificate_transactions");
@@ -185,6 +191,8 @@ exports.init = function init(mongoose) {
             type: Schema.Types.ObjectId,
             ref: 'certificate_transactions'
         }
+    }, {
+        usePushEach: true
     });
 
 
@@ -313,6 +321,8 @@ exports.init = function init(mongoose) {
             }
         }],
         results: Schema.Types.Mixed
+    }, {
+        usePushEach: true
     });
 
 
@@ -353,7 +363,9 @@ exports.init = function init(mongoose) {
 
 
 
-    var participants = mongoose.model('participants', {
+
+
+    const participant_schema = new Schema({
         name: String,
         address: {
             street: String,
@@ -389,21 +401,28 @@ exports.init = function init(mongoose) {
                 default: "No Account"
             }
         }
+    }, {
+        usePushEach: true
+    });
 
 
-    }, "participants");
+    var participants = mongoose.model('participants', participant_schema, "participants");
 
     exports.Participants = participants;
 
 
-    var label = mongoose.model('labels', {
+    const label_schema = new Schema({
         load: String,
         speed: Number,
         doe: String,
         max: Number,
         min: Number,
         date: Date
-    }, "labels");
+    }, {
+        usePushEach: true
+    })
+
+    var label = mongoose.model('labels', label_schema, "labels");
 
     exports.Labels = label;
 
