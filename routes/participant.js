@@ -516,13 +516,14 @@ router.post("/pumps/upload", get_labels, aw(async (req, res) => {
             if (pump.results.success) {
                 const mcheck = await model_check(req, pump, req.participant, pumps_succeeded);
                 if (!mcheck.ok && !pump.pending_reasons) pump.pending_reasons = [];
+                if (mcheck.individual_collide) {
+                    pump.pending_reasons.push("This pump cannot be listed because there is already a pump listed with individual model number " + pump.individual_model)
+                }
+                if (mcheck.basic_collide) {
+                    pump.pending_reasons.push("This pump cannot be listed because there are already pump(s) listed under this basic model (" + pump.basic_model + ") with a conflicting Energy Rating value")
+                }
             }
-            if (pump.results.success && mcheck.individual_collide) {
-                pump.pending_reasons.push("This pump cannot be listed because there is already a pump listed with individual model number " + pump.individual_model)
-            }
-            if (pump.results.success && mcheck.basic_collide) {
-                pump.pending_reasons.push("This pump cannot be listed because there are already pump(s) listed under this basic model (" + pump.basic_model + ") with a conflicting Energy Rating value")
-            }
+
             if (pump.results.success) {
                 pumps_succeeded.push(pump);
             } else {
