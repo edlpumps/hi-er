@@ -135,7 +135,7 @@
         "driver_power_input_to_motor_at_75_bep": 24.3757,
         "driver_power_input_to_motor_at_100_bep": 47.3142,
         "variable_load_energy_rating": 21.538,
-        "variable_load_energy_index": 0.52403,
+        "variable_load_energy_index": 0.52,
         "energy_rating": 62
     }
 }

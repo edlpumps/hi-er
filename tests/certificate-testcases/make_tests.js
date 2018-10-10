@@ -34,7 +34,8 @@ for (const column of columns3) {
 }
 
 const calc3_5 = sheets.Sheets['III_V'];
-const cases3_5 = new Map();
+const calc3_7 = sheets.Sheets['III_VII'];
+
 for (let r = 6; r <= 16; r++) {
     const row = new RowAdapter(calc3_5, r);
     const rating = row.val('A');
@@ -81,6 +82,53 @@ for (let r = 6; r <= 16; r++) {
     pump.certificate_5 = section5;
 }
 
+for (let r = 6; r <= 16; r++) {
+    const row = new RowAdapter(calc3_7, r);
+    const rating = row.val('A');
+    const pump = Section3.get(rating);
+    const section7 = {}; //certificate_5
+    section7.motor = {
+        motor_type: row.val('G'),
+        efficiency: row.val('H'),
+        power: row.val('F')
+    }
+    section7.minimum_efficiency_extended = row.val('U');
+    section7.minimum_efficiency_extended_check = row.val('V') == 'Proceed';
+    section7.default_efficiency_bands = row.val('W');
+    section7.motor_efficiency_equivalent_bands = row.val('X');
+    section7.full_load_default_motor_losses = row.val('Y');
+    section7.std_pump_input_to_motor_at_100_bep_flow = row.val('Z')
+    section7.std_motor_part_load_loss_factor_at_100_bep = row.val('AA');
+    section7.std_motor_part_load_loss_at_100_bep = row.val('AB');
+    section7.pump_input_power_at_100_bep = row.val('AC');
+    section7.variable_load_pump_input_power_at_25_bep = row.val('AD');
+    section7.variable_load_pump_input_power_at_50_bep = row.val('AE');
+    section7.variable_load_pump_input_power_at_75_bep = row.val('AF');
+    section7.motor_power_ratio_at_25_bep = row.val('AG');
+    section7.motor_power_ratio_at_50_bep = row.val('AH');
+    section7.motor_power_ratio_at_75_bep = row.val('AI');
+    section7.motor_power_ratio_at_100_bep = row.val('AJ');
+    section7.coeff_A = row.val('AK');
+    section7.coeff_B = row.val('AL');
+    section7.coeff_C = row.val('AM');
+    section7.motor_and_control_part_load_loss_factor_at_25_bep = row.val('AN');
+    section7.motor_and_control_part_load_loss_factor_at_50_bep = row.val('AO');
+    section7.motor_and_control_part_load_loss_factor_at_75_bep = row.val('AP');
+    section7.motor_and_control_part_load_loss_factor_at_100_bep = row.val('AQ');
+    section7.full_load_nameplate_motor_losses = row.val('AR');
+    section7.motor_and_control_default_part_load_loss_at_25_bep = row.val('AS');
+    section7.motor_and_control_default_part_load_loss_at_50_bep = row.val('AT');
+    section7.motor_and_control_default_part_load_loss_at_75_bep = row.val('AU');
+    section7.motor_and_control_default_part_load_loss_at_100_bep = row.val('AV');
+    section7.driver_power_input_to_motor_at_25_bep = row.val('AW');
+    section7.driver_power_input_to_motor_at_50_bep = row.val('AX');
+    section7.driver_power_input_to_motor_at_75_bep = row.val('AY');
+    section7.driver_power_input_to_motor_at_100_bep = row.val('AZ');
+    section7.variable_load_energy_rating = row.val('BA');
+    section7.variable_load_energy_index = Math.round(row.val('BB') * 100) / 100;
+    section7.energy_rating = Math.round(row.val('BC'));
+    pump.certificate_7 = section7;
+}
 
 for (const pump of Section3.values()) {
     const filename = `./_${pump.rating_id}.json`;
