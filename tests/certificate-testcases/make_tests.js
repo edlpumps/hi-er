@@ -76,8 +76,8 @@ for (let r = 6; r <= 16; r++) {
     section5.driver_power_input_to_motor_at_100_bep = row.val('AY');
     section5.driver_power_input_to_motor_at_110_bep = row.val('AZ');
     section5.constant_load_energy_rating = row.val('BA');
-    section5.constant_load_energy_index = row.val('BB');
-    section5.energy_rating = row.val('BD');
+    section5.constant_load_energy_index = Math.round(row.val('BB') * 100) / 100;
+    section5.energy_rating = Math.round(row.val('BD'));
     pump.certificate_5 = section5;
 }
 

@@ -15,6 +15,7 @@
     "per_cl": 48.8789824619107,
     "success": 1,
     "section": 3,
+    "per_std": 54.289837875203,
     "pei_baseline": 1.12467134911685,
     "energy_rating": 22,
     "energy_savings": "17",
@@ -23,7 +24,6 @@
     "standard_c_value": 133.84,
     "hyd_power_bep110": 34.8009354098887,
     "hyd_power_bep100": 32.7221518798849,
-    "per_std (expected)": 54.289837875203,
     "std_pump_efficiency": 62.8209050138985,
     "per_std_calculated ": 54.2898378752028,
     "full_load_motor_losses": 5.12820512820514,
@@ -38,32 +38,32 @@
     "std_part_load_loss_bep110": 4.23386815985085,
     "std_part_load_loss_bep100": 4.04786068262041,
     "std_pump_power_input_bep75": 42.6127987808882,
-    "std_pump_power_input_bep110": 56.2406716131698,
-    "std_pump_power_input_bep100": 52.0879982111774,
     "std_motor_power_ratio_bep75": 0.568170650411843,
-    "std_motor_power_ratio_bep100": 0.694506642815699,
+    "std_pump_power_input_bep100": 52.0879982111774,
+    "std_pump_power_input_bep110": 56.2406716131698,
     "std_driver_power_input_bep75": 46.2754035390106,
+    "std_motor_power_ratio_bep100": 0.694506642815699,
     "std_motor_power_ratio_bep110": 0.749875621508931,
     "std_driver_power_input_bep100": 56.1358588937978,
+    "baseline_part_load_loss_bep75": 3.87822184267338,
     "std_driver_power_input_bep110": 60.4745397730207,
-    "baseline_pump_power_input_bep75": 48.1029838404603,
+    "baseline_part_load_loss_bep110": 4.57403220614153,
+    "baseline_part_load_loss_bep100": 4.35214324450007,
     "std_part_load_loss_factor_bep75": 0.714207927833851,
-    "baseline_pump_power_input_bep100": 58.7989573066471,
+    "baseline_pump_power_input_bep75": 48.1029838404603,
     "baseline_pump_power_input_bep110": 63.4866564783884,
+    "baseline_motor_power_ratio_bep75": 0.641373117872803,
+    "baseline_pump_power_input_bep100": 58.7989573066471,
     "std_part_load_loss_factor_bep100": 0.789332833110979,
     "std_part_load_loss_factor_bep110": 0.825604291170914,
-    "baseline_part_load_loss_bep75, 65": 3.87822184267338,
-    "baseline_part_load_loss_bep100, 90": 4.35214324450007,
-    "baseline_part_load_loss_bep110, 100": 4.57403220614153,
+    "baseline_motor_power_ratio_bep100": 0.783986097421961,
+    "baseline_driver_power_input_bep75": 51.9812056831336,
+    "baseline_motor_power_ratio_bep110": 0.846488753045179,
+    "baseline_driver_power_input_bep100": 63.1511005511472,
+    "baseline_driver_power_input_bep110": 68.0606886845299,
     "baseline_part_load_loss_factor_bep75": 0.756253259321308,
-    "baseline_motor_power_ratio_bep75, 65": 0.641373117872803,
-    "baseline_motor_power_ratio_bep100, 90": 0.783986097421961,
     "baseline_part_load_loss_factor_bep100": 0.848667932677511,
-    "baseline_driver_power_input_bep75, 65": 51.9812056831336,
-    "baseline_part_load_loss_factor_bep110": 0.891936280197597,
-    "baseline_motor_power_ratio_bep110, 100": 0.846488753045179,
-    "baseline_driver_power_input_bep100, 90": 63.1511005511472,
-    "baseline_driver_power_input_bep110, 100": 68.0606886845299
+    "baseline_part_load_loss_factor_bep110": 0.891936280197597
   },
   "flow": {
     "bep75": 257.78225712676,
@@ -75,10 +75,15 @@
   "pei_baseline": 1.12467134911685,
   "energy_rating": 22,
   "configuration": "bare",
+  "head": {
+    "bep75, 65": 389.04289462043,
+    "bep100, 90": 362.673617484511,
+    "bep110, 100": 347.14229873852
+  },
   "laboratory": {
     "_id": "582f3c33d2a3d000114660e5",
-    "name": "Xylem Inc. - Applied Water Systems",
     "code": "000102",
+    "name": "Xylem Inc. - Applied Water Systems",
     "address": {
       "city": "Seneca Falls",
       "state": "NY",
@@ -87,18 +92,13 @@
     }
   },
   "energy_savings": 17,
-  "head": {
-    "bep75, 65": 389.04289462043,
-    "bep100, 90": 362.673617484511,
-    "bep110, 100": 347.14229873852
-  },
   "motor_regulated": 0,
   "individual_model": "10",
   "motor_power_rated": 75,
   "driver_input_power": {
-    "bep75, 65": 37.8928434075323,
-    "bep100, 90": 51.6156895012263,
-    "bep110, 100": 57.1430796382283
+    "bep75": 37.8928434075323,
+    "bep110": 57.1430796382283,
+    "bep100": 51.6156895012263
   },
   "certificate_5": {
     "motor": {
@@ -137,7 +137,7 @@
     "driver_power_input_to_motor_at_100_bep": 49.9603668257336,
     "driver_power_input_to_motor_at_110_bep": 55.3960374555634,
     "constant_load_energy_rating": 47.2577064510518,
-    "constant_load_energy_index": 0.870470576089838,
-    "energy_rating": 25.4200773027015
+    "constant_load_energy_index": 0.87,
+    "energy_rating": 25
   }
 }

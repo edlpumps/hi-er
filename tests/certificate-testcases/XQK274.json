@@ -15,6 +15,7 @@
     "per_cl": 7.249275,
     "success": 1,
     "section": 3,
+    "per_std": 8.52855882352941,
     "pei_baseline": 1.14560446974294,
     "energy_rating": 30,
     "energy_savings": "2",
@@ -23,7 +24,6 @@
     "standard_c_value": 130.99,
     "hyd_power_bep110": 3.19559453993933,
     "hyd_power_bep100": 3.09640040444894,
-    "per_std (expected)": 8.52855882352941,
     "std_pump_efficiency": 40.4778562174494,
     "per_std_calculated ": 8.37441174996569,
     "full_load_motor_losses": 0.974576271186442,
@@ -38,32 +38,32 @@
     "std_part_load_loss_bep110": 0.974576271186442,
     "std_part_load_loss_bep100": 0.974576271186442,
     "std_pump_power_input_bep75": 6.61820703928294,
-    "std_pump_power_input_bep110": 8.01489683335432,
-    "std_pump_power_input_bep100": 7.64961560171294,
     "std_motor_power_ratio_bep75": 0.882427605237726,
-    "std_motor_power_ratio_bep100": 1,
+    "std_pump_power_input_bep100": 7.64961560171294,
+    "std_pump_power_input_bep110": 8.01489683335432,
     "std_driver_power_input_bep75": 7.51208284723938,
+    "std_motor_power_ratio_bep100": 1,
     "std_motor_power_ratio_bep110": 1,
     "std_driver_power_input_bep100": 8.62419187289938,
+    "baseline_part_load_loss_bep75": 0.974576271186442,
     "std_driver_power_input_bep110": 8.98947310454076,
-    "baseline_pump_power_input_bep75": 7.68082852579055,
+    "baseline_part_load_loss_bep110": 0.974576271186442,
+    "baseline_part_load_loss_bep100": 0.974576271186442,
     "std_part_load_loss_factor_bep75": 0.917194307294431,
-    "baseline_pump_power_input_bep100": 8.87784038429465,
+    "baseline_pump_power_input_bep75": 7.68082852579055,
     "baseline_pump_power_input_bep110": 9.30177128994232,
+    "baseline_motor_power_ratio_bep75": 1,
+    "baseline_pump_power_input_bep100": 8.87784038429465,
     "std_part_load_loss_factor_bep100": 1,
     "std_part_load_loss_factor_bep110": 1,
-    "baseline_part_load_loss_bep75, 65": 0.974576271186442,
-    "baseline_part_load_loss_bep100, 90": 0.974576271186442,
-    "baseline_part_load_loss_bep110, 100": 0.974576271186442,
+    "baseline_motor_power_ratio_bep100": 1,
+    "baseline_driver_power_input_bep75": 8.655404796977,
+    "baseline_motor_power_ratio_bep110": 1,
+    "baseline_driver_power_input_bep100": 9.85241665548109,
+    "baseline_driver_power_input_bep110": 10.2763475611288,
     "baseline_part_load_loss_factor_bep75": 1,
-    "baseline_motor_power_ratio_bep75, 65": 1,
-    "baseline_motor_power_ratio_bep100, 90": 1,
     "baseline_part_load_loss_factor_bep100": 1,
-    "baseline_driver_power_input_bep75, 65": 8.655404796977,
-    "baseline_part_load_loss_factor_bep110": 1,
-    "baseline_motor_power_ratio_bep110, 100": 1,
-    "baseline_driver_power_input_bep100, 90": 9.85241665548109,
-    "baseline_driver_power_input_bep110, 100": 10.2763475611288
+    "baseline_part_load_loss_factor_bep110": 1
   },
   "flow": {
     "bep75": 47.7,
@@ -75,10 +75,15 @@
   "pei_baseline": 1.14560446974294,
   "energy_rating": 30,
   "configuration": "bare",
+  "head": {
+    "bep75, 65": 210.4,
+    "bep100, 90": 192.6,
+    "bep110, 100": 180.7
+  },
   "laboratory": {
     "_id": "582f3be7d2a3d000114660e3",
-    "name": "Crane Pumps & Systems",
     "code": "000104",
+    "name": "Crane Pumps & Systems",
     "address": {
       "city": "Piqua",
       "state": "OH",
@@ -87,18 +92,13 @@
     }
   },
   "energy_savings": 2,
-  "head": {
-    "bep75, 65": 210.4,
-    "bep100, 90": 192.6,
-    "bep110, 100": 180.7
-  },
   "motor_regulated": 0,
   "individual_model": "1P",
   "motor_power_rated": 7.5,
   "driver_input_power": {
-    "bep75, 65": 6.57,
-    "bep100, 90": 7.42,
-    "bep110, 100": 7.76
+    "bep75": 6.57,
+    "bep110": 7.76,
+    "bep100": 7.42
   },
   "certificate_5": {
     "motor": {
@@ -137,7 +137,7 @@
     "driver_power_input_to_motor_at_100_bep": 7.09158036425075,
     "driver_power_input_to_motor_at_110_bep": 7.42211154496142,
     "constant_load_energy_rating": 6.92550393744152,
-    "constant_load_energy_index": 0.812036837728641,
-    "energy_rating": 33.35676320143
+    "constant_load_energy_index": 0.81,
+    "energy_rating": 33
   }
 }

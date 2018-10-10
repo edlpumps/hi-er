@@ -75,9 +75,9 @@
     "active_admin": "1",
     "pending": "1",
     "driver_input_power": {
-        "bep75": 52.8,
+        "bep75": 86.9,
         "bep100": 102,
-        "bep110": 55.6
+        "bep110": 108
     },
     "head": {
         "bep100": 424.429761562769,
@@ -102,7 +102,46 @@
     "individual_model": "B1.1",
     "bowl_diameter": "",
 
-
+    "certificate_5": {
+        "motor": {
+            "motor_type": "enclosed",
+            "efficiency": 98.4,
+            "power": 100
+        },
+        "minimum_efficiency_extended": 95.4,
+        "minimum_efficiency_extended_check": true,
+        "default_efficiency_bands": 11,
+        "motor_efficiency_equivalent_bands": 98.4,
+        "full_load_default_motor_losses": 6.02725366876308,
+        "std_pump_input_to_motor_at_75_bep_flow": 0.6632208,
+        "std_pump_input_to_motor_at_100_bep_flow": 0.778464,
+        "std_pump_input_to_motor_at_110_bep_flow": 0.824256,
+        "std_motor_part_load_loss_factor_at_75_bep": 0.769623554452316,
+        "std_motor_part_load_loss_factor_at_100_bep": 0.844903012431225,
+        "std_motor_part_load_loss_factor_at_110_bep": 0.876425990902218,
+        "std_motor_part_load_loss_at_75_bep": 4.6387163921392,
+        "std_motor_part_load_loss_at_100_bep": 5.09244478142508,
+        "std_motor_part_load_loss_at_110_bep": 5.28244176906471,
+        "pump_input_power_at_75_bep": 82.2612836078608,
+        "pump_input_power_at_100_bep": 96.9075552185749,
+        "pump_input_power_at_110_bep": 102.717558230935,
+        "full_load_motor_losses_equivelant_bands_above_normal": 2.03252032520324,
+        "pump_input_to_motor_power_ratio_at_75_bep": 0.658090268862886,
+        "pump_input_to_motor_power_ratio_at_100_bep": 0.775260441748599,
+        "pump_input_to_motor_power_ratio_at_110_bep": 0.821740465847482,
+        "motor_part_load_loss_factor_at_75_bep": 0.766453325549768,
+        "motor_part_load_loss_factor_at_100_bep": 0.842724053936527,
+        "motor_part_load_loss_factor_at_110_bep": 0.874678312232758,
+        "nameplate_motor_part_load_losses_at_75_bep": 1.55783196249952,
+        "nameplate_motor_part_load_losses_at_100_bep": 1.71285376816366,
+        "nameplate_motor_part_load_losses_at_110_bep": 1.77780144762754,
+        "driver_power_input_to_motor_at_75_bep": 83.8191155703603,
+        "driver_power_input_to_motor_at_100_bep": 98.6204089867386,
+        "driver_power_input_to_motor_at_110_bep": 104.495359678563,
+        "constant_load_energy_rating": 95.6353969157461,
+        "constant_load_energy_index": 0.92,
+        "energy_rating": 16
+    },
     "certificate_7": {
         "motor": {
             "motor_type": "enclosed",

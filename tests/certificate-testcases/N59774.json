@@ -8,7 +8,7 @@
     "diameter": "7",
     "section": "3",
     "stages": "1",
-    "speed": "180",
+    "speed": "1800",
     "motor_power_rated": 1.5,
     "pei": "0.89",
     "results": {
@@ -43,7 +43,7 @@
         "baseline_pump_power_input_bep75": 1.12837446911492,
         "baseline_pump_efficiency": 33.0369606334503,
         "baseline_c_value": 134.99,
-        "per_std_calculated": 1.25539527040934,
+        "per_std_calculated": 1.23208651685393,
         "std_driver_power_input_bep110": 1.36161566624179,
         "std_driver_power_input_bep100": 1.2773629315206,
         "std_driver_power_input_bep75": 1.12758386971237,
@@ -62,7 +62,7 @@
         "std_pump_efficiency": 39.1769606334503,
         "standard_c_value": 128.85,
         "pei": 0.89,
-        "per_std": 1.25539527040934,
+        "per_std": 1.23208651685393,
         "per_cl": 1.096557,
         "full_load_motor_losses": 0.234104046242775,
         "default_motor_efficiency": 86.5,
@@ -77,9 +77,10 @@
     "active_admin": "1",
     "pending": "1",
     "driver_input_power": {
-        "bep75": 1.12758386971237,
-        "bep100": 1.2773629315206,
-        "bep110": 1.36161566624179
+        "bep75": 1,
+        "bep100": 1.12,
+        "bep110": 1.17
+
 
 
 
