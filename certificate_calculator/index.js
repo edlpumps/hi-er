@@ -42,11 +42,54 @@ const COEFF_C = [0.5303, 0.1052, 0.1847, 0.2625];
 
 exports.calculate_3_to_5 = (pump, certificate) => {
     debug(`Begin 3-5 certificate calculation on pump ${pump.rating_id}`)
-    const motor_lookup = `${certificate.motor.motor_type}${pump.doe.toUpperCase()}-${pump.motor_power_rated}-${pump.speed}`;
-
+    const motor_lookup = `${certificate.motor.motor_type}${pump.doe.toUpperCase()}-${certificate.motor.power}-${pump.speed}`;
+    const L = pump.driver_input_power.bep75;
+    const M = pump.driver_input_power.bep100;
+    const N = pump.driver_input_power.bep110;
+    const O = pump.motor_power_rated;
+    const P = pump.results.default_motor_efficiency;
     const T = minimum_motors[motor_lookup];
+    const U = T < certificate.motor.efficiency;
 
-    // START HERE...
+    const min_band = band(T);
+    const actual_band = band(certificate.motor.efficiency);
+    const V = actual_band - min_band;
+
+    const default_band_number = band_number(pump.results.default_motor_efficiency);
+    const Z = band_by_number(default_band_number + V).key;
+
+    const AA = (O / (P / 100)) - O;
+    const AB = Math.min(1, L / (O + AA));
+    const AC = Math.min(1, M / (O + AA));
+    const AD = Math.min(1, N / (O + AA));
+    const AE = (-0.4508 * (AB * AB * AB)) + (1.2399 * (AB * AB)) - (0.4301 * AB) + 0.641;
+    const AF = (-0.4508 * (AC * AC * AC)) + (1.2399 * (AC * AC)) - (0.4301 * AC) + 0.641;
+    const AG = (-0.4508 * (AD * AD * AD)) + (1.2399 * (AD * AD)) - (0.4301 * AD) + 0.641;
+    const AH = AA * AE;
+    const AI = AA * AF;
+    const AJ = AA * AG;
+    const AK = L - AH;
+    const AL = M - AI;
+    const AM = N - AJ;
+    const AN = (O / (Z / 100)) - O;
+    const AO = Math.min(1, AK / O);
+    const AP = Math.min(1, AL / O);
+    const AQ = Math.min(1, AM / O);
+    const AR = (-0.4508 * (AO * AO * AO)) + (1.2399 * (AO * AO)) - (0.4301 * AO) + 0.641;
+    const AS = (-0.4508 * (AP * AP * AP)) + (1.2399 * (AP * AP)) - (0.4301 * AP) + 0.641;
+    const AT = (-0.4508 * (AQ * AQ * AQ)) + (1.2399 * (AQ * AQ)) - (0.4301 * AQ) + 0.641;
+    const AU = AR * AN;
+    const AV = AS * AN;
+    const AW = AT * AN;
+    const AX = AK + AU;
+    const AY = AL + AV;
+    const AZ = AM + AW;
+
+    const BA = 0.3333 * AX + 0.3333 * AY + 0.3333 * AZ;
+    const pei = BA / pump.results.per_std;
+    const BB = Math.round(pei * 100) / 100;
+
+    const BD = Math.round((pump.results.pei_baseline - pei) * 100);
 
     certificate.minimum_efficiency_extended = T;
     certificate.minimum_efficiency_extended_check = U;
@@ -67,19 +110,24 @@ exports.calculate_3_to_5 = (pump, certificate) => {
     certificate.pump_input_power_at_75_bep = AK;
     certificate.pump_input_power_at_100_bep = AL;
     certificate.pump_input_power_at_110_bep = AM;
+
     certificate.full_load_motor_losses_equivelant_bands_above_normal = AN;
+
     certificate.pump_input_to_motor_power_ratio_at_75_bep = AO;
     certificate.pump_input_to_motor_power_ratio_at_100_bep = AP;
     certificate.pump_input_to_motor_power_ratio_at_110_bep = AQ;
+
     certificate.motor_part_load_loss_factor_at_75_bep = AR;
     certificate.motor_part_load_loss_factor_at_100_bep = AS;
     certificate.motor_part_load_loss_factor_at_110_bep = AT;
     certificate.nameplate_motor_part_load_losses_at_75_bep = AU;
     certificate.nameplate_motor_part_load_losses_at_100_bep = AV;
     certificate.nameplate_motor_part_load_losses_at_110_bep = AW;
+
     certificate.driver_power_input_to_motor_at_75_bep = AX;
     certificate.driver_power_input_to_motor_at_100_bep = AY;
     certificate.driver_power_input_to_motor_at_110_bep = AZ;
+
     certificate.constant_load_energy_rating = BA;
     certificate.constant_load_energy_index = BB;
     certificate.energy_rating = BD;
@@ -87,32 +135,33 @@ exports.calculate_3_to_5 = (pump, certificate) => {
 }
 exports.calculate_3_to_7 = (pump, certificate) => {
     debug(`Begin 3-7 certificate calculation on pump ${pump.rating_id}`)
-    const motor_lookup = `${certificate.motor.motor_type}${pump.doe.toUpperCase()}-${pump.motor_power_rated}-${pump.speed}`;
+    const motor_lookup = `${certificate.motor.motor_type}${pump.doe.toUpperCase()}-${certificate.motor.power}-${pump.speed}`;
     certificate.minimum_efficiency_extended = minimum_motors[motor_lookup];
-    if (pump.doe === 'st') {
+    if (pump.doe.toLowerCase() === 'st') {
         certificate.minimum_efficiency_extended_check = true;
+        certificate.minimum_efficiency_extended = '-';
     } else {
         certificate.minimum_efficiency_extended_check = certificate.minimum_efficiency_extended <= certificate.motor.efficiency;
     }
+
     if (!certificate.minimum_efficiency_extended_check) {
         return certificate;
     }
-
+    const P = pump.load120 ? pump.driver_input_power.bep100 : pump.driver_input_power.bep110;
+    const Q = pump.flow.bep100;
+    const R = pump.motor_power_rated;
+    const S = pump.results.default_motor_efficiency;
     const min_band = band(certificate.minimum_efficiency_extended);
     const actual_band = band(certificate.motor.efficiency);
     certificate.default_efficiency_bands = actual_band - min_band;
-
-    if (pump.doe === 'st') {
+    if (pump.doe.toLowerCase() === 'st') {
+        certificate.default_efficiency_bands = '-';
         certificate.motor_efficiency_equivalent_bands = pump.results.default_motor_efficiency;
     } else {
         const default_band_number = band_number(pump.results.default_motor_efficiency);
         certificate.motor_efficiency_equivalent_bands = band_by_number(default_band_number + certificate.default_efficiency_bands).key;
     }
 
-    const P = pump.driver_input_power.bep100;
-    const Q = pump.flow.bep100;
-    const R = pump.motor_power_rated;
-    const S = pump.results.default_motor_efficiency;
     const X = certificate.motor_efficiency_equivalent_bands;
     const Y = (R / (S / 100)) - R;
     let Z = P / (R + Y);
@@ -124,7 +173,6 @@ exports.calculate_3_to_7 = (pump, certificate) => {
     const AD = ((0.8 * Math.pow(0.25 * Q, 3) / Math.pow(Q, 3)) + (0.2 * 0.25 * Q / Q)) * AC;
     const AE = ((0.8 * Math.pow(0.50 * Q, 3) / Math.pow(Q, 3)) + (0.2 * 0.50 * Q / Q)) * AC;
     const AF = ((0.8 * Math.pow(0.75 * Q, 3) / Math.pow(Q, 3)) + (0.2 * 0.75 * Q / Q)) * AC;
-
     let AG = Math.min(AD / R, 1);
     let AH = Math.min(AE / R, 1);
     let AI = Math.min(AF / R, 1);
@@ -145,6 +193,7 @@ exports.calculate_3_to_7 = (pump, certificate) => {
     certificate.full_load_default_motor_losses = Y;
     certificate.std_pump_input_to_motor_at_100_bep_flow = Z;
     certificate.std_motor_part_load_loss_factor_at_100_bep = AA;
+
     certificate.nameplate_motor_part_load_losses_at_100_bep = AB;
     certificate.pump_input_power_at_100_bep = AC;
     certificate.variable_load_pump_input_power_at_25_bep = AD;
@@ -176,9 +225,10 @@ exports.calculate_3_to_7 = (pump, certificate) => {
         (0.25 * AY) +
         (0.25 * AZ);
 
-    certificate.variable_load_energy_index = (certificate.variable_load_energy_rating / pump.results.per_std * 100) / 100;
+    const vlei = certificate.variable_load_energy_rating / pump.results.per_std;
+    certificate.variable_load_energy_index = Math.round(vlei * 100) / 100;
 
-    certificate.energy_rating = Math.round((pump.pei_baseline - certificate.variable_load_energy_index) * 100);
+    certificate.energy_rating = Math.round((pump.pei_baseline - vlei) * 100);
 
     return certificate;
 }
@@ -186,10 +236,10 @@ exports.calculate_4_5_to_7 = (pump) => {
     const certificate = {}
     debug(`Begin 4/5-7 certificate calculation on pump ${pump.rating_id}`)
     //Full load nameplate motor losses
-    certificate.full_load_nameplate_motor_losses = (pump.motor_power_rated / (pump.results.default_motor_efficiency / 100) - pump.motor_power_rated);
-    certificate.full_load_default_motor_losses = (pump.motor_power_rated / (pump.results.default_motor_efficiency / 100) - pump.motor_power_rated);
+    const me = pump.motor_regulated ? pump.motor_efficiency : pump.results.default_motor_efficiency;
+    certificate.full_load_nameplate_motor_losses = (pump.motor_power_rated / (me / 100) - pump.motor_power_rated);
+    certificate.full_load_default_motor_losses = (pump.motor_power_rated / (me / 100) - pump.motor_power_rated);
     debug(`Full load nameplate motor losses = ${certificate.full_load_nameplate_motor_losses}`);
-
     // Standard pump input to motor power ratio at 100% BEP flow
     // =IF(L6/(N6+Q6)>=1,1,L6/(N6+Q6))
     const load120 = (pump.load120 != 0);
@@ -270,8 +320,9 @@ exports.calculate_4_5_to_7 = (pump) => {
         (0.25 * certificate.driver_power_input_to_motor_at_75_bep) +
         (0.25 * certificate.driver_power_input_to_motor_at_100_bep);
 
-    certificate.variable_load_energy_index = (certificate.variable_load_energy_rating / pump.results.per_std * 100) / 100;
+    const vlei = certificate.variable_load_energy_rating / pump.results.per_std;
+    certificate.variable_load_energy_index = Math.round(vlei * 100) / 100;
 
-    certificate.energy_rating = Math.round((pump.pei_baseline - certificate.variable_load_energy_index) * 100);
+    certificate.energy_rating = Math.round((pump.pei_baseline - vlei) * 100);
     return certificate;
 }

@@ -3,24 +3,29 @@ const expect = require("chai").expect;
 const fs = require('fs');
 const path = require('path');
 const certcalc = require('../certificate_calculator');
-const N4ZXMQ = require('./certificate-testcases/N4ZXMQ.json');
-const Y4PPD4 = require('./certificate-testcases/Y4PPD4.json');
-const NQ693Q = require('./certificate-testcases/NQ693Q.json');
-const B47K95 = require('./certificate-testcases/B47K95.json');
-const N43EE4 = require('./certificate-testcases/N43EE4.json');
-const X4KK74 = require('./certificate-testcases/X4KK74.json');
-const N59774 = require('./certificate-testcases/N59774.json');
-const _85WXD4 = require('./certificate-testcases/85WXD4.json');
-const W4MLD5 = require('./certificate-testcases/W4MLD5.json');
-const _2QYWJ5 = require('./certificate-testcases/2QYWJ5.json');
-const XQK274 = require('./certificate-testcases/XQK274.json');
-const _84861Q = require('./certificate-testcases/84861Q.json');
-const B4XZL5 = require('./certificate-testcases/B4XZL5.json');
-const Y5PG85 = require('./certificate-testcases/Y5PG85.json');
-const _85WZM5 = require('./certificate-testcases/85WZM5.json');
-const N4Z914 = require('./certificate-testcases/N4Z914.json');
+const N4ZXMQ = require('./certificate-testcases/3_57/N4ZXMQ.json');
+const Y4PPD4 = require('./certificate-testcases/3_57/Y4PPD4.json');
+const NQ693Q = require('./certificate-testcases/3_57/NQ693Q.json');
+const X4KK74 = require('./certificate-testcases/3_57/X4KK74.json');
+const N59774 = require('./certificate-testcases/3_57/N59774.json');
+const _85WXD4 = require('./certificate-testcases/3_57/85WXD4.json');
+const W4MLD5 = require('./certificate-testcases/3_57/W4MLD5.json');
+const _2QYWJ5 = require('./certificate-testcases/3_57/2QYWJ5.json');
+const XQK274 = require('./certificate-testcases/3_57/XQK274.json');
+const _84861Q = require('./certificate-testcases/3_57/84861Q.json');
+const B4XZL5 = require('./certificate-testcases/3_57/B4XZL5.json');
+const Y5PG85 = require('./certificate-testcases/3_57/Y5PG85.json');
+const _85WZM5 = require('./certificate-testcases/3_57/85WZM5.json');
+const N4Z914 = require('./certificate-testcases/3_57/N4Z914.json');
+const B47K95 = require('./certificate-testcases/45_7/B47K95.json');
+const N43EE4 = require('./certificate-testcases/45_7/N43EE4.json');
+const BQXVW5 = require('./certificate-testcases/45_7/BQXVW5.json');
+const X4KLXQ = require('./certificate-testcases/45_7/X4KLXQ.json');
+const _742ZYQ = require('./certificate-testcases/45_7/742ZYQ.json');
 const cases_3_to_5 = [N59774, _85WXD4, W4MLD5, _2QYWJ5, XQK274, _84861Q, B4XZL5, Y5PG85, _85WZM5, X4KK74, N4Z914];
 const cases_3_to_7 = [N4Z914, X4KK74, W4MLD5, XQK274, _84861Q, _85WZM5, N59774, _2QYWJ5, _85WXD4, Y5PG85, B4XZL5];
+const cases_45_to_7 = [B47K95, BQXVW5, X4KLXQ, N43EE4, N4ZXMQ, Y4PPD4, _742ZYQ, NQ693Q];
+
 
 const INPUT = true;
 const THREE_TO_FIVE = true;
@@ -100,7 +105,7 @@ if (INPUT) {
             assert.equal(N43EE4.flow.bep100, 374.62);
             assert.equal(N43EE4.flow.bep110, 249.49);
             assert.equal(N43EE4.motor_power_rated, 50);
-            assert.equal(N43EE4.motor_regulated, undefined);
+            assert.equal(N43EE4.motor_regulated, 0);
             assert.equal(N43EE4.results.default_motor_efficiency, 93);
             done();
         });
@@ -135,7 +140,7 @@ if (INPUT) {
 
 if (FOUR_AND_FIVE_TO_SEVEN) {
     describe('Section 4-5 -> 7', function () {
-        const tests = [N4ZXMQ, Y4PPD4, NQ693Q, B47K95, N43EE4];
+        const tests = cases_45_to_7;
         for (const pump of tests) {
             describe(pump.rating_id, function (done) {
                 let c;
