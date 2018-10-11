@@ -22,7 +22,7 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
-            "program": "${workspaceRoot}/tests/index.js",
+            "program": "${workspaceRoot}/index.js",
             "cwd": "${workspaceRoot}"
         },
         {

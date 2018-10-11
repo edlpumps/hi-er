@@ -8,7 +8,7 @@ const path = require('path');
 const pdf = require('html-pdf');
 const pug = require('pug');
 const archiver = require('archiver');
-
+const certcalc = require('../certificate_calculator');
 const moment = require('moment');
 
 
@@ -169,13 +169,28 @@ router.post('/calculate/:id', aw(async (req, res) => {
     const pump = await req.Pumps.findOne({
         rating_id: req.params.id
     }).populate('participant').exec();
-    const certificate = req.session.active_certificate
+    let certificate = req.session.active_certificate
     certificate.motor = req.body.certificate.motor
     certificate.driver = req.body.certificate.driver
 
     // Do calculations here
-    certificate.pei = .94;
-    certificate.energy_rating = 56;
+    switch (certificate.calculation_type) {
+        case '3-to-5':
+            certificate = certcalc.calculate_3_to_5(pump, certificate);
+            break;
+        case '3-to-7':
+            certificate = certcalc.calculate_3_to_7(pump, certificate)
+            break;
+        case '4-to-7':
+        case '5-to-7':
+            certificate = certcalc.calculate_4_5_to_7(pump);
+            break;
+        default:
+            console.log("INVALID certificate calculation type = " + certificate.calculation_type);
+            return res.sendStatus(406);
+
+    }
+
 
     req.session.active_certificate = certificate
     res.render("ratings/certificates/create_calculated", {

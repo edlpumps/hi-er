@@ -42,7 +42,8 @@ const COEFF_C = [0.5303, 0.1052, 0.1847, 0.2625];
 
 exports.calculate_3_to_5 = (pump, certificate) => {
     debug(`Begin 3-5 certificate calculation on pump ${pump.rating_id}`)
-    const motor_lookup = `${certificate.motor.motor_type}${pump.doe.toUpperCase()}-${certificate.motor.power}-${pump.speed}`;
+    certificate.error = undefined;
+    const motor_lookup = `${certificate.motor.motor_type.toLowerCase()}${pump.doe.toUpperCase()}-${certificate.motor.power}-${pump.speed}`;
     const L = pump.driver_input_power.bep75;
     const M = pump.driver_input_power.bep100;
     const N = pump.driver_input_power.bep110;
@@ -56,7 +57,12 @@ exports.calculate_3_to_5 = (pump, certificate) => {
     const V = actual_band - min_band;
 
     const default_band_number = band_number(pump.results.default_motor_efficiency);
-    const Z = band_by_number(default_band_number + V).key;
+    const bands = band_by_number(default_band_number + V);
+    if (!bands) {
+        certificate.error = "This motor power / efficiency is not supported";
+        return certificate;
+    }
+    const Z = bands.key;
 
     const AA = (O / (P / 100)) - O;
     const AB = Math.min(1, L / (O + AA));
@@ -130,6 +136,7 @@ exports.calculate_3_to_5 = (pump, certificate) => {
 
     certificate.constant_load_energy_rating = BA;
     certificate.constant_load_energy_index = BB;
+    certificate.pei = certificate.constant_load_energy_index
     certificate.energy_rating = BD;
     return certificate;
 }
@@ -227,7 +234,7 @@ exports.calculate_3_to_7 = (pump, certificate) => {
 
     const vlei = certificate.variable_load_energy_rating / pump.results.per_std;
     certificate.variable_load_energy_index = Math.round(vlei * 100) / 100;
-
+    certificate.pei = certificate.variable_load_energy_index;
     certificate.energy_rating = Math.round((pump.pei_baseline - vlei) * 100);
 
     return certificate;
@@ -322,7 +329,7 @@ exports.calculate_4_5_to_7 = (pump) => {
 
     const vlei = certificate.variable_load_energy_rating / pump.results.per_std;
     certificate.variable_load_energy_index = Math.round(vlei * 100) / 100;
-
+    certificate.pei = certificate.variable_load_energy_index
     certificate.energy_rating = Math.round((pump.pei_baseline - vlei) * 100);
     return certificate;
 }

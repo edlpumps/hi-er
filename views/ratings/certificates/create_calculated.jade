@@ -67,46 +67,50 @@ block content
                         .row    
                             .col.col-xs-6: label Energy Rating
                             .col.col-xs-6: span #{pump.energy_rating}
-                    .col.col-sm-6
-                        h1 Extended certificate data
-                        .row    
-                            .col.col-xs-6: label PEI
-                            .col.col-xs-6: span #{certificate.pei}
-                        .row    
-                            .col.col-xs-6: label Energy Rating
-                            .col.col-xs-6: span #{certificate.energy_rating}
-                        
-                        if ( (certificate.calculation_type == '3-to-5' || certificate.calculation_type == '3-to-7'))
+                    if certificate.error
+                        .col.col-sm-6
+                            p.alert.alert-danger #{certificate.error}
+                    else
+                        .col.col-sm-6
+                            h1 Extended certificate data
                             .row    
-                                .col.col-xs-6: label Motor Manufacturer
-                                .col.col-xs-6: span #{certificate.motor.manufacturer}
+                                .col.col-xs-6: label PEI
+                                .col.col-xs-6: span #{certificate.pei}
                             .row    
-                                .col.col-xs-6: label Motor Motor Model Number
-                                .col.col-xs-6: span #{certificate.motor.model}
-                            .row
-                                .col.col-xs-6: label Motor Type
-                                .col.col-xs-6: span #{certificate.motor.motor_type}
+                                .col.col-xs-6: label Energy Rating
+                                .col.col-xs-6: span #{certificate.energy_rating}
                             
-                        if ( (certificate.calculation_type == '3-to-5' || certificate.calculation_type == '3-to-7') && pump.doe != 'st')
-                            .row    
-                                .col.col-xs-6: label Nameplate Efficiency
-                                .col.col-xs-6: span #{certificate.motor.efficiency}
-                            .row    
-                                .col.col-xs-6: label Motor Nameplate Power
-                                .col.col-xs-6: span #{certificate.motor.power}
-                        if ( (certificate.calculation_type == '3-to-7' || certificate.calculation_type == '4-to-7' || certificate.calculation_type == '5-to-7'))
-                            .row
-                                .col.col-xs-6: label VFD Manufacturer
-                                .col.col-xs-6: span #{certificate.driver.manufacturer}
-                            .row    
-                                .col.col-xs-6: label VFD Model Number
-                                .col.col-xs-6: span #{certificate.driver.model}
-                            .row    
-                                .col.col-xs-6: label VFD nameplate Power
-                                .col.col-xs-6: span #{certificate.driver.power}
+                            if ( (certificate.calculation_type == '3-to-5' || certificate.calculation_type == '3-to-7'))
+                                .row    
+                                    .col.col-xs-6: label Motor Manufacturer
+                                    .col.col-xs-6: span #{certificate.motor.manufacturer}
+                                .row    
+                                    .col.col-xs-6: label Motor Motor Model Number
+                                    .col.col-xs-6: span #{certificate.motor.model}
+                                .row
+                                    .col.col-xs-6: label Motor Type
+                                    .col.col-xs-6: span #{certificate.motor.motor_type}
+                                
+                            if ( (certificate.calculation_type == '3-to-5' || certificate.calculation_type == '3-to-7') && pump.doe != 'st')
+                                .row    
+                                    .col.col-xs-6: label Nameplate Efficiency
+                                    .col.col-xs-6: span #{certificate.motor.efficiency}
+                                .row    
+                                    .col.col-xs-6: label Motor Nameplate Power
+                                    .col.col-xs-6: span #{certificate.motor.power}
+                            if ( (certificate.calculation_type == '3-to-7' || certificate.calculation_type == '4-to-7' || certificate.calculation_type == '5-to-7'))
+                                .row
+                                    .col.col-xs-6: label VFD Manufacturer
+                                    .col.col-xs-6: span #{certificate.driver.manufacturer}
+                                .row    
+                                    .col.col-xs-6: label VFD Model Number
+                                    .col.col-xs-6: span #{certificate.driver.model}
+                                .row    
+                                    .col.col-xs-6: label VFD nameplate Power
+                                    .col.col-xs-6: span #{certificate.driver.power}
 
                 hr
-                .row:.col.col-sm-5
+                .row: .col.col-sm-5
                     .form-group
                         label How many certificates?
                         input.form-control(type='number', min='1', name='certificate[quantity]', value='1')
