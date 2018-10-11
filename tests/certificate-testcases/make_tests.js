@@ -17,6 +17,8 @@ class RowAdapter {
 
 const db3 = sheets.Sheets['III Database Fields'];
 const columns3 = ['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
+const db45 = sheets.Sheets['IV_V Database Fields'];
+const columns45 = ['B', 'C', 'D', 'F', 'G', 'H', 'I', 'J'];
 
 const Section3 = new Map();
 for (const column of columns3) {
@@ -33,9 +35,26 @@ for (const column of columns3) {
     Section3.set(ratingId, pump);
 }
 
+const Section45 = new Map();
+for (const column of columns45) {
+    const ratingId = db3[`${column}1`].v;
+    let pump = {};
+    for (let row = 1; row <= 91; row++) {
+        const key = db3[`A${row}`].v;
+        const cell = db3[`${column}${row}`]
+        if (cell) {
+            pump[key] = cell.v;
+        }
+    }
+    pump = unflatten(pump);
+    Section45.set(ratingId, pump);
+}
+
 const calc3_5 = sheets.Sheets['III_V'];
 const calc3_7 = sheets.Sheets['III_VII'];
+const calc4_7 = sheets.Sheets['IV_VII']
 
+// Make section 3 => 5 cases
 for (let r = 6; r <= 16; r++) {
     const row = new RowAdapter(calc3_5, r);
     const rating = row.val('A');
@@ -82,6 +101,7 @@ for (let r = 6; r <= 16; r++) {
     pump.certificate_5 = section5;
 }
 
+// Make section 3 => 7 cases
 for (let r = 6; r <= 16; r++) {
     const row = new RowAdapter(calc3_7, r);
     const rating = row.val('A');
@@ -130,7 +150,69 @@ for (let r = 6; r <= 16; r++) {
     pump.certificate_7 = section7;
 }
 
-for (const pump of Section3.values()) {
+
+// Make section 4 => 7 cases
+for (let r = 8; r <= 11; r++) {
+    const row = new RowAdapter(calc4_7, r);
+    const rating = row.val('A');
+    const pump = Section45.get(rating);
+    const section = {}; //certificate_5
+    section.motor = {
+        motor_type: row.val('G'),
+        efficiency: row.val('H'),
+        power: row.val('F')
+    }
+    section.full_load_nameplate_motor_losses = row.val('Q');
+    section.full_load_default_motor_losses = row.val('Q');
+    section.std_pump_input_to_motor_at_100_bep_flow = row.val('R');
+    section.std_motor_part_load_loss_factor_at_100_bep = row.val('S');
+    section.nameplate_motor_part_load_losses_at_100_bep = row.val('T')
+    section.pump_input_power_at_100_bep = row.val('U');
+    section.variable_load_pump_input_power_at_25_bep = row.val('V');
+    section.variable_load_pump_input_power_at_50_bep = row.val('W');
+    section.variable_load_pump_input_power_at_75_bep = row.val('W');
+    section.motor_power_ratio_at_25_bep = row.val('Y');
+    section.motor_power_ratio_at_50_bep = row.val('Z');
+    section.motor_power_ratio_at_75_bep = row.val('AA');
+    section.motor_power_ratio_at_100_bep = row.val('AB');
+    section.coeff_A = row.val('AC');
+    section.coeff_B = row.val('AD');
+    section.coeff_C = row.val('AE');
+
+    section.motor_and_control_part_load_loss_factor_at_25_bep = row.val('AF');
+    section.motor_and_control_part_load_loss_factor_at_50_bep = row.val('AG');
+    section.motor_and_control_part_load_loss_factor_at_75_bep = row.val('AH');
+    section.motor_and_control_part_load_loss_factor_at_100_bep = row.val('AI');
+
+    section.motor_and_control_default_part_load_loss_at_25_bep = row.val('AJ');
+    section.motor_and_control_default_part_load_loss_at_50_bep = row.val('AK');
+    section.motor_and_control_default_part_load_loss_at_75_bep = row.val('AL');
+    section.motor_and_control_default_part_load_loss_at_100_bep = row.val('AM');
+
+    section.driver_power_input_to_motor_at_25_bep = row.val('AN');
+    section.driver_power_input_to_motor_at_50_bep = row.val('AO');
+    section.driver_power_input_to_motor_at_75_bep = row.val('AP');
+    section.driver_power_input_to_motor_at_100_bep = row.val('AQ');
+
+    section.variable_load_energy_rating = row.val("AR")
+
+    section.variable_load_energy_index = Math.round(row.val('AS') * 100) / 100;
+    section.energy_rating = Math.round(row.val('AT'));
+    pump.certificate_7 = section;
+}
+
+/*for (const pump of Section3.values()) {
+    const filename = `./_${pump.rating_id}.json`;
+    fs.writeFile(filename, JSON.stringify(pump, null, 2), function (err, result) {
+        if (err) {
+            console.log(`Failed to write ${filename}`);
+        } else {
+            console.log(`Saved test case to ${filename}`)
+        }
+    })
+}
+*/
+for (const pump of Section45.values()) {
     const filename = `./_${pump.rating_id}.json`;
     fs.writeFile(filename, JSON.stringify(pump, null, 2), function (err, result) {
         if (err) {
