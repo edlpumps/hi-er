@@ -40,7 +40,7 @@ block content
                 p 
                     | #{certificate.installation_site.address.street}
                     br
-                    | #{certificate.installation_site.address.city}, #{certificate.installation_site.address.state} div certificate.installation_site.address.zip
+                    | #{certificate.installation_site.address.city}, #{certificate.installation_site.address.state} #{certificate.installation_site.address.zip}
                     br
                     | #{certificate.installation_site.address.country}
             
@@ -70,6 +70,8 @@ block content
                     if certificate.error
                         .col.col-sm-6
                             p.alert.alert-danger #{certificate.error}
+                            if certificate.error_details
+                                p.text-danger #{certificate.error_details}
                     else
                         .col.col-sm-6
                             h1 Extended certificate data
@@ -108,15 +110,16 @@ block content
                                 .row    
                                     .col.col-xs-6: label VFD nameplate Power
                                     .col.col-xs-6: span #{certificate.driver.power}
-
-                hr
-                .row: .col.col-sm-5
-                    .form-group
-                        label How many certificates?
-                        input.form-control(type='number', min='1', name='certificate[quantity]', value='1')
+                if !certificate.error
+                    hr
+                    .row: .col.col-sm-5
+                        .form-group
+                            label How many certificates?
+                            input.form-control(type='number', min='1', name='certificate[quantity]', value='1')
 
                 hr(style='margin-top:2em')
                 .row: .col.col-xs-12
                     a(href=`/ratings/certificates/input/${pump.rating_id}`).btn.btn-default Back
-                    button.btn.btn-danger(type='submit').btn-space Add to cart
-                    p.text-warning Once this certificate has been added to your card, you will be able to continue building additional ones - but you will not be able to change this selection (other than to remove it).
+                    if !certificate.error
+                        button.btn.btn-danger(type='submit').btn-space Add to cart
+                        p.text-warning Once this certificate has been added to your card, you will be able to continue building additional ones - but you will not be able to change this selection (other than to remove it).

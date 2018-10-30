@@ -40,7 +40,7 @@ block content
                 p 
                     | #{certificate.installation_site.address.street}
                     br
-                    | #{certificate.installation_site.address.city}, #{certificate.installation_site.address.state} div certificate.installation_site.address.zip
+                    | #{certificate.installation_site.address.city}, #{certificate.installation_site.address.state} #{certificate.installation_site.address.zip}
                     br
                     | #{certificate.installation_site.address.country}
             
@@ -78,7 +78,10 @@ block content
                         .col.col-sm-6
                             .form-group
                                 label(for='certificate[motor][power]') Extended Nameplate Power
-                                input.form-control(type='number', min='0', name='certificate[motor][power]', placeholder='Motor Nameplate Power', value=certificate.motor.power, required)
+                                select.form-control(name='certificate[motor][power]', required)
+                                    each power in powers
+                                        option(value=power, selected=(power==certificate.motor.power)) #{power}hp
+                                //-input.form-control(type='number', min='0', name='certificate[motor][power]', placeholder='Motor Nameplate Power', value=certificate.motor.power, required)
                     .row
                         .col.col-sm-6
                             .form-group
@@ -101,7 +104,9 @@ block content
                         .col.col-sm-6
                             .form-group
                                 label(for='certificate[driver][power]') Extended Nameplate Power
-                                input.form-control(type='number', min='0', name='certificate[driver][power]', placeholder='VFD Nameplate Power', value=certificate.driver.power, required)
+                                select.form-control(name='certificate[driver][power]', required)
+                                    each power in powers
+                                        option(value=power, selected=(power==certificate.driver.power)) #{power}hp
                 hr(style='margin-top:2em')
                 .row: .col.col-xs-12
                     a(href=`/ratings/certificates/create/${pump.rating_id}`).btn.btn-default Back

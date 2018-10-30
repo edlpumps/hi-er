@@ -128,8 +128,10 @@ router.get('/input/:id', aw(async (req, res) => {
     }).populate('participant').exec();
 
 
+
     res.render("ratings/certificates/create_input", {
         pump: pump,
+        powers: certcalc.motor_powers(),
         participant: pump.participant,
         certificate: certificate
     });
@@ -146,6 +148,8 @@ router.post('/input/:id', aw(async (req, res) => {
         certificate.invalid_reason = 'You must add a motor or VFD, or both.'
         res.render("ratings/certificates/create_input", {
             pump: pump,
+            powers: certcalc.motor_powers(),
+
             participant: pump.participant,
             certificate: certificate
         });
@@ -160,6 +164,8 @@ router.post('/input/:id', aw(async (req, res) => {
 
     res.render("ratings/certificates/create_input", {
         pump: pump,
+        powers: certcalc.motor_powers(),
+
         participant: pump.participant,
         certificate: certificate
     });

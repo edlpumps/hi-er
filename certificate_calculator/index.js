@@ -1,6 +1,8 @@
 const debug = require('debug')('cert-calc');
 const minimum_motors = require('./minimum_motor');
 const bands = require('./bands');
+const MINIMUM_EFFICIENCY_ERROR = "This configuration does not meet the minimum extended efficiency for this pump.";
+const UNSUPPORTED_EFFICIENCY_POWER_ERROR = "This motor power / efficiency is not supported";
 assign_coefficient = (N, C) => {
     if (N <= 5) return C[0];
     else if (N <= 20) return C[1];
@@ -40,9 +42,24 @@ const COEFF_A = [-0.4658, -1.3198, -1.5122, -0.8914];
 const COEFF_B = [1.4965, 2.9551, 3.0777, 2.8846];
 const COEFF_C = [0.5303, 0.1052, 0.1847, 0.2625];
 
+exports.motor_powers = () => {
+    const map = new Map();
+    const powers = [];
+    for (const key in minimum_motors) {
+        const tokens = key.split("-");
+        const power = tokens[1];
+        if (powers.indexOf(power) < 0) {
+            powers.push(power);
+        }
+    }
+    return powers;
+}
+
+
 exports.calculate_3_to_5 = (pump, certificate) => {
-    debug(`Begin 3-5 certificate calculation on pump ${pump.rating_id}`)
+    debug(`Begin 3-5 certificate calculation on pump ${pump.rating_id}`);
     certificate.error = undefined;
+    certificate.error_details = undefined;
     const motor_lookup = `${certificate.motor.motor_type.toLowerCase()}${pump.doe.toUpperCase()}-${certificate.motor.power}-${pump.speed}`;
     const L = pump.driver_input_power.bep75;
     const M = pump.driver_input_power.bep100;
@@ -59,7 +76,8 @@ exports.calculate_3_to_5 = (pump, certificate) => {
     const default_band_number = band_number(pump.results.default_motor_efficiency);
     const bands = band_by_number(default_band_number + V);
     if (!bands) {
-        certificate.error = "This motor power / efficiency is not supported";
+        certificate.error = UNSUPPORTED_EFFICIENCY_POWER_ERROR;
+        debug(certificate.error);
         return certificate;
     }
     const Z = bands.key;
@@ -142,6 +160,8 @@ exports.calculate_3_to_5 = (pump, certificate) => {
 }
 exports.calculate_3_to_7 = (pump, certificate) => {
     debug(`Begin 3-7 certificate calculation on pump ${pump.rating_id}`)
+    certificate.error = undefined;
+    certificate.error_details = undefined;
     const motor_lookup = `${certificate.motor.motor_type}${pump.doe.toUpperCase()}-${certificate.motor.power}-${pump.speed}`;
     certificate.minimum_efficiency_extended = minimum_motors[motor_lookup];
     if (pump.doe.toLowerCase() === 'st') {
@@ -152,6 +172,10 @@ exports.calculate_3_to_7 = (pump, certificate) => {
     }
 
     if (!certificate.minimum_efficiency_extended_check) {
+        certificate.error = MINIMUM_EFFICIENCY_ERROR;
+        certificate.error_details = `Minimum extended efficiency based of this motor, based on ${certificate.motor.power}hp, is ${certificate.minimum_efficiency_extended}%`;
+        debug(certificate.error);
+        debug(certificate.error_details);
         return certificate;
     }
     const P = pump.load120 ? pump.driver_input_power.bep100 : pump.driver_input_power.bep110;
