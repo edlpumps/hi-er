@@ -288,15 +288,15 @@ exports.init = function init(mongoose) {
         },
         measured_control_flow_input: {
             bep25: Number,
-            bep5init: Number,
-            bep7init: Number,
-            bep1init0: Number
+            bep50: Number,
+            bep75: Number,
+            bep1bep100init0: Number
         },
-        measuredinitcontrol_head_input: {
-            bep2init: Number,
-            bep5init: Number,
-            bep7init: Number,
-            bep1init0: Number
+        measured_control_head_input: {
+            bep25: Number,
+            bep50: Number,
+            bep75: Number,
+            bep100: Number
         },
 
 
