@@ -143,7 +143,9 @@ exports.init = function init(mongoose) {
 
     const certificateTransaction = new Schema({
         date: Date,
-        state: String
+        state: String,
+        quantity: Number,
+        cart: [Schema.Types.Mixed]
     }, {
         usePushEach: true
     })

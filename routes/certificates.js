@@ -240,21 +240,40 @@ router.get("/cart", aw(async (req, res) => {
 
 
 router.get("/checkout", aw(async (req, res) => {
+
+    let quantity = 0;
+    for (const c of req.session.certificate_cart) {
+        quantity += parseInt(c.quantity);
+    }
+
     const ct = await req.CertificateTransactions.create({
         date: new Date(),
-        state: 'pending'
+        state: 'pending',
+        cart: req.session.certificate_cart,
+        quantity: quantity
     });
+
+
     if (!req.session.certificate_transactions) {
         req.session.certificate_transactions = [];
     }
     req.session.certificate_transactions.push(ct);
-    res.render("ratings/certificates/estore-standin", {
+
+
+
+
+    const estore = `${process.env.ESTORE_CERTIFICATE_URL}?TID=${ct._id}&qty=${quantity}`;
+
+
+    res.redirect(estore);
+
+    /*res.render("ratings/certificates/estore-standin", {
         cart: req.session.certificate_cart,
         transaction: ct
-    });
+    });*/
 }));
 
-router.post("/purchased/:transactionId", aw(async (req, res) => {
+router.post("/confirmation/:transactionId", aw(async (req, res) => {
     const ct = await req.CertificateTransactions.findById(req.params.transactionId).exec();
     if (!ct) {
         res.sendStatus(404, 'Transaction not found');
@@ -264,7 +283,7 @@ router.post("/purchased/:transactionId", aw(async (req, res) => {
     console.log("POSTED FROM HI ESTORE - CHECK CREDENTIALS")
     const d = new Date();
     const purchased = [];
-    for (const c of req.session.certificate_cart) {
+    for (const c of ct.cart) {
         for (let i = 0; i < c.quantity; i++) {
             const nextId = await req.getNextCertificateNumber();
             const cnumber = hashids.encode(nextId);
@@ -285,10 +304,13 @@ router.post("/purchased/:transactionId", aw(async (req, res) => {
         }
     }
     ct.state = 'completed';
-    req.session.certificate_cart = [];
+
     await ct.save();
-    req.session.purchased = purchased;
+    res.sendStatus(200);
+    /*
+    
     res.redirect(`/ratings/certificates/purchased/${ct._id}`)
+    */
 }))
 
 router.get("/purchased/:transactionId", aw(async (req, res) => {
