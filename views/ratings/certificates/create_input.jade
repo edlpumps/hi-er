@@ -74,11 +74,12 @@ block content
                         .col.col-sm-6
                             .form-group
                                 label(for='certificate[motor][efficiency]') Extended Nameplate Efficiency
-                                input.form-control(type='number', min='0', max='100', name='certificate[motor][efficiency]', placeholder='Motor Nameplate Efficiencey', value=certificate.motor.efficiency, required)
+                                input.form-control(type='number', min='0', step='0.1', max='100', name='certificate[motor][efficiency]', placeholder='Motor Nameplate Efficiencey', value=certificate.motor.efficiency, required)
                         .col.col-sm-6
                             .form-group
                                 label(for='certificate[motor][power]') Extended Nameplate Power
                                 select.form-control(name='certificate[motor][power]', required)
+                                    option(value='', selected=certificate.motor.power == undefined) Select Power
                                     each power in powers
                                         option(value=power, selected=(power==certificate.motor.power)) #{power}hp
                                 //-input.form-control(type='number', min='0', name='certificate[motor][power]', placeholder='Motor Nameplate Power', value=certificate.motor.power, required)
@@ -105,6 +106,7 @@ block content
                             .form-group
                                 label(for='certificate[driver][power]') Extended Nameplate Power
                                 select.form-control(name='certificate[driver][power]', required)
+                                    option(value='', selected=certificate.driver.power == undefined) Select Power
                                     each power in powers
                                         option(value=power, selected=(power==certificate.driver.power)) #{power}hp
                 hr(style='margin-top:2em')
