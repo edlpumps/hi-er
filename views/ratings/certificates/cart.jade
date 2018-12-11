@@ -44,7 +44,7 @@ block content
                                         if certificate.pump_record
                                             span #{certificate.pump_record.energy_rating}
                                     td 
-                                        if certificate.poles 
+                                        if certificate.poles && certificate.motor
                                             span #{certificate.motor.model} / #{certificate.motor.manufacturer}
                                     td 
                                         if certificate.vfd

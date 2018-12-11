@@ -24,6 +24,7 @@ block content
           hr
           form.form(action=`/ratings/certificates/purchase/${pump.rating_id}`, method='post')
             h3 Packager Information
+            if certificate.packager
             p
              | #{certificate.packager.name}
              br

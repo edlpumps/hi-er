@@ -263,8 +263,9 @@ exports.calculate_3_to_7 = (pump, certificate) => {
 
     return certificate;
 }
-exports.calculate_4_5_to_7 = (pump) => {
-    const certificate = {}
+exports.calculate_4_5_to_7 = (pump, certificate) => {
+    certificate.error = undefined;
+    certificate.error_details = undefined;
     debug(`Begin 4/5-7 certificate calculation on pump ${pump.rating_id}`)
     //Full load nameplate motor losses
     const me = pump.motor_regulated ? pump.motor_efficiency : pump.results.default_motor_efficiency;

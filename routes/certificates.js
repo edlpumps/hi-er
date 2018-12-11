@@ -189,14 +189,13 @@ router.post('/calculate/:id', aw(async (req, res) => {
             break;
         case '4-to-7':
         case '5-to-7':
-            certificate = certcalc.calculate_4_5_to_7(pump);
+            certificate = certcalc.calculate_4_5_to_7(pump, certificate);
             break;
         default:
             console.log("INVALID certificate calculation type = " + certificate.calculation_type);
             return res.sendStatus(406);
 
     }
-
 
     req.session.active_certificate = certificate
     res.render("ratings/certificates/create_calculated", {
