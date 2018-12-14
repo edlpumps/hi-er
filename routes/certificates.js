@@ -272,7 +272,7 @@ router.get("/checkout", aw(async (req, res) => {
     });*/
 }));
 
-router.post("/confirmation/:transactionId", aw(async (req, res) => {
+router.post("/confirmed/:transactionId", aw(async (req, res) => {
     const ct = await req.CertificateTransactions.findById(req.params.transactionId).exec();
     if (!ct) {
         res.sendStatus(404, 'Transaction not found');
