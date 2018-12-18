@@ -56,7 +56,7 @@ new Vue({
         }
     },
     methods: {
-        search_pumps() {
+        search_pumps: function () {
             let v = this;
             this.searching = true;
             $.ajax({
@@ -77,20 +77,20 @@ new Vue({
                 v.searching = false;
             });
         },
-        load_brands() {
+        load_brands: function () {
             let q = '';
             const v = this;
             if (this.search.participant) {
-                q = `?name=${encodeURIComponent(this.search.participant)}`;
+                q = "?name=" + encodeURIComponent(this.search.participant);
             }
-            const url = `/ratings/api/brands${q}`;
+            const url = "/ratings/api/brands" + q;
             $.getJSON(url, function (data) {
                 v.brands = data.brands;
             }).fail(function (err) {
                 console.log(err);
             });
         },
-        getConfigLabel(config) {
+        getConfigLabel: function (config) {
             var retval = this.configurations.filter(function (c) {
                 return config == c.value;
             }).map(function (c) {

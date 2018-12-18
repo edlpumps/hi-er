@@ -70,9 +70,9 @@ block content
                            .small(style="padding-top:20px; margin-bottom:0px") PEI
                            h4(style='margin-top:0px') {{pump.pei.toFixed(2)}}
                         .col.hidden-xs.col.col-sm-2(style='padding-top:2em')
-                            a.btn.btn-danger(v-bind:href=`'/ratings/certificates/create/'+pump.rating_id`) Create ER Certificate 
+                            a.btn.btn-danger(v-bind:href="'/ratings/certificates/create/'+pump.rating_id") Create ER Certificate 
                         .col.hidden-sm.hidden-md.hidden-lg.hidden-xs.col.col-xs-3(style='padding-top:2em')
-                            a.btn.btn-danger(v-bind:href=`'/ratings/certificates/create/'+pump.rating_id`) + ER Cert.
+                            a.btn.btn-danger(v-bind:href="'/ratings/certificates/create/'+pump.rating_id") + ER Cert.
 
 
                  
