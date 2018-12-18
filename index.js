@@ -94,6 +94,7 @@ var configure = function () {
         if (!req.session.unit_set) {
             req.session.unit_set = units.US;
         }
+        res.locals.certificate_cart_exists = req.session.certificate_cart ? req.session.certificate_cart.length > 0 : false;
         res.locals.unit_set = req.session.unit_set;
         res.locals.ESTORE_ADMIN_EMAIL = process.env.ESTORE_ADMIN_EMAIL;
         res.locals.units = units.make_units(res.locals.unit_set);
