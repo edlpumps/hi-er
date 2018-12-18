@@ -68,6 +68,10 @@ exports.calculate_3_to_5 = (pump, certificate) => {
     const P = pump.results.default_motor_efficiency;
     const T = minimum_motors[motor_lookup];
     const U = T < certificate.motor.efficiency;
+    console.log("------------------------------------------------");
+    console.log(T);
+    console.log(U);
+    console.log("------------------------------------------------");
 
     const min_band = band(T);
     const actual_band = band(certificate.motor.efficiency);
@@ -156,6 +160,15 @@ exports.calculate_3_to_5 = (pump, certificate) => {
     certificate.constant_load_energy_index = BB;
     certificate.pei = certificate.constant_load_energy_index
     certificate.energy_rating = BD;
+
+    if (!certificate.minimum_efficiency_extended_check) {
+        certificate.error = MINIMUM_EFFICIENCY_ERROR;
+        certificate.error_details = `Minimum extended efficiency based of this motor, based on ${certificate.motor.power}hp, is ${certificate.minimum_efficiency_extended}%`;
+        debug(certificate.error);
+        debug(certificate.error_details);
+        return certificate;
+    }
+
     return certificate;
 }
 exports.calculate_3_to_7 = (pump, certificate) => {
