@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const aw = require('./async_wrap');
 const debug = require('debug')('certificates');
+const debug_estore = require('debug')('cert-estore');
 const Hashids = require('hashids');
 const hashids = new Hashids("hydraulic institute", 10, 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789');
 const path = require('path');
@@ -272,14 +273,42 @@ router.get("/checkout", aw(async (req, res) => {
     });*/
 }));
 
+const authorize_confirmation = (req, transactionId) => {
+    const crypto = require('crypto');
+    debug_estore(`Checking confirmation of transaction ${transactionId}`)
+    if (!process.env.ESTORE_CONFIRMATION_SECRET) {
+        debug_estore(`No check performed, no estore secret defined in environment`);
+        return true;
+    }
+
+    const auth = req.headers.authorization;
+    debug_estore(`Authorization Header:  ${auth}`);
+    if (auth && auth.split(' ').length == 2) {
+        const hash = auth.split(' ')[1].trim();
+        const check = crypto.createHmac('sha512', process.env.ESTORE_CONFIRMATION_SECRET)
+            .update(transactionId)
+            .digest('base64');
+
+        debug_estore(`Check hash:  ${check}`);
+        debug_estore(`Hash in request:  ${hash}`);
+        return hash === check;
+    } else {
+        debug_estore(`No Authorization header on request, cannot authorize.`);
+        return false;
+    }
+}
+
 router.post("/confirmed/:transactionId", aw(async (req, res) => {
     const ct = await req.CertificateTransactions.findById(req.params.transactionId).exec();
     if (!ct) {
         res.sendStatus(404, 'Transaction not found');
         return;
     }
-    // MUST CHECK AUTHENTICATION
-    console.log("POSTED FROM HI ESTORE - CHECK CREDENTIALS")
+    if (!authorize_confirmation(req, req.params.transactionId)) {
+        debug_estore(`Authorization failed for certificate transaction confirmation.  Returning 401 to sender`);
+        res.sendStatus(401);
+        return;
+    }
     const d = new Date();
     const purchased = [];
     for (const c of ct.cart) {
@@ -304,6 +333,7 @@ router.post("/confirmed/:transactionId", aw(async (req, res) => {
     }
     ct.state = 'completed';
 
+
     await ct.save();
     res.sendStatus(200);
     /*
@@ -321,7 +351,7 @@ router.get("/purchased/:transactionId", aw(async (req, res) => {
     req.session.purchased = await req.Certificates.find({
         transaction: ct._id
     }).populate('pump').exec();
-
+    req.session.certificate_cart = [];
     res.render("ratings/certificates/purchased", {
         purchased: req.session.purchased,
         transaction: ct
