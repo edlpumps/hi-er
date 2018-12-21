@@ -18,7 +18,12 @@ router.get('/', aw(async (req, res) => {
 }))
 
 router.get('/create', aw(async (req, res) => {
-    const participants = await req.Participants.find({}, 'name').exec();
+    const participants = await req.Participants.find({
+        $and: [{
+            active: true,
+            'subscription.status': 'Active'
+        }]
+    }, 'name').exec();
     res.render("ratings/certificates/create", {
         participants: participants.map(p => p.name),
         search: req.session.csearch ? req.session.csearch : {}
