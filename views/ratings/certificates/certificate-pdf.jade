@@ -103,8 +103,8 @@ html
                             span VFD Manufacturer:  #{certificate.vfd.manufacturer}
                             br
                             span VFD Model #: #{certificate.vfd.model} 
-                            br
-                            span VFD Nameplate Efficiency: #{certificate.vfd.efficiency} 
+                            //-br
+                            //-span VFD Nameplate Efficiency: #{certificate.vfd.efficiency} 
                             br
                             span VFD Nameplate Power: #{certificate.vfd.power} 
             tr
@@ -120,8 +120,8 @@ html
                     p.er_display #{certificate.pump.energy_rating}
                 td
                     div
-                    p: b Calculated Extended Product
-                    h1(style='margin-top:0;') 
+                    p(style='visibility:hidden') : b Calculated Extended Product
+                    h1(style='visibility:hidden;margin-top:0;') 
                         | PEI
                         sub #{certificate.pump.configuration == 'bare' || certificate.pump.configuration == 'pump_motor' ? "CL" : "VL"}
                         span :  #{certificate.pei.toFixed(2)}
@@ -138,7 +138,5 @@ html
             span Issuance Date: #{moment(certificate.date).format('MMMM D, YYYY')}
         section
             p.fine-print  
-                | This certificate is valid for a single pump installation.  The Calculated Extended Product PEI is only used for the 
-                | purpose of calculating the Extended Product Energy Rating.  It should not be used for the purpose of compliance to 
-                | the U.S. Department of Energy regulation.  For more information and to verify validity of certificate, got to the 
+                | This certificate is valid for a single pump installation.  For more information and to verify validity of certificate, got to the 
                 | ER Certificate database on er.pumps.org.  ER certificates will be removed from the ER database two years after issuance date.
