@@ -495,7 +495,9 @@ router.post("/pumps/upload", get_labels, aw(async (req, res) => {
             pump.results = results;
             pump.energy_rating = pump.results.energy_rating;
             pump.energy_savings = pump.results.energy_savings;
-            pump.pei_baseline = pump.results.pei_baseline;
+            // Change requested by HI - 12/21/2018.
+            // Instead of using pei_baseline, always use 1.
+            pump.pei_baseline = 1 /*pump.results.pei_baseline*/ ;
             delete pump.results.pump;
 
             pump.laboratory = find_lab(pump.laboratory, labs);
