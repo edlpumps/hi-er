@@ -24,6 +24,7 @@ block content
           hr
           form.form(action=`/ratings/certificates/purchase/${pump.rating_id}`, method='post')
             h3 Packager Information
+            if certificate.packager
             p
              | #{certificate.packager.name}
              br
@@ -63,7 +64,7 @@ block content
                             .col.col-xs-6: span #{pump.doe}
                         .row    
                             .col.col-xs-6: label PEI
-                            .col.col-xs-6: span #{pump.pei}
+                            .col.col-xs-6: span #{parseFloat(pump.pei).toFixed(2)}
                         .row    
                             .col.col-xs-6: label Energy Rating
                             .col.col-xs-6: span #{pump.energy_rating}

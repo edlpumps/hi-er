@@ -54,8 +54,8 @@ block content
                         span VFD Manufacturer:  #{certificate.vfd.manufacturer}
                         br
                         span VFD Model #: #{certificate.vfd.model} 
-                        br
-                        span VFD Nameplate Efficiency: #{certificate.vfd.efficiency} 
+                        //-br
+                        //-span VFD Nameplate Efficiency: #{certificate.vfd.efficiency} 
                         br
                         span VFD Nameplate Power: #{certificate.vfd.power} 
           .row
@@ -71,8 +71,8 @@ block content
                   p.er_display #{certificate.pump.energy_rating}
             .col.col-sm-6.text-center(style='border-left:thick rgb(221, 221, 221) solid')
                 div
-                  p: b Calculated Extended Product
-                  h1 
+                  p(style='visibility:hidden;'): b Calculated Extended Product
+                  h1(style='visibility:hidden;')
                     | PEI
                     sub #{certificate.pump.configuration == 'bare' || certificate.pump.configuration == 'pump_motor' ? "CL" : "VL"}
                     span :  #{certificate.pei.toFixed(2)}

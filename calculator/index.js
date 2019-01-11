@@ -89,8 +89,6 @@ var lookup_default_motor_efficiency = function (pump, power) {
     }
     var label = doe.toUpperCase() + "-" + power_normalized + "-" + pump.speed;
     var table = require("./default_motor_efficiencies.json");
-    console.log(label);
-    console.log(table[label]);
     var retval = table[label];
     return retval;
 }
@@ -223,12 +221,17 @@ var section345_baseline_common = function (pump, result) {
         result.baseline_driver_power_input_bep100 +
         result.baseline_driver_power_input_bep110) * 0.3333;
 
-    result.pei_baseline = result.per_baseline_calculated / result.per_std_calculated;
+    // Change requested by HI - 12/21/2018.
+    // Instead of using pei_baseline, always use 1.    
+    result.pei_baseline = 1; /*result.per_baseline_calculated / result.per_std_calculated*/ ;
 
 }
 
 var calc_energy_rating = function (pump, result) {
-    result.energy_rating = Math.round((result.pei_baseline - pump.pei) * 100);
+    // Change requested by HI - 12/21/2018.
+    // Instead of using pei_baseline, always use 1.
+    // result.energy_rating = Math.round((result.pei_baseline - pump.pei) * 100);
+    result.energy_rating = Math.round((1 /*result.pei_baseline*/ - pump.pei) * 100);
     result.energy_savings = (result.energy_rating / 100 * pump.motor_power_rated).toFixed(0);
 }
 

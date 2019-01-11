@@ -26,10 +26,10 @@ block content
                         thead 
                             tr
                                 th Packager
-                                th Pump
+                                th ER-Listed Basic Model
                                 th Original ER
-                                th Motor
-                                th VFD
+                                th Extended Motor
+                                th Extended VFD
                                 th Exended ER
                                 th Quantity
                                 th 
@@ -44,7 +44,7 @@ block content
                                         if certificate.pump_record
                                             span #{certificate.pump_record.energy_rating}
                                     td 
-                                        if certificate.poles 
+                                        if certificate.poles && certificate.motor
                                             span #{certificate.motor.model} / #{certificate.motor.manufacturer}
                                     td 
                                         if certificate.vfd
@@ -57,7 +57,7 @@ block content
                     section
                         hr
                         .pull-right
-                            a.btn.btn-default(href='/ratings/certificates/search') Create more certificates
+                            a.btn.btn-default(href='/ratings/certificates/create') Create more certificates
                             a.btn.btn-success(href='/ratings/certificates/checkout').btn-space Checkout
                                     
                 

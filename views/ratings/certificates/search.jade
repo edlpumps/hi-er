@@ -17,7 +17,7 @@ block content
                 img(src="/images/hydraulic-institute-logo.png", style="width:80%").hidden-md.hidden-lg.hidden-sm
           .panel-body
              .form-group
-               label.col-sm-3.control-label Certificate Number
+               label.col-sm-3.control-label Certificate Serial Number
                .col.col-sm-6
                  input.form-control(v-model="search.cnumber", type="text")
              .form-group
@@ -30,7 +30,7 @@ block content
              .form-group(v-if='search_valid', style='text-align:center; padding:2em')
                 button.btn.btn-primary(type="button", v-on:click="search_certificates();") Search for Certificates
              .form-group(v-else, style='text-align:center; padding:2em')
-                p.alert.alert-warning You must enter at least one of the following:  Certificate number or Packager
+                p.alert.alert-warning You must enter at least one of the following:  Certificate Serial Number or Packager
          .panel.panel-default(v-show="(certificates.length > 0 || searched) && search_valid")
           .panel-body
             .row
@@ -88,8 +88,8 @@ block content
                         .col.col-sm-2.energy_badge
                            .small(style="padding-top:20px; margin-bottom:0px") Extended Energy Rating
                            h2(style="margin-top:0px") {{certificate.energy_rating}}
-                           .small(style="padding-top:20px; margin-bottom:0px") Extended PEI
-                           h4(style='margin-top:0px') {{certificate.pei.toFixed(2)}}
+                           //-.small(style="padding-top:20px; margin-bottom:0px") Extended PEI
+                           //-h4(style='margin-top:0px') {{certificate.pei.toFixed(2)}}
                         
     script(src="/scripts/certificates/search.js")
     

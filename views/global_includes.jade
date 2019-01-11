@@ -38,6 +38,12 @@ script(type="text/javascript", src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist
 include common/help
 
 mixin unit_switch()
+ if certificate_cart_exists
+  li
+    a(href='/ratings/certificates/cart')
+      .glyphicon.glyphicon-shopping-cart(style='margin-right:5px')
+      span Certificate Checkout
+
  li
    .navbar-text
     .btn-group.btn-group-xs

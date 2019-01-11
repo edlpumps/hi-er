@@ -113,7 +113,9 @@ exports.calculate_3_to_5 = (pump, certificate) => {
     const pei = BA / pump.results.per_std;
     const BB = Math.round(pei * 100) / 100;
 
-    const BD = Math.round((pump.results.pei_baseline - pei) * 100);
+    // Change requested by HI - 12/21/2018.
+    // Instead of using pei_baseline, always use 1.
+    const BD = Math.round(( /*pump.results.pei_baseline*/ -pei) * 100);
 
     certificate.minimum_efficiency_extended = T;
     certificate.minimum_efficiency_extended_check = U;
@@ -156,6 +158,15 @@ exports.calculate_3_to_5 = (pump, certificate) => {
     certificate.constant_load_energy_index = BB;
     certificate.pei = certificate.constant_load_energy_index
     certificate.energy_rating = BD;
+
+    if (!certificate.minimum_efficiency_extended_check) {
+        certificate.error = MINIMUM_EFFICIENCY_ERROR;
+        certificate.error_details = `Minimum extended efficiency based of this motor, based on ${certificate.motor.power}hp, is ${certificate.minimum_efficiency_extended}%`;
+        debug(certificate.error);
+        debug(certificate.error_details);
+        return certificate;
+    }
+
     return certificate;
 }
 exports.calculate_3_to_7 = (pump, certificate) => {
@@ -259,12 +270,16 @@ exports.calculate_3_to_7 = (pump, certificate) => {
     const vlei = certificate.variable_load_energy_rating / pump.results.per_std;
     certificate.variable_load_energy_index = Math.round(vlei * 100) / 100;
     certificate.pei = certificate.variable_load_energy_index;
-    certificate.energy_rating = Math.round((pump.pei_baseline - vlei) * 100);
+
+    // Change requested by HI - 12/21/2018.
+    // Instead of using pei_baseline, always use 1.
+    certificate.energy_rating = Math.round((1 /*pump.pei_baseline*/ - vlei) * 100);
 
     return certificate;
 }
-exports.calculate_4_5_to_7 = (pump) => {
-    const certificate = {}
+exports.calculate_4_5_to_7 = (pump, certificate) => {
+    certificate.error = undefined;
+    certificate.error_details = undefined;
     debug(`Begin 4/5-7 certificate calculation on pump ${pump.rating_id}`)
     //Full load nameplate motor losses
     const me = pump.motor_regulated ? pump.motor_efficiency : pump.results.default_motor_efficiency;
@@ -353,7 +368,10 @@ exports.calculate_4_5_to_7 = (pump) => {
 
     const vlei = certificate.variable_load_energy_rating / pump.results.per_std;
     certificate.variable_load_energy_index = Math.round(vlei * 100) / 100;
-    certificate.pei = certificate.variable_load_energy_index
-    certificate.energy_rating = Math.round((pump.pei_baseline - vlei) * 100);
+    certificate.pei = certificate.variable_load_energy_index;
+
+    // Change requested by HI - 12/21/2018.
+    // Instead of using pei_baseline, always use 1.
+    certificate.energy_rating = Math.round((1 /*pump.pei_baseline*/ - vlei) * 100);
     return certificate;
 }
