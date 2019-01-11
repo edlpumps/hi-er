@@ -3,7 +3,7 @@ const expect = require("chai").expect;
 const fs = require('fs');
 const path = require('path');
 const certcalc = require('../certificate_calculator');
-const circulator = require('../circulator-calculator');
+
 const N4ZXMQ = require('./certificate-testcases/3_57/N4ZXMQ.json');
 const Y4PPD4 = require('./certificate-testcases/3_57/Y4PPD4.json');
 const NQ693Q = require('./certificate-testcases/3_57/NQ693Q.json');
@@ -583,101 +583,6 @@ if (THREE_TO_SEVEN) {
 }
 
 if (CIRCULATOR) {
-    describe('PER Reference', function () {
-        it('Calculates CP3 No Controls', () => {
-            const results = circulator.calculate_per_ref('cp3 ', [17, 23, 33, 40], 150);
-            assert_precision(results.per_ref, 1.25742454091735);
-            assert_precision(results.w2wEfficiency_ref, 67.79);
-            assert_precision(results.output_power[3], 1.51668351870576);
-        });
-    });
 
-    describe('CP3 No Controls', function () {
-        it('Calculates PEI and Energy Rating', () => {
-            const pump = {
-                circulator: {
-                    type: 'cp3',
-                    input_power: [0.4, 1.2, 1.9, 2.5],
-                    head: [17, 23, 33, 40],
-                    flow: 150,
-                    pei_input: 1.2
-                }
-            }
-
-            const results = circulator.noControl(pump);
-            assert_precision(results.per_input, 1.5);
-            assert_precision(results.pei_input, 1.2);
-            assert_precision(results.pei, 1.19291452583364);
-            assert_precision(results.pei_baseline, 1.74143002121381);
-            assert_precision(results.energy_rating, 54.1430021213805);
-        });
-    });
-
-
-    describe('CP2 Pressure / Temperature / External', function () {
-        it('Calculates PEI and Energy Rating', () => {
-            const pump = {
-                circulator: {
-                    type: 'cp3',
-                    least_input_power: [0.4, 1.2, 1.9, 2.5],
-                    most_input_power: [0.65, 1.4, 2.6, 3.2],
-                    head: [17, 23, 33, 40],
-                    flow: 150,
-                    least_pei_input: 1.3,
-                    most_pei_input: 1.7
-                }
-            }
-
-            const results = circulator.commonControl(pump);
-            assert_precision(results.least.energy_rating, 44.1430021213805);
-            assert_precision(results.most.energy_rating, 4.14300212138055);
-        });
-    });
-
-    describe('CP1 External Input', function () {
-        it('Calculates PEI and Energy Rating', () => {
-            const pump = {
-                circulator: {
-                    type: 'cp3',
-                    least_power_at_max_speed: 1.5,
-                    least_power_at_low_speed: 1.3,
-                    most_power_at_max_speed: 1.8,
-                    most_power_at_low_speed: 1.4,
-                    head: [17, 23, 33, 40],
-                    flow: 150,
-                    least_pei_input: 1.13,
-                    most_pei_input: 1.35
-                }
-            }
-
-            const results = circulator.externalInput(pump);
-
-            assert_precision(results.least.energy_rating, 61.1430021213806);
-            assert_precision(results.most.energy_rating, 39.1430021213805);
-        });
-    });
-
-    describe('CP1 Manual Controls', function () {
-        it('Calculates PEI and Energy Rating', () => {
-            const pump = {
-                circulator: {
-                    type: 'cp3',
-                    least_power_at_max_speed: 1.5,
-                    least_power_at_low_speed: 1.3,
-                    most_power_at_max_speed: 1.8,
-                    most_power_at_low_speed: 1.4,
-                    head: [17, 23, 33, 40],
-                    flow: 150,
-                    least_pei_input: 1.14,
-                    most_pei_input: 1.35
-                }
-            }
-
-            const results = circulator.manualControl(pump);
-
-            assert_precision(results.least.energy_rating, 60.1430021213806);
-            assert_precision(results.most.energy_rating, 39.1430021213805);
-        });
-    });
-
+    require('./circulator-tests')
 }
