@@ -1,5 +1,6 @@
 const Excel = require('exceljs');
 const UOM = require('../utils/uom');
+const calculator = require('../circulator-calculator');
 
 const NO_SPEED_CONTROL = {
     label: 'no-speed-control',
@@ -104,6 +105,7 @@ const resolve_control_method = (sheet, column, row) => {
 
 const extract_row = (sheet, rowNumber, labs) => {
     const row = {}
+    row.template_row = rowNumber;
     row.participant = readCell(sheet, PARTICIPANT_COLUMN, rowNumber);
     if (!row.participant) return;
 
@@ -208,8 +210,36 @@ const extract_row = (sheet, rowNumber, labs) => {
             return row;
         }
     }
+
+
+    // calculate the energy rating for the pump (lc and mc)
+    const least = {
+            type: row.type,
+            input_power: row.lc_input_power,
+            head: row.head,
+            flow: row.flow,
+            pei_input: row.lc_pei
+    }
+    let results = calculator.calculate_energy_rating(row.lc_control_method, least);
+    
+    row.lc_energy_rating = results.least.energy_rating
+    if ( mc ) {
+        const most = {
+            type: row.type,
+            input_power: row.mc_input_power,
+            head: row.head,
+            flow: row.flow,
+            pei_input: row.mc_pei
+        }
+        results = calculator.calculate_energy_rating(row.mc_control_method, most);
+        row.mc_energy_rating = results.most.energy_rating
+    }
+    
     return row;
 }
+
+
+
 
 const apply_units = (pump, units) => {
     if (units == UOM.US) return;

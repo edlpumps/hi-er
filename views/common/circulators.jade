@@ -1,0 +1,13 @@
+mixin control_method(cm)
+    if (cm == 'no-speed-control')
+        span No Speed Control
+    else if (cm == 'pressure-control')
+        span Pressure Control
+    else if (cm == 'temperature-control')
+        span Temperature Control
+    else if (cm == 'manual-control')
+        span Manual Control
+    else if (cm == 'external-control')
+        span External Input Signal Only Control
+    else if (cm == 'external-other-control')
+        span External Input Signal and Other Controls

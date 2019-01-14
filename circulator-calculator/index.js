@@ -318,3 +318,23 @@ exports.manualControl = manualControl;
 exports.commonControl = commonControl;
 exports.calculate_per_ref = calculate_per_ref;
 exports.calculate_baseline_pei = calculate_baseline_pei;
+
+
+exports.calculate_energy_rating = (control_method, input ) => {
+    const params = {circulator: input};
+    switch(control_method) {
+        case 'no-speed-control':
+            const r = noControl(params);
+            return {least: r};
+        case 'manual-control':
+            return manualControl(params);
+        case 'pressure-control':
+        case 'temperature-control':
+        case 'external-control':
+            return commonControl(params);
+        case 'external-other-control':
+            return externalInput(params);
+        default:
+            return undefined;
+    }
+}

@@ -975,7 +975,8 @@ router.get("/api/users", function (req, res) {
 
 
 
-
+const circulators = require("./circulator");
+router.use('/circulators', circulators)
 router.post("/api/users/delete/:id", common.deleteUser);
 router.post("/api/users/add", common.addUser)
 router.post("/api/users/save", common.saveUser)

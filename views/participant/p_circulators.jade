@@ -4,9 +4,10 @@ extends layout
 block nav
      +navigation("pumps")
 block content
- div.ng-cloak(ng-app='ERParticipantApp')
-    .container(ng-controller="ERParticipantController as app",ng-init="app.pump_search_query = #{JSON.stringify(pump_search_query)}; app.units = #{JSON.stringify(units)}; app.user= #{JSON.stringify(user)}; app.participant= #{JSON.stringify(participant)};")
-      .modal.fade#delete(tabindex='-1', role='dialog' aria-labelledby='titleLabel', aria-hidden='true')
+ div
+    //- (ng-controller="ERParticipantController as app",ng-init="app.pump_search_query = #{JSON.stringify(pump_search_query)}; app.units = #{JSON.stringify(units)}; app.user= #{JSON.stringify(user)}; app.participant= #{JSON.stringify(participant)};")
+    .container
+      //-.modal.fade#delete(tabindex='-1', role='dialog' aria-labelledby='titleLabel', aria-hidden='true')
         .modal-dialog
           .modal-content
             .modal-header
@@ -21,49 +22,43 @@ block content
               div
                 button.btn.btn-danger(type="button", data-dismiss='modal', ng-click="app.removePump(app.pump_to_delete)") Delete pump
                 button.btn.btn-default(type='button' data-dismiss='modal') Dismiss
-
-
       .panel.panel-default
         .panel-heading 
             h1 Pump listings
         .panel-body
           ul.nav.nav-tabs
-            li.active
-              a(href="#") C&amp;I Pumps
             li
-              a(href="/participant/circulators") Circulator Pumps
+              a(href="/participant/pumps") C&amp;I Pumps
+            li.active
+              a(href="#") Circulator Pumps
           .row(style='padding-top:20px', ng-show='app.user.participant_edit')
             if subscription_limit
               .col.col-xs-12
-               .alert.alert-warning You have reached the maximum number of C&amp;I pump listings your account subscription allows.  If you delete pumps, please refresh your browser to begin adding pumps.
+               .alert.alert-warning You have reached the maximum number of circulator pump listings your account subscription allows.  If you delete pumps, please refresh your browser to begin adding pumps.
             if subscription_missing
               .col.col-xs-12
                .alert.alert-warning Your account is not active, you may not list pumps at this time.
             else 
               .col.col-xs-12
                unless subscription_limit
-                .btn-group
-                  button(type="button", data-toggle="dropdown").btn.btn-primary.dropdown-toggle 
-                    .glyphicon.glyphicon-plus 
-                    span.btn-space New Pump 
-                    span.btn-space.caret
-                  us.dropdown-menu
-                      li: a(href="pumps/new") Create new pump listing using web form
-                      li: a(href="pumps/upload") Upload new pump(s) with template
+                a.btn.btn-primary.btn-space(href="/participant/circulators/upload") Import Circulator Pump(s)
+                
                a.btn.btn-default.btn-space(href="/participant/pumps/download") Download pumps
                a(href="/ratings/glossary#status_explanation", title="Help documentation", target="_blank", style="margin-left:1em") Learn about pump listing status and revision/redesigns.
           .row.solo
            .col.col-xs-12
             .form-group
               .icon-addon.addon-lg
-               input.form-control(id="search", ng-change="app.post_search_query();", ng-model="app.pump_search_query", placeholder="Filter by Rating ID / Basic model number / Individual model number.")
+               //- ng-change="app.post_search_query();", ng-model="app.pump_search_query", 
+               input.form-control(id="search", placeholder="Filter by Rating ID / Basic model number / Individual model number.")
                label.glyphicon.glyphicon-search(for="search", title="Filter pumps", rel="tooltip")
           .row.solo
            .col.col-xs-12
-            p.text-center(ng-show='app.searching_pumps')
+            //-p.text-center(ng-show='app.searching_pumps')
               img(src='/images/loading-bar.gif')
               span.help-block Searching... please wait
-            .table-responsive(ng-show='!app.searching_pumps')
+            //-(ng-show='!app.searching_pumps')
+            .table-responsive
               table.table.table-striped
                 thead
                  tr 
@@ -79,9 +74,9 @@ block content
                   th.hidden-xs.hidden-sm Stages
                   th.hidden-xs PEI
                   th ER
-                  th(ng-show='app.user.participant_edit')
+                  //-th(ng-show='app.user.participant_edit')
                 tbody
-                 tr(ng-repeat="pump in app.pump_search_results() | orderBy:['basic_model','listed', 'pending', 'individual_model']")
+                 //-tr(ng-repeat="pump in app.pump_search_results() | orderBy:['basic_model','listed', 'pending', 'individual_model']")
                   td
                     img(ng-show="pump.pending", height="25" width="25" ng-src="/images/pending.png")
                     img(ng-hide="pump.pending", height="25" width="25" ng-src="/images/{{pump.listed && pump.active_admin && !pump.pending ? 'active' : 'inactive'}}.png")

@@ -59,6 +59,7 @@ describe('Excel import tests', function () {
 
         it(`Fails rows with no data`, () => {
             const pump = result.failed[0];
+            expect(pump.template_row).to.equal(9);
             expect(pump.participant).to.not.equal(undefined);
             expect(pump.participant.name).to.equal(participant.name);
             expect(pump.brand).to.equal('IQ')
@@ -67,6 +68,7 @@ describe('Excel import tests', function () {
         })
         it(`Fails rows with no data control methods`, () => {
             const pump = result.failed[1];
+            expect(pump.template_row).to.equal(10);
             expect(pump.participant).to.not.equal(undefined);
             expect(pump.participant.name).to.equal(participant.name);
             expect(pump.brand).to.equal('IQ')
@@ -75,6 +77,7 @@ describe('Excel import tests', function () {
         })
         it(`Fails rows with control method conflict (lc)`, () => {
             const pump = result.failed[2];
+            expect(pump.template_row).to.equal(11);
             expect(pump.participant).to.not.equal(undefined);
             expect(pump.participant.name).to.equal(participant.name);
             expect(pump.brand).to.equal('IQ')
@@ -83,6 +86,7 @@ describe('Excel import tests', function () {
         });
         it(`Fails rows with control method conflict (mc)`, () => {
             const pump = result.failed[3];
+            expect(pump.template_row).to.equal(12);
             expect(pump.participant).to.not.equal(undefined);
             expect(pump.participant.name).to.equal(participant.name);
             expect(pump.brand).to.equal('IQ')
@@ -91,6 +95,7 @@ describe('Excel import tests', function () {
         });
         it(`Fails rows with missing head column`, () => {
             const pump = result.failed[4];
+            expect(pump.template_row).to.equal(13);
             expect(pump.participant).to.not.equal(undefined);
             expect(pump.participant.name).to.equal(participant.name);
             expect(pump.brand).to.equal('IQ')
@@ -99,6 +104,7 @@ describe('Excel import tests', function () {
         });
         it(`Fails rows with invalid head column`, () => {
             const pump = result.failed[5];
+            expect(pump.template_row).to.equal(14);
             expect(pump.participant).to.not.equal(undefined);
             expect(pump.participant.name).to.equal(participant.name);
             expect(pump.brand).to.equal('IQ')
@@ -107,6 +113,7 @@ describe('Excel import tests', function () {
         });
         it(`Fails rows with invalid flow column`, () => {
             const pump = result.failed[6];
+            expect(pump.template_row).to.equal(15);
             expect(pump.participant).to.not.equal(undefined);
             expect(pump.participant.name).to.equal(participant.name);
             expect(pump.brand).to.equal('IQ')
@@ -115,6 +122,7 @@ describe('Excel import tests', function () {
         });
         it(`Fails rows with invalid flow column`, () => {
             const pump = result.failed[7];
+            expect(pump.template_row).to.equal(16);
             expect(pump.participant).to.not.equal(undefined);
             expect(pump.participant.name).to.equal(participant.name);
             expect(pump.brand).to.equal('IQ')
@@ -123,6 +131,7 @@ describe('Excel import tests', function () {
         });
         it(`Fails rows with missing pei (mc)`, () => {
             const pump = result.failed[8];
+            expect(pump.template_row).to.equal(17);
             expect(pump.participant).to.not.equal(undefined);
             expect(pump.participant.name).to.equal(participant.name);
             expect(pump.brand).to.equal('IQ')
@@ -131,6 +140,7 @@ describe('Excel import tests', function () {
         });
         it(`Fails rows with method / input power mismatch`, () => {
             const pump = result.failed[9];
+            expect(pump.template_row).to.equal(18);
             expect(pump.participant).to.not.equal(undefined);
             expect(pump.participant.name).to.equal(participant.name);
             expect(pump.brand).to.equal('IQ')
@@ -139,6 +149,7 @@ describe('Excel import tests', function () {
         });
         it(`Fails rows with method / input power mismatch`, () => {
             const pump = result.failed[10];
+            expect(pump.template_row).to.equal(19);
             expect(pump.participant).to.not.equal(undefined);
             expect(pump.participant.name).to.equal(participant.name);
             expect(pump.brand).to.equal('IQ')
@@ -147,6 +158,7 @@ describe('Excel import tests', function () {
         });
         it(`Fails rows with method / input power mismatch`, () => {
             const pump = result.failed[11];
+            expect(pump.template_row).to.equal(20);
             expect(pump.participant).to.not.equal(undefined);
             expect(pump.participant.name).to.equal(participant.name);
             expect(pump.brand).to.equal('IQ')
@@ -155,6 +167,7 @@ describe('Excel import tests', function () {
         });
         it(`Fails rows with method / input power mismatch`, () => {
             const pump = result.failed[12];
+            expect(pump.template_row).to.equal(21);
             expect(pump.participant).to.not.equal(undefined);
             expect(pump.participant.name).to.equal(participant.name);
             expect(pump.brand).to.equal('IQ')
@@ -164,6 +177,7 @@ describe('Excel import tests', function () {
 
         it(`Import CP3 No Control`, () => {
             const pump = result.ready[0];
+            expect(pump.template_row).to.equal(5);
             expect(pump.participant).to.not.equal(undefined);
             expect(pump.participant.name).to.equal(participant.name);
             expect(pump.brand).to.equal('IQ')
@@ -204,6 +218,7 @@ describe('Excel import tests', function () {
 
         it(`Import CP2 Pressure / Temperature Control`, () => {
             const pump = result.ready[1];
+            expect(pump.template_row).to.equal(6);
             expect(pump.participant).to.not.equal(undefined);
             expect(pump.participant.name).to.equal(participant.name);
             expect(pump.brand).to.equal('IQ')
@@ -256,6 +271,7 @@ describe('Excel import tests', function () {
 
         it(`Import CP1 Pressure / Manual Control`, () => {
             const pump = result.ready[2];
+            expect(pump.template_row).to.equal(7);
             expect(pump.participant).to.not.equal(undefined);
             expect(pump.participant.name).to.equal(participant.name);
             expect(pump.brand).to.equal('IQ')
@@ -301,6 +317,7 @@ describe('Excel import tests', function () {
 
         it(`Import CP1 Manual / Pressure Control`, () => {
             const pump = result.ready[3];
+            expect(pump.template_row).to.equal(8);
             expect(pump.participant).to.not.equal(undefined);
             expect(pump.participant.name).to.equal(participant.name);
             expect(pump.brand).to.equal('IQ')

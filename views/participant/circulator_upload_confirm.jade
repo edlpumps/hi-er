@@ -1,0 +1,107 @@
+extends layout
+
+include ../common/labels
+include ../common/circulators
+
+block nav
+     +navigation("upload")
+block content
+  div.ng-cloak(ng-app='ERParticipantApp')
+
+    .container
+      if succeeded && succeeded.length > 0
+       .panel.panel-default
+        .panel-heading 
+            h1 Pumps ready for input
+            p.text-warning Note, these pumps will not be listed or saved until you confirm below
+
+        .panel-body
+           table.table.table-striped
+              thead
+                tr
+                  th Row #
+                  th 
+                    span Basic / Manufacturer
+                    br
+                    span Model #
+                  th Type
+                  th Control Method
+                  th PEI
+                  th Energy Rating
+              tbody
+               each success in succeeded
+                 tr
+                  td #{success.template_row}
+                  td 
+                    span #{success.basic_model}
+                    br
+                    span #{success.manufacturer_model}
+                  td #{success.type}
+                  
+                  if success.mc_control_method
+                    td 
+                      b Least Consumptive: 
+                      +control_method(success.lc_control_method)
+                      br
+                      b Most Consumptive:
+                      +control_method(success.mc_control_method)
+                    td 
+                      span #{success.lc_pei}
+                      br
+                      span #{success.mc_pei}
+                    td 
+                      span #{success.lc_energy_rating}
+                      br
+                      span #{success.mc_energy_rating}
+                  else
+                    td 
+                      +control_method(success.lc_control_method)
+                    td #{success.lc_pei}
+                    td #{success.lc_energy_rating}
+                 
+           form(action="save_upload", method="post")
+            button.btn.btn-primary(type="submit") Add pumps
+            .checkbox
+              label  
+               input(type="checkbox", name="list_pumps") 
+               .text-info List pumps when added.  If left unchecked, pumps will be added, but they will be in the "pending" state until you activate them individually.  Pending pumps are not seen by the public users.
+            input(type="hidden", name="pumps", value="#{JSON.stringify(succeeded)}")
+            
+      if failed && failed.length > 0
+        .panel.panel-warning
+          .panel-heading
+            h1 Pumps that cannot be imported
+            p.text-warning The following pumps cannot be imported as they are currently listed in this template.  They will be ignored.
+          .panel-body
+            table.table.table-striped
+              thead
+                tr
+                  th Row #
+                  th 
+                    span Basic / Manufacturer
+                    br
+                    span Model #
+                  th Type
+                  th Control Method
+                  th Failure reasons
+              tbody
+               each fail in failed
+                 tr
+                   td #{fail.template_row}
+                   td 
+                    span #{fail.basic_model}
+                    br
+                    span #{fail.manufacturer_model}
+                   td #{fail.type}
+                   if fail.mc_control_method
+                    td 
+                      b Least Consumptive: 
+                      +control_method(fail.lc_control_method)
+                      br
+                      b Most Consumptive:
+                      +control_method(fail.mc_control_method)
+                   else
+                    td 
+                      +control_method(fail.lc_control_method)
+                   td #{fail.failure}
+            
