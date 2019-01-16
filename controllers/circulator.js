@@ -117,8 +117,10 @@ const extract_row = (sheet, rowNumber, labs) => {
     row.laboratory = findLab(readCell(sheet, LABORATORY_COLUMN, rowNumber), labs);
     const lc = resolve_control_method(sheet, LC_CONTROL_METHOD_COLUMN, rowNumber);
     if (lc) {
-        row.lc_control_method = lc.label;
-        row.lc_pressure_curve = readCell(sheet, "P", rowNumber);
+        row.least = {
+            control_method: lc.label,
+            pressure_curve: readCell(sheet, "P", rowNumber)
+        }
     } else {
         row.failure = 'No control methods specified';
         return row;
@@ -126,8 +128,10 @@ const extract_row = (sheet, rowNumber, labs) => {
 
     const mc = resolve_control_method(sheet, MC_CONTROL_METHOD_COLUMN, rowNumber);
     if (mc) {
-        row.mc_control_method = mc.label;
-        row.mc_pressure_curve = readCell(sheet, "Q", rowNumber);
+        row.most = {
+            control_method: mc.label,
+            pressure_curve: readCell(sheet, "Q", rowNumber)
+        }
     }
 
     row.control_methods = [];
@@ -154,7 +158,7 @@ const extract_row = (sheet, rowNumber, labs) => {
 
     row.head = readNumericArray(sheet, ["AD", "AE", "AF", "AG"], rowNumber);
     row.flow = readNumeric(sheet, "AH", rowNumber);
-    row.lc_pei = readNumeric(sheet, "AI", rowNumber);
+    row.least.pei = readNumeric(sheet, "AI", rowNumber);
 
     if (row.head.length != 4) {
         row.failure = 'Four head data points are required';
@@ -164,20 +168,20 @@ const extract_row = (sheet, rowNumber, labs) => {
         row.failure = 'Flow Rate is required';
         return row;
     }
-    if (isNaN(row.lc_pei)) {
+    if (isNaN(row.least.pei)) {
         row.failure = 'PEI for least consumptive method is required';
         return row;
     }
 
     if (lc.number <= 4) {
-        row.lc_input_power = readNumericArray(sheet, ["R", "S", "T", "U"], rowNumber);
-        if (row.lc_input_power.length !== 4) {
+        row.least.input_power = readNumericArray(sheet, ["R", "S", "T", "U"], rowNumber);
+        if (row.least.input_power.length !== 4) {
             row.failure = 'Least consumptive method specified requires four power inputs';
             return row;
         }
     } else {
-        row.lc_input_power = readNumericArray(sheet, ["V", "W"], rowNumber);
-        if (row.lc_input_power.length !== 2) {
+        row.least.input_power = readNumericArray(sheet, ["V", "W"], rowNumber);
+        if (row.least.input_power.length !== 2) {
             row.failure = 'Least consumptive method specified requires max/reduced power inputs';
             return row;
         }
@@ -191,21 +195,21 @@ const extract_row = (sheet, rowNumber, labs) => {
             return row;
         }
         if (mc.number <= 4) {
-            row.mc_input_power = readNumericArray(sheet, ["X", "Y", "Z", "AA"], rowNumber);
-            if (row.mc_input_power.length !== 4) {
+            row.most.input_power = readNumericArray(sheet, ["X", "Y", "Z", "AA"], rowNumber);
+            if (row.most.input_power.length !== 4) {
                 row.failure = 'Most consumptive method specified requires four power inputs';
                 return row;
             }
         } else {
-            row.mc_input_power = readNumericArray(sheet, ["AB", "AC"], rowNumber);
-            if (row.mc_input_power.length !== 2) {
+            row.most.input_power = readNumericArray(sheet, ["AB", "AC"], rowNumber);
+            if (row.most.input_power.length !== 2) {
                 row.failure = 'Most consumptive method specified requires max/reduced power inputs';
                 return row;
             }
         }
-        row.mc_pei = readNumeric(sheet, "AJ", rowNumber);
+        row.most.pei = readNumeric(sheet, "AJ", rowNumber);
 
-        if (isNaN(row.mc_pei)) {
+        if (isNaN(row.most.pei)) {
             row.failure = 'PEI for most consumptive method is required';
             return row;
         }
@@ -214,27 +218,26 @@ const extract_row = (sheet, rowNumber, labs) => {
 
     // calculate the energy rating for the pump (lc and mc)
     const least = {
-            type: row.type,
-            input_power: row.lc_input_power,
-            head: row.head,
-            flow: row.flow,
-            pei_input: row.lc_pei
+        type: row.type,
+        input_power: row.least.input_power,
+        head: row.head,
+        flow: row.flow,
+        pei_input: row.least.pei
     }
-    let results = calculator.calculate_energy_rating(row.lc_control_method, least);
-    
-    row.lc_energy_rating = results.least.energy_rating
-    if ( mc ) {
+    let results = calculator.calculate_energy_rating(row.least.control_method, least);
+    row.least.energy_rating = results.energy_rating
+    if (mc) {
         const most = {
             type: row.type,
-            input_power: row.mc_input_power,
+            input_power: row.most.input_power,
             head: row.head,
             flow: row.flow,
-            pei_input: row.mc_pei
+            pei_input: row.most.pei
         }
-        results = calculator.calculate_energy_rating(row.mc_control_method, most);
-        row.mc_energy_rating = results.most.energy_rating
+        results = calculator.calculate_energy_rating(row.most.control_method, most);
+        row.most.energy_rating = results.energy_rating
     }
-    
+
     return row;
 }
 
@@ -244,9 +247,9 @@ const extract_row = (sheet, rowNumber, labs) => {
 const apply_units = (pump, units) => {
     if (units == UOM.US) return;
 
-    pump.lc_input_power = pump.lc_input_power.map(p => p / UOM.factors.power);
-    if (pump.mc_input_power) {
-        pump.mc_input_power = pump.mc_input_power.map(p => p / UOM.factors.power);
+    pump.least.input_power = pump.least.input_power.map(p => p / UOM.factors.power);
+    if (pump.most) {
+        pump.most.input_power = pump.most.input_power.map(p => p / UOM.factors.power);
     }
     pump.head = pump.head.map(p => p / UOM.factors.head);
     pump.flow = pump.flow / UOM.factors.flow;

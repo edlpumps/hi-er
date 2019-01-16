@@ -69,30 +69,18 @@ const calculate_per_ref = (_type, /*_power, */ _head, _flow /*, _pei*/ ) => {
     const type = input_to_pump_type(_type);
     assert(type, 'PER-ref Violation:  Pump type must be valid (CP1/2/3) - was given [' + _type + ']');
 
-    /*assert(_power, 'PER-ref Violation:  Must provide power');
-    assert(_power.length == 4, 'PER-ref Violation:  Must provide power points at 25, 50, 75, 100% BEP');*/
-
     assert(_head, 'Must provide head');
     assert(_head.length == 4, 'PER-ref Violation:  Must provide head points at 25, 50, 75, 100% BEP');
 
-    //const power = _power.map(input_to_number);
     const head = _head.map(input_to_number);
-
     const flow100 = input_to_number(_flow);
-    /*const pei = input_to_number(_pei);*/
 
-    /*assert(power[PT_025] !== undefined, 'PER-ref Violation:  Power @25% BEP not specified or is NaN');
-    assert(power[PT_050] !== undefined, 'PER-ref Violation:  Power @50% BEP not specified or is NaN');
-    assert(power[PT_075] !== undefined, 'PER-ref Violation:  Power @75% BEP not specified or is NaN');
-    assert(power[PT_100] !== undefined, 'PER-ref Violation:  Power @100% BEP not specified or is NaN');
-    */
     assert(head[PT_025] !== undefined, 'PER-ref Violation:  Head @25% BEP not specified or is NaN');
     assert(head[PT_050] !== undefined, 'PER-ref Violation:  Head @50% BEP not specified or is NaN');
     assert(head[PT_075] !== undefined, 'PER-ref Violation:  Head @75% BEP not specified or is NaN');
     assert(head[PT_100] !== undefined, 'PER-ref Violation:  Head @100% BEP not specified or is NaN');
 
     assert(flow100, 'PER-ref Violation:  Must provide flow BEP');
-    /*assert(pei, 'PER-ref Violation:  Must provide PEI');*/
 
     ///////////////////////////////////////////////////////////////////
     // Load Point Flow rate
@@ -192,6 +180,28 @@ const calculate_baseline_pei = (_type, _head, _flow) => {
     }
 }
 
+const calculate_energy_rating = (pump, power, coefficients) => {
+    const type = input_to_pump_type(pump.circulator.type);
+
+    const head = pump.circulator.head.map(input_to_number);
+    const flow = input_to_number(pump.circulator.flow);
+    const pei_input = input_to_number(pump.circulator.pei_input);
+
+    const per = apply_coeffs(power, coefficients);
+
+    const result = calc_pei_and_validity(type, per, head, flow, pei_input);
+
+    const {
+        pei_baseline
+    } = calculate_baseline_pei(type, head, flow);
+
+    if (result.pei_validity != RETEST) {
+        result.energy_rating = (pei_baseline - pei_input) * 100;
+    }
+
+    return result;
+}
+
 const noControl = (pump) => {
     const type = input_to_pump_type(pump.circulator.type);
     const power = pump.circulator.input_power.map(input_to_number);
@@ -241,68 +251,25 @@ const calc_pei_and_validity = (type, per, head, flow, pei_input) => {
     }
 }
 
-const commonControl = (pump) => {
-    const least_power = pump.circulator.least_input_power.map(input_to_number);
-    const most_power = pump.circulator.most_input_power.map(input_to_number);
-
-    return calculate_least_most_energy_rating(
+const calc_with_controls = (pump, coeffs) => {
+    const power = input_to_number(pump.circulator.input_power);
+    return calculate_energy_rating(
         pump,
-        least_power,
-        most_power,
-        [0.05, 0.4, 0.4, 0.14]
-    );
-}
-
-const calculate_least_most_energy_rating = (pump, least_powers, most_powers, coefficients) => {
-    const type = input_to_pump_type(pump.circulator.type);
-
-    const head = pump.circulator.head.map(input_to_number);
-    const flow = input_to_number(pump.circulator.flow);
-    const least_pei_input = input_to_number(pump.circulator.least_pei_input);
-    const most_pei_input = input_to_number(pump.circulator.most_pei_input);
-
-    const least_per = apply_coeffs(least_powers, coefficients);
-    const most_per = apply_coeffs(most_powers, coefficients);
-
-    const least = calc_pei_and_validity(type, least_per, head, flow, least_pei_input);
-    const most = calc_pei_and_validity(type, most_per, head, flow, most_pei_input);
-
-    const {
-        pei_baseline
-    } = calculate_baseline_pei(type, head, flow);
-
-    if (least.pei_validity != RETEST) {
-        least.energy_rating = (pei_baseline - least_pei_input) * 100;
-    }
-    if (most.pei_validity != RETEST) {
-        most.energy_rating = (pei_baseline - most_pei_input) * 100;
-    }
-
-    return {
-        least,
-        most
-    };
-}
-const external_manual_controls = (pump, coeffs) => {
-    const least_power_at_max_speed = input_to_number(pump.circulator.least_power_at_max_speed);
-    const least_power_at_low_speed = input_to_number(pump.circulator.least_power_at_low_speed);
-    const most_power_at_max_speed = input_to_number(pump.circulator.most_power_at_max_speed);
-    const most_power_at_low_speed = input_to_number(pump.circulator.most_power_at_low_speed);
-
-    return calculate_least_most_energy_rating(
-        pump,
-        [least_power_at_max_speed, least_power_at_low_speed],
-        [most_power_at_max_speed, most_power_at_low_speed],
+        power,
         coeffs
     )
 }
 
+const commonControl = (pump) => {
+    return calc_with_controls(pump, [0.05, 0.4, 0.4, 0.14])
+}
+
 const externalInput = (pump) => {
-    return external_manual_controls(pump, [0.7, 0.3])
+    return calc_with_controls(pump, [0.7, 0.3])
 }
 
 const manualControl = (pump) => {
-    return external_manual_controls(pump, [0.75, 0.25])
+    return calc_with_controls(pump, [0.75, 0.25])
 }
 
 
@@ -320,12 +287,13 @@ exports.calculate_per_ref = calculate_per_ref;
 exports.calculate_baseline_pei = calculate_baseline_pei;
 
 
-exports.calculate_energy_rating = (control_method, input ) => {
-    const params = {circulator: input};
-    switch(control_method) {
+exports.calculate_energy_rating = (control_method, input) => {
+    const params = {
+        circulator: input
+    };
+    switch (control_method) {
         case 'no-speed-control':
-            const r = noControl(params);
-            return {least: r};
+            return noControl(params);
         case 'manual-control':
             return manualControl(params);
         case 'pressure-control':

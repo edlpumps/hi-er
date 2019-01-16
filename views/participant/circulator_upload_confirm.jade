@@ -38,26 +38,26 @@ block content
                     span #{success.manufacturer_model}
                   td #{success.type}
                   
-                  if success.mc_control_method
+                  if success.most
                     td 
                       b Least Consumptive: 
-                      +control_method(success.lc_control_method)
+                      +control_method(success.least.control_method)
                       br
                       b Most Consumptive:
-                      +control_method(success.mc_control_method)
+                      +control_method(success.most.control_method)
                     td 
-                      span #{success.lc_pei}
+                      span #{success.least.pei}
                       br
-                      span #{success.mc_pei}
+                      span #{success.most.pei}
                     td 
-                      span #{success.lc_energy_rating}
+                      span #{success.least.energy_rating}
                       br
-                      span #{success.mc_energy_rating}
+                      span #{success.most.energy_rating}
                   else
                     td 
-                      +control_method(success.lc_control_method)
-                    td #{success.lc_pei}
-                    td #{success.lc_energy_rating}
+                      +control_method(success.least.control_method)
+                    td #{success.least.pei}
+                    td #{success.least.energy_rating}
                  
            form(action="save_upload", method="post")
             button.btn.btn-primary(type="submit") Add pumps
@@ -93,15 +93,17 @@ block content
                     br
                     span #{fail.manufacturer_model}
                    td #{fail.type}
-                   if fail.mc_control_method
+                   if fail.most
                     td 
                       b Least Consumptive: 
-                      +control_method(fail.lc_control_method)
+                      if fail.least
+                       +control_method(fail.least.control_method)
                       br
                       b Most Consumptive:
-                      +control_method(fail.mc_control_method)
+                      +control_method(fail.most.control_method)
                    else
                     td 
-                      +control_method(fail.lc_control_method)
+                      if fail.least
+                        +control_method(fail.least.control_method)
                    td #{fail.failure}
             

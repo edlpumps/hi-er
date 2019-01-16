@@ -76,6 +76,7 @@ var configure = function () {
     app.use(function (req, res, next) {
         req.Participants = req.app.locals.db.Participants;
         req.Pumps = req.app.locals.db.Pumps;
+        req.Circulators = req.app.locals.db.Circulators;
         req.Users = req.app.locals.db.Users;
         req.Labels = req.app.locals.db.Labels;
         req.Labs = req.app.locals.db.Labs;
@@ -109,7 +110,7 @@ var configure = function () {
     const pei = require("./routes/pei");
     const labels = require("./routes/labels");
     const ratings = require("./routes/ratings");
-   
+
     app.use("/", root);
     app.use("/participant", participant);
     app.use("/admin", admin);
@@ -168,6 +169,7 @@ var conn = mongoose.connect(data_connection_str, {
         app.locals.db = {
             Users: schemas.Users,
             Participants: schemas.Participants,
+            Circulators: schemas.Circulators,
             Pumps: schemas.Pumps,
             Labels: schemas.Labels,
             Labs: schemas.Labs,

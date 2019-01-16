@@ -1,13 +1,57 @@
 mixin control_method(cm)
-    if (cm == 'no-speed-control')
-        span No Speed Control
-    else if (cm == 'pressure-control')
-        span Pressure Control
-    else if (cm == 'temperature-control')
-        span Temperature Control
-    else if (cm == 'manual-control')
-        span Manual Control
-    else if (cm == 'external-control')
-        span External Input Signal Only Control
-    else if (cm == 'external-other-control')
-        span External Input Signal and Other Controls
+	if (cm == 'no-speed-control')
+		span No Speed Control
+	else if (cm == 'pressure-control')
+		span Pressure Control
+	else if (cm == 'temperature-control')
+		span Temperature Control
+	else if (cm == 'manual-control')
+		span Manual Control
+	else if (cm == 'external-control')
+		span External Input Signal Only Control
+	else if (cm == 'external-other-control')
+		span External Input Signal and Other Controls
+
+mixin vue_circulator_components()
+	script.
+		Vue.component('control-method', {
+			props: ['method'],
+			template: '<span>{{text}}</span>',
+			computed: {
+				text() {
+					if (this.method == 'no-speed-control')
+						return "No Speed Control";
+					else if (this.method == 'pressure-control')
+						return "Pressure Control";
+					else if (this.method == 'temperature-control')
+						return "Temperature Control";
+					else if (this.method == 'manual-control')
+						return "Manual Control";
+					else if (this.method == 'external-control')
+						return "External Input Signal Only Control";
+					else if (this.method == 'external-other-control')
+						return "External Input Signal and Other Controls";
+				}
+			}
+		});
+
+		Vue.component('pei', {
+			props: ['value'],
+			template: '<span>{{text}}</span>',
+			computed: {
+				text() {
+					return this.value.toFixed(2)
+				}
+			}
+		});
+
+		Vue.component('energy-rating', {
+			props: ['value'],
+			template: '<span>{{text}}</span>',
+			computed: {
+				text() {
+					return this.value.toFixed(0)
+				}
+			}
+		});
+

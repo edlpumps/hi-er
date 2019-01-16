@@ -1,12 +1,66 @@
 extends layout
-
+include ../common/circulators
 
 block nav
      +navigation("pumps")
+
+
+block script
+    script.
+        new Vue({
+          el: '#vue',
+
+          data: {
+            pumps: [],
+            search: "",
+            participant: null,
+            user: null,
+            units: null,
+            searching_pumps: false
+          },
+
+          mounted: function () {
+            this.units = $('#vue').data('units');
+            this.participant = $('#vue').data('participant');
+            this.user = $('#vue').data('user');
+            this.fetch_pumps();
+          },
+
+          watch: {
+            search: function() {
+              this.fetch_pumps();
+            }
+          },
+
+          methods: {
+            fetch_pumps: function () {
+              this.searching_pumps = true;
+              
+              var v = this;
+              var request = $.getJSON('/participant/circulators/search?q=' + this.search);
+              
+              request.done(function(data) {
+                v.pumps = data.pumps;
+              });
+              
+              request.fail(function(err) {
+                console.error(err);
+              });
+              
+              request.always(function() {
+                v.searching_pumps = false;
+              });
+            },
+            dual_cm: function(pump) {
+              return  pump.most && pump.most.control_method;
+            }
+          }
+        });
+
 block content
  div
-    //- (ng-controller="ERParticipantController as app",ng-init="app.pump_search_query = #{JSON.stringify(pump_search_query)}; app.units = #{JSON.stringify(units)}; app.user= #{JSON.stringify(user)}; app.participant= #{JSON.stringify(participant)};")
-    .container
+    +vue_circulator_components()
+    .container#vue(data-units=(JSON.stringify(units)), data-user=(JSON.stringify(user)), data-participant=(JSON.stringify(participant)))
       //-.modal.fade#delete(tabindex='-1', role='dialog' aria-labelledby='titleLabel', aria-hidden='true')
         .modal-dialog
           .modal-content
@@ -50,48 +104,61 @@ block content
             .form-group
               .icon-addon.addon-lg
                //- ng-change="app.post_search_query();", ng-model="app.pump_search_query", 
-               input.form-control(id="search", placeholder="Filter by Rating ID / Basic model number / Individual model number.")
+               input.form-control(v-model='search', id="search", placeholder="Filter by Rating ID / Basic model number / Manufacturer model number.")
                label.glyphicon.glyphicon-search(for="search", title="Filter pumps", rel="tooltip")
-          .row.solo
-           .col.col-xs-12
-            //-p.text-center(ng-show='app.searching_pumps')
+          
+          section.solo
+            //-pre {{JSON.stringify(pumps, null, 2)}}
+            p.text-center(v-if='searching_pumps')
               img(src='/images/loading-bar.gif')
               span.help-block Searching... please wait
-            //-(ng-show='!app.searching_pumps')
-            .table-responsive
+            .table-responsive(v-else)
               table.table.table-striped
                 thead
                  tr 
                   th
                   th ID
                   th.hidden-xs Listing Date
-                  th.hidden-xs Basic Model #
-                  th Individual Model #
-                  th.hidden-xs Configuration
-                  th.hidden-xs DOE Pump Category
-                  th.hidden-xs.hidden-sm Impeller (#{units.diameter.label})
-                  th.hidden-xs.hidden-sm Nominal speed (rpm)
-                  th.hidden-xs.hidden-sm Stages
-                  th.hidden-xs PEI
+                  th.hidden-xs Model #
+                  th.hidden-xs Type
+                  th.hidden-xs.hidden-sm.hidden-md Control Method
+                  th.hidden-xs.hidden-sm PEI
                   th ER
+                  
                   //-th(ng-show='app.user.participant_edit')
                 tbody
-                 //-tr(ng-repeat="pump in app.pump_search_results() | orderBy:['basic_model','listed', 'pending', 'individual_model']")
+                 tr(v-for='pump in pumps')
                   td
-                    img(ng-show="pump.pending", height="25" width="25" ng-src="/images/pending.png")
-                    img(ng-hide="pump.pending", height="25" width="25" ng-src="/images/{{pump.listed && pump.active_admin && !pump.pending ? 'active' : 'inactive'}}.png")
+                    img(v-if="pump.pending", height="25", width="25", src="/images/pending.png")
+                    img(v-else="pump.pending", height="25", width="25", :src="'/images/'+pump.listed && pump.active_admin && !pump.pending ? 'active' : 'inactive'+'.png'")
                   td {{pump.rating_id}}
-                  td.hidden-xs {{pump.date | date:'mediumDate'}}
-                  td.hidden-xs: a(href="pumps/{{pump._id}}") {{pump.basic_model}}
-                  td {{pump.individual_model}}
-                  td.hidden-xs {{app.getConfigLabel(pump.configuration)}}
-                  td.hidden-xs {{pump.doe}}
-                  td.hidden-xs.hidden-sm {{pump.diameter * app.units.diameter.factor | number:3}}
-                  td.hidden-xs.hidden-sm {{pump.speed}}
-                  td.hidden-xs.hidden-sm {{pump.stages}}
-                  td.hidden-xs {{pump.pei | number:2}}
-                  td {{pump.energy_rating}} 
-                  
-                  td(ng-show='app.user.participant_edit') 
-                     button(ng-show="pump.pending", type="button", ng-click="app.confirmDeletePump(pump)").btn.btn-danger.btn-xs Delete
+                  td.hidden-xs {{pump.date}}
+                  td.hidden-xs: a(:href="'circulators/'+pump._id")
+                    span {{pump.basic_model}}
+                    br
+                    span {{pump.manufacturer_model}}
+                  td.hidden-xs {{pump.type}}
+                  td.hidden-xs.hidden-sm.hidden-md.lm(v-if='dual_cm(pump)')
+                    .least
+                      control-method(:method='pump.least.control_method')
+                    .most
+                      control-method(:method='pump.most.control_method')
+                  td.hidden-xs.hidden-sm.hidden-md(v-else)
+                    control-method(:method='pump.least.control_method')
+                  td.hidden-xs.hidden-sm.lm(v-if='dual_cm(pump)').hidden-xs 
+                    .least
+                      pei(:value='pump.least.pei')
+                    .most
+                      pei(:value='pump.most.pei')
+                  td.hidden-xs.hidden-sm(v-else)
+                    pei(:value='pump.least.pei')
+                  td.lm(v-if='dual_cm(pump)')
+                    .least
+                      energy-rating(:value='pump.least.energy_rating')
+                    .most
+                      energy-rating(:value='pump.most.energy_rating')
+                  td(v-else)
+                    energy-rating(:value='pump.least.energy_rating')               
+                  td(v-if='user.participant_edit') 
+                     button(v-if="pump.pending", type="button").btn.btn-danger.btn-xs Delete
 

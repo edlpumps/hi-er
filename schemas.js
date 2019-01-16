@@ -364,7 +364,78 @@ exports.init = function init(mongoose) {
     exports.Pumps = Pumps;
 
 
+    var circulatorSchema = new Schema({
+        participant: {
+            type: Schema.Types.ObjectId,
+            ref: 'participants'
+        },
+        date: Date,
+        rating_id: String,
+        brand: String,
+        basic_model: String,
+        manufacturer_model: String,
+        alternative_part_number: String,
+        type: String,
+        control_methods: [String],
+        head: [Number],
+        flow: Number,
+        least: {
+            pressure_curve: String,
+            control_method: String,
+            pei: Number,
+            input_power: [Number],
+            energy_rating: Number
+        },
+        most: {
+            pressure_curve: String,
+            control_method: String,
+            pei: Number,
+            input_power: [Number],
+            energy_rating: Number
+        },
+        laboratory: {
+            _id: String,
+            name: String,
+            code: String,
+            address: {
+                street: String,
+                street2: String,
+                city: String,
+                state: String,
+                postal: String,
+                country: String
+            }
+        },
+        pei: Number,
+        energy_rating: Number,
+        energy_savings: Number,
 
+        listed: Boolean,
+        // defaulting pending for false for backwards compatibility (beta testers already listed)
+        pending: {
+            type: Boolean,
+            default: false
+        },
+        pending_reasons: [String],
+        active_admin: {
+            type: Boolean,
+            default: true
+        },
+        note_admin: String,
+        revisions: [{
+            date: Date,
+            note: String,
+            correction: {
+                type: Boolean,
+                default: true
+            }
+        }],
+        results: Schema.Types.Mixed
+    }, {
+        usePushEach: true
+    });
+    const Circulators = mongoose.model('circulators', circulatorSchema);
+    exports.Circulators = Circulators;
 
 
     const participant_schema = new Schema({

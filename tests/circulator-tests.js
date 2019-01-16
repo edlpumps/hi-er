@@ -187,8 +187,8 @@ describe('Excel import tests', function () {
             expect(pump.type).to.equal('CP3');
             expect(pump.laboratory).to.not.equal(undefined);
             expect(pump.laboratory.name).to.equal('Houston');
-            expect(pump.lc_control_method).to.equal('no-speed-control');
-            expect(pump.mc_control_method).to.equal(undefined);
+            expect(pump.least.control_method).to.equal('no-speed-control');
+            expect(pump.most).to.equal(undefined);
 
             expect(pump.control_methods.filter(c => c == 'no-speed-control').length).to.equal(1);
             expect(pump.control_methods.filter(c => c == 'pressure-control').length).to.equal(1);
@@ -205,14 +205,16 @@ describe('Excel import tests', function () {
             assert_precision(pump.head[3], 40);
 
             assert_precision(pump.flow, 150);
-            assert_precision(pump.lc_pei, 1.2);
+            assert_precision(pump.least.pei, 1.2);
 
-            expect(pump.lc_input_power).to.not.equal(undefined);
-            expect(pump.lc_input_power.length).to.equal(4);
-            assert_precision(pump.lc_input_power[0], 0.4);
-            assert_precision(pump.lc_input_power[1], 1.2);
-            assert_precision(pump.lc_input_power[2], 1.9);
-            assert_precision(pump.lc_input_power[3], 2.5);
+            expect(pump.least.input_power).to.not.equal(undefined);
+            expect(pump.least.input_power.length).to.equal(4);
+            assert_precision(pump.least.input_power[0], 0.4);
+            assert_precision(pump.least.input_power[1], 1.2);
+            assert_precision(pump.least.input_power[2], 1.9);
+            assert_precision(pump.least.input_power[3], 2.5);
+
+            assert_precision(pump.least.energy_rating, 54.143);
 
         });
 
@@ -228,11 +230,11 @@ describe('Excel import tests', function () {
             expect(pump.type).to.equal('CP2');
             expect(pump.laboratory).to.not.equal(undefined);
             expect(pump.laboratory.name).to.equal('Houston');
-            expect(pump.lc_control_method).to.equal('pressure-control');
-            expect(pump.mc_control_method).to.equal('temperature-control');
+            expect(pump.least.control_method).to.equal('pressure-control');
+            expect(pump.most.control_method).to.equal('temperature-control');
 
-            expect(pump.lc_pressure_curve).to.equal('mx+b');
-            expect(pump.mc_pressure_curve).to.equal('a^2+bx+c');
+            expect(pump.least.pressure_curve).to.equal('mx+b');
+            expect(pump.most.pressure_curve).to.equal('a^2+bx+c');
 
             expect(pump.control_methods.filter(c => c == 'no-speed-control').length).to.equal(0);
             expect(pump.control_methods.filter(c => c == 'pressure-control').length).to.equal(1);
@@ -249,22 +251,22 @@ describe('Excel import tests', function () {
             assert_precision(pump.head[3], 40);
 
             assert_precision(pump.flow, 150);
-            assert_precision(pump.lc_pei, 1.3);
-            assert_precision(pump.mc_pei, 1.7);
+            assert_precision(pump.least.pei, 1.3);
+            assert_precision(pump.most.pei, 1.7);
 
-            expect(pump.lc_input_power).to.not.equal(undefined);
-            expect(pump.lc_input_power.length).to.equal(4);
-            assert_precision(pump.lc_input_power[0], 0.4);
-            assert_precision(pump.lc_input_power[1], 1.2);
-            assert_precision(pump.lc_input_power[2], 1.9);
-            assert_precision(pump.lc_input_power[3], 2.5);
+            expect(pump.least.input_power).to.not.equal(undefined);
+            expect(pump.least.input_power.length).to.equal(4);
+            assert_precision(pump.least.input_power[0], 0.4);
+            assert_precision(pump.least.input_power[1], 1.2);
+            assert_precision(pump.least.input_power[2], 1.9);
+            assert_precision(pump.least.input_power[3], 2.5);
 
-            expect(pump.mc_input_power).to.not.equal(undefined);
-            expect(pump.mc_input_power.length).to.equal(4);
-            assert_precision(pump.mc_input_power[0], 0.65);
-            assert_precision(pump.mc_input_power[1], 1.4);
-            assert_precision(pump.mc_input_power[2], 2.6);
-            assert_precision(pump.mc_input_power[3], 3.2);
+            expect(pump.most.input_power).to.not.equal(undefined);
+            expect(pump.most.input_power.length).to.equal(4);
+            assert_precision(pump.most.input_power[0], 0.65);
+            assert_precision(pump.most.input_power[1], 1.4);
+            assert_precision(pump.most.input_power[2], 2.6);
+            assert_precision(pump.most.input_power[3], 3.2);
 
         })
 
@@ -281,8 +283,8 @@ describe('Excel import tests', function () {
             expect(pump.type).to.equal('CP1');
             expect(pump.laboratory).to.not.equal(undefined);
             expect(pump.laboratory.name).to.equal('Houston');
-            expect(pump.lc_control_method).to.equal('pressure-control');
-            expect(pump.mc_control_method).to.equal('manual-control');
+            expect(pump.least.control_method).to.equal('pressure-control');
+            expect(pump.most.control_method).to.equal('manual-control');
 
             expect(pump.control_methods.filter(c => c == 'no-speed-control').length).to.equal(0);
             expect(pump.control_methods.filter(c => c == 'pressure-control').length).to.equal(1);
@@ -299,20 +301,20 @@ describe('Excel import tests', function () {
             assert_precision(pump.head[3], 40);
 
             assert_precision(pump.flow, 150);
-            assert_precision(pump.lc_pei, 1.3);
-            assert_precision(pump.mc_pei, 1.74);
+            assert_precision(pump.least.pei, 1.3);
+            assert_precision(pump.most.pei, 1.74);
 
-            expect(pump.lc_input_power).to.not.equal(undefined);
-            expect(pump.lc_input_power.length).to.equal(4);
-            assert_precision(pump.lc_input_power[0], 0.4);
-            assert_precision(pump.lc_input_power[1], 1.2);
-            assert_precision(pump.lc_input_power[2], 1.9);
-            assert_precision(pump.lc_input_power[3], 2.5);
+            expect(pump.least.input_power).to.not.equal(undefined);
+            expect(pump.least.input_power.length).to.equal(4);
+            assert_precision(pump.least.input_power[0], 0.4);
+            assert_precision(pump.least.input_power[1], 1.2);
+            assert_precision(pump.least.input_power[2], 1.9);
+            assert_precision(pump.least.input_power[3], 2.5);
 
-            expect(pump.mc_input_power).to.not.equal(undefined);
-            expect(pump.mc_input_power.length).to.equal(2);
-            assert_precision(pump.mc_input_power[0], 1.8);
-            assert_precision(pump.mc_input_power[1], 1.4);
+            expect(pump.most.input_power).to.not.equal(undefined);
+            expect(pump.most.input_power.length).to.equal(2);
+            assert_precision(pump.most.input_power[0], 1.8);
+            assert_precision(pump.most.input_power[1], 1.4);
         });
 
         it(`Import CP1 Manual / Pressure Control`, () => {
@@ -327,8 +329,8 @@ describe('Excel import tests', function () {
             expect(pump.type).to.equal('CP1');
             expect(pump.laboratory).to.not.equal(undefined);
             expect(pump.laboratory.name).to.equal('Houston');
-            expect(pump.lc_control_method).to.equal('manual-control');
-            expect(pump.mc_control_method).to.equal('pressure-control');
+            expect(pump.least.control_method).to.equal('manual-control');
+            expect(pump.most.control_method).to.equal('pressure-control');
 
             expect(pump.control_methods.filter(c => c == 'no-speed-control').length).to.equal(0);
             expect(pump.control_methods.filter(c => c == 'pressure-control').length).to.equal(1);
@@ -345,22 +347,20 @@ describe('Excel import tests', function () {
             assert_precision(pump.head[3], 40);
 
             assert_precision(pump.flow, 150);
-            assert_precision(pump.lc_pei, 1.15);
-            assert_precision(pump.mc_pei, 1.7);
+            assert_precision(pump.least.pei, 1.15);
+            assert_precision(pump.most.pei, 1.7);
 
-            expect(pump.mc_input_power).to.not.equal(undefined);
-            expect(pump.mc_input_power.length).to.equal(4);
-            assert_precision(pump.mc_input_power[0], 0.65);
-            assert_precision(pump.mc_input_power[1], 1.4);
-            assert_precision(pump.mc_input_power[2], 2.6);
-            assert_precision(pump.mc_input_power[3], 3.2);
+            expect(pump.most.input_power).to.not.equal(undefined);
+            expect(pump.most.input_power.length).to.equal(4);
+            assert_precision(pump.most.input_power[0], 0.65);
+            assert_precision(pump.most.input_power[1], 1.4);
+            assert_precision(pump.most.input_power[2], 2.6);
+            assert_precision(pump.most.input_power[3], 3.2);
 
-            expect(pump.lc_input_power).to.not.equal(undefined);
-            expect(pump.lc_input_power.length).to.equal(2);
-            assert_precision(pump.lc_input_power[0], 1.5);
-            assert_precision(pump.lc_input_power[1], 1.3);
-
-
+            expect(pump.least.input_power).to.not.equal(undefined);
+            expect(pump.least.input_power.length).to.equal(2);
+            assert_precision(pump.least.input_power[0], 1.5);
+            assert_precision(pump.least.input_power[1], 1.3);
         });
 
     });
@@ -381,19 +381,19 @@ describe('Excel import tests', function () {
 
         it(`Converts LC Input Power (4)`, () => {
             const pump = result.ready[0]; // pressure / manual
-            assert_precision(pump.lc_input_power[0], 0.4);
+            assert_precision(pump.least.input_power[0], 0.4);
         });
         it(`Converts LC Input Power (2)`, () => {
             const pump = result.ready[1]; // manual / pressure
-            assert_precision(pump.lc_input_power[0], 1.5);
+            assert_precision(pump.least.input_power[0], 1.5);
         });
         it(`Converts MC Input Power (4)`, () => {
             const pump = result.ready[1]; // manual / pressure
-            assert_precision(pump.mc_input_power[0], 0.65);
+            assert_precision(pump.most.input_power[0], 0.65);
         });
         it(`Converts MC Input Power (2)`, () => {
             const pump = result.ready[0]; // pressure / manual
-            assert_precision(pump.mc_input_power[0], 1.8);
+            assert_precision(pump.most.input_power[0], 1.8);
         });
         it(`Converts Head`, () => {
             const pump = result.ready[0]; // pressure / manual
@@ -434,63 +434,93 @@ describe('Calculation Tests', function () {
         assert_precision(results.energy_rating, 54.1430021213805);
     });
 
-    it('CP2 Pressure / Temperature / External PEI and Energy Rating', () => {
+    it('CP2 Pressure / Temperature / External PEI and Energy Rating (least)', () => {
         const pump = {
             circulator: {
                 type: 'cp3',
-                least_input_power: [0.4, 1.2, 1.9, 2.5],
-                most_input_power: [0.65, 1.4, 2.6, 3.2],
+                input_power: [0.4, 1.2, 1.9, 2.5],
                 head: [17, 23, 33, 40],
                 flow: 150,
-                least_pei_input: 1.3,
-                most_pei_input: 1.7
+                pei_input: 1.3
+            }
+        }
+        const results = circulator.commonControl(pump);
+        assert_precision(results.energy_rating, 44.1430021213805);
+
+    });
+    it('CP2 Pressure / Temperature / External PEI and Energy Rating (most)', () => {
+        const pump = {
+            circulator: {
+                type: 'cp3',
+                input_power: [0.65, 1.4, 2.6, 3.2],
+                head: [17, 23, 33, 40],
+                flow: 150,
+                pei_input: 1.7
             }
         }
 
         const results = circulator.commonControl(pump);
-        assert_precision(results.least.energy_rating, 44.1430021213805);
-        assert_precision(results.most.energy_rating, 4.14300212138055);
+        assert_precision(results.energy_rating, 4.14300212138055);
     });
 
-    it('CP1 External Input PEI and Energy Rating', () => {
+    it('CP1 External Input PEI and Energy Rating (least)', () => {
         const pump = {
             circulator: {
                 type: 'cp3',
-                least_power_at_max_speed: 1.5,
-                least_power_at_low_speed: 1.3,
-                most_power_at_max_speed: 1.8,
-                most_power_at_low_speed: 1.4,
+                input_power: [1.5, 1.3],
                 head: [17, 23, 33, 40],
                 flow: 150,
-                least_pei_input: 1.13,
-                most_pei_input: 1.35
+                pei_input: 1.13,
+            }
+        }
+
+        const results = circulator.externalInput(pump);
+        assert_precision(results.energy_rating, 61.1430021213806);
+    });
+    it('CP1 External Input PEI and Energy Rating (most)', () => {
+        const pump = {
+            circulator: {
+                type: 'cp3',
+                input_power: [1.8, 1.4],
+                head: [17, 23, 33, 40],
+                flow: 150,
+                pei_input: 1.35
             }
         }
 
         const results = circulator.externalInput(pump);
 
-        assert_precision(results.least.energy_rating, 61.1430021213806);
-        assert_precision(results.most.energy_rating, 39.1430021213805);
+        assert_precision(results.energy_rating, 39.1430021213805);
     });
 
-    it('CP1 Manual Controls PEI and Energy Rating', () => {
+    it('CP1 Manual Controls PEI and Energy Rating (least)', () => {
         const pump = {
             circulator: {
                 type: 'cp3',
-                least_power_at_max_speed: 1.5,
-                least_power_at_low_speed: 1.3,
-                most_power_at_max_speed: 1.8,
-                most_power_at_low_speed: 1.4,
+                input_power: [1.5, 1.3],
                 head: [17, 23, 33, 40],
                 flow: 150,
-                least_pei_input: 1.14,
+                pei_input: 1.14,
                 most_pei_input: 1.35
             }
         }
 
         const results = circulator.manualControl(pump);
-
-        assert_precision(results.least.energy_rating, 60.1430021213806);
-        assert_precision(results.most.energy_rating, 39.1430021213805);
+        assert_precision(results.energy_rating, 60.1430021213806);
     });
+    it('CP1 Manual Controls PEI and Energy Rating (most)', () => {
+        const pump = {
+            circulator: {
+                type: 'cp3',
+                input_power: [1.8, 1.4],
+                head: [17, 23, 33, 40],
+                flow: 150,
+                pei_input: 1.35
+            }
+        }
+
+        const results = circulator.manualControl(pump);
+        assert_precision(results.energy_rating, 39.1430021213805);
+    });
+
 });

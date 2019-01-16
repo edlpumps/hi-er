@@ -1,0 +1,244 @@
+extends layout
+include ../common/pump_page
+
+block nav
+     +navigation("pump")
+
+block content
+ div.ng-cloak(ng-app='ERParticipantApp')
+    .modal.fade#activate(tabindex='-1', role='dialog' aria-labelledby='titleLabel', aria-hidden='true')
+        .modal-dialog
+          .modal-content
+            .modal-header
+              button(type='button', class='close' data-dismiss='modal' aria-hidden='hidden') &times;
+              h4.modal-title Confirm activation
+            .modal-body
+              p.text-warning Are you sure you want to activate this pump?  
+              p 
+               | Once you activate the pump for the first time, it is considered 
+               | published.  While you can always file a revision to the pump 
+               | (which is visible to the public), after the pump is published it 
+               | can no longer be deleted.  It will appear in public search 
+               | listings, and be accessible to anyone with it's rating 
+               | identification or QR code.
+            .modal-footer
+              div
+                button.btn.btn-danger(type="button", data-dismiss='modal', onclick="$('#pending_update_confirmed').val(true); $('#pump_form').submit()") Yes
+                button.btn.btn-default(type='button' data-dismiss='modal') Nevermind
+    .modal.fade#deactivate(tabindex='-1', role='dialog' aria-labelledby='titleLabel', aria-hidden='true')
+        .modal-dialog
+          .modal-content
+            .modal-header
+              button(type='button', class='close' data-dismiss='modal' aria-hidden='hidden') &times;
+              h4.modal-title Confirm de-activation
+            .modal-body
+              p.text-warning Are you sure you want to set this pump to inactive?  
+              p 
+               | Setting a pump to "inactive" is intended for pumps that are not 
+               | commercially available.  This listing will only be found by a 
+               | direct search by the pump's rating ID or QR code.  The pump's label
+               | page will have a message indicating that it is not commercially available.
+               
+            .modal-footer
+              div
+                button.btn.btn-danger(type="button", data-dismiss='modal', onclick="$('#inactive_update_confirmed').val(true); $('#pump_form').submit()") Yes
+                button.btn.btn-default(type='button' data-dismiss='modal') Nevermind
+
+    .container(ng-controller="ERParticipantController as app",ng-init="app.user= #{JSON.stringify(user)}; app.participant= #{JSON.stringify(participant)}")
+
+      .panel.panel-default
+        .panel-heading 
+            h2 #{pump.brand} #{pump.brand ? ' / ' : ''} #{pump.basic_model} #{pump.individual_model}
+            h2 #{(pump.diameter*units.diameter.factor).toFixed(3)} #{units.diameter.label} @ #{pump.speed} rpm
+            .help-block This data is visible to the public.
+        .panel-body
+          .row
+           .col.col-sm-5.text-center
+             .row
+                .col.col-sm-6.text-center
+                  h4 Pump Energy Index
+                  p.pei_display #{pump.pei.toFixed(2)}
+                  p.pei_baseline Baseline: #{pump.pei_baseline.toFixed(2)}
+                .col.col-sm-6.text-center
+                  h4 Energy Rating
+                  p.er_display #{pump.energy_rating}
+             .row 
+                .col.col-sm-12
+                 img(src="/images/doe/#{pump_drawing}").hidden-xs
+                 img(src="/images/doe/#{pump_drawing}", style="width:90%").hidden-md.hidden-lg.hidden-sm
+                 p.solo: a.btn.btn-danger(href="/participant/pumps/#{pump._id}/download") Download full data
+           .col.col-sm-7
+             +pump_page_info(pump)
+             
+
+                
+      .panel.panel-default
+        .panel-heading 
+            h2 Load Point Data
+            .help-block This data is not visible to the public, it is only visible to members of your organization.
+        .panel-body
+           table.table
+            thead
+              tr 
+                th &nbsp;
+                th #{pump.load120 ? "75% BEP" : "65% BEP"}
+                th #{pump.load120 ? "100% BEP" : "90% BEP"}
+                th #{pump.load120 ? "110% BEP" : "100% BEP"} 
+            tbody
+              tr
+                td Flow (#{units.flow.label})
+                td #{(pump.flow.bep75 * units.flow.factor).toFixed(2)}
+                td #{(pump.flow.bep100 * units.flow.factor).toFixed(2)}
+                td #{(pump.flow.bep110 * units.flow.factor).toFixed(2)}
+              tr
+                td Head (#{units.head.label})
+                td #{(pump.head.bep75 * units.head.factor).toFixed(2)}
+                td #{(pump.head.bep100 * units.head.factor).toFixed(2)}
+                td #{(pump.head.bep110 * units.head.factor).toFixed(2)}
+              if pump.driver_input_power.bep100
+                tr
+                  td Driver input power (#{units.power.label})
+                  td #{(pump.driver_input_power.bep75 * units.power.factor).toFixed(2)}
+                  td #{(pump.driver_input_power.bep100 * units.power.factor).toFixed(2)}
+                  td #{(pump.driver_input_power.bep110 * units.power.factor).toFixed(2)}
+        
+           if pump.section == '6' || pump.section == '6a' || pump.section == '6b' || pump.section == '7'
+            table.table
+              thead
+                tr
+                  th &nbsp
+                  th Control input power (#{units.power.label})
+                  
+              tbody
+                tr
+                 td 25% BEP
+                 td #{(pump.control_power_input.bep25 * units.power.factor).toFixed(2)}
+                tr
+                 td 50% BEP
+                 td #{(pump.control_power_input.bep50 * units.power.factor).toFixed(2)}
+                tr
+                 td 75% BEP
+                 td #{(pump.control_power_input.bep75 * units.power.factor).toFixed(2)}
+                tr
+                 td 100% BEP
+                 td #{(pump.control_power_input.bep100 * units.power.factor).toFixed(2)}
+
+      
+      .panel.panel-default
+        .panel-heading 
+            h2 Downloadable Media
+        .panel-body
+          
+          .row.solo
+            .col.col-xs-12.text-center
+              img(src="/labels/#{participant._id}/#{pump._id}/png", style="width:100%; max-width:600px;")
+              p 
+               a(href="/labels/#{participant._id}/#{pump._id}/png?download=true") Download as PNG
+               | &nbsp;&nbsp; - &nbsp;&nbsp; 
+               a(href="/labels/#{participant._id}/#{pump._id}/svg?download=true") Download as SVG 
+          .row.solo
+            .col.col-xs-12.text-center
+              img(src="/labels/#{participant._id}/#{pump._id}/png-sm", style="width:100%; max-width:400px;")
+              p 
+               a(href="/labels/#{participant._id}/#{pump._id}/png-sm?download=true") Download as PNG
+               | &nbsp;&nbsp; - &nbsp;&nbsp; 
+               a(href="/labels/#{participant._id}/#{pump._id}/svg-sm?download=true") Download as SVG 
+          .row.solo
+            .col.col-xs-12.text-center
+              img(src="/labels/#{participant._id}/#{pump._id}/qr/png", style="width:100%; max-width:600px;")
+              p
+               a(href="/labels/#{participant._id}/#{pump._id}/qr/png?download=true") Download as PNG
+               | &nbsp;&nbsp; - &nbsp;&nbsp; 
+               a(href="/labels/#{participant._id}/#{pump._id}/qr?download=true") Download as SVG 
+              
+          
+      .panel.panel-default
+        .panel-heading
+          h2 Data Corrections / Revisions
+        .panel-body
+          ol 
+           if pump.revisions
+            each revision in pump.revisions
+             li
+              span #{revision.note} - #{moment(revision.date).format("ll")}
+          if user.participant_edit
+           .row
+            .col.col-xs-12
+             a.btn.btn-warning(href="/participant/pumps/#{pump._id}/revise") Add Data Correction
+             a(href="/ratings/glossary#status_explanation", title="Help documentation", target="_blank", style="margin-left:1em") Learn about pump listing status and revision/redesigns.
+             
+      if user.participant_edit
+       .panel.panel-default
+        .panel-heading
+          h2 Administrative controls
+        .panel-body
+         form(action="/participant/pumps/#{pump._id}", id="pump_form", method="post")
+          input(type="hidden", id="pending_status", name="pending", value="#{pump.pending}")
+          input(type="hidden", id="listed_status", name="listed", value="#{pump.listed}")
+          input(type="hidden", id="pending_update_confirmed", name="pending_update_confirmed")
+          input(type="hidden", id="inactive_update_confirmed", name="inactive_update_confirmed")
+          input(type="hidden", id="listed_state", name="listed_state")
+          script.
+            $("#pump_form").submit(function() {
+                var initial = $("#pending_status").val()  === 'true';
+                var initial_listed = $("#listed_status").val()  === 'true';
+                var current = $("#listed").is(':checked');
+                var confirmed = $("#pending_update_confirmed").val()  === 'true';
+                var inactive_confirmed = $("#inactive_update_confirmed").val()  === 'true';
+                $("#listed_state").val(current);
+                if ( initial == true && current == true) {
+                  if ( confirmed) {
+                    
+                    return true;
+                  }
+                  else {
+                    $('#activate').modal('show');
+                    return false;
+                  }
+                }
+                if ( initial_listed == true && current == false) {
+                  if ( inactive_confirmed) {
+                    $("#listed").val(false);
+                    console.log("Listed => " + $("#listed").val());
+                    return true;
+                  }
+                  else {
+                    $('#deactivate').modal('show');
+                    return false;
+                  }
+                }
+                return true;
+            });
+          .row
+           .col.col-xs-12
+              if subscription_limit && !pump.listed
+                .alert.alert-warning
+                 p This pump cannot be activated, you've reached the maximum number of pumps listed for your account.
+              else if !pump.listed && can_activate.individual_collide
+                .alert.alert-warning
+                 p This pump cannot be activated, there is already an active pump with the same individual model number. 
+              else if !pump.listed && can_activate.basic_collide
+                .alert.alert-warning
+                 p This pump cannot be activated, there is already an active pump with the same basic model number which has a different Energy Rating. 
+              else 
+               .form-group
+                - var text = pump.pending ? "Pending" : "Inactive"
+                - var checked = pump.listed ? "on" : undefined;
+                
+                label(style="margin-right:10px") Pump listing status:  
+                input.switchBox(type="checkbox", name="listed", id="listed", checked=(checked), data-on-text="Active", data-off-text=text)
+                .help-block Pending pump are not yet visible to the public.  Inactive pumps listings continue to appear in public listings, however a note will be displayed to the viewer explaining that the pump is no longer commercially available.  Inactive pumps do not count towards your subscription limit.
+          .row
+           .col.col-xs-12
+            p: a(href="/ratings/glossary#status_explanation", title="Help documentation", target="_blank") Learn about pump listing status and revision/redesigns.
+          .row
+           .col.col-xs-12
+             if !pump.active_admin
+              .alert.alert-danger
+                h3 This pump has been de-listed by a Hydraulic Institute Program Manager. 
+                .form-group
+                  label(style="margin-right:10px") Program manager note:  
+                  p.form-static-control #{pump.note_admin}
+          .row
+            .col.col-xs-12
+               button.btn.btn-danger(type="submit") Save changes
