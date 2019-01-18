@@ -46,18 +46,18 @@ block content
                       b Most Consumptive:
                       +control_method(success.most.control_method)
                     td 
-                      span #{success.least.pei}
+                      span #{success.least.pei.toFixed(2)}
                       br
-                      span #{success.most.pei}
+                      span #{success.most.pei.toFixed(2)}
                     td 
-                      span #{success.least.energy_rating}
+                      span #{success.least.energy_rating.toFixed(0)}
                       br
-                      span #{success.most.energy_rating}
+                      span #{success.most.energy_rating.toFixed(0)}
                   else
                     td 
                       +control_method(success.least.control_method)
-                    td #{success.least.pei}
-                    td #{success.least.energy_rating}
+                    td #{success.least.pei.toFixed(2)}
+                    td #{success.least.energy_rating.toFixed(0)}
                  
            form(action="save_upload", method="post")
             button.btn.btn-primary(type="submit") Add pumps

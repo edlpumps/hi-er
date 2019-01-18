@@ -13,7 +13,150 @@ mixin control_method(cm)
 		span External Input Signal and Other Controls
 
 mixin vue_circulator_components()
+	script#v-circulator-data-details(type='text/x-template')
+		section.padded
+			section
+					label Available Control Methods:
+					span.control-method(v-for='method of pump.control_methods')
+						control-method(:method='method')
+			section
+				table.table
+					thead
+						tr
+							th
+							th Control Method
+							th PEI
+							th(colspan='4').text-center Input Power ({{units.power.label}})
+							th ER
+					tbody
+						tr
+							td Least Consumptive
+							td: control-method(:method='pump.least.control_method')
+							td(v-if='num_input_powers(pump.least.control_method) == 2', colspan='2')	{{(pump.least.input_power[0]*units.power.factor).toFixed(2)}}
+							td(v-if='num_input_powers(pump.least.control_method) == 2', colspan='2')	{{(pump.least.input_power[1]*units.power.factor).toFixed(2)}}
+							td(v-if='num_input_powers(pump.least.control_method) == 4') {{(pump.least.input_power[0]*units.power.factor).toFixed(2)}}
+							td(v-if='num_input_powers(pump.least.control_method) == 4')	{{(pump.least.input_power[1]*units.power.factor).toFixed(2)}}
+							td(v-if='num_input_powers(pump.least.control_method) == 4') {{(pump.least.input_power[2]*units.power.factor).toFixed(2)}}
+							td(v-if='num_input_powers(pump.least.control_method) == 4')	{{(pump.least.input_power[3]*units.power.factor).toFixed(2)}}
+							td: pei(:value='pump.least.pei')
+							td: energy-rating(:value='pump.least.energy_rating')
+						tr(v-if='dual_cm()')
+							td Most Consumptive
+							td: control-method(:method='pump.most.control_method')
+							td(v-if='num_input_powers(pump.most.control_method) == 2', colspan='2')	{{(pump.most.input_power[0]*units.power.factor).toFixed(2)}}
+							td(v-if='num_input_powers(pump.most.control_method) == 2', colspan='2')	{{(pump.most.input_power[1]*units.power.factor).toFixed(2)}}
+							td(v-if='num_input_powers(pump.most.control_method) == 4') {{(pump.most.input_power[0]*units.power.factor).toFixed(2)}}
+							td(v-if='num_input_powers(pump.most.control_method) == 4')	{{(pump.most.input_power[1]*units.power.factor).toFixed(2)}}
+							td(v-if='num_input_powers(pump.most.control_method) == 4') {{(pump.most.input_power[2]*units.power.factor).toFixed(2)}}
+							td(v-if='num_input_powers(pump.most.control_method) == 4')	{{(pump.most.input_power[3]*units.power.factor).toFixed(2)}}
+							td: pei(:value='pump.most.pei')
+							td: energy-rating(:value='pump.most.energy_rating')
+				
+				.help-block(v-if='!public') Note that input power at alternative load points is not shown to the public.
+        
+	script#v-circulator-details(type='text/x-template')
+		section
+			.alert.alert-warning(v-if='pump.pending')
+				p This pump has not been published yet.  You must activate the pump before it will be visible to the public.
+			.alert.alert-danger(v-if='!pump.listed && !pump.pending')
+				p This pump is no longer commercially available.
+			.row
+				.col.col-xs-5
+					label HI Rating ID:
+				.col.col-xs-7
+					.form-control-static: a(:href="'/ratings/'+pump.rating_id") {{pump.rating_id}}
+			.row
+				.col.col-xs-5
+					label Basic model #:
+				.col.col-xs-7
+					.form-control-static {{pump.basic_model}}
+			.row
+				.col.col-xs-5
+					label Manufacturer model #:
+				.col.col-xs-7
+					.form-control-static {{pump.manufacturer_model}}
+			.row
+				.col.col-xs-5
+					label Alternative model #:
+				.col.col-xs-7
+					.form-control-static {{pump.alternative_model}}
+			.row
+				.col.col-xs-5
+					label Brand:
+				.col.col-xs-7
+					.form-control-static {{pump.brand}}
+			.row
+				.col.col-xs-5
+					label Type:
+				.col.col-xs-7
+					.form-control-static {{pump.type}}
+			.row
+				.col.col-xs-5
+					label Rated Control Method:
+				.col.col-xs-7
+					.form-control-static: control-method(:method='pump.least.control_method')
+			.row
+				.col.col-xs-5
+					label BEP Flow Rated:
+				.col.col-xs-7
+					.form-control-static {{(pump.flow * units.flow.factor).toFixed(2)}} {{units.flow.label}}
+			.row
+				.col.col-xs-5
+					label BEP Head:
+				.col.col-xs-7
+					.form-control-static {{(pump.head[3] * units.head.factor).toFixed(2)}} {{units.head.label}}
+			.row
+				.col.col-xs-5
+					label HI approved laboratory:
+				.col.col-xs-7
+					.form-control-static {{pump.laboratory ? pump.laboratory.name + ' - ' + pump.laboratory.code : 'N/A'}}
+			.row(v-if='pump.date')
+				.col.col-xs-5
+					label Date listed:
+				.col.col-xs-7
+					.form-control-static {{moment(pump.date).format("MMM DD, YYYY")}}
+				
 	script.
+		Vue.component('circulator-details', {
+			props: ['pump', 'units'],
+			template: '#v-circulator-details',
+			methods: {
+				moment(...args) {
+					// eslint-disable-next-line no-undef
+					return moment(...args);
+				},
+				dual_cm: function() {
+					return  this.pump.most && this.pump.most.control_method;
+				}
+			}
+		}),
+		Vue.component('circulator-data-details', {
+			props: ['pump', 'units', 'public'],
+			template: '#v-circulator-data-details',
+			methods: {
+				moment(...args) {
+					// eslint-disable-next-line no-undef
+					return moment(...args);
+				},
+				dual_cm: function() {
+					return  this.pump.most && this.pump.most.control_method;
+				}, 
+				num_input_powers: function(cm) {
+					if (cm == 'no-speed-control')
+						return 4;
+					else if (cm == 'pressure-control')
+						return 4;
+					else if (cm == 'temperature-control')
+						return 4;
+					else if (cm == 'manual-control')
+						return 2;
+					else if (cm == 'external-control')
+						return 4;
+					else if (cm == 'external-other-control')
+						return 2;
+				}
+			}
+		}),
 		Vue.component('control-method', {
 			props: ['method'],
 			template: '<span>{{text}}</span>',

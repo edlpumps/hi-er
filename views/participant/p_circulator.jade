@@ -1,12 +1,48 @@
 extends layout
 include ../common/pump_page
+include ../common/circulators
 
 block nav
      +navigation("pump")
+block script
+    script.
+        Vue.component('pei-label', {
+          props: ['value'],
+          template: '<p><span>Pump Energy Index</span><br/><span class="pei_display"><pei :value="value"/></span></p>'
+        });
+        Vue.component('er-label', {
+          props: ['value'],
+          template: '<p><span>Energy Rating</span><br/><span class="er_display"><energy-rating :value="value"/></span></p>'
+        });
+        new Vue({
+          el: '#vue',
+          data: {
+            pump: null,
+            participant: null,
+            user: null,
+            units: null
+          },
 
+          mounted: function () {
+            this.units = $('#vue').data('units');
+            this.participant = $('#vue').data('participant');
+            this.user = $('#vue').data('user');
+            this.pump = $('#vue').data('pump');
+          },
+
+          
+
+          methods: {
+            dual_cm: function() {
+              if ( this.pump ) {
+                return  this.pump.most && this.pump.most.control_method;
+              }
+            }
+          }
+        });
 block content
- div.ng-cloak(ng-app='ERParticipantApp')
-    .modal.fade#activate(tabindex='-1', role='dialog' aria-labelledby='titleLabel', aria-hidden='true')
+ div
+    //-.modal.fade#activate(tabindex='-1', role='dialog' aria-labelledby='titleLabel', aria-hidden='true')
         .modal-dialog
           .modal-content
             .modal-header
@@ -25,7 +61,7 @@ block content
               div
                 button.btn.btn-danger(type="button", data-dismiss='modal', onclick="$('#pending_update_confirmed').val(true); $('#pump_form').submit()") Yes
                 button.btn.btn-default(type='button' data-dismiss='modal') Nevermind
-    .modal.fade#deactivate(tabindex='-1', role='dialog' aria-labelledby='titleLabel', aria-hidden='true')
+    //-.modal.fade#deactivate(tabindex='-1', role='dialog' aria-labelledby='titleLabel', aria-hidden='true')
         .modal-dialog
           .modal-content
             .modal-header
@@ -43,33 +79,32 @@ block content
               div
                 button.btn.btn-danger(type="button", data-dismiss='modal', onclick="$('#inactive_update_confirmed').val(true); $('#pump_form').submit()") Yes
                 button.btn.btn-default(type='button' data-dismiss='modal') Nevermind
+    +vue_circulator_components()
 
-    .container(ng-controller="ERParticipantController as app",ng-init="app.user= #{JSON.stringify(user)}; app.participant= #{JSON.stringify(participant)}")
+    .container#vue(data-pump=(JSON.stringify(pump)), data-units=(JSON.stringify(units)), data-user=(JSON.stringify(user)), data-participant=(JSON.stringify(participant)))
 
       .panel.panel-default
         .panel-heading 
-            h2 #{pump.brand} #{pump.brand ? ' / ' : ''} #{pump.basic_model} #{pump.individual_model}
-            h2 #{(pump.diameter*units.diameter.factor).toFixed(3)} #{units.diameter.label} @ #{pump.speed} rpm
+            h2 #{pump.brand} #{pump.brand ? ' / ' : ''} #{pump.basic_model} #{pump.manufacturer_model}
             .help-block This data is visible to the public.
-        .panel-body
+        .panel-body(v-if='pump')
           .row
            .col.col-sm-5.text-center
-             .row
-                .col.col-sm-6.text-center
-                  h4 Pump Energy Index
-                  p.pei_display #{pump.pei.toFixed(2)}
-                  p.pei_baseline Baseline: #{pump.pei_baseline.toFixed(2)}
-                .col.col-sm-6.text-center
-                  h4 Energy Rating
-                  p.er_display #{pump.energy_rating}
-             .row 
-                .col.col-sm-12
-                 img(src="/images/doe/#{pump_drawing}").hidden-xs
-                 img(src="/images/doe/#{pump_drawing}", style="width:90%").hidden-md.hidden-lg.hidden-sm
-                 p.solo: a.btn.btn-danger(href="/participant/pumps/#{pump._id}/download") Download full data
-           .col.col-sm-7
-             +pump_page_info(pump)
+            .row
+              .col.col-sm-6.text-center
+                pei-label(:value='pump.least.pei')
+              .col.col-sm-6.text-center
+                er-label(:value='pump.least.energy_rating')
+            .row
+              .col
+                p Cool Picture
+
              
+           .col.col-sm-7
+            circulator-details(:pump='pump', :units='units')
+          .row
+            .col
+              circulator-data-details(:pump='pump', :units='units')  
 
                 
       .panel.panel-default
@@ -77,7 +112,8 @@ block content
             h2 Load Point Data
             .help-block This data is not visible to the public, it is only visible to members of your organization.
         .panel-body
-           table.table
+           p Pump Head values, power inputs for each control method (least and most) goes here.
+           //-table.table
             thead
               tr 
                 th &nbsp;
@@ -102,7 +138,7 @@ block content
                   td #{(pump.driver_input_power.bep100 * units.power.factor).toFixed(2)}
                   td #{(pump.driver_input_power.bep110 * units.power.factor).toFixed(2)}
         
-           if pump.section == '6' || pump.section == '6a' || pump.section == '6b' || pump.section == '7'
+           //-if pump.section == '6' || pump.section == '6a' || pump.section == '6b' || pump.section == '7'
             table.table
               thead
                 tr
@@ -128,22 +164,22 @@ block content
         .panel-heading 
             h2 Downloadable Media
         .panel-body
-          
-          .row.solo
+          p Labels here...
+          //-.row.solo
             .col.col-xs-12.text-center
               img(src="/labels/#{participant._id}/#{pump._id}/png", style="width:100%; max-width:600px;")
               p 
                a(href="/labels/#{participant._id}/#{pump._id}/png?download=true") Download as PNG
                | &nbsp;&nbsp; - &nbsp;&nbsp; 
                a(href="/labels/#{participant._id}/#{pump._id}/svg?download=true") Download as SVG 
-          .row.solo
+          //-.row.solo
             .col.col-xs-12.text-center
               img(src="/labels/#{participant._id}/#{pump._id}/png-sm", style="width:100%; max-width:400px;")
               p 
                a(href="/labels/#{participant._id}/#{pump._id}/png-sm?download=true") Download as PNG
                | &nbsp;&nbsp; - &nbsp;&nbsp; 
                a(href="/labels/#{participant._id}/#{pump._id}/svg-sm?download=true") Download as SVG 
-          .row.solo
+          //-.row.solo
             .col.col-xs-12.text-center
               img(src="/labels/#{participant._id}/#{pump._id}/qr/png", style="width:100%; max-width:600px;")
               p
@@ -167,7 +203,7 @@ block content
              a.btn.btn-warning(href="/participant/pumps/#{pump._id}/revise") Add Data Correction
              a(href="/ratings/glossary#status_explanation", title="Help documentation", target="_blank", style="margin-left:1em") Learn about pump listing status and revision/redesigns.
              
-      if user.participant_edit
+      //-if user.participant_edit
        .panel.panel-default
         .panel-heading
           h2 Administrative controls
@@ -211,16 +247,17 @@ block content
             });
           .row
            .col.col-xs-12
-              if subscription_limit && !pump.listed
+              p Subscription limits, activation controls go here.
+              //-if subscription_limit && !pump.listed
                 .alert.alert-warning
                  p This pump cannot be activated, you've reached the maximum number of pumps listed for your account.
-              else if !pump.listed && can_activate.individual_collide
+              //-else if !pump.listed && can_activate.individual_collide
                 .alert.alert-warning
                  p This pump cannot be activated, there is already an active pump with the same individual model number. 
-              else if !pump.listed && can_activate.basic_collide
+              //-else if !pump.listed && can_activate.basic_collide
                 .alert.alert-warning
                  p This pump cannot be activated, there is already an active pump with the same basic model number which has a different Energy Rating. 
-              else 
+              //-else 
                .form-group
                 - var text = pump.pending ? "Pending" : "Inactive"
                 - var checked = pump.listed ? "on" : undefined;

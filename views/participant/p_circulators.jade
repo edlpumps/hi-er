@@ -131,7 +131,7 @@ block content
                   td
                     img(v-if="pump.pending", height="25", width="25", src="/images/pending.png")
                     img(v-else="pump.pending", height="25", width="25", :src="'/images/'+pump.listed && pump.active_admin && !pump.pending ? 'active' : 'inactive'+'.png'")
-                  td {{pump.rating_id}}
+                  td: a(:href="'circulators/'+pump._id") {{pump.rating_id}}
                   td.hidden-xs {{pump.date}}
                   td.hidden-xs: a(:href="'circulators/'+pump._id")
                     span {{pump.basic_model}}

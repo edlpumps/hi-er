@@ -43,6 +43,8 @@ router.get('/', aw(async (req, res) => {
 }));
 
 
+
+
 router.get('/template', function (req, res) {
     const filePath = path.join(__dirname, template.config.filename);
     const stat = fs.statSync(filePath);
@@ -160,6 +162,19 @@ router.get("/search", aw(async (req, res) => {
     }));
 }));
 
+router.get('/:id', aw(async (req, res) => {
+    req.log.debug("Rendering participant portal (circulator pump page)");
+    const pump = await req.Circulators.findById(req.params.id).exec();
+    if (!pump) {
+        return res.sendStatus(404);
+    }
+
+    res.render("participant/p_circulator", {
+        user: req.user,
+        participant: req.participant,
+        pump: pump
+    });
+}));
 
 
 module.exports = router;

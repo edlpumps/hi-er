@@ -1,0 +1,2 @@
+mongodump --db heroku_1h9p7fqb --host ds125001.mlab.com --port 25001 --username heroku_1h9p7fqb --password "password" --out ./db-snapshot
+mongorestore --db er ./db-snapshot/er
