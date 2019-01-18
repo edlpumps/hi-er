@@ -225,7 +225,9 @@ const extract_row = (sheet, rowNumber, labs) => {
         pei_input: row.least.pei
     }
     let results = calculator.calculate_energy_rating(row.least.control_method, least);
-    row.least.energy_rating = results.energy_rating
+    row.least.energy_rating = results.energy_rating;
+    row.least.output_power = results.output_power;
+    row.least.water_to_wire_efficiency = results.water_to_wire_efficiency;
     if (mc) {
         const most = {
             type: row.type,
@@ -235,7 +237,9 @@ const extract_row = (sheet, rowNumber, labs) => {
             pei_input: row.most.pei
         }
         results = calculator.calculate_energy_rating(row.most.control_method, most);
-        row.most.energy_rating = results.energy_rating
+        row.most.energy_rating = results.energy_rating;
+        row.most.output_power = results.output_power;
+        row.most.water_to_wire_efficiency = results.water_to_wire_efficiency;
     }
 
     return row;

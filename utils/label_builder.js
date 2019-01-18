@@ -18,6 +18,11 @@ const label_template = pug.compileFile(label_template_file);
 const label_sm_template = pug.compileFile(label_sm_template_file);
 
 
+
+const circulator_label_template_file = path.join(__dirname, "../views/svg/circulator-label.pug");
+
+
+
 var build_label_params = function (pump, label) {
     var pm = pump.configuration == "bare" ? "- Bare Pump" : "- Motor";
     var config =
@@ -85,4 +90,56 @@ exports.make_label = function (req, participant, pump, label) {
 exports.make_sm_label = function (req, participant, pump, label) {
     var params = build_label_params(pump, label);
     return label_sm_template(params);
+}
+
+
+var build_circulator_params = function (pump, waip, max) {
+    var datetime = pump.date
+    var locale = "en-us";
+
+    var er = Math.min(pump.energy_rating, max);
+    var date = datetime.toLocaleString(locale, {
+        month: "short"
+    });
+    var distance = (er) / max;
+    var pos = Math.round(distance * 500 + 60);
+    date += " " + datetime.getFullYear()
+
+    return {
+        dual: pump.most && pump.most.control_method,
+        er_most: pump.most && pump.most.control_method ? pump.most.energy_rating.toFixed(0) : 0,
+        max: max,
+        pei: pump.least.pei.toFixed(2),/*
+        doe: pump.doe,
+        pm: pm,
+        config: config,
+        participant: pump.participant,*/
+        basic_model: pump.basic_model,
+        brand: pump.brand,
+        /*speed: pump.speed,
+        load: load,*/
+        er: pump.least.energy_rating.toFixed(0),
+        date: date,
+        rating_id: pump.rating_id,
+        bar_width: distance * 500 - 1,
+        er_pos: pos,
+        logo: hi_logo_data_uri,
+        waip: waip.toFixed(3)
+        /*load_abbr: load_abbr*/
+    };
+
+
+}
+
+exports.make_circulator_label = function(req, participant, pump) {
+    const circulator_label_template = pug.compileFile(circulator_label_template_file);
+    const waip = pump.least.output_power[3] / pump.least.water_to_wire_efficiency;
+    let hp = 0;
+    if ( waip < 1.0/30 ) hp = 0;
+    else if ( waip < 1.0/8 ) hp = 1;
+    else if ( waip < 3.0/4 ) hp = 2;
+    else hp = 3;
+    const scales = [335.4, 189.6, 158.6, 142.3];
+    const maxScale = scales[hp];
+    return circulator_label_template(build_circulator_params(pump, waip, maxScale));
 }

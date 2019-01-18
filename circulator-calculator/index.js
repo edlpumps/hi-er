@@ -148,7 +148,8 @@ const calculate_per_ref = (_type, /*_power, */ _head, _flow /*, _pei*/ ) => {
 const calculate_baseline_pei = (_type, _head, _flow) => {
     const {
         output_power,
-        per_ref
+        per_ref,
+        w2wEfficiency_ref,
     } = calculate_per_ref(_type, _head, _flow);
 
     let output_power_validity_baseline = VALID;
@@ -176,7 +177,8 @@ const calculate_baseline_pei = (_type, _head, _flow) => {
         w2wEfficiency_baseline,
         per_ref,
         per_baseline,
-        pei_baseline
+        pei_baseline,
+        w2wEfficiency_ref
     }
 }
 
@@ -192,13 +194,16 @@ const calculate_energy_rating = (pump, power, coefficients) => {
     const result = calc_pei_and_validity(type, per, head, flow, pei_input);
 
     const {
-        pei_baseline
+        pei_baseline,
+        output_power,
+        w2wEfficiency_ref,
     } = calculate_baseline_pei(type, head, flow);
 
     if (result.pei_validity != RETEST) {
         result.energy_rating = (pei_baseline - pei_input) * 100;
     }
-
+    result.output_power = result.output_power;
+    result.water_to_wire_efficiency = w2wEfficiency_ref;
     return result;
 }
 
@@ -210,7 +215,9 @@ const noControl = (pump) => {
     const pei_input = input_to_number(pump.circulator.pei_input);
 
     const {
-        per_ref
+        per_ref,
+        output_power,
+        w2wEfficiency_ref,
     } = calculate_per_ref(type, head, flow);
 
     const per_input = average(power);
@@ -225,7 +232,7 @@ const noControl = (pump) => {
     } = calculate_baseline_pei(type, head, flow);
 
     const energy_rating = (pei_baseline - pei_input) * 100;
-
+    const water_to_wire_efficiency = w2wEfficiency_ref
     return {
         pei_input,
         per_baseline,
@@ -234,20 +241,26 @@ const noControl = (pump) => {
         pei_diff,
         pei_validity,
         energy_rating,
-        pei
+        pei,
+        output_power,
+        water_to_wire_efficiency,
     }
 }
 
 const calc_pei_and_validity = (type, per, head, flow, pei_input) => {
     const {
         per_ref,
+        output_power,
+        w2wEfficiency_ref,
     } = calculate_per_ref(type, head, flow);
 
     const pei = per / per_ref;
     const pei_validity = check_pei(pei_input, pei);
     return {
         pei,
-        pei_validity
+        pei_validity,
+        output_power,
+        w2wEfficiency_ref,
     }
 }
 

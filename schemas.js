@@ -379,19 +379,24 @@ exports.init = function init(mongoose) {
         control_methods: [String],
         head: [Number],
         flow: Number,
+        
         least: {
             pressure_curve: String,
             control_method: String,
             pei: Number,
             input_power: [Number],
-            energy_rating: Number
+            energy_rating: Number,
+            output_power: [Number],
+            water_to_wire_efficiency: Number
         },
         most: {
             pressure_curve: String,
             control_method: String,
             pei: Number,
             input_power: [Number],
-            energy_rating: Number
+            energy_rating: Number,
+            output_power: [Number],
+            water_to_wire_efficiency: Number
         },
         laboratory: {
             _id: String,

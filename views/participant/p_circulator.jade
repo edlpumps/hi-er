@@ -86,7 +86,6 @@ block content
       .panel.panel-default
         .panel-heading 
             h2 #{pump.brand} #{pump.brand ? ' / ' : ''} #{pump.basic_model} #{pump.manufacturer_model}
-            .help-block This data is visible to the public.
         .panel-body(v-if='pump')
           .row
            .col.col-sm-5.text-center
@@ -97,7 +96,7 @@ block content
                 er-label(:value='pump.least.energy_rating')
             .row
               .col
-                p Cool Picture
+                img(:src='"/images/" + pump.type.toLowerCase() + ".png"')
 
              
            .col.col-sm-7
@@ -105,66 +104,11 @@ block content
           .row
             .col
               circulator-data-details(:pump='pump', :units='units')  
-
-                
-      .panel.panel-default
-        .panel-heading 
-            h2 Load Point Data
-            .help-block This data is not visible to the public, it is only visible to members of your organization.
-        .panel-body
-           p Pump Head values, power inputs for each control method (least and most) goes here.
-           //-table.table
-            thead
-              tr 
-                th &nbsp;
-                th #{pump.load120 ? "75% BEP" : "65% BEP"}
-                th #{pump.load120 ? "100% BEP" : "90% BEP"}
-                th #{pump.load120 ? "110% BEP" : "100% BEP"} 
-            tbody
-              tr
-                td Flow (#{units.flow.label})
-                td #{(pump.flow.bep75 * units.flow.factor).toFixed(2)}
-                td #{(pump.flow.bep100 * units.flow.factor).toFixed(2)}
-                td #{(pump.flow.bep110 * units.flow.factor).toFixed(2)}
-              tr
-                td Head (#{units.head.label})
-                td #{(pump.head.bep75 * units.head.factor).toFixed(2)}
-                td #{(pump.head.bep100 * units.head.factor).toFixed(2)}
-                td #{(pump.head.bep110 * units.head.factor).toFixed(2)}
-              if pump.driver_input_power.bep100
-                tr
-                  td Driver input power (#{units.power.label})
-                  td #{(pump.driver_input_power.bep75 * units.power.factor).toFixed(2)}
-                  td #{(pump.driver_input_power.bep100 * units.power.factor).toFixed(2)}
-                  td #{(pump.driver_input_power.bep110 * units.power.factor).toFixed(2)}
-        
-           //-if pump.section == '6' || pump.section == '6a' || pump.section == '6b' || pump.section == '7'
-            table.table
-              thead
-                tr
-                  th &nbsp
-                  th Control input power (#{units.power.label})
-                  
-              tbody
-                tr
-                 td 25% BEP
-                 td #{(pump.control_power_input.bep25 * units.power.factor).toFixed(2)}
-                tr
-                 td 50% BEP
-                 td #{(pump.control_power_input.bep50 * units.power.factor).toFixed(2)}
-                tr
-                 td 75% BEP
-                 td #{(pump.control_power_input.bep75 * units.power.factor).toFixed(2)}
-                tr
-                 td 100% BEP
-                 td #{(pump.control_power_input.bep100 * units.power.factor).toFixed(2)}
-
-      
       .panel.panel-default
         .panel-heading 
             h2 Downloadable Media
         .panel-body
-          p Labels here...
+          circulator-label(:pump='pump')
           //-.row.solo
             .col.col-xs-12.text-center
               img(src="/labels/#{participant._id}/#{pump._id}/png", style="width:100%; max-width:600px;")

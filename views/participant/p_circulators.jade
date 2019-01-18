@@ -130,7 +130,7 @@ block content
                  tr(v-for='pump in pumps')
                   td
                     img(v-if="pump.pending", height="25", width="25", src="/images/pending.png")
-                    img(v-else="pump.pending", height="25", width="25", :src="'/images/'+pump.listed && pump.active_admin && !pump.pending ? 'active' : 'inactive'+'.png'")
+                    img(v-else="pump.pending", height="25", width="25", :src="'/images/'+(pump.listed && pump.active_admin && !pump.pending ? 'active' : 'inactive')+'.png'")
                   td: a(:href="'circulators/'+pump._id") {{pump.rating_id}}
                   td.hidden-xs {{pump.date}}
                   td.hidden-xs: a(:href="'circulators/'+pump._id")

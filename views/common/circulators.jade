@@ -13,6 +13,19 @@ mixin control_method(cm)
 		span External Input Signal and Other Controls
 
 mixin vue_circulator_components()
+	script#v-circulator-label(type='text/x-template')
+		div
+			p
+				label Nominal HP:  
+				span {{waip}}
+			p
+				label HP Slot:
+				span {{hp}}
+			p
+				label Max Scale:
+				span {{maxScale}}
+
+
 	script#v-circulator-data-details(type='text/x-template')
 		section.padded
 			section
@@ -25,8 +38,10 @@ mixin vue_circulator_components()
 						tr
 							th
 							th Control Method
-							th PEI
 							th(colspan='4').text-center Input Power ({{units.power.label}})
+							th Output Power ({{units.power.label}})
+							th W2W &eta;
+							th PEI
 							th ER
 					tbody
 						tr
@@ -38,6 +53,8 @@ mixin vue_circulator_components()
 							td(v-if='num_input_powers(pump.least.control_method) == 4')	{{(pump.least.input_power[1]*units.power.factor).toFixed(2)}}
 							td(v-if='num_input_powers(pump.least.control_method) == 4') {{(pump.least.input_power[2]*units.power.factor).toFixed(2)}}
 							td(v-if='num_input_powers(pump.least.control_method) == 4')	{{(pump.least.input_power[3]*units.power.factor).toFixed(2)}}
+							td: {{(pump.least.output_power[3] * units.power.factor).toFixed(2)}}
+							td: {{(pump.least.water_to_wire_efficiency).toFixed(0)}}%
 							td: pei(:value='pump.least.pei')
 							td: energy-rating(:value='pump.least.energy_rating')
 						tr(v-if='dual_cm()')
@@ -49,6 +66,8 @@ mixin vue_circulator_components()
 							td(v-if='num_input_powers(pump.most.control_method) == 4')	{{(pump.most.input_power[1]*units.power.factor).toFixed(2)}}
 							td(v-if='num_input_powers(pump.most.control_method) == 4') {{(pump.most.input_power[2]*units.power.factor).toFixed(2)}}
 							td(v-if='num_input_powers(pump.most.control_method) == 4')	{{(pump.most.input_power[3]*units.power.factor).toFixed(2)}}
+							td: {{(pump.most.output_power[3] * units.power.factor).toFixed(2)}}
+							td: {{(pump.most.water_to_wire_efficiency).toFixed(0)}}%
 							td: pei(:value='pump.most.pei')
 							td: energy-rating(:value='pump.most.energy_rating')
 				
@@ -75,7 +94,7 @@ mixin vue_circulator_components()
 					label Manufacturer model #:
 				.col.col-xs-7
 					.form-control-static {{pump.manufacturer_model}}
-			.row
+			.row(v-if='pump.alternative_model')
 				.col.col-xs-5
 					label Alternative model #:
 				.col.col-xs-7
@@ -117,6 +136,38 @@ mixin vue_circulator_components()
 					.form-control-static {{moment(pump.date).format("MMM DD, YYYY")}}
 				
 	script.
+		Vue.component('circulator-label', {
+			props: ['pump'],
+			template: '#v-circulator-label',
+			methods: {
+				moment(...args) {
+					// eslint-disable-next-line no-undef
+					return moment(...args);
+				},
+				dual_cm: function() {
+					return  this.pump.most && this.pump.most.control_method;
+				}
+			},
+			computed: {
+				waip: function() {
+					if (this.pump) {
+						return this.pump.least.output_power[3] / this.pump.least.water_to_wire_efficiency;
+					} else {
+						return 0;
+					}
+				},
+				hp: function() {
+					if ( this.waip < 1.0/30 ) return 0;
+					else if ( this.waip < 1.0/8 ) return 1;
+					else if ( this.waip < 3.0/4 ) return 2;
+					else return 3;
+				},
+				maxScale: function() {
+					const scales = [335.4, 189.6, 158.6, 142.3];
+					return scales[this.hp];
+				}
+			}
+		}),
 		Vue.component('circulator-details', {
 			props: ['pump', 'units'],
 			template: '#v-circulator-details',

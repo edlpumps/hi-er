@@ -8,7 +8,8 @@ const Circulator = require('../controllers/circulator');
 const units = require('../utils/uom');
 const Hashids = require('hashids');
 const hashids = new Hashids("hydraulic institute", 6, 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789');
-
+const svg_builder = require('../utils/label_builder.js');
+const svg2png = require("svg2png");
 
 router.use(async (req, res, next) => {
     const labs = await req.Labs.find({
@@ -175,6 +176,16 @@ router.get('/:id', aw(async (req, res) => {
         pump: pump
     });
 }));
+
+router.get('/:id/svg/label', aw(async(req, res) =>{
+    const pump = await req.Circulators.findById(req.params.id).populate('participant').exec();
+    const svg = svg_builder.make_circulator_label(req, pump.participant, pump);
+    if (req.query.download) {
+        res.setHeader('Content-disposition', 'attachment; filename=Energy Rating Label - ' + pump.rating_id + '.svg');
+    }
+    res.setHeader('Content-Type', 'image/svg+xml');
+    res.send(svg);
+}))
 
 
 module.exports = router;
