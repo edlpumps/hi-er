@@ -14,17 +14,23 @@ mixin control_method(cm)
 
 mixin vue_circulator_components()
 	script#v-circulator-label(type='text/x-template')
-		div
-			p
-				label Nominal HP:  
-				span {{waip}}
-			p
-				label HP Slot:
-				span {{hp}}
-			p
-				label Max Scale:
-				span {{maxScale}}
-
+		section.text-center
+			div.padded
+				img(:src='"/participant/circulators/"+pump._id+"/svg/label"')
+				br
+				a(:href='"/participant/circulators/"+pump._id+"/svg/label?download=true"').margin-right Download SVG
+				a(:href='"/participant/circulators/"+pump._id+"/png/label?download=true"') Download PNG
+			div.padded
+				img(:src='"/participant/circulators/"+pump._id+"/svg/sm-label"')
+				br
+				a(:href='"/participant/circulators/"+pump._id+"/svg/sm-label?download=true"').margin-right Download SVG
+				a(:href='"/participant/circulators/"+pump._id+"/png/sm-label?download=true"') Download PNG
+			div.padded
+				img(:src='"/participant/circulators/"+pump._id+"/svg/qr"')
+				br
+				a(:href='"/participant/circulators/"+pump._id+"/svg/qr?download=true"').margin-right Download SVG
+				a(:href='"/participant/circulators/"+pump._id+"/png/qr?download=true"') Download PNG
+		
 
 	script#v-circulator-data-details(type='text/x-template')
 		section.padded
@@ -83,7 +89,7 @@ mixin vue_circulator_components()
 				.col.col-xs-5
 					label HI Rating ID:
 				.col.col-xs-7
-					.form-control-static: a(:href="'/ratings/'+pump.rating_id") {{pump.rating_id}}
+					.form-control-static: a(:href="'/circulator/ratings/'+pump.rating_id") {{pump.rating_id}}
 			.row
 				.col.col-xs-5
 					label Basic model #:

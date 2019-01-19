@@ -5,44 +5,51 @@ const calculator = require('../circulator-calculator');
 const NO_SPEED_CONTROL = {
     label: 'no-speed-control',
     input: 'No Speed Control',
+    display: "Full Speed",
     column: 'H',
     number: 1
 };
 const PRESSURE_CONTROL = {
     label: 'pressure-control',
     input: 'Pressure Control',
+    display: "Pressure",
     column: 'I',
     number: 2
 };
 const TEMPERATURE_CONTROL = {
     label: 'temperature-control',
     input: 'Temperature Control',
+    display: "Temperature",
     column: 'J',
     number: 3
 };
 const EXTERNAL_CONTROL = {
     label: 'external-control',
     input: 'External Input Signal Only Control',
+    display: "External Input Signal",
     column: 'K',
     number: 4
 };
 const EXTERNAL_AND_OTHER_CONTROL = {
     label: 'external-other-control',
     input: 'External Input Signal and Other Controls',
+    display: "Adaptive Pressure",
     column: 'L',
     number: 5
 };
 const MANUAL_CONTROL = {
     label: 'manual-control',
     input: 'Manual Speed Controls',
+    display: "Manual Speed",
     column: 'M',
     number: 6
 };
 const control_methods = [
-    NO_SPEED_CONTROL, PRESSURE_CONTROL,
-    TEMPERATURE_CONTROL, EXTERNAL_CONTROL,
-    EXTERNAL_AND_OTHER_CONTROL, MANUAL_CONTROL
+    NO_SPEED_CONTROL, MANUAL_CONTROL, EXTERNAL_CONTROL, PRESSURE_CONTROL,
+    EXTERNAL_AND_OTHER_CONTROL, TEMPERATURE_CONTROL,
 ]
+
+exports.control_methods = control_methods;
 const FIRST_PUMP_ROW = 5;
 const PARTICIPANT_COLUMN = "A";
 const BRAND_COLUMN = "B"
