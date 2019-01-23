@@ -84,12 +84,16 @@ router.get('/', aw(async (req, res) => {
 
 
     function callback(error, response, body) {
-        var subscription = {
+        const subscription = {
             status: "No Account",
-            pumps: 0
+            pumps: 0,
+            circulators: {
+                status: "No Account"
+            }
         }
         if (!error) {
-            var info = JSON.parse(body);
+            const info = JSON.parse(body);
+            subscription.circulators.status = info.circulators.status || "No Account";
             subscription.status = info.status || "No Account";
             subscription.pumps = info.pumps || "0";
         } else {
@@ -497,7 +501,7 @@ router.post("/pumps/upload", get_labels, aw(async (req, res) => {
             pump.energy_savings = pump.results.energy_savings;
             // Change requested by HI - 12/21/2018.
             // Instead of using pei_baseline, always use 1.
-            pump.pei_baseline = 1 /*pump.results.pei_baseline*/ ;
+            pump.pei_baseline = 1 /*pump.results.pei_baseline*/;
             delete pump.results.pump;
 
             pump.laboratory = find_lab(pump.laboratory, labs);
@@ -576,14 +580,14 @@ router.get('/pumps/:id', aw(async (req, res) => {
     var load = pump.configuration == "bare" || pump.configuration == "pump_motor" ? "CL" : "VL";
 
     const label = await req.Labels.findOne().and([{
-            speed: pump.speed
-        },
-        {
-            doe: pump.doe
-        },
-        {
-            load: load
-        }
+        speed: pump.speed
+    },
+    {
+        doe: pump.doe
+    },
+    {
+        load: load
+    }
     ]).exec();
     var qr_svg = svg_builder.make_qr(req, req.participant, pump, label);
     var label_svg = svg_builder.make_label(req, req.participant, pump, label);
@@ -728,7 +732,6 @@ router.post('/pumps/:id', aw(async (req, res) => {
         }
         res.redirect("/participant/pumps");
     })
-
 }));
 
 const model_check = async (req, pump, participant, additional_pumps) => {
@@ -760,8 +763,8 @@ const model_check = async (req, pump, participant, additional_pumps) => {
     if (additional_pumps) {
         inds += additional_pumps.filter(
             p => p.individual_model == pump.individual_model &&
-            p.listed &&
-            p.rating_id != pump.rating_id).length;
+                p.listed &&
+                p.rating_id != pump.rating_id).length;
     }
 
     if (inds > 0) {
@@ -787,9 +790,9 @@ const model_check = async (req, pump, participant, additional_pumps) => {
     if (additional_pumps) {
         ers += additional_pumps.filter(
             p => p.basic_model == pump.basic_model &&
-            p.listed &&
-            p.energy_rating != pump.energy_rating &&
-            p.rating_id != pump.rating_id).length;
+                p.listed &&
+                p.energy_rating != pump.energy_rating &&
+                p.rating_id != pump.rating_id).length;
     }
 
     if (ers > 0) {
@@ -947,8 +950,8 @@ router.get("/api/active_labs", function (req, res) {
 router.get("/api/users", function (req, res) {
     req.log.debug("Returning user listings for participating organization");
     req.Users.find({
-            participant: req.participant._id
-        }, {
+        participant: req.participant._id
+    }, {
             name: true,
             email: true,
             _id: true,

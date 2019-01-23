@@ -53,14 +53,14 @@ mixin vue_circulator_components()
 						tr
 							td Least Consumptive
 							td: control-method(:method='pump.least.control_method')
-							td(v-if='num_input_powers(pump.least.control_method) == 2', colspan='2')	{{(pump.least.input_power[0]*units.power.factor).toFixed(2)}}
-							td(v-if='num_input_powers(pump.least.control_method) == 2', colspan='2')	{{(pump.least.input_power[1]*units.power.factor).toFixed(2)}}
+							td(v-if='num_input_powers(pump.least.control_method) == 2', colspan='2') {{(pump.least.input_power[0]*units.power.factor).toFixed(2)}}
+							td(v-if='num_input_powers(pump.least.control_method) == 2', colspan='2') {{(pump.least.input_power[1]*units.power.factor).toFixed(2)}}
 							td(v-if='num_input_powers(pump.least.control_method) == 4') {{(pump.least.input_power[0]*units.power.factor).toFixed(2)}}
-							td(v-if='num_input_powers(pump.least.control_method) == 4')	{{(pump.least.input_power[1]*units.power.factor).toFixed(2)}}
+							td(v-if='num_input_powers(pump.least.control_method) == 4') {{(pump.least.input_power[1]*units.power.factor).toFixed(2)}}
 							td(v-if='num_input_powers(pump.least.control_method) == 4') {{(pump.least.input_power[2]*units.power.factor).toFixed(2)}}
-							td(v-if='num_input_powers(pump.least.control_method) == 4')	{{(pump.least.input_power[3]*units.power.factor).toFixed(2)}}
-							td: {{(pump.least.output_power[3] * units.power.factor).toFixed(2)}}
-							td: {{(pump.least.water_to_wire_efficiency).toFixed(0)}}%
+							td(v-if='num_input_powers(pump.least.control_method) == 4') {{(pump.least.input_power[3]*units.power.factor).toFixed(2)}}
+							td {{(pump.least.output_power[3] * units.power.factor).toFixed(2)}}
+							td {{(pump.least.water_to_wire_efficiency).toFixed(0)}}%
 							td: pei(:value='pump.least.pei')
 							td: energy-rating(:value='pump.least.energy_rating')
 						tr(v-if='dual_cm()')
@@ -69,11 +69,11 @@ mixin vue_circulator_components()
 							td(v-if='num_input_powers(pump.most.control_method) == 2', colspan='2')	{{(pump.most.input_power[0]*units.power.factor).toFixed(2)}}
 							td(v-if='num_input_powers(pump.most.control_method) == 2', colspan='2')	{{(pump.most.input_power[1]*units.power.factor).toFixed(2)}}
 							td(v-if='num_input_powers(pump.most.control_method) == 4') {{(pump.most.input_power[0]*units.power.factor).toFixed(2)}}
-							td(v-if='num_input_powers(pump.most.control_method) == 4')	{{(pump.most.input_power[1]*units.power.factor).toFixed(2)}}
+							td(v-if='num_input_powers(pump.most.control_method) == 4') {{(pump.most.input_power[1]*units.power.factor).toFixed(2)}}
 							td(v-if='num_input_powers(pump.most.control_method) == 4') {{(pump.most.input_power[2]*units.power.factor).toFixed(2)}}
-							td(v-if='num_input_powers(pump.most.control_method) == 4')	{{(pump.most.input_power[3]*units.power.factor).toFixed(2)}}
-							td: {{(pump.most.output_power[3] * units.power.factor).toFixed(2)}}
-							td: {{(pump.most.water_to_wire_efficiency).toFixed(0)}}%
+							td(v-if='num_input_powers(pump.most.control_method) == 4') {{(pump.most.input_power[3]*units.power.factor).toFixed(2)}}
+							td {{(pump.most.output_power[3] * units.power.factor).toFixed(2)}}
+							td {{(pump.most.water_to_wire_efficiency).toFixed(0)}}%
 							td: pei(:value='pump.most.pei')
 							td: energy-rating(:value='pump.most.energy_rating')
 				

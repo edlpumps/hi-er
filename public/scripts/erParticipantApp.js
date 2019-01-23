@@ -1,21 +1,21 @@
 "use strict";
 
 var configurations = [{
-    value: "bare",
-    label: "Bare Pump"
-  },
-  {
-    value: "pump_motor",
-    label: "Pump + Motor"
-  },
-  {
-    value: "pump_motor_cc",
-    label: "Pump + Motor w/ Continuous Controls"
-  },
-  {
-    value: "pump_motor_nc",
-    label: "Pump + Motor w/ Non-continuous Controls"
-  }
+  value: "bare",
+  label: "Bare Pump"
+},
+{
+  value: "pump_motor",
+  label: "Pump + Motor"
+},
+{
+  value: "pump_motor_cc",
+  label: "Pump + Motor w/ Continuous Controls"
+},
+{
+  value: "pump_motor_nc",
+  label: "Pump + Motor w/ Non-continuous Controls"
+}
 ];
 
 var app = angular.module('ERParticipantApp', []).directive('bootstrapSwitch', [
@@ -83,8 +83,8 @@ var service = app.factory('service', function ($http) {
     },
     updateLab: function (id, available) {
       return $http.post('/participant/api/labs/' + id, {
-          available: available
-        })
+        available: available
+      })
         .success(function (docs) {
           return docs.data;
         })
@@ -94,8 +94,8 @@ var service = app.factory('service', function ($http) {
     },
     saveNewUser: function (user) {
       return $http.post('/participant/api/users/add', {
-          user: user
-        })
+        user: user
+      })
         .success(function (docs) {
           return docs.data;
         })
@@ -105,8 +105,8 @@ var service = app.factory('service', function ($http) {
     },
     saveUser: function (user) {
       return $http.post('/participant/api/users/save', {
-          user: user
-        })
+        user: user
+      })
         .success(function (docs) {
           return docs.data;
         })
@@ -134,16 +134,16 @@ var service = app.factory('service', function ($http) {
     },
     saveSettings: function (participant) {
       return $http.post('/participant/api/settings', {
-          participant: participant
-        })
+        participant: participant
+      })
         .then(function (docs) {
           return docs.data;
         });
     },
     saveSearchQuery: function (q) {
       return $http.post('/participant/api/search', {
-          pump_search_query: q
-        })
+        pump_search_query: q
+      })
         .then(function (docs) {
           return docs.data;
         });
@@ -464,21 +464,21 @@ var ERNewManualPumpController = function ($scope, $location, service) {
   var vm = this;
 
   vm.configurations = [{
-      value: "bare",
-      label: "Bare Pump"
-    },
-    {
-      value: "pump_motor",
-      label: "Pump + Motor"
-    },
-    {
-      value: "pump_motor_cc",
-      label: "Pump + Motor w/ Continuous Controls"
-    },
-    {
-      value: "pump_motor_nc",
-      label: "Pump + Motor w/ Non-continuous Controls"
-    }
+    value: "bare",
+    label: "Bare Pump"
+  },
+  {
+    value: "pump_motor",
+    label: "Pump + Motor"
+  },
+  {
+    value: "pump_motor_cc",
+    label: "Pump + Motor w/ Continuous Controls"
+  },
+  {
+    value: "pump_motor_nc",
+    label: "Pump + Motor w/ Non-continuous Controls"
+  }
   ];
 
 

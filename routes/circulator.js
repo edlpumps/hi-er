@@ -11,6 +11,14 @@ const hashids = new Hashids("hydraulic institute", 6, 'ABCDEFGHIJKLMNPQRSTUVWXYZ
 const svg_builder = require('../utils/label_builder.js');
 const svg2png = require("svg2png");
 
+const model_check = async (req, pump) => {
+    return {
+        ok: true,
+        subscription_limit: false
+    };
+}
+
+
 router.use(async (req, res, next) => {
     const labs = await req.Labs.find({
         _id: {
@@ -170,11 +178,39 @@ router.get('/:id', aw(async (req, res) => {
         return res.sendStatus(404);
     }
 
+    const check = await model_check(req, pump);
     res.render("participant/p_circulator", {
         user: req.user,
         participant: req.participant,
-        pump: pump
+        pump: pump,
+        can_activate: check,
+        subscription_limit: check.subscription_limit,
     });
+}));
+router.post('/:id', aw(async (req, res) => {
+    console.log(req.body);
+    if (!req.user.participant_edit) {
+        req.log.info("Save pump attempted by unauthorized user");
+        req.log.info(req.user);
+        res.redirect("/unauthorized");
+        return;
+    }
+    const pump = await req.Circulators.findById(req.params.id).exec();
+    if (pump) {
+        pump.listed = req.body.listed;
+        const check = await model_check(req, pump, req.participant);
+        if (pump.listed && !check.ok) {
+            pump.listed = false;
+        }
+        if (pump.listed) pump.pending = false;
+    }
+    pump.save(function (err) {
+        if (err) {
+            req.log.error(err);
+        }
+        res.redirect("/participant/circulators");
+    })
+
 }));
 
 router.get('/:id/svg/label', aw(async (req, res) => {

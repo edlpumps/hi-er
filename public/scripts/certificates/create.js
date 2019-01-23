@@ -15,21 +15,21 @@ new Vue({
         searched: false,
         units: null,
         configurations: [{
-                value: "bare",
-                label: "Bare Pump"
-            },
-            {
-                value: "pump_motor",
-                label: "Pump + Motor"
-            },
-            {
-                value: "pump_motor_cc",
-                label: "Pump + Motor w/ Continuous Controls"
-            },
-            {
-                value: "pump_motor_nc",
-                label: "Pump + Motor w/ Non-continuous Controls"
-            }
+            value: "bare",
+            label: "Bare Pump"
+        },
+        {
+            value: "pump_motor",
+            label: "Pump + Motor"
+        },
+        {
+            value: "pump_motor_cc",
+            label: "Pump + Motor w/ Continuous Controls"
+        },
+        {
+            value: "pump_motor_nc",
+            label: "Pump + Motor w/ Non-continuous Controls"
+        }
         ]
 
 

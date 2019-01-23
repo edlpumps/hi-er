@@ -110,6 +110,7 @@ var configure = function () {
     const pei = require("./routes/pei");
     const labels = require("./routes/labels");
     const ratings = require("./routes/ratings");
+    const circulator_ratings = require("./routes/circulator-ratings");
 
     app.use("/", root);
     app.use("/participant", participant);
@@ -117,6 +118,7 @@ var configure = function () {
     app.use("/pei", pei);
     app.use("/labels", labels);
     app.use("/ratings", ratings);
+    app.use("/circulator/ratings", circulator_ratings);
 
     root.post('/login',
         passport.authenticate('local', {
@@ -200,9 +202,9 @@ var conn = mongoose.connect(data_connection_str, {
 // Authentication
 ////////////////////////////////////////////////////
 passport.use(new Strategy({
-        usernameField: 'email',
-        passReqToCallback: true
-    },
+    usernameField: 'email',
+    passReqToCallback: true
+},
     function (req, email, password, done) {
         var regex = new RegExp("^" + email + "$", "i");
 

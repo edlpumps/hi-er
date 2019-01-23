@@ -20,7 +20,9 @@ block script
             pump: null,
             participant: null,
             user: null,
-            units: null
+            units: null,
+            selected_value: false,
+
           },
 
           mounted: function () {
@@ -37,18 +39,49 @@ block script
               if ( this.pump ) {
                 return  this.pump.most && this.pump.most.control_method;
               }
+            }, 
+            save_listings_status: function() {
+                this.selected_value = $("#listed").is(':checked');
+
+                if ( this.pump.listed != this.selected_value ) {
+                    $('#save').modal('show');
+                } else {
+                  console.log("Nothing to do, just redirect");
+                }
+            }, 
+            post_listings_status: function() {
+              this.pump.listed = this.selected_value;
+              $.ajax({
+                method: 'post',
+                url: '/participant/circulators/'+this.pump._id,
+                data: JSON.stringify({
+                    listed: this.selected_value
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+              }).fail(function (err, body) {
+                  console.error(err);
+              }).done(function (data) {
+                  window.location = "/participant/circulators";
+              });
             }
           }
         });
 block content
+ 
  div
-    //-.modal.fade#activate(tabindex='-1', role='dialog' aria-labelledby='titleLabel', aria-hidden='true')
-        .modal-dialog
+    
+    +vue_circulator_components()
+
+    .container#vue(data-pump=(JSON.stringify(pump)), data-units=(JSON.stringify(units)), data-user=(JSON.stringify(user)), data-participant=(JSON.stringify(participant)))
+      .modal.fade#save(tabindex='-1', role='dialog' aria-labelledby='titleLabel', aria-hidden='true')
+        .modal-dialog(v-if='pump')
           .modal-content
             .modal-header
               button(type='button', class='close' data-dismiss='modal' aria-hidden='hidden') &times;
               h4.modal-title Confirm activation
-            .modal-body
+            .modal-body(v-if='pump.pending && selected_value')
               p.text-warning Are you sure you want to activate this pump?  
               p 
                | Once you activate the pump for the first time, it is considered 
@@ -57,36 +90,28 @@ block content
                | can no longer be deleted.  It will appear in public search 
                | listings, and be accessible to anyone with it's rating 
                | identification or QR code.
-            .modal-footer
-              div
-                button.btn.btn-danger(type="button", data-dismiss='modal', onclick="$('#pending_update_confirmed').val(true); $('#pump_form').submit()") Yes
-                button.btn.btn-default(type='button' data-dismiss='modal') Nevermind
-    //-.modal.fade#deactivate(tabindex='-1', role='dialog' aria-labelledby='titleLabel', aria-hidden='true')
-        .modal-dialog
-          .modal-content
-            .modal-header
-              button(type='button', class='close' data-dismiss='modal' aria-hidden='hidden') &times;
-              h4.modal-title Confirm de-activation
-            .modal-body
+            .modal-body(v-else-if='selected_value')
+              p.text-warning Are you sure you want to activate this pump?  
+              p 
+               | The pump will appear in public search 
+               | listings, and be accessible to anyone with it's rating 
+               | identification or QR code.
+            .modal-body(v-else-if='!selected_value')
               p.text-warning Are you sure you want to set this pump to inactive?  
               p 
                | Setting a pump to "inactive" is intended for pumps that are not 
                | commercially available.  This listing will only be found by a 
                | direct search by the pump's rating ID or QR code.  The pump's label
                | page will have a message indicating that it is not commercially available.
-               
             .modal-footer
               div
-                button.btn.btn-danger(type="button", data-dismiss='modal', onclick="$('#inactive_update_confirmed').val(true); $('#pump_form').submit()") Yes
+                button.btn.btn-danger(type="button", data-dismiss='modal', @click='post_listings_status') Yes 
                 button.btn.btn-default(type='button' data-dismiss='modal') Nevermind
-    +vue_circulator_components()
-
-    .container#vue(data-pump=(JSON.stringify(pump)), data-units=(JSON.stringify(units)), data-user=(JSON.stringify(user)), data-participant=(JSON.stringify(participant)))
-
-      .panel.panel-default
+      
+      .panel.panel-default(v-if='pump')
         .panel-heading 
             h2 #{pump.brand} #{pump.brand ? ' / ' : ''} #{pump.basic_model} #{pump.manufacturer_model}
-        .panel-body(v-if='pump')
+        .panel-body
           .row
            .col.col-sm-5.text-center
             .row
@@ -97,42 +122,17 @@ block content
             .row
               .col
                 img(:src='"/images/" + pump.type.toLowerCase() + ".png"')
-
-             
            .col.col-sm-7
             circulator-details(:pump='pump', :units='units')
           .row
             .col
               circulator-data-details(:pump='pump', :units='units')  
-      .panel.panel-default
+      .panel.panel-default(v-if='pump')
         .panel-heading 
             h2 Downloadable Media
         .panel-body
           circulator-label(:pump='pump')
-          //-.row.solo
-            .col.col-xs-12.text-center
-              img(src="/labels/#{participant._id}/#{pump._id}/png", style="width:100%; max-width:600px;")
-              p 
-               a(href="/labels/#{participant._id}/#{pump._id}/png?download=true") Download as PNG
-               | &nbsp;&nbsp; - &nbsp;&nbsp; 
-               a(href="/labels/#{participant._id}/#{pump._id}/svg?download=true") Download as SVG 
-          //-.row.solo
-            .col.col-xs-12.text-center
-              img(src="/labels/#{participant._id}/#{pump._id}/png-sm", style="width:100%; max-width:400px;")
-              p 
-               a(href="/labels/#{participant._id}/#{pump._id}/png-sm?download=true") Download as PNG
-               | &nbsp;&nbsp; - &nbsp;&nbsp; 
-               a(href="/labels/#{participant._id}/#{pump._id}/svg-sm?download=true") Download as SVG 
-          //-.row.solo
-            .col.col-xs-12.text-center
-              img(src="/labels/#{participant._id}/#{pump._id}/qr/png", style="width:100%; max-width:600px;")
-              p
-               a(href="/labels/#{participant._id}/#{pump._id}/qr/png?download=true") Download as PNG
-               | &nbsp;&nbsp; - &nbsp;&nbsp; 
-               a(href="/labels/#{participant._id}/#{pump._id}/qr?download=true") Download as SVG 
-              
-          
-      .panel.panel-default
+      .panel.panel-default(v-if='pump')
         .panel-heading
           h2 Data Corrections / Revisions
         .panel-body
@@ -145,63 +145,24 @@ block content
            .row
             .col.col-xs-12
              a.btn.btn-warning(href="/participant/pumps/#{pump._id}/revise") Add Data Correction
-             a(href="/ratings/glossary#status_explanation", title="Help documentation", target="_blank", style="margin-left:1em") Learn about pump listing status and revision/redesigns.
-             
-      //-if user.participant_edit
+             a(href="/ratings/glossary#status_explanation", title="Help documentation", target="_blank", style="margin-left:1em") Learn about pump listing status and revision/redesigns.    
+      if user.participant_edit
        .panel.panel-default
         .panel-heading
           h2 Administrative controls
         .panel-body
-         form(action="/participant/pumps/#{pump._id}", id="pump_form", method="post")
-          input(type="hidden", id="pending_status", name="pending", value="#{pump.pending}")
-          input(type="hidden", id="listed_status", name="listed", value="#{pump.listed}")
-          input(type="hidden", id="pending_update_confirmed", name="pending_update_confirmed")
-          input(type="hidden", id="inactive_update_confirmed", name="inactive_update_confirmed")
-          input(type="hidden", id="listed_state", name="listed_state")
-          script.
-            $("#pump_form").submit(function() {
-                var initial = $("#pending_status").val()  === 'true';
-                var initial_listed = $("#listed_status").val()  === 'true';
-                var current = $("#listed").is(':checked');
-                var confirmed = $("#pending_update_confirmed").val()  === 'true';
-                var inactive_confirmed = $("#inactive_update_confirmed").val()  === 'true';
-                $("#listed_state").val(current);
-                if ( initial == true && current == true) {
-                  if ( confirmed) {
-                    
-                    return true;
-                  }
-                  else {
-                    $('#activate').modal('show');
-                    return false;
-                  }
-                }
-                if ( initial_listed == true && current == false) {
-                  if ( inactive_confirmed) {
-                    $("#listed").val(false);
-                    console.log("Listed => " + $("#listed").val());
-                    return true;
-                  }
-                  else {
-                    $('#deactivate').modal('show');
-                    return false;
-                  }
-                }
-                return true;
-            });
           .row
            .col.col-xs-12
-              p Subscription limits, activation controls go here.
-              //-if subscription_limit && !pump.listed
+              if subscription_limit && !pump.listed
                 .alert.alert-warning
                  p This pump cannot be activated, you've reached the maximum number of pumps listed for your account.
-              //-else if !pump.listed && can_activate.individual_collide
+              else if !pump.listed && can_activate.individual_collide
                 .alert.alert-warning
                  p This pump cannot be activated, there is already an active pump with the same individual model number. 
-              //-else if !pump.listed && can_activate.basic_collide
+              else if !pump.listed && can_activate.basic_collide
                 .alert.alert-warning
                  p This pump cannot be activated, there is already an active pump with the same basic model number which has a different Energy Rating. 
-              //-else 
+              else 
                .form-group
                 - var text = pump.pending ? "Pending" : "Inactive"
                 - var checked = pump.listed ? "on" : undefined;
@@ -222,4 +183,5 @@ block content
                   p.form-static-control #{pump.note_admin}
           .row
             .col.col-xs-12
-               button.btn.btn-danger(type="submit") Save changes
+               button.btn.btn-danger(@click='save_listings_status') Save changes
+ 
