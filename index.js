@@ -247,7 +247,7 @@ passport.deserializeUser(function (id, cb) {
 var startup = function () {
     mainlog.info("HI Energy Rating application startup -- %s, port %s", process.env.NODE_ENV, port);
     http.createServer(app).listen(port);
-
+    push_daily();
 }
 
 var push_daily = function () {
@@ -403,5 +403,3 @@ var twiceAMonth = "0 11 1,15 * *"
 sched.scheduleJob(daily, push_daily);
 sched.scheduleJob(weekly, push_weekly);
 sched.scheduleJob(twiceAMonth, push_twice_a_month);
-
-push_daily();
