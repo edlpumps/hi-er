@@ -360,6 +360,7 @@ var push_emails = function (interval) {
                 })
             }
             recips.forEach(function (recip) {
+                console.log("SENDING SUBSCRIBER EMAIL")
                 mailer.sendListings(recip, buffer);
             })
 
@@ -379,8 +380,8 @@ var push_emails = function (interval) {
 var mailer = require('./utils/mailer');
 var sched = require('node-schedule');
 var daily = new sched.RecurrenceRule();
-daily.hour = 9;
-daily.minute = 0;
+daily.hour = 11;
+daily.minute = 36;
 
 var weekly = new sched.RecurrenceRule();
 weekly.dayOfWeek = 1;
