@@ -247,7 +247,7 @@ passport.deserializeUser(function (id, cb) {
 var startup = function () {
     mainlog.info("HI Energy Rating application startup -- %s, port %s", process.env.NODE_ENV, port);
     http.createServer(app).listen(port);
-    push_daily();
+
 }
 
 var push_daily = function () {
