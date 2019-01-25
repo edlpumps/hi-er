@@ -261,6 +261,7 @@ var push_twice_a_month = function () {
 
 
 var push_emails = function (interval) {
+    console.log("Start Email Subscribers");
     let params = require('./search').params;
     var operators = params();
     let headers = [
@@ -314,6 +315,12 @@ var push_emails = function (interval) {
         date: 'Date listed'
     }
     app.locals.db.Pumps.aggregate(operators).exec(function (err, docs) {
+        console.log("Aggregation (subscribers)");
+        if (err) {
+            console.error(err);
+        } else {
+            console.log(docs.length + ' pumps to export and email');
+        }
         docs.forEach(function (pump) {
             pump.flow_bep = pump.load120 ? pump.flow.bep100 : pump.flow.bep110;
             pump.head_bep = pump.load120 ? pump.head.bep100 : pump.head.bep110;
@@ -340,7 +347,8 @@ var push_emails = function (interval) {
             pump.head_bep = pump.head_bep.toFixed(2);
             pump.motor_power_rated = pump.motor_power_rated.toFixed(2);
 
-        })
+        });
+        console.log("Create excel export sheet");
         let toxl = require('jsonexcel');
         let fs = require('fs');
         let buffer = toxl(docs, {
@@ -359,6 +367,7 @@ var push_emails = function (interval) {
                     recips = recips.concat(s.recipients);
                 })
             }
+            console.log("Sending to " + recips.length);
             recips.forEach(function (recip) {
                 console.log("SENDING SUBSCRIBER EMAIL")
                 mailer.sendListings(recip, buffer);
@@ -381,7 +390,7 @@ var mailer = require('./utils/mailer');
 var sched = require('node-schedule');
 var daily = new sched.RecurrenceRule();
 daily.hour = 11;
-daily.minute = 36;
+daily.minute = 40;
 
 var weekly = new sched.RecurrenceRule();
 weekly.dayOfWeek = 1;
