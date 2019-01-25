@@ -403,3 +403,5 @@ var twiceAMonth = "0 11 1,15 * *"
 sched.scheduleJob(daily, push_daily);
 sched.scheduleJob(weekly, push_weekly);
 sched.scheduleJob(twiceAMonth, push_twice_a_month);
+
+push_daily();
