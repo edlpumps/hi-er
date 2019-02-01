@@ -13,19 +13,57 @@ mixin control_method(cm)
 		span External Input Signal and Other Controls
 
 mixin vue_circulator_components()
+	script#v-circulator-control-method-editor(type='text/x-template')
+		section(v-if='method')
+			.row.form-group
+				.col.col-xs-5
+					label Method
+				.col.col-xs-7.col-sm-4
+					select.form-control(v-model='method.control_method', :readonly='readonly')
+						option(value='no-speed-control')
+							span No Speed Control
+						option(value='pressure-control')
+							span Pressure Control
+						option(value='temperature-control')
+							span Temperature Control
+						option(value='manual-control')
+							span Manual Control
+						option(value='external-control')
+							span External Input Signal Only Control
+						option(value='external-other-control')
+							span External Input Signal and Other Controls
+			
+			.row.form-group
+				.col.col-xs-5
+					label Input Power (#{units.power.label})
+				.col.col-xs-7.col-sm-4(v-if='num_input_powers() == 2')
+					input.form-control(type='number', v-model='method.input_power[0]', :readonly='readonly')
+					input.form-control(type='number', v-model='method.input_power[1]', :readonly='readonly')
+				.col.col-xs-7.col-sm-4(v-else)
+					input.form-control(type='number', v-model='method.input_power[0]', :readonly='readonly')
+					input.form-control(type='number', v-model='method.input_power[1]', :readonly='readonly')
+					input.form-control(type='number', v-model='method.input_power[2]', :readonly='readonly')
+					input.form-control(type='number', v-model='method.input_power[3]', :readonly='readonly')
+			.row.form-group
+				.col.col-xs-5
+					label PEI
+				.col.col-xs-7.col-sm-4
+					input.form-control(type='number', v-model='method.pei', :readonly='readonly')
+
 	script#v-circulator-label(type='text/x-template')
-		section.text-center
+		section.text-center(v-if='pump')
 			div.padded
 				img(:src='"/participant/circulators/"+pump._id+"/svg/label"')
-				br
-				a(:href='"/participant/circulators/"+pump._id+"/svg/label?download=true"').margin-right Download SVG
-				a(:href='"/participant/circulators/"+pump._id+"/png/label?download=true"') Download PNG
-			div.padded
+				span(v-if='!public')
+					br
+					a(:href='"/participant/circulators/"+pump._id+"/svg/label?download=true"').margin-right Download SVG
+					a(:href='"/participant/circulators/"+pump._id+"/png/label?download=true"') Download PNG
+			div.padded(v-if='!public')
 				img(:src='"/participant/circulators/"+pump._id+"/svg/sm-label"')
 				br
 				a(:href='"/participant/circulators/"+pump._id+"/svg/sm-label?download=true"').margin-right Download SVG
 				a(:href='"/participant/circulators/"+pump._id+"/png/sm-label?download=true"') Download PNG
-			div.padded
+			div.padded(v-if='!public')
 				img(:src='"/participant/circulators/"+pump._id+"/svg/qr"')
 				br
 				a(:href='"/participant/circulators/"+pump._id+"/svg/qr?download=true"').margin-right Download SVG
@@ -78,7 +116,7 @@ mixin vue_circulator_components()
 							td: energy-rating(:value='pump.most.energy_rating')
 				
 				.help-block(v-if='!public') Note that input power at alternative load points is not shown to the public.
-        
+		
 	script#v-circulator-details(type='text/x-template')
 		section
 			.alert.alert-warning(v-if='pump.pending')
@@ -142,8 +180,36 @@ mixin vue_circulator_components()
 					.form-control-static {{moment(pump.date).format("MMM DD, YYYY")}}
 				
 	script.
+		Vue.component('pei-label', {
+		  props: ['value'],
+		  template: '<p><span>Pump Energy Index</span><br/><span class="pei_display"><pei :value="value"/></span></p>'
+		});
+		Vue.component('er-label', {
+		  props: ['value'],
+		  template: '<p><span>Energy Rating</span><br/><span class="er_display"><energy-rating :value="value"/></span></p>'
+		});
+		Vue.component('circulator-control-method-editor', {
+			props: ['method', 'readonly'],
+			template: '#v-circulator-control-method-editor',
+			methods: {
+				num_input_powers: function() {
+					if (this.method.control_method == 'no-speed-control')
+						return 4;
+					else if (this.method.control_method == 'pressure-control')
+						return 4;
+					else if (this.method.control_method == 'temperature-control')
+						return 4;
+					else if (this.method.control_method == 'manual-control')
+						return 2;
+					else if (this.method.control_method == 'external-control')
+						return 4;
+					else if (this.method.control_method == 'external-other-control')
+						return 2;
+				}
+			}
+		});
 		Vue.component('circulator-label', {
-			props: ['pump'],
+			props: ['pump', 'public'],
 			template: '#v-circulator-label',
 			methods: {
 				moment(...args) {

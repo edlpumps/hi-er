@@ -171,6 +171,81 @@ router.get("/search", aw(async (req, res) => {
     }));
 }));
 
+router.get("/:id/revise", aw(async (req, res) => {
+    if (!req.user.participant_edit) {
+        req.log.info("Revise pump attempted by unauthorized user");
+        req.log.info(req.user);
+        res.redirect("/unauthorized");
+        return;
+    }
+    let pump = await req.Circulators.findById(req.params.id).exec();
+    if (!pump) {
+        return res.sendStatus(404);
+    }
+
+    if (req.session.unit_set == units.METRIC) {
+        // pumps are stored internally in US units.
+        pump = units.convert_circulator_to_metric(pump);
+    }
+    var help = require("../public/resources/help.json");
+    res.render("participant/p_circulator_revise", {
+        user: req.user,
+        participant: req.participant,
+        pump: pump,
+        help: help,
+        revision: true
+    });
+}));
+
+router.post("/:id/revise", aw(async (req, res) => {
+    if (!req.user.participant_edit) {
+        req.log.info("Revise pump attempted by unauthorized user");
+        req.log.info(req.user);
+        res.redirect("/unauthorized");
+        return;
+    }
+    let pump = await req.Circulators.findById(req.params.id).exec();
+    if (!pump) {
+        return res.sendStatus(404);
+    }
+    let revision = req.body.pump;
+    if (req.session.unit_set == units.METRIC) {
+        // pumps are stored internally in US units, switch to US to do calcs.
+        revision = units.convert_circulator_to_us(revision);
+    }
+
+    const results = Circulator.calculate_assembled_circulator(revision);
+    res.json(results);
+}));
+
+// This route actually applies / saves the revision itself.
+router.put("/:id/revise", aw(async (req, res) => {
+    if (!req.user.participant_edit) {
+        req.log.info("Revise pump attempted by unauthorized user");
+        req.log.info(req.user);
+        res.redirect("/unauthorized");
+        return;
+    }
+    let pump = await req.Circulators.findById(req.params.id).exec();
+    if (!pump) {
+        return res.sendStatus(404);
+    }
+    let revision = req.body.pump;
+    if (req.session.unit_set == units.METRIC) {
+        // pumps are stored internally in US units, switch to US to do calcs.
+        revision = units.convert_circulator_to_us(revision);
+    }
+    const results = Circulator.calculate_assembled_circulator(revision);
+    pump = Object.assign(pump, results);
+    pump.revisions.push({
+        data: new Date(),
+        note: req.body.revision_note,
+        correction: true
+    });
+    await pump.save();
+    res.sendStatus(200);
+}));
+
 router.get('/:id', aw(async (req, res) => {
     req.log.debug("Rendering participant portal (circulator pump page)");
     const pump = await req.Circulators.findById(req.params.id).exec();
@@ -188,7 +263,6 @@ router.get('/:id', aw(async (req, res) => {
     });
 }));
 router.post('/:id', aw(async (req, res) => {
-    console.log(req.body);
     if (!req.user.participant_edit) {
         req.log.info("Save pump attempted by unauthorized user");
         req.log.info(req.user);
@@ -211,6 +285,17 @@ router.post('/:id', aw(async (req, res) => {
         res.redirect("/participant/circulators");
     })
 
+}));
+
+router.get('/:id/export', aw(async (req, res) => {
+    const pump = await req.Circulators.findById(req.params.id).exec();
+    if (!pump) {
+        return res.sendStatus(404);
+    }
+    const file = await Circulator.export([pump], req.session.unit_set);
+    res.download(file, 'Pump Listings.xlsx', function (err) {
+        fs.unlink(file);
+    });
 }));
 
 router.get('/:id/svg/label', aw(async (req, res) => {

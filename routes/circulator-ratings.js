@@ -107,7 +107,7 @@ router.get("/:id", aw(async (req, res) => {
 
     if (!pump || !pump.participant.active ||
         pump.pending || !pump.active_admin ||
-        pump.participant.subscription.circulators.status != 'Active') {
+        pump.participant.subscription.circulator.status != 'Active') {
 
         req.flash("errorTitle", "Not Available");
         req.flash("errorMessage",

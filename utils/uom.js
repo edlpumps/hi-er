@@ -37,6 +37,15 @@ exports.convert_to_metric = function (pump) {
     else return convert(pump, 1);
 }
 
+exports.convert_circulator_to_us = function (pump) {
+    if (pump.unit_set == "US") return pump;
+    else return convert_circulator(pump, -1, true);
+}
+exports.convert_circulator_to_metric = function (pump) {
+    if (pump.unit_set == "METRIC") return pump;
+    else return convert_circulator(pump, 1);
+}
+
 exports.make_units = function (unit_set) {
     return {
         active: unit_set,
@@ -61,6 +70,40 @@ exports.make_units = function (unit_set) {
 
 exports.convert_motor_rated_power_result = function (motor_rated_power) {
     return motor_rated_power * exports.factors.power;
+}
+var convert_circulator = function (pump, flip, round) {
+    const retval = JSON.parse(JSON.stringify(pump));
+
+    if (retval.flow) {
+        retval.flow *= Math.pow(factors.flow, flip);
+    }
+    if (retval.head) {
+        for (let i = 0; i < retval.head.length; i++) {
+            retval.head[i] *= Math.pow(factors.head, flip);
+        }
+    }
+    if (retval.least && retval.least.input_power) {
+        for (let i = 0; i < retval.least.input_power.length; i++) {
+            retval.least.input_power[i] *= Math.pow(factors.power, flip);
+        }
+    }
+    if (retval.most && retval.most.input_power) {
+        for (let i = 0; i < retval.most.input_power.length; i++) {
+            retval.most.input_power[i] *= Math.pow(factors.power, flip);
+        }
+    }
+    if (retval.least && retval.least.output_power) {
+        for (let i = 0; i < retval.least.output_power.length; i++) {
+            retval.least.output_power[i] *= Math.pow(factors.power, flip);
+        }
+    }
+    if (retval.most && retval.most.output_power) {
+        for (let i = 0; i < retval.most.output_power.length; i++) {
+            retval.most.output_power[i] *= Math.pow(factors.power, flip);
+        }
+    }
+    return retval;
+
 }
 var convert = function (pump, flip, round) {
     var retval = JSON.parse(JSON.stringify(pump));

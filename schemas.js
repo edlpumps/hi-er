@@ -13,8 +13,8 @@ exports.init = function init(mongoose) {
     exports.getNextRatingsId = async () => {
         return new Promise((resolve, reject) => {
             var ret = counters.collection.findAndModify({
-                name: "ratings"
-            }, {}, {
+                    name: "ratings"
+                }, {}, {
                     $inc: {
                         seq: 1
                     }
@@ -29,8 +29,8 @@ exports.init = function init(mongoose) {
     exports.getNextCertificateOrderNumber = async () => {
         return new Promise((resolve, reject) => {
             var ret = counters.collection.findAndModify({
-                name: "certificate_orders"
-            }, {}, {
+                    name: "certificate_orders"
+                }, {}, {
                     $inc: {
                         seq: 1
                     }
@@ -45,8 +45,8 @@ exports.init = function init(mongoose) {
     exports.getNextCertificateNumber = async () => {
         return new Promise((resolve, reject) => {
             var ret = counters.collection.findAndModify({
-                name: "certificates"
-            }, {}, {
+                    name: "certificates"
+                }, {}, {
                     $inc: {
                         seq: 1
                     }
@@ -123,8 +123,8 @@ exports.init = function init(mongoose) {
             country: String
         }
     }, {
-            usePushEach: true
-        })
+        usePushEach: true
+    })
     var labs = mongoose.model('labs', lab_schema, "labs");
 
     exports.Labs = labs;
@@ -136,8 +136,8 @@ exports.init = function init(mongoose) {
         last_email_date: Date,
         interval_days: Number
     }, {
-            usePushEach: true
-        });
+        usePushEach: true
+    });
     var subscribers = mongoose.model('subscribers', subscriber_schema, "subscribers");
     exports.Subscribers = subscribers;
 
@@ -147,8 +147,8 @@ exports.init = function init(mongoose) {
         quantity: Number,
         cart: [Schema.Types.Mixed]
     }, {
-            usePushEach: true
-        })
+        usePushEach: true
+    })
 
     var certificate_transactions = mongoose.model('certificate_transactions', certificateTransaction, "certificate_transactions");
     exports.CertificateTransactions = certificate_transactions;
@@ -194,8 +194,8 @@ exports.init = function init(mongoose) {
             ref: 'certificate_transactions'
         }
     }, {
-            usePushEach: true
-        });
+        usePushEach: true
+    });
 
 
     var certificates = mongoose.model('certificates', certificateSchema, "certificates");
@@ -324,8 +324,8 @@ exports.init = function init(mongoose) {
         }],
         results: Schema.Types.Mixed
     }, {
-            usePushEach: true
-        });
+        usePushEach: true
+    });
 
 
 
@@ -437,8 +437,8 @@ exports.init = function init(mongoose) {
         }],
         results: Schema.Types.Mixed
     }, {
-            usePushEach: true
-        });
+        usePushEach: true
+    });
     const Circulators = mongoose.model('circulators', circulatorSchema);
     exports.Circulators = Circulators;
 
@@ -474,7 +474,7 @@ exports.init = function init(mongoose) {
                 type: String,
                 default: "0"
             },
-            circulators: {
+            circulator: {
                 status: {
                     type: String,
                     default: "No Account"
@@ -486,8 +486,8 @@ exports.init = function init(mongoose) {
             }
         }
     }, {
-            usePushEach: true
-        });
+        usePushEach: true
+    });
 
 
     var participants = mongoose.model('participants', participant_schema, "participants");
@@ -503,8 +503,8 @@ exports.init = function init(mongoose) {
         min: Number,
         date: Date
     }, {
-            usePushEach: true
-        })
+        usePushEach: true
+    })
 
     var label = mongoose.model('labels', label_schema, "labels");
 

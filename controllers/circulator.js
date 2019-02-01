@@ -1,6 +1,10 @@
 const Excel = require('exceljs');
 const UOM = require('../utils/uom');
 const calculator = require('../circulator-calculator');
+const path = require('path');
+const tmp = require('tmp');
+const fs = require('fs');
+
 
 const NO_SPEED_CONTROL = {
     label: 'no-speed-control',
@@ -252,6 +256,33 @@ const extract_row = (sheet, rowNumber, labs) => {
     return row;
 }
 
+exports.calculate_assembled_circulator = (circulator) => {
+    const least = {
+        type: circulator.type,
+        input_power: circulator.least.input_power,
+        head: circulator.head,
+        flow: circulator.flow,
+        pei_input: circulator.least.pei
+    }
+    let results = calculator.calculate_energy_rating(circulator.least.control_method, least);
+    circulator.least.energy_rating = results.energy_rating;
+    circulator.least.output_power = results.output_power;
+    circulator.least.water_to_wire_efficiency = results.water_to_wire_efficiency;
+    if (circulator.most && circulator.most.control_method) {
+        const most = {
+            type: circulator.type,
+            input_power: circulator.most.input_power,
+            head: circulator.head,
+            flow: circulator.flow,
+            pei_input: circulator.most.pei
+        }
+        results = calculator.calculate_energy_rating(circulator.most.control_method, most);
+        circulator.most.energy_rating = results.energy_rating;
+        circulator.most.output_power = results.output_power;
+        circulator.most.water_to_wire_efficiency = results.water_to_wire_efficiency;
+    }
+    return circulator;
+}
 
 
 
@@ -309,7 +340,29 @@ const load_file = async (participant, labs, unit_set, filename) => {
 
 
 
+exports.export = async (pumps, units) => {
+    const workbook = new Excel.Workbook();
+    await workbook.xlsx.readFile(path.join(__dirname, 'circulator-template.xlsx'));
+    const worksheet = workbook.getWorksheet(1);
+    let row = 5;
+    for (const pump of pumps) {
+        const address = "A" + row;
+        const cell = worksheet.getCell(address);
+        cell.value = pump.rating_id;
+    }
+    const file_path = await new Promise(async (resolve, reject) => {
+        tmp.file(async function (err, file_path, fd, cleanupCallback) {
+            if (err) throw err;
+            await workbook.xlsx.writeFile(file_path)
+            resolve(file_path);
+        }, {
+            postfix: ".xlsx"
+        });
+    });
+    return file_path;
 
+
+}
 
 
 
