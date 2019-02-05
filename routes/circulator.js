@@ -143,6 +143,19 @@ router.post("/save_upload", aw(async (req, res) => {
 }));
 
 
+router.get('/download', aw(async (req, res) => {
+    const pumps = await req.Circulators.find({
+        participant: req.participant
+    }).exec();
+
+    const file = await Circulator.export(pumps, req.session.unit_set);
+    res.download(file, 'Pump Listings.xlsx', function (err) {
+        if (err) console.error(err);
+        else fs.unlink(file, function () {
+            console.log('Removed template');
+        });
+    });
+}));
 
 router.get("/search", aw(async (req, res) => {
     console.log(req.query.q);
@@ -262,6 +275,9 @@ router.get('/:id', aw(async (req, res) => {
         subscription_limit: check.subscription_limit,
     });
 }));
+
+
+
 router.post('/:id', aw(async (req, res) => {
     if (!req.user.participant_edit) {
         req.log.info("Save pump attempted by unauthorized user");
@@ -294,9 +310,13 @@ router.get('/:id/export', aw(async (req, res) => {
     }
     const file = await Circulator.export([pump], req.session.unit_set);
     res.download(file, 'Pump Listings.xlsx', function (err) {
-        fs.unlink(file);
+        if (err) console.error(err);
+        else fs.unlink(file, function () {
+            console.log('Removed template');
+        });
     });
 }));
+
 
 router.get('/:id/svg/label', aw(async (req, res) => {
     const pump = await req.Circulators.findById(req.params.id).populate('participant').exec();

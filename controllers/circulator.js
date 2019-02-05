@@ -338,30 +338,101 @@ const load_file = async (participant, labs, unit_set, filename) => {
     }
 }
 
+const write_cell = (worksheet, column, row, value) => {
+    let cell = worksheet.getCell(`${column}${row}`);
+    cell.value = value;
+}
+
+const control_method_yn = (pump, method) => {
+    if (pump.control_methods.indexOf(method) >= 0) return 'Yes';
+    return '';
+}
+
+const export_pump = (worksheet, row, _pump, units) => {
+    let pump = _pump;
+    if (units == units.METRIC) {
+        // pumps are stored internally in US units, switch to US to do calcs.
+        pump = units.convert_circulator_to_metric(_pump);
+    }
+
+    write_cell(worksheet, 'A', row, pump.rating_id);
+    write_cell(worksheet, 'B', row, pump.brand);
+    write_cell(worksheet, 'C', row, pump.basic_model);
+    write_cell(worksheet, 'D', row, pump.manufacturer_model);
+    write_cell(worksheet, 'E', row, pump.alternative_part_number);
+    write_cell(worksheet, 'F', row, pump.type);
+    write_cell(worksheet, 'G', row, pump.laboratory ? pump.laboratory.name : '')
+    write_cell(worksheet, 'H', row, control_method_yn(pump, 'no-speed-control'));
+    write_cell(worksheet, 'I', row, control_method_yn(pump, 'pressure-control'));
+    write_cell(worksheet, 'J', row, control_method_yn(pump, 'temperature-control'));
+    write_cell(worksheet, 'K', row, control_method_yn(pump, 'external-control'));
+    write_cell(worksheet, 'L', row, control_method_yn(pump, 'external-other-control'));
+    write_cell(worksheet, 'M', row, control_method_yn(pump, 'manual-control'));
+    write_cell(worksheet, 'AD', row, pump.head[0].toFixed(2));
+    write_cell(worksheet, 'AE', row, pump.head[1].toFixed(2));
+    write_cell(worksheet, 'AF', row, pump.head[2].toFixed(2));
+    write_cell(worksheet, 'AG', row, pump.head[3].toFixed(2));
+    write_cell(worksheet, 'AH', row, pump.flow.toFixed(2));
+
+    // Least Consumptive exports    
+    write_cell(worksheet, 'N', row, control_methods.filter(cm => cm.label == pump.least.control_method)[0].input);
+    write_cell(worksheet, 'P', row, pump.least.pressure_curve);
+    write_cell(worksheet, 'AI', row, pump.least.pei.toFixed(2));
+    write_cell(worksheet, 'AK', row, pump.least.energy_rating.toFixed(0));
+    if (pump.least.input_power.length == 4) {
+        write_cell(worksheet, 'R', row, pump.least.input_power[0].toFixed(2))
+        write_cell(worksheet, 'S', row, pump.least.input_power[1].toFixed(2))
+        write_cell(worksheet, 'T', row, pump.least.input_power[2].toFixed(2))
+        write_cell(worksheet, 'U', row, pump.least.input_power[3].toFixed(2))
+    } else {
+        write_cell(worksheet, 'V', row, pump.least.input_power[0].toFixed(2))
+        write_cell(worksheet, 'W', row, pump.least.input_power[1].toFixed(2))
+    }
+
+    // Most Consumptive exports
+    if (pump.most && pump.most.control_method) {
+        write_cell(worksheet, 'O', row, control_methods.filter(cm => cm.label == pump.most.control_method)[0].input);
+        write_cell(worksheet, 'Q', row, pump.most.pressure_curve);
+        write_cell(worksheet, 'AJ', row, pump.most.pei.toFixed(2));
+        write_cell(worksheet, 'AL', row, pump.most.energy_rating.toFixed(0));
+
+        if (pump.most.input_power.length == 4) {
+            write_cell(worksheet, 'X', row, pump.most.input_power[0].toFixed(2))
+            write_cell(worksheet, 'Y', row, pump.most.input_power[1].toFixed(2))
+            write_cell(worksheet, 'Z', row, pump.most.input_power[2].toFixed(2))
+            write_cell(worksheet, 'AA', row, pump.most.input_power[3].toFixed(2))
+        } else {
+            write_cell(worksheet, 'AB', row, pump.most.input_power[0].toFixed(2))
+            write_cell(worksheet, 'AC', row, pump.most.input_power[1].toFixed(2))
+        }
+    }
 
 
+
+
+
+}
 exports.export = async (pumps, units) => {
     const workbook = new Excel.Workbook();
-    await workbook.xlsx.readFile(path.join(__dirname, 'circulator-template.xlsx'));
+    const template_path = path.join(__dirname, 'Attachment 1 - Circulator ER Template.xlsx');
+    await workbook.xlsx.readFile(template_path);
     const worksheet = workbook.getWorksheet(1);
     let row = 5;
     for (const pump of pumps) {
-        const address = "A" + row;
-        const cell = worksheet.getCell(address);
-        cell.value = pump.rating_id;
+        export_pump(worksheet, row++, pump, units);
     }
-    const file_path = await new Promise(async (resolve, reject) => {
-        tmp.file(async function (err, file_path, fd, cleanupCallback) {
-            if (err) throw err;
-            await workbook.xlsx.writeFile(file_path)
-            resolve(file_path);
-        }, {
-            postfix: ".xlsx"
+    const file_path = tmp.fileSync();
+
+    return new Promise((resolve, reject) => {
+        workbook.xlsx.writeFile(file_path.name).then((err) => {
+            if (err) {
+                console.error(err);
+                reject(err);
+            } else {
+                resolve(file_path.name)
+            }
         });
     });
-    return file_path;
-
-
 }
 
 
