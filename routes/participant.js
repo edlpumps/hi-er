@@ -65,7 +65,7 @@ router.get('/', aw(async (req, res) => {
     if (process.env.ESTORE_OVERRIDE) {
         req.participant.subscription.status = 'Active';
         req.participant.subscription.pumps = 10000;
-        participant.subscription.circulator = {
+        req.participant.subscription.circulator = {
             status: "Active"
         }
         await req.participant.save();
