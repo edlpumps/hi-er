@@ -3,6 +3,7 @@ const minimum_motors = require('./minimum_motor');
 const bands = require('./bands');
 const MINIMUM_EFFICIENCY_ERROR = "This configuration does not meet the minimum extended efficiency for this pump.";
 const UNSUPPORTED_EFFICIENCY_POWER_ERROR = "This motor power / efficiency is not supported";
+const calculator = require('../calculator');
 assign_coefficient = (N, C) => {
     if (N <= 5) return C[0];
     else if (N <= 20) return C[1];
@@ -115,7 +116,7 @@ exports.calculate_3_to_5 = (pump, certificate) => {
 
     // Change requested by HI - 12/21/2018.
     // Instead of using pei_baseline, always use 1.
-    const BD = Math.round(( /*pump.results.pei_baseline*/ -pei) * 100);
+    const BD = Math.round(( /*pump.results.pei_baseline*/ 1 - pei) * 100);
 
     certificate.minimum_efficiency_extended = T;
     certificate.minimum_efficiency_extended_check = U;
@@ -374,4 +375,9 @@ exports.calculate_4_5_to_7 = (pump, certificate) => {
     // Instead of using pei_baseline, always use 1.
     certificate.energy_rating = Math.round((1 /*pump.pei_baseline*/ - vlei) * 100);
     return certificate;
+}
+
+exports.prepare_pump = (pump) => {
+    pump.results.per_cl = calculator.calc_per_cl(pump);
+    pump.results.per_std = pump.results.per_cl / pump.pei;
 }
