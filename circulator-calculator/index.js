@@ -53,7 +53,7 @@ const apply_coeffs = (points, coeffs) => {
 const check_pei = (input, calculated) => {
     const pei_diff = Math.abs(calculated - input);
     let pei_validity = VALID;
-    if (pei_diff > 0.2) {
+    if (pei_diff > 0.02) {
         if (input < calculated) {
             pei_validity = RETEST;
         } else {
@@ -190,9 +190,7 @@ const calculate_energy_rating = (pump, power, coefficients) => {
     const pei_input = input_to_number(pump.circulator.pei_input);
 
     const per = apply_coeffs(power, coefficients);
-
     const result = calc_pei_and_validity(type, per, head, flow, pei_input);
-
     const {
         pei_baseline,
         output_power,
@@ -225,7 +223,6 @@ const noControl = (pump) => {
 
     const pei_diff = Math.abs(pei - pei_input);
     const pei_validity = check_pei(pei_input, pei);
-
     const {
         per_baseline,
         pei_baseline
@@ -265,7 +262,8 @@ const calc_pei_and_validity = (type, per, head, flow, pei_input) => {
 }
 
 const calc_with_controls = (pump, coeffs) => {
-    const power = input_to_number(pump.circulator.input_power);
+
+    const power = pump.circulator.input_power.map(input_to_number);
     return calculate_energy_rating(
         pump,
         power,

@@ -36,6 +36,7 @@ block content
                     span #{success.basic_model}
                     br
                     span #{success.manufacturer_model}
+                    
                   td #{success.type}
                   
                   if success.most
@@ -47,8 +48,13 @@ block content
                       +control_method(success.most.control_method)
                     td 
                       span #{success.least.pei.toFixed(2)}
+                      if (success.least.pei_validity != 'VALID')
+                        span (#{success.least.pei_validity})
                       br
                       span #{success.most.pei.toFixed(2)}
+                      if (success.most.pei_validity != 'VALID')
+                        span (#{success.most.pei_validity})
+
                     td 
                       span #{success.least.energy_rating.toFixed(0)}
                       br
@@ -56,7 +62,10 @@ block content
                   else
                     td 
                       +control_method(success.least.control_method)
-                    td #{success.least.pei.toFixed(2)}
+                    td 
+                      span #{success.least.pei.toFixed(2)}
+                      if (success.least.pei_validity != 'VALID')
+                        span (#{success.least.pei_validity})
                     td #{success.least.energy_rating.toFixed(0)}
                  
            form(action="save_upload", method="post")
