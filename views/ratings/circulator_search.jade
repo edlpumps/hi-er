@@ -125,7 +125,9 @@ block content
 													p {{pump.participant.name}}
 													p {{pump.type}}
 										.col.hidden-xs.col-sm-4(style="padding-top:20px")
-													span.control-method(v-for='method of pump.control_methods')
+											p: label Control Methods
+											ul
+												li.control-method(v-for='method of pump.control_methods')
 														control-method(:method='method')
 										.col.col-xs-4.col-sm-2.energy_badge
 											.small(style="padding-top:20px; margin-bottom:0px") Energy Rating

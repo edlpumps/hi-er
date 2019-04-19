@@ -16,7 +16,8 @@ block script
             participant: null,
             user: null,
             units: null,
-            searching_pumps: false
+            searching_pumps: false,
+            pump_to_delete: null
           },
 
           mounted: function () {
@@ -33,11 +34,25 @@ block script
           },
 
           methods: {
+            removePump: function(pump) {
+               const v = this;
+               $.ajax({
+                method: 'delete',
+                url: '/participant/circulators/'+pump._id,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+              }).fail(function (err, body) {
+                  console.error(err);
+              }).done(function (data) {
+                  v.fetch_pumps();
+              });
+            },
             fetch_pumps: function () {
               this.searching_pumps = true;
               
-              var v = this;
-              var request = $.getJSON('/participant/circulators/search?q=' + this.search);
+              const v = this;
+              const request = $.getJSON('/participant/circulators/search?q=' + this.search);
               
               request.done(function(data) {
                 v.pumps = data.pumps;
@@ -61,20 +76,20 @@ block content
  div
     +vue_circulator_components()
     .container#vue(data-units=(JSON.stringify(units)), data-user=(JSON.stringify(user)), data-participant=(JSON.stringify(participant)))
-      //-.modal.fade#delete(tabindex='-1', role='dialog' aria-labelledby='titleLabel', aria-hidden='true')
-        .modal-dialog
+      .modal.fade#delete(tabindex='-1', role='dialog' aria-labelledby='titleLabel', aria-hidden='true')
+        .modal-dialog(v-if='pump_to_delete')
           .modal-content
             .modal-header
               button(type='button', class='close' data-dismiss='modal' aria-hidden='hidden') &times;
               h4.modal-title#titleLabel Delete pump
             .modal-body
-              p Are you sure you want to delete {{app.pump_to_delete.brand}} {{app.pump_to_delete.basic_model}} / {{app.pump_to_delete.individual_model}} from the ER portal?
+              p Are you sure you want to delete {{pump_to_delete.brand}} {{pump_to_delete.basic_model}} / {{pump_to_delete.manufacturer_model}} from the ER portal?
               p.text-danger If you delete this pump, it's public page will no longer be available.  This is a permanent operation and cannot be undone.  
               p It's recommended to set this pump 'inactive' if you want to temporarily remove the listing.  You can do this by clicking on the pump and setting it to the inactive state at the bottom of the screen.
               p If you do delete this pump, all claims to ER for this model will need to cease within 30 days.
             .modal-footer
               div
-                button.btn.btn-danger(type="button", data-dismiss='modal', ng-click="app.removePump(app.pump_to_delete)") Delete pump
+                button.btn.btn-danger(type="button", data-dismiss='modal', @click="removePump(pump_to_delete)") Delete pump
                 button.btn.btn-default(type='button' data-dismiss='modal') Dismiss
       .panel.panel-default
         .panel-heading 
@@ -137,6 +152,9 @@ block content
                     span {{pump.basic_model}}
                     br
                     span {{pump.manufacturer_model}}
+                    span(v-if='pump.alternative_part_number')
+                      br
+                      span {{pump.alternative_part_number}}
                   td.hidden-xs {{pump.type}}
                   td.hidden-xs.hidden-sm.hidden-md.lm(v-if='dual_cm(pump)')
                     .least
@@ -160,5 +178,5 @@ block content
                   td(v-else)
                     energy-rating(:value='pump.least.energy_rating')               
                   td(v-if='user.participant_edit') 
-                     button(v-if="pump.pending", type="button").btn.btn-danger.btn-xs Delete
+                     button(v-if="pump.pending", type="button", @click='pump_to_delete=pump', data-toggle="modal" data-target="#delete").btn.btn-danger.btn-xs Delete
 

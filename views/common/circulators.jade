@@ -74,46 +74,73 @@ mixin vue_circulator_components()
 		section.padded
 			section
 					label Available Control Methods:
-					span.control-method(v-for='method of pump.control_methods')
-						control-method(:method='method')
+					ul.control-method-list
+						li.control-method(v-for='method of pump.control_methods')
+							control-method(:method='method')
 			section
-				table.table
-					thead
-						tr
-							th
-							th Control Method
-							th(colspan='4').text-center Input Power ({{units.power.label}})
-							th Output Power ({{units.power.label}})
-							th W2W &eta;
-							th PEI
-							th ER
-					tbody
-						tr
-							td Least Consumptive
-							td: control-method(:method='pump.least.control_method')
-							td(v-if='num_input_powers(pump.least.control_method) == 2', colspan='2') {{(pump.least.input_power[0]*units.power.factor).toFixed(2)}}
-							td(v-if='num_input_powers(pump.least.control_method) == 2', colspan='2') {{(pump.least.input_power[1]*units.power.factor).toFixed(2)}}
-							td(v-if='num_input_powers(pump.least.control_method) == 4') {{(pump.least.input_power[0]*units.power.factor).toFixed(2)}}
-							td(v-if='num_input_powers(pump.least.control_method) == 4') {{(pump.least.input_power[1]*units.power.factor).toFixed(2)}}
-							td(v-if='num_input_powers(pump.least.control_method) == 4') {{(pump.least.input_power[2]*units.power.factor).toFixed(2)}}
-							td(v-if='num_input_powers(pump.least.control_method) == 4') {{(pump.least.input_power[3]*units.power.factor).toFixed(2)}}
-							td {{(pump.least.output_power[3] * units.power.factor).toFixed(2)}}
-							td {{(pump.least.water_to_wire_efficiency).toFixed(0)}}%
-							td: pei(:value='pump.least.pei')
-							td: energy-rating(:value='pump.least.energy_rating')
-						tr(v-if='dual_cm()')
-							td Most Consumptive
-							td: control-method(:method='pump.most.control_method')
-							td(v-if='num_input_powers(pump.most.control_method) == 2', colspan='2')	{{(pump.most.input_power[0]*units.power.factor).toFixed(2)}}
-							td(v-if='num_input_powers(pump.most.control_method) == 2', colspan='2')	{{(pump.most.input_power[1]*units.power.factor).toFixed(2)}}
-							td(v-if='num_input_powers(pump.most.control_method) == 4') {{(pump.most.input_power[0]*units.power.factor).toFixed(2)}}
-							td(v-if='num_input_powers(pump.most.control_method) == 4') {{(pump.most.input_power[1]*units.power.factor).toFixed(2)}}
-							td(v-if='num_input_powers(pump.most.control_method) == 4') {{(pump.most.input_power[2]*units.power.factor).toFixed(2)}}
-							td(v-if='num_input_powers(pump.most.control_method) == 4') {{(pump.most.input_power[3]*units.power.factor).toFixed(2)}}
-							td {{(pump.most.output_power[3] * units.power.factor).toFixed(2)}}
-							td {{(pump.most.water_to_wire_efficiency).toFixed(0)}}%
-							td: pei(:value='pump.most.pei')
-							td: energy-rating(:value='pump.most.energy_rating')
+				.row
+					.col.col-sm-6
+						h2: control-method(:method='pump.least.control_method')
+						p(v-if='dual_cm()') (Least Consumptive)
+						table.table
+							tbody
+								tr
+									td: label PEI
+									td: pei(:value='pump.least.pei')
+								tr
+									td: label ER
+									td: energy-rating(:value='pump.least.energy_rating')
+								tr(v-if='num_input_powers(pump.least.control_method) == 2')
+									td: label WAIP @ Max Speed
+									td {{(pump.least.input_power[0]*units.power.factor).toFixed(2)}} {{units.power.label}}
+								tr(v-if='num_input_powers(pump.least.control_method) == 2')
+									td: label WAIP @ Low Speed
+									td {{(pump.least.input_power[1]*units.power.factor).toFixed(2)}} {{units.power.label}}
+								tr(v-if='num_input_powers(pump.least.control_method) == 4')
+									td: label Input Power @25% BEP
+									td {{(pump.least.input_power[0]*units.power.factor).toFixed(2)}} {{units.power.label}}
+								tr(v-if='num_input_powers(pump.least.control_method) == 4')
+									td: label Input Power @50% BEP
+									td {{(pump.least.input_power[1]*units.power.factor).toFixed(2)}} {{units.power.label}}
+								tr(v-if='num_input_powers(pump.least.control_method) == 4')
+									td: label Input Power @75% BEP
+									td {{(pump.least.input_power[2]*units.power.factor).toFixed(2)}} {{units.power.label}}
+								tr(v-if='num_input_powers(pump.least.control_method) == 4')
+									td: label Input Power @100% BEP
+									td {{(pump.least.input_power[3]*units.power.factor).toFixed(2)}} {{units.power.label}}
+						
+					.col.col-sm-6(v-if='dual_cm()') 
+						h2: control-method(:method='pump.most.control_method')
+						p (Most Consumptive)
+						table.table
+							tbody
+								tr
+									td: label PEI
+									td: pei(:value='pump.most.pei')
+								tr
+									td: label ER
+									td: energy-rating(:value='pump.most.energy_rating')
+								tr(v-if='num_input_powers(pump.most.control_method) == 2')
+									td: label WAIP @ Max Speed
+									td {{(pump.most.input_power[0]*units.power.factor).toFixed(2)}} {{units.power.label}}
+								tr(v-if='num_input_powers(pump.most.control_method) == 2')
+									td: label WAIP @ Low Speed
+									td {{(pump.most.input_power[1]*units.power.factor).toFixed(2)}} {{units.power.label}}
+								tr(v-if='num_input_powers(pump.most.control_method) == 4')
+									td: label Input Power @25% BEP
+									td {{(pump.most.input_power[0]*units.power.factor).toFixed(2)}} {{units.power.label}}
+								tr(v-if='num_input_powers(pump.most.control_method) == 4')
+									td: label Input Power @50% BEP
+									td {{(pump.most.input_power[1]*units.power.factor).toFixed(2)}} {{units.power.label}}
+								tr(v-if='num_input_powers(pump.most.control_method) == 4')
+									td: label Input Power @75% BEP
+									td {{(pump.most.input_power[2]*units.power.factor).toFixed(2)}} {{units.power.label}}
+								tr(v-if='num_input_powers(pump.most.control_method) == 4')
+									td: label Input Power @100% BEP
+									td {{(pump.most.input_power[3]*units.power.factor).toFixed(2)}} {{units.power.label}}
+						
+				
+				
 				
 				.help-block(v-if='!public') Note that input power at alternative load points is not shown to the public.
 		
@@ -138,11 +165,11 @@ mixin vue_circulator_components()
 					label Manufacturer model #:
 				.col.col-xs-7
 					.form-control-static {{pump.manufacturer_model}}
-			.row(v-if='pump.alternative_model')
+			.row(v-if='pump.alternative_part_number')
 				.col.col-xs-5
 					label Alternative model #:
 				.col.col-xs-7
-					.form-control-static {{pump.alternative_model}}
+					.form-control-static {{pump.alternative_part_number}}
 			.row
 				.col.col-xs-5
 					label Brand:

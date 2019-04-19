@@ -317,6 +317,20 @@ router.get('/:id/export', aw(async (req, res) => {
     });
 }));
 
+router.delete('/:id', aw(async (req, res) => {
+    // Ensure this pump is owned by the participant of the route.'
+    const pump = await req.Circulators.findById(req.params.id).populate('participant').exec();
+    if (!pump) {
+        return res.sendStatus(404);
+    } else if (req.participant._id.toString() !== pump.participant._id.toString()) {
+        return res.sendStatus(401);
+    }
+    await req.Circulators.remove({
+        _id: req.params.id
+    });
+    res.sendStatus(200)
+}));
+
 
 router.get('/:id/svg/label', aw(async (req, res) => {
     const pump = await req.Circulators.findById(req.params.id).populate('participant').exec();

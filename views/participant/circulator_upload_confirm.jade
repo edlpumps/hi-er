@@ -36,6 +36,9 @@ block content
                     span #{success.basic_model}
                     br
                     span #{success.manufacturer_model}
+                    if ( success.alternative_part_number)
+                      br
+                      span #{success.alternative_part_number}
                     
                   td #{success.type}
                   
