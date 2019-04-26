@@ -1,0 +1,72 @@
+extends layout
+include ../common/pump_page
+include ../common/circulators
+
+block nav
+     +navigation("participant_pumps")
+block script
+    script.
+        
+        new Vue({
+          el: '#vue',
+          data: {
+            pump: null,
+            participant: null,
+            user: null,
+            units: null,
+            selected_value: false,
+
+          },
+
+          mounted: function () {
+            this.units = $('#vue').data('units');
+            this.participant = $('#vue').data('participant');
+            this.user = $('#vue').data('user');
+            this.pump = $('#vue').data('pump');
+          },
+
+          
+
+          methods: {
+            dual_cm: function() {
+              if ( this.pump ) {
+                return  this.pump.most && this.pump.most.control_method;
+              }
+            }
+          }
+        });
+block content
+ 
+ div
+    
+    +vue_circulator_components()
+
+    .container#vue(data-pump=(JSON.stringify(pump)), data-units=(JSON.stringify(units)), data-user=(JSON.stringify(user)), data-participant=(JSON.stringify(participant)))
+     
+      .panel.panel-default(v-if='pump')
+        .panel-heading 
+            h2 #{pump.brand} #{pump.brand ? ' / ' : ''} #{pump.basic_model} #{pump.manufacturer_model}
+        .panel-body
+          .row
+           .col.col-sm-5.text-center
+            .row
+              .col.col-sm-6.text-center
+                pei-label(:value='pump.least.pei')
+              .col.col-sm-6.text-center
+                er-label(:value='pump.least.energy_rating')
+            .row
+              .col
+                img(:src='"/images/" + pump.type.toLowerCase() + ".png"')
+           .col.col-sm-7
+            circulator-details(:pump='pump', :units='units')
+          .row
+            .col.col-xs-12
+              circulator-data-details(:pump='pump', :units='units')  
+          .row(v-if='pump')
+            .col.col-xs-12
+              a(:href="'/participant/circulators/'+pump._id+'/export'").btn.btn-danger Download full data
+      .panel.panel-default(v-if='pump')
+        .panel-heading 
+            h2 Downloadable Media
+        .panel-body
+          circulator-label(:pump='pump', :public='false')

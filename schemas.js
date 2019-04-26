@@ -351,7 +351,6 @@ exports.init = function init(mongoose) {
             participants.forEach(p => p.pumpCount = 0)
             for (const count of result) {
                 const i = participants.map(p => p._id.toString()).indexOf(count._id.toString());
-                console.log(i);
                 if (i >= 0) {
                     participants[i].pumpCount = count.count;
                 }
@@ -439,6 +438,38 @@ exports.init = function init(mongoose) {
     }, {
         usePushEach: true
     });
+
+    circulatorSchema.statics.countsByParticipant = async (listed, participants) => {
+        const pipeline = [];
+        if (listed !== undefined) {
+            pipeline.push({
+                $match: {
+                    listed: listed
+                }
+            })
+        }
+        pipeline.push({
+            $group: {
+                _id: '$participant',
+                count: {
+                    $sum: 1
+                }
+            }
+        })
+        const result = await Circulators.aggregate(pipeline);
+        if (participants) {
+            participants.forEach(p => p.circulatorCount = 0)
+            for (const count of result) {
+                const i = participants.map(p => p._id.toString()).indexOf(count._id.toString());
+                if (i >= 0) {
+                    participants[i].circulatorCount = count.count;
+                }
+            }
+            return participants;
+        } else
+            return result;
+    }
+
     const Circulators = mongoose.model('circulators', circulatorSchema);
     exports.Circulators = Circulators;
 

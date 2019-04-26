@@ -196,6 +196,24 @@ router.get('/participant/:id/pumps', aw(async (req, res) => {
     });
 }));
 
+
+router.get('/participant/:id/circulators', aw(async (req, res) => {
+    const participant = await req.Participants.findById(req.params.id).exec();
+    const circulators = await req.Circulators.find({
+        participant: req.params.id
+    }).sort({
+        basic_model: 1,
+        manufacturer_model: 1
+    }).lean().exec();
+
+    res.render("admin/a_circulators", {
+        user: req.user,
+        circulators: circulators,
+        participant: participant
+    });
+}));
+
+
 router.get('/participant/:id/pumps/:pump_id', aw(async (req, res) => {
     const participant = await req.Participants.findById(req.params.id).exec();
     const pump = await req.Pumps.findById(req.params.pump_id).lean().exec();
@@ -205,6 +223,18 @@ router.get('/participant/:id/pumps/:pump_id', aw(async (req, res) => {
         pump: pump,
         pump_drawing: pump.doe ? pump.doe.toLowerCase() + ".png" : "",
         section_label: common.section_label
+    });
+}));
+router.get('/participant/:id/circulators/:circulator_id', aw(async (req, res) => {
+    const participant = await req.Participants.findById(req.params.id).exec();
+    const circulator = await req.Circulators.findById(req.params.circulator_id).lean().exec();
+    res.render("admin/a_circulator", {
+        user: req.user,
+        participant: participant,
+        pump: circulator
+        /*,
+                pump_drawing: pump.doe ? pump.doe.toLowerCase() + ".png" : "",
+                section_label: common.section_label*/
     });
 }));
 
@@ -393,6 +423,7 @@ router.get("/api/participants", aw(async (req, res) => {
         name: 1
     }).lean().exec();
     participants = await req.Pumps.countsByParticipant(true, participants);
+    participants = await req.Circulators.countsByParticipant(true, participants);
     res.json({
         participants: participants
     });

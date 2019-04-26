@@ -1,0 +1,51 @@
+extends layout
+
+block nav
+    +navigation("participant_pumps")
+    
+block content
+     .container
+       .panel.panel-default
+        .panel-heading 
+            h2 Circulator listings for #{participant.name}
+        .panel-body
+          .row
+           .col.col-xs-12
+            .table-responsive
+              table.table.table-striped
+                thead
+                 tr 
+                  th
+                  th Rating ID
+                  th.hidden-xs Date Listed
+                  th Basic Model Designation
+                  //-th Individual Model Designation
+                  //-th.hidden-xs Configuration
+                  //-th.hidden-xs DOE Pump Category
+                  //-th.hidden-xs.hidden-sm Impeller (#{units.diameter.label})
+                  //-th.hidden-xs.hidden-sm Nominal speed (rpm)
+                  //-th.hidden-xs.hidden-sm Stages
+                  //-th.hidden-xs Exp. PEI
+                  //-th.hidden-xs PEI
+                  //-th ER
+                tbody
+                 each circulator in circulators
+                  tr
+                   td
+                    img(height="25" width="25" ng-src="/images/#{circulator.listed && circulator.active_admin && !circulator.pending ? 'active' : 'inactive'}.png")
+                   td #{circulator.rating_id}
+                   td.hidden-xs #{circulator.date ? moment(circulator.date).format("ll") : ' '}
+                   td: a(href="circulators/#{circulator._id}") #{circulator.basic_model}
+                   //-td #{pump.individual_model}
+                   //-td.hidden-xs #{getConfigLabel(pump.configuration)}
+                   //-td.hidden-xs #{pump.doe}
+                   //-td.hidden-xs.hidden-sm #{(pump.diameter *units.diameter.factor).toFixed(3)}
+                   //-td.hidden-xs.hidden-sm #{pump.speed}
+                   //-td.hidden-xs.hidden-sm #{pump.stages}
+                   //-td.hidden-xs 
+                    if pump.results && pump.results.pei_check && pump.results.pei_check.expected_pei !== undefined
+                     p #{pump.results.pei_check.expected_pei.toFixed(2)}
+                    else 
+                     p -
+                   //-td.hidden-xs #{pump.pei.toFixed(2)}
+                   //-td #{pump.energy_rating} 
