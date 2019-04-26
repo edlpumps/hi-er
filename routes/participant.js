@@ -87,8 +87,6 @@ router.get('/', aw(async (req, res) => {
 
 
     function callback(error, response, body) {
-        console.log("GOT AN ESTORE RESPONSE");
-        console.log(body);
         const subscription = {
             status: "No Account",
             pumps: 0,

@@ -30,7 +30,7 @@ block content
           ul.nav.nav-tabs
             li.active
               a(href="#") C&amp;I Pumps
-            if process.env.CIRCULATORS
+            if process.env.CIRCULATORS && participant.subscription.circulator.status == 'Active'
               li
                 a(href="/participant/circulators") Circulator Pumps
           .row(style='padding-top:20px', ng-show='app.user.participant_edit')
