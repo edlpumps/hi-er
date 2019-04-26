@@ -186,6 +186,7 @@ router.post('/calculate/:id', aw(async (req, res) => {
     certificate.driver = req.body.certificate.driver
 
     // Do calculations here
+    certcalc.prepare_pump(pump);
     switch (certificate.calculation_type) {
         case '3-to-5':
             certificate = certcalc.calculate_3_to_5(pump, certificate);
