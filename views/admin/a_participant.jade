@@ -72,7 +72,8 @@ block content
                     .form-group
                         label(style="margin-right:10px") Number of pumps (if active)
                         p.form-control-static #{participant.subscription.pumps} 
-                    .form-group
+                    if process.env.CIRCULATORS
+                      .form-group
                         label(style="margin-right:10px") Circulators
                         p.form-control-static #{participant.subscription.circulator.status} 
                     .help-block Subscription level is based on payment in the E-Store.

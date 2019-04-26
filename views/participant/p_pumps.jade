@@ -30,8 +30,9 @@ block content
           ul.nav.nav-tabs
             li.active
               a(href="#") C&amp;I Pumps
-            li
-              a(href="/participant/circulators") Circulator Pumps
+            if process.env.CIRCULATORS
+              li
+                a(href="/participant/circulators") Circulator Pumps
           .row(style='padding-top:20px', ng-show='app.user.participant_edit')
             if subscription_limit
               .col.col-xs-12

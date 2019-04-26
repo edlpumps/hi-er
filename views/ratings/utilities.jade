@@ -19,8 +19,9 @@ block content
              ul.nav.nav-tabs(style='margin-bottom:20px')
               li.active
                a(href="#") C&amp;I Pumps
-              li
-               a(href="/circulator/ratings/utilities") Circulator Pumps
+              if process.env.CIRCULATORS
+                li
+                  a(href="/circulator/ratings/utilities") Circulator Pumps
              .form-group
                label.col-sm-3.control-label  DOE Designation
                .col.col-sm-6

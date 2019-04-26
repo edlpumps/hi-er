@@ -136,7 +136,8 @@ block content
                          | {{app.listedCount}} 
                          span(ng-show="app.participant.subscription.pumps != 'U'") of {{app.participant.subscription.pumps}} available pump listings are being used.
                          span(ng-hide="app.participant.subscription.pumps != 'U'") pumps listed (Unlimited pumps allowed).
-                        p(ng-show='app.participant.subscription.circulator') Circulators:  {{app.participant.subscription.circulator.status}}
+                        if process.env.CIRCULATORS
+                          p(ng-show='app.participant.subscription.circulator') Circulators:  {{app.participant.subscription.circulator.status}}
                         p 
                             | To update your subscription level, please contact the Hydraulic Institute's Program Manager at (
                             a(href="mailto:(#{ESTORE_ADMIN_EMAIL}") #{ESTORE_ADMIN_EMAIL}
