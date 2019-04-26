@@ -98,8 +98,9 @@ router.get('/', aw(async (req, res) => {
         }
         if (!error) {
             const info = JSON.parse(body);
-            console.log(info);
-            subscription.circulator.status = info.circulator.status || "No Account";
+            if (info.circulator) {
+                subscription.circulator.status = info.circulator.status || "No Account";
+            }
             subscription.status = info.status || "No Account";
             subscription.pumps = info.pumps || "0";
         } else {
