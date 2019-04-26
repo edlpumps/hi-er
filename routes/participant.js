@@ -96,6 +96,10 @@ router.get('/', aw(async (req, res) => {
         }
         if (!error) {
             const info = JSON.parse(body);
+            console.log("-----------------------------------------");
+            console.log("---  E-Store Response -------------------");
+            console.log(JSON.stringify(info, null, 2));
+            console.log("-----------------------------------------");
             if (info.circulator) {
                 subscription.circulator.status = info.circulator.status || "No Account";
             }
