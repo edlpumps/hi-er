@@ -290,15 +290,15 @@ exports.init = function init(mongoose) {
         },
         measured_control_flow_input: {
             bep25: Number,
-            bep5init: Number,
-            bep7init: Number,
-            bep1init0: Number
+            bep50: Number,
+            bep75: Number,
+            bep1bep100init0: Number
         },
-        measuredinitcontrol_head_input: {
-            bep2init: Number,
-            bep5init: Number,
-            bep7init: Number,
-            bep1init0: Number
+        measured_control_head_input: {
+            bep25: Number,
+            bep50: Number,
+            bep75: Number,
+            bep100: Number
         },
 
 
@@ -364,7 +364,83 @@ exports.init = function init(mongoose) {
     exports.Pumps = Pumps;
 
 
+    var circulatorSchema = new Schema({
+        participant: {
+            type: Schema.Types.ObjectId,
+            ref: 'participants'
+        },
+        date: Date,
+        rating_id: String,
+        brand: String,
+        basic_model: String,
+        manufacturer_model: String,
+        alternative_part_number: String,
+        type: String,
+        control_methods: [String],
+        head: [Number],
+        flow: Number,
 
+        least: {
+            pressure_curve: String,
+            control_method: String,
+            pei: Number,
+            input_power: [Number],
+            energy_rating: Number,
+            output_power: [Number],
+            water_to_wire_efficiency: Number
+        },
+        most: {
+            pressure_curve: String,
+            control_method: String,
+            pei: Number,
+            input_power: [Number],
+            energy_rating: Number,
+            output_power: [Number],
+            water_to_wire_efficiency: Number
+        },
+        laboratory: {
+            _id: String,
+            name: String,
+            code: String,
+            address: {
+                street: String,
+                street2: String,
+                city: String,
+                state: String,
+                postal: String,
+                country: String
+            }
+        },
+        pei: Number,
+        energy_rating: Number,
+        energy_savings: Number,
+
+        listed: Boolean,
+        // defaulting pending for false for backwards compatibility (beta testers already listed)
+        pending: {
+            type: Boolean,
+            default: false
+        },
+        pending_reasons: [String],
+        active_admin: {
+            type: Boolean,
+            default: true
+        },
+        note_admin: String,
+        revisions: [{
+            date: Date,
+            note: String,
+            correction: {
+                type: Boolean,
+                default: true
+            }
+        }],
+        results: Schema.Types.Mixed
+    }, {
+        usePushEach: true
+    });
+    const Circulators = mongoose.model('circulators', circulatorSchema);
+    exports.Circulators = Circulators;
 
 
     const participant_schema = new Schema({
@@ -397,6 +473,12 @@ exports.init = function init(mongoose) {
             pumps: {
                 type: String,
                 default: "0"
+            },
+            circulator: {
+                status: {
+                    type: String,
+                    default: "No Account"
+                }
             },
             status: {
                 type: String,

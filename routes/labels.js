@@ -15,14 +15,14 @@ const render_svg = async (req, res, svg_maker, callback) => {
         }
         var load = pump.configuration == "bare" || pump.configuration == "pump_motor" ? "CL" : "VL";
         req.Labels.findOne().and([{
-                speed: pump.speed
-            },
-            {
-                doe: pump.doe
-            },
-            {
-                load: load
-            }
+            speed: pump.speed
+        },
+        {
+            doe: pump.doe
+        },
+        {
+            load: load
+        }
         ]).exec(function (err, label) {
             if (err) return callback(err);
             else return callback(null, svg_maker(req, participant, pump, label), pump);

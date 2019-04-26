@@ -1,0 +1,136 @@
+extends layout
+include ../common/pump_page
+include ../common/circulators
+
+block nav
+		+navigation("search")
+block script
+		script.
+				
+				new Vue({
+					el: '#vue',
+					data: {
+						pumps: [],
+						units: null,
+						search: {
+							rating_id: null,
+							basic_model: null,
+							participant: null
+						},
+						participants: [],
+						searching: false
+					},
+
+					mounted: function () {
+						this.units = $('#vue').data('units');
+						this.participants = $('#vue').data('participants');
+					},
+
+					computed: {
+						search_ready: function() {
+							return this.search.participant || this.search.rating_id || this.search.basic_model
+						}
+					},         
+					watch: {
+						'search.participant': function() {
+							this.search.brand = undefined;
+							console.log("brand cleared");
+						}
+					},
+					methods: {
+						findPumps: function() {
+							this.searching = true;
+
+							const search = {
+								rating_id: this.search.rating_id,
+								basic_model: this.search.basic_model,
+								participant: this.search.participant ? this.search.participant._id : undefined,
+								brand: this.search.brand
+							}
+							const v = this;
+							$.ajax({
+								method: 'post',
+								url: '/circulator/ratings/',
+								data: JSON.stringify(search),
+								headers: {
+										'Content-Type': 'application/json'
+								},
+							}).fail(function (err, body) {
+									console.error(err);
+									v.searching = false;
+							}).done(function (data) {
+									v.searching = false;
+									v.pumps = data;
+									console.log(v.pumps);
+							});
+						}
+					}
+				});
+block content
+	div
+		+vue_circulator_components()
+		.container#vue(data-pump=(JSON.stringify(pump)), data-units=(JSON.stringify(units)), data-participants=(JSON.stringify(participants)))
+			form.form-horizontal
+					.panel.panel-default.hi-panel-search.rating_panel
+						.panel-heading
+							.heading
+								img(src="/images/hydraulic-institute-logo.png", width="600").hidden-xs
+								img(src="/images/hydraulic-institute-logo.png", style="width:80%").hidden-md.hidden-lg.hidden-sm
+								
+						.panel-body
+							ul.nav.nav-tabs(style='margin-bottom:20px')
+								li
+									a(href="/ratings/search") C&amp;I Pumps
+								li.active
+									a(href="#") Circulator Pumps
+							.form-group
+									label.col-sm-3.control-label Rating ID
+									.col.col-sm-6
+										input.form-control(v-model="search.rating_id", type="text")
+							.form-group
+									label.col-sm-3.control-label Basic Model Number
+									.col.col-sm-6
+										input.form-control(v-model="search.basic_model", type="text")
+							.form-group
+									label.col-sm-3.control-label Participating Organization
+									.col.col-sm-6
+										select.form-control(v-model="search.participant")
+											option(value="")
+												option(v-for='participant in participants', :value='participant') {{participant.name}}
+							.form-group(v-if="search.participant && search.participant.brands && search.participant.brands.length")
+									label.col-sm-3.control-label Brand
+									.col.col-sm-6
+										select.form-control(v-model="search.brand")
+											option(value="")
+											option(v-for='brand in search.participant.brands', :value='brand') {{brand}}
+							.form-group
+									label.col-sm-3.control-label 
+									.col.col-sm-5
+										button.btn.btn-primary(v-if='search_ready', type="button", @click='findPumps') Search for Rated Pumps
+					.panel.panel-default
+						.panel-heading
+							h1 Results 
+						.panel-body(v-if='searching')
+							p.text-center 
+								img(src='/images/loading-bar.gif')
+								span.help-block Searching... please wait
+						ul.list-group(v-if='pumps && pumps.length')
+							li(v-for='pump in pumps').list-group-item.rating_listing
+								a(:href="'/circulator/ratings/'+pump.rating_id").listing
+									.row
+										.col.col-xs-8.col-sm-6
+													h3 {{pump.brand}} {{pump.brand ? ' / ' : ''}} {{pump.basic_model}}
+													p: b Manufacturer's model number:  {{pump.manufacturer_model}} 
+													p(v-if='pump.alternative_part_number'): b Alternative's model number:  {{pump.alternative_part_number}} 
+													p {{pump.participant.name}}
+													p {{pump.type}}
+										.col.hidden-xs.col-sm-4(style="padding-top:20px")
+											p: label Control Methods
+											ul
+												li.control-method(v-for='method of pump.control_methods')
+														control-method(:method='method')
+										.col.col-xs-4.col-sm-2.energy_badge
+											.small(style="padding-top:20px; margin-bottom:0px") Energy Rating
+											h2(style="margin-top:0px") {{pump.least.energy_rating.toFixed(0)}}
+											.small(style="padding-top:20px; margin-bottom:0px") PEI
+											h4(style='margin-top:0px') {{pump.least.pei.toFixed(2)}}

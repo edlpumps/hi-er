@@ -65,6 +65,9 @@ router.get('/', aw(async (req, res) => {
     if (process.env.ESTORE_OVERRIDE) {
         req.participant.subscription.status = 'Active';
         req.participant.subscription.pumps = 10000;
+        req.participant.subscription.circulator = {
+            status: "Active"
+        }
         await req.participant.save();
         return response_handler();
     }
@@ -84,12 +87,19 @@ router.get('/', aw(async (req, res) => {
 
 
     function callback(error, response, body) {
-        var subscription = {
+        console.log("GOT AN ESTORE RESPONSE");
+        console.log(body);
+        const subscription = {
             status: "No Account",
-            pumps: 0
+            pumps: 0,
+            circulator: {
+                status: "No Account"
+            }
         }
         if (!error) {
-            var info = JSON.parse(body);
+            const info = JSON.parse(body);
+            console.log(info);
+            subscription.circulator.status = info.circulator.status || "No Account";
             subscription.status = info.status || "No Account";
             subscription.pumps = info.pumps || "0";
         } else {
@@ -728,7 +738,6 @@ router.post('/pumps/:id', aw(async (req, res) => {
         }
         res.redirect("/participant/pumps");
     })
-
 }));
 
 const model_check = async (req, pump, participant, additional_pumps) => {
@@ -975,7 +984,8 @@ router.get("/api/users", function (req, res) {
 
 
 
-
+const circulators = require("./circulator");
+router.use('/circulators', circulators)
 router.post("/api/users/delete/:id", common.deleteUser);
 router.post("/api/users/add", common.addUser)
 router.post("/api/users/save", common.saveUser)

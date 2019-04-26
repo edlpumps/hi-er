@@ -1,3 +1,5 @@
+db-snapshot/*
+
 # Logs
 logs
 *.log

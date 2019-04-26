@@ -3,6 +3,7 @@ const expect = require("chai").expect;
 const fs = require('fs');
 const path = require('path');
 const certcalc = require('../certificate_calculator');
+
 const N4ZXMQ = require('./certificate-testcases/3_57/N4ZXMQ.json');
 const Y4PPD4 = require('./certificate-testcases/3_57/Y4PPD4.json');
 const NQ693Q = require('./certificate-testcases/3_57/NQ693Q.json');
@@ -27,15 +28,16 @@ const cases_3_to_7 = [N4Z914, X4KK74, W4MLD5, XQK274, _84861Q, _85WZM5, N59774, 
 const cases_45_to_7 = [B47K95, BQXVW5, X4KLXQ, N43EE4, N4ZXMQ, Y4PPD4, _742ZYQ, NQ693Q];
 
 
-const INPUT = true;
-const THREE_TO_FIVE = true;
-const THREE_TO_SEVEN = true;
-const FOUR_AND_FIVE_TO_SEVEN = true;
+const INPUT = false;
+const THREE_TO_FIVE = false;
+const THREE_TO_SEVEN = false;
+const FOUR_AND_FIVE_TO_SEVEN = false;
+const CIRCULATOR = true;
 
-const assert_precision = (target, value, tolerance) => {
+const assert_precision = (value, target, tolerance) => {
     const t = tolerance || 0.001;
     const diff = Math.abs(target - value);
-    assert.isBelow(diff, t);
+    assert.isBelow(diff, t, `Expected ${target} got ${value}`);
 }
 if (INPUT) {
     describe('Input checks', function () {
@@ -578,4 +580,9 @@ if (THREE_TO_SEVEN) {
             });
         }
     });
+}
+
+if (CIRCULATOR) {
+
+    require('./circulator-tests')
 }

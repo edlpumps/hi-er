@@ -1,0 +1,183 @@
+extends layout
+include ../common/pump_page
+include ../common/circulators
+
+block nav
+     +navigation("pump")
+block script
+    script.
+        
+        new Vue({
+          el: '#vue',
+          data: {
+            pump: null,
+            participant: null,
+            user: null,
+            units: null,
+            selected_value: false,
+
+          },
+
+          mounted: function () {
+            this.units = $('#vue').data('units');
+            this.participant = $('#vue').data('participant');
+            this.user = $('#vue').data('user');
+            this.pump = $('#vue').data('pump');
+          },
+
+          
+
+          methods: {
+            dual_cm: function() {
+              if ( this.pump ) {
+                return  this.pump.most && this.pump.most.control_method;
+              }
+            }, 
+            save_listings_status: function() {
+                this.selected_value = $("#listed").is(':checked');
+
+                if ( this.pump.listed != this.selected_value ) {
+                    $('#save').modal('show');
+                } else {
+                  console.log("Nothing to do, just redirect");
+                }
+            }, 
+            post_listings_status: function() {
+              this.pump.listed = this.selected_value;
+              $.ajax({
+                method: 'post',
+                url: '/participant/circulators/'+this.pump._id,
+                data: JSON.stringify({
+                    listed: this.selected_value
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+              }).fail(function (err, body) {
+                  console.error(err);
+              }).done(function (data) {
+                  window.location = "/participant/circulators";
+              });
+            }
+          }
+        });
+block content
+ 
+ div
+    
+    +vue_circulator_components()
+
+    .container#vue(data-pump=(JSON.stringify(pump)), data-units=(JSON.stringify(units)), data-user=(JSON.stringify(user)), data-participant=(JSON.stringify(participant)))
+      .modal.fade#save(tabindex='-1', role='dialog' aria-labelledby='titleLabel', aria-hidden='true')
+        .modal-dialog(v-if='pump')
+          .modal-content
+            .modal-header
+              button(type='button', class='close' data-dismiss='modal' aria-hidden='hidden') &times;
+              h4.modal-title Confirm activation
+            .modal-body(v-if='pump.pending && selected_value')
+              p.text-warning Are you sure you want to activate this pump?  
+              p 
+               | Once you activate the pump for the first time, it is considered 
+               | published.  While you can always file a revision to the pump 
+               | (which is visible to the public), after the pump is published it 
+               | can no longer be deleted.  It will appear in public search 
+               | listings, and be accessible to anyone with it's rating 
+               | identification or QR code.
+            .modal-body(v-else-if='selected_value')
+              p.text-warning Are you sure you want to activate this pump?  
+              p 
+               | The pump will appear in public search 
+               | listings, and be accessible to anyone with it's rating 
+               | identification or QR code.
+            .modal-body(v-else-if='!selected_value')
+              p.text-warning Are you sure you want to set this pump to inactive?  
+              p 
+               | Setting a pump to "inactive" is intended for pumps that are not 
+               | commercially available.  This listing will only be found by a 
+               | direct search by the pump's rating ID or QR code.  The pump's label
+               | page will have a message indicating that it is not commercially available.
+            .modal-footer
+              div
+                button.btn.btn-danger(type="button", data-dismiss='modal', @click='post_listings_status') Yes 
+                button.btn.btn-default(type='button' data-dismiss='modal') Nevermind
+      
+      .panel.panel-default(v-if='pump')
+        .panel-heading 
+            h2 #{pump.brand} #{pump.brand ? ' / ' : ''} #{pump.basic_model} #{pump.manufacturer_model}
+        .panel-body
+          .row
+           .col.col-sm-5.text-center
+            .row
+              .col.col-sm-6.text-center
+                pei-label(:value='pump.least.pei')
+              .col.col-sm-6.text-center
+                er-label(:value='pump.least.energy_rating')
+            .row
+              .col
+                img(:src='"/images/" + pump.type.toLowerCase() + ".png"')
+           .col.col-sm-7
+            circulator-details(:pump='pump', :units='units')
+          .row
+            .col.col-xs-12
+              circulator-data-details(:pump='pump', :units='units')  
+          .row(v-if='pump')
+            .col.col-xs-12
+              a(:href="'/participant/circulators/'+pump._id+'/export'").btn.btn-danger Download full data
+      .panel.panel-default(v-if='pump')
+        .panel-heading 
+            h2 Downloadable Media
+        .panel-body
+          circulator-label(:pump='pump', :public='false')
+      .panel.panel-default(v-if='pump')
+        .panel-heading
+          h2 Data Corrections / Revisions
+        .panel-body
+          ol 
+           if pump.revisions
+            each revision in pump.revisions
+             li
+              span #{revision.note} - #{moment(revision.date).format("ll")}
+          if user.participant_edit
+           .row
+            .col.col-xs-12
+             a.btn.btn-warning(href="/participant/circulators/#{pump._id}/revise") Add Data Correction
+             a(href="/ratings/glossary#status_explanation", title="Help documentation", target="_blank", style="margin-left:1em") Learn about pump listing status and revision/redesigns.    
+      if user.participant_edit
+       .panel.panel-default
+        .panel-heading
+          h2 Administrative controls
+        .panel-body
+          .row
+           .col.col-xs-12
+              if subscription_limit && !pump.listed
+                .alert.alert-warning
+                 p This pump cannot be activated, you've reached the maximum number of pumps listed for your account.
+              else if !pump.listed && can_activate.individual_collide
+                .alert.alert-warning
+                 p This pump cannot be activated, there is already an active pump with the same individual model number. 
+              else if !pump.listed && can_activate.basic_collide
+                .alert.alert-warning
+                 p This pump cannot be activated, there is already an active pump with the same basic model number which has a different Energy Rating. 
+              else 
+               .form-group
+                - var text = pump.pending ? "Pending" : "Inactive"
+                - var checked = pump.listed ? "on" : undefined;
+                
+                label(style="margin-right:10px") Pump listing status:  
+                input.switchBox(type="checkbox", name="listed", id="listed", checked=(checked), data-on-text="Active", data-off-text=text)
+                .help-block Pending pump are not yet visible to the public.  Inactive pumps listings continue to appear in public listings, however a note will be displayed to the viewer explaining that the pump is no longer commercially available.  Inactive pumps do not count towards your subscription limit.
+          .row
+           .col.col-xs-12
+            p: a(href="/ratings/glossary#status_explanation", title="Help documentation", target="_blank") Learn about pump listing status and revision/redesigns.
+          .row
+           .col.col-xs-12
+             if !pump.active_admin
+              .alert.alert-danger
+                h3 This pump has been de-listed by a Hydraulic Institute Program Manager. 
+                .form-group
+                  label(style="margin-right:10px") Program manager note:  
+                  p.form-static-control #{pump.note_admin}
+          .row
+            .col.col-xs-12
+               button.btn.btn-danger(@click='save_listings_status') Save changes
+ 

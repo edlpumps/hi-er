@@ -1,0 +1,12 @@
+{
+    "config": {
+        "unit_row": 4,
+        "first_row": 5,
+        "filename": "er-circulator-listings.xlsx",
+        "version": "1.0",
+        "revision_date": "1/24/2019"
+    },
+
+    "mappings": {}
+
+}

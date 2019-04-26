@@ -4,12 +4,11 @@ extends layout
 block nav
      +navigation("upload")
 block content
-  div.ng-cloak(ng-app='ERParticipantApp')
-
+  div
     .container
       .panel.panel-default
         .panel-heading 
-            h1 Upload C&amp;I Pump Listings
+            h1 Upload Circulator Pump Listings
         .panel-body
           .row
             .col.col-md-12
@@ -17,7 +16,7 @@ block content
           .row
             .col.col-md-12
               p.strong
-               a(href="/participant/template") Download the template. 
+               a(href="/participant/circulators/template") Download the template. 
                | The current version for the upload template is #{template.version}, which was last updated on #{template.revision_date}.
             
               

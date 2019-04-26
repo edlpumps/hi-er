@@ -1,0 +1,238 @@
+extends layout
+include ../common/pump_page
+include ../common/circulators
+
+block nav
+		+navigation("pump")
+block script
+		script.
+				new Vue({
+					el: '#vue',
+					data: {
+						pump: null,
+						participant: null,
+						user: null,
+						units: null,
+						selected_value: false,
+						revision_note: "",
+						revision_submitted: false, 
+						revised: null
+					},
+
+					mounted: function () {
+						this.units = $('#vue').data('units');
+						this.participant = $('#vue').data('participant');
+						this.user = $('#vue').data('user');
+						this.pump = $('#vue').data('pump');
+					},
+
+					
+
+					methods: {
+						calculate_revision() {
+							const v = this;
+							$.ajax({
+								method: 'post',
+								url: '/participant/circulators/'+this.pump._id+'/revise',
+								data: JSON.stringify({
+										pump: v.pump
+								}),
+								headers: {
+										'Content-Type': 'application/json'
+								},
+							}).fail(function (err, textStatus, errorThrown) {
+									console.log("ERROR");
+									console.error(textStatus);
+									console.error(errorThrown);
+							}).success(function (data) {
+									v.revised = data;
+									v.revision_submitted = true;
+									console.log(data);
+							});
+							
+						},
+						submit_revision() {
+							const v = this;
+							$.ajax({
+								method: 'put',
+								url: '/participant/circulators/'+this.pump._id+'/revise',
+								data: JSON.stringify({
+										pump: v.pump, 
+										revision_note: v.revision_note
+								}),
+								headers: {
+										'Content-Type': 'application/json'
+								},
+							}).fail(function (err, textStatus, errorThrown) {
+									console.log("ERROR");
+									console.error(textStatus);
+									console.error(errorThrown);
+							}).success(function (data) {
+									window.location = "/participant/circulators/" + v.pump._id;
+							});
+						},
+						toggle_most() {
+							if ( this.pump.most && this.pump.most.control_method) {
+								this.pump.most.control_method = null;
+							} else {
+								this.pump.most = {
+									control_method : 'no-speed-control',
+									pei: 1,
+									input_power: [0, 0, 0, 0],
+									energy_rating: 0
+								}
+							}
+						}
+					}
+				});
+block content
+ 
+	div
+		
+		+vue_circulator_components()
+
+		.container#vue(data-pump=(JSON.stringify(pump)), data-units=(JSON.stringify(units)), data-user=(JSON.stringify(user)), data-participant=(JSON.stringify(participant)))
+			
+			.panel.panel-default(v-if='pump')
+				.panel-heading 
+						h1.text-warning Revision for pump #{pump.rating_id}
+				.panel-body
+					.row.form-group
+						.col.col-xs-5
+							label.text-primary HI Rating ID
+						.col.col-xs-7.col-sm-4
+							input.form-control(v-model='pump.rating_id', readonly)
+					.row.form-group
+						.col.col-xs-5
+							label.text-primary Basic Model #
+							+help(help.basic_model_number, true)
+						.col.col-xs-7.col-sm-4
+							input.form-control(v-model="pump.basic_model", readonly)
+					.row.form-group
+						.col.col-xs-5
+							label.text-primary Manufacturer Model #
+							+help(help.individual_model_number, true)
+						.col.col-xs-7.col-sm-4
+							input.form-control(v-model="pump.manufacturer_model", readonly)
+					.row.form-group
+						.col.col-xs-5
+							label.text-primary Alternative Model #
+						.col.col-xs-7.col-sm-4
+							input.form-control(v-model="pump.alternative_model", :readonly='revision_submitted')
+					.row.form-group
+						.col.col-xs-5
+							label.text-primary Pump Brand
+							+help(help.brand, true)
+						.col.col-xs-7.col-sm-4
+							input.form-control(v-model='pump.brand', :readonly='revision_submitted')
+					.row.form-group
+						.col.col-xs-5
+							label.text-primary Type
+						.col.col-xs-7.col-sm-4
+							select.form-control(v-model='pump.type', :readonly='revision_submitted')
+								option(value='CP1') CP1
+								option(value='CP2') CP2
+								option(value='CP3') CP3
+					.row.form-group(v-if='!revision_submitted')
+						.col.col-xs-5
+							label.text-primary BEP Flow Rated
+						.col.col-xs-6.col-sm-3
+							input.form-control(type='number', v-model='pump.flow', :readonly='revision_submitted')
+						.col.col-xs-1
+							span #{units.flow.label}
+					.row.form-group
+							.col.col-xs-5
+								label Head (#{units.head.label}) 
+							.col-xs-7.col-sm-4
+								.row
+									.col-xs-6
+										span 25% BEP
+									.col-xs-6
+										input.form-control(type='number', v-model='pump.head[0]', :readonly='revision_submitted')
+								.row
+									.col-xs-6
+										span 50% BEP
+									.col-xs-6
+										input.form-control(type='number', v-model='pump.head[1]', :readonly='revision_submitted')
+								.row
+									.col-xs-6
+										span 75% BEP
+									.col-xs-6
+										input.form-control(type='number', v-model='pump.head[2]', :readonly='revision_submitted')
+								.row
+									.col-xs-6
+										span 100% BEP
+									.col-xs-6
+										input.form-control(type='number', v-model='pump.head[3]', :readonly='revision_submitted')
+					section
+						h3 Rated Control Method (Least Consumptive)
+						hr
+						circulator-control-method-editor(:method='pump.least', :readonly='revision_submitted')
+						
+					section
+						h3 Most Consumptive Control Method
+						section(@click='toggle_most', style='cursor:pointer')
+								span(style='margin-right:1em')
+									img(src='/images/active.png', style='width:25px', v-if='pump.most && pump.most.control_method')
+									img(src='/images/inactive.png', style='width:25px', v-else)
+								span
+									span Specify a most-consumptive control method
+						hr
+						circulator-control-method-editor(:method='pump.most', :readonly='revision_submitted', v-if='pump.most && pump.most.control_method')
+					//-p
+						pre {{JSON.stringify(pump, null, 2)}}
+				.panel-body(v-if='revision_submitted')
+					section
+						.row
+							.col.col-sm-12.text-center
+								h4 Rated
+								.row
+									.col.col-sm-6.text-center
+										p Original
+										er-label(:value='pump.least.energy_rating')
+									.col.col-sm-6.text-center
+										p Revised
+										er-label(:value='revised.least.energy_rating')
+						.row
+							.col.col-sm-12.text-center(v-if='pump.most && pump.most.control_method ||  revised.most && revised.most.control_method')
+								h4 Most Consumptive
+								.row
+									.col.col-sm-6.text-center
+										p Original
+										div(v-if='pump.most && pump.most.control_method')
+										
+											er-label(:value='pump.most.energy_rating')
+										div(v-else)
+											p N/A
+									.col.col-sm-6.text-center
+										p Revised
+										div(v-if='revised.most && revised.most.control_method')
+											er-label(:value='revised.most.energy_rating')
+										div(v-else)
+											p N/A
+				.panel-body(v-else)
+					section
+						.row
+							.col.col-sm-6.text-center
+								h4 Rated
+								.row
+									.col.col-sm-12.text-center
+										er-label(:value='pump.least.energy_rating')
+							.col.col-sm-6.text-center(v-if='pump.most && pump.most.control_method')
+								h4 Most Consumptive
+								.row
+									.col.col-sm-12.text-center
+										er-label(:value='pump.most.energy_rating')
+				.panel-footer(v-if='revision_submitted')
+					.row
+						.col.col-xs-12
+								label Revision / Correction Node:
+								textarea.form-control(v-model='revision_note')
+								.help-block A revision note explaining the reason this change is being made must be entered. This note is only visible to your organization, and HI administrators - not to the public. Public viewers of this pump will only see a generic message indicating that there has been an update applied.
+					.row
+						.col.col-xs-12
+								button.btn.btn-danger(@click='submit_revision', :disabled='!revision_note') Apply Revision
+				.panel-footer(v-else)
+					.row
+						.col.col-xs-12
+								button.btn.btn-danger(@click='calculate_revision') Calculate Revised Energy Rating

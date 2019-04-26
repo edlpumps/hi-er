@@ -27,10 +27,16 @@ block content
         .panel-heading 
             h1 Pump listings
         .panel-body
-          .row(ng-show='app.user.participant_edit')
+          ul.nav.nav-tabs
+            li.active
+              a(href="#") C&amp;I Pumps
+            if process.env.CIRCULATORS
+              li
+                a(href="/participant/circulators") Circulator Pumps
+          .row(style='padding-top:20px', ng-show='app.user.participant_edit')
             if subscription_limit
               .col.col-xs-12
-               .alert.alert-warning You have reached the maximum number of pump listings your account subscription allows.  If you delete pumps, please refresh your browser to begin adding pumps.
+               .alert.alert-warning You have reached the maximum number of C&amp;I pump listings your account subscription allows.  If you delete pumps, please refresh your browser to begin adding pumps.
             if subscription_missing
               .col.col-xs-12
                .alert.alert-warning Your account is not active, you may not list pumps at this time.

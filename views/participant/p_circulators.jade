@@ -1,0 +1,182 @@
+extends layout
+include ../common/circulators
+
+block nav
+     +navigation("pumps")
+
+
+block script
+    script.
+        new Vue({
+          el: '#vue',
+
+          data: {
+            pumps: [],
+            search: "",
+            participant: null,
+            user: null,
+            units: null,
+            searching_pumps: false,
+            pump_to_delete: null
+          },
+
+          mounted: function () {
+            this.units = $('#vue').data('units');
+            this.participant = $('#vue').data('participant');
+            this.user = $('#vue').data('user');
+            this.fetch_pumps();
+          },
+
+          watch: {
+            search: function() {
+              this.fetch_pumps();
+            }
+          },
+
+          methods: {
+            removePump: function(pump) {
+               const v = this;
+               $.ajax({
+                method: 'delete',
+                url: '/participant/circulators/'+pump._id,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+              }).fail(function (err, body) {
+                  console.error(err);
+              }).done(function (data) {
+                  v.fetch_pumps();
+              });
+            },
+            fetch_pumps: function () {
+              this.searching_pumps = true;
+              
+              const v = this;
+              const request = $.getJSON('/participant/circulators/search?q=' + this.search);
+              
+              request.done(function(data) {
+                v.pumps = data.pumps;
+              });
+              
+              request.fail(function(err) {
+                console.error(err);
+              });
+              
+              request.always(function() {
+                v.searching_pumps = false;
+              });
+            },
+            dual_cm: function(pump) {
+              return  pump.most && pump.most.control_method;
+            }
+          }
+        });
+
+block content
+ div
+    +vue_circulator_components()
+    .container#vue(data-units=(JSON.stringify(units)), data-user=(JSON.stringify(user)), data-participant=(JSON.stringify(participant)))
+      .modal.fade#delete(tabindex='-1', role='dialog' aria-labelledby='titleLabel', aria-hidden='true')
+        .modal-dialog(v-if='pump_to_delete')
+          .modal-content
+            .modal-header
+              button(type='button', class='close' data-dismiss='modal' aria-hidden='hidden') &times;
+              h4.modal-title#titleLabel Delete pump
+            .modal-body
+              p Are you sure you want to delete {{pump_to_delete.brand}} {{pump_to_delete.basic_model}} / {{pump_to_delete.manufacturer_model}} from the ER portal?
+              p.text-danger If you delete this pump, it's public page will no longer be available.  This is a permanent operation and cannot be undone.  
+              p It's recommended to set this pump 'inactive' if you want to temporarily remove the listing.  You can do this by clicking on the pump and setting it to the inactive state at the bottom of the screen.
+              p If you do delete this pump, all claims to ER for this model will need to cease within 30 days.
+            .modal-footer
+              div
+                button.btn.btn-danger(type="button", data-dismiss='modal', @click="removePump(pump_to_delete)") Delete pump
+                button.btn.btn-default(type='button' data-dismiss='modal') Dismiss
+      .panel.panel-default
+        .panel-heading 
+            h1 Pump listings
+        .panel-body
+          ul.nav.nav-tabs
+            li
+              a(href="/participant/pumps") C&amp;I Pumps
+            li.active
+              a(href="#") Circulator Pumps
+          .row(style='padding-top:20px', ng-show='app.user.participant_edit')
+            if subscription_limit
+              .col.col-xs-12
+               .alert.alert-warning You have reached the maximum number of circulator pump listings your account subscription allows.  If you delete pumps, please refresh your browser to begin adding pumps.
+            if subscription_missing
+              .col.col-xs-12
+               .alert.alert-warning Your account is not active, you may not list pumps at this time.
+            else 
+              .col.col-xs-12
+               unless subscription_limit
+                a.btn.btn-primary.btn-space(href="/participant/circulators/upload") Import Circulator Pump(s)
+                
+               a.btn.btn-default.btn-space(href="/participant/circulators/download") Download pumps
+               a(href="/ratings/glossary#status_explanation", title="Help documentation", target="_blank", style="margin-left:1em") Learn about pump listing status and revision/redesigns.
+          .row.solo
+           .col.col-xs-12
+            .form-group
+              .icon-addon.addon-lg
+               //- ng-change="app.post_search_query();", ng-model="app.pump_search_query", 
+               input.form-control(v-model='search', id="search", placeholder="Filter by Rating ID / Basic model number / Manufacturer model number.")
+               label.glyphicon.glyphicon-search(for="search", title="Filter pumps", rel="tooltip")
+          
+          section.solo
+            //-pre {{JSON.stringify(pumps, null, 2)}}
+            p.text-center(v-if='searching_pumps')
+              img(src='/images/loading-bar.gif')
+              span.help-block Searching... please wait
+            .table-responsive(v-else)
+              table.table.table-striped
+                thead
+                 tr 
+                  th
+                  th ID
+                  th.hidden-xs Listing Date
+                  th.hidden-xs Model #
+                  th.hidden-xs Type
+                  th.hidden-xs.hidden-sm.hidden-md Control Method
+                  th.hidden-xs.hidden-sm PEI
+                  th ER
+                  
+                  //-th(ng-show='app.user.participant_edit')
+                tbody
+                 tr(v-for='pump in pumps')
+                  td
+                    img(v-if="pump.pending", height="25", width="25", src="/images/pending.png")
+                    img(v-else="pump.pending", height="25", width="25", :src="'/images/'+(pump.listed && pump.active_admin && !pump.pending ? 'active' : 'inactive')+'.png'")
+                  td: a(:href="'circulators/'+pump._id") {{pump.rating_id}}
+                  td.hidden-xs {{pump.date}}
+                  td.hidden-xs: a(:href="'circulators/'+pump._id")
+                    span {{pump.basic_model}}
+                    br
+                    span {{pump.manufacturer_model}}
+                    span(v-if='pump.alternative_part_number')
+                      br
+                      span {{pump.alternative_part_number}}
+                  td.hidden-xs {{pump.type}}
+                  td.hidden-xs.hidden-sm.hidden-md.lm(v-if='dual_cm(pump)')
+                    .least
+                      control-method(:method='pump.least.control_method')
+                    .most
+                      control-method(:method='pump.most.control_method')
+                  td.hidden-xs.hidden-sm.hidden-md(v-else)
+                    control-method(:method='pump.least.control_method')
+                  td.hidden-xs.hidden-sm.lm(v-if='dual_cm(pump)').hidden-xs 
+                    .least
+                      pei(:value='pump.least.pei')
+                    .most
+                      pei(:value='pump.most.pei')
+                  td.hidden-xs.hidden-sm(v-else)
+                    pei(:value='pump.least.pei')
+                  td.lm(v-if='dual_cm(pump)')
+                    .least
+                      energy-rating(:value='pump.least.energy_rating')
+                    .most
+                      energy-rating(:value='pump.most.energy_rating')
+                  td(v-else)
+                    energy-rating(:value='pump.least.energy_rating')               
+                  td(v-if='user.participant_edit') 
+                     button(v-if="pump.pending", type="button", @click='pump_to_delete=pump', data-toggle="modal" data-target="#delete").btn.btn-danger.btn-xs Delete
+

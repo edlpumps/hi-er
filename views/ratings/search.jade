@@ -17,6 +17,12 @@ block content
                 img(src="/images/hydraulic-institute-logo.png", style="width:80%").hidden-md.hidden-lg.hidden-sm
                 
           .panel-body
+             ul.nav.nav-tabs(style='margin-bottom:20px')
+              li.active
+               a(href="#") C&amp;I Pumps
+              if process.env.CIRCULATORS
+                li
+                 a(href="/circulator/ratings") Circulator Pumps
              .form-group
                label.col-sm-3.control-label Rating ID
                .col.col-sm-6
