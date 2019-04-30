@@ -4,6 +4,7 @@ const request = require('request');
 const common = require('./common');
 const mailer = require('../utils/mailer');
 const aw = require('./async_wrap');
+const svg_builder = require('../utils/label_builder.js');
 module.exports = router;
 
 // All resources served from here are restricted to administrators.
@@ -238,6 +239,16 @@ router.get('/participant/:id/circulators/:circulator_id', aw(async (req, res) =>
     });
 }));
 
+router.get('/participant/:id/circulators/:circulator_id/svg/label', aw(async (req, res) => {
+    const pump = await req.Circulators.findById(req.params.circulator_id).populate('participant').exec();
+    const svg = svg_builder.make_circulator_label(req, pump.participant, pump);
+    if (req.query.download) {
+        res.setHeader('Content-disposition', 'attachment; filename=Energy Rating Label - ' + pump.rating_id + '.svg');
+    }
+    res.setHeader('Content-Type', 'image/svg+xml');
+    res.send(svg);
+}));
+
 router.get('/participant/:id/pumps/:pump_id/download', aw(async (req, res) => {
     const pump = await req.Pumps.findById(req.params.pump_id).populate('participant').exec();
     const p = JSON.parse(JSON.stringify(pump));
@@ -249,13 +260,15 @@ router.get('/participant/:id/pumps/:pump_id/download', aw(async (req, res) => {
 }));
 
 
-router.post('/participant/:id/pumps/:pump_id', aw(async (req, res) => {
+router.post('/participant/:id/:type/:pump_id', aw(async (req, res) => {
     const participant = await req.Participants.findById(req.params.id).exec();
-    const pump = await req.Pumps.findById(req.params.pump_id).exec();
+    const collection = req.params.type == 'pumps' ? req.Pumps : req.Circulators;
+    const view = req.params.type == 'pumps' ? "admin/a_pump" : "admin/a_circulator";
+    const pump = await collection.findById(req.params.pump_id).exec();
     pump.active_admin = req.body.active_admin ? true : false;
     pump.note_admin = req.body.note_admin;
     await pump.save();
-    res.render("admin/a_pump", {
+    res.render(view, {
         user: req.user,
         participant: participant,
         pump: pump,
