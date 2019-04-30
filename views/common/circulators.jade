@@ -53,7 +53,9 @@ mixin vue_circulator_components()
 	script#v-circulator-label(type='text/x-template')
 		section.text-center(v-if='pump')
 			div.padded
-				img(:src='"/participant/circulators/"+pump._id+"/svg/label"')
+				img(v-if='!public', :src='"/participant/circulators/"+pump._id+"/svg/label"')
+				img(v-else, :src='"/circulator/ratings/"+pump._id+"/svg/label"')
+				
 				span(v-if='!public')
 					br
 					a(:href='"/participant/circulators/"+pump._id+"/svg/label?download=true"').margin-right Download SVG

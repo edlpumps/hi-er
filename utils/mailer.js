@@ -49,7 +49,7 @@ var smtpConfig = {
 
 var transporter = nodemailer.createTransport(smtpConfig);
 
-var make_mail_options = function(recipient, subject, template_params, html, text) {
+var make_mail_options = function (recipient, subject, template_params, html, text) {
     var sender = process.env.SMTP_SENDING_ADDRESS;
     var recipient = process.env.LIVE_EMAIL ? recipient : process.env.SMTP_RECIPIENT_OVERRIDE;
     var mailOptions = {
@@ -64,7 +64,7 @@ var make_mail_options = function(recipient, subject, template_params, html, text
     }
     return mailOptions;
 }
-exports.sendAuthenticationEmail = function(base_url, user, creator) {
+exports.sendAuthenticationEmail = function (base_url, user, creator) {
     var activation_link = base_url + '/activate/' + user.activationKey;
     var template_params = {
         user: user,
@@ -75,7 +75,7 @@ exports.sendAuthenticationEmail = function(base_url, user, creator) {
 
     var mailOptions = make_mail_options(user.email, "HI Energy Rating Portal - Account Activation", template_params, activation_template, activation_template_pt);
 
-    transporter.sendMail(mailOptions, function(error, info) {
+    transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
             console.log("Could not send email using the following user:")
             console.log(process.env.SMTP_USERNAME)
@@ -85,7 +85,7 @@ exports.sendAuthenticationEmail = function(base_url, user, creator) {
         }
     });
 }
-exports.sendPasswordReset = function(base_url, reset, user) {
+exports.sendPasswordReset = function (base_url, reset, user) {
     var template_params = {
         reset_link: base_url + '/reset/' + reset._id,
         base_url: base_url,
@@ -94,7 +94,7 @@ exports.sendPasswordReset = function(base_url, reset, user) {
 
     var mailOptions = make_mail_options(reset.email, "HI Energy Rating Portal - Password Reset", template_params, reset_template, reset_template_pt);
 
-    transporter.sendMail(mailOptions, function(error, info) {
+    transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
             console.log("Could not send email using the following user:")
             console.log(process.env.SMTP_USERNAME)
@@ -105,7 +105,7 @@ exports.sendPasswordReset = function(base_url, reset, user) {
     });
 }
 
-exports.sendDeletionNotification = function(deleted, actor) {
+exports.sendDeletionNotification = function (deleted, actor) {
     var template_params = {
         deleted: deleted,
         actor: actor
@@ -113,7 +113,7 @@ exports.sendDeletionNotification = function(deleted, actor) {
 
     var mailOptions = make_mail_options(deleted.email, "HI Energy Rating Portal - Account Deletion", template_params, delete_template, delete_template_pt);
 
-    transporter.sendMail(mailOptions, function(error, info) {
+    transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
             console.log("Could not send email using the following user:")
             console.log(process.env.SMTP_USERNAME)
@@ -124,15 +124,18 @@ exports.sendDeletionNotification = function(deleted, actor) {
     });
 }
 
-exports.sendListings = function(recipient, csv) {
+exports.sendListings = function (recipient, pump_excel, circulator_excel) {
     var template_params = {};
 
     var mailOptions = make_mail_options(recipient, "HI Energy Rating Portal - Energy Rating Listings", template_params, listings_template, listings_template_pt);
     mailOptions.attachments = [{
-        filename: 'energy_ratings.xlsx',
-        content: csv
+        filename: 'ci_energy_ratings.xlsx',
+        content: pump_excel
+    }, {
+        filename: 'circulator_energy_ratings.xlsx',
+        content: circulator_excel
     }]
-    transporter.sendMail(mailOptions, function(error, info) {
+    transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
             console.log("Could not send email using the following user:")
             console.log(process.env.SMTP_USERNAME)
@@ -143,14 +146,14 @@ exports.sendListings = function(recipient, csv) {
     });
 }
 
-exports.sendEStoreSetup = function(recipient, participant) {
+exports.sendEStoreSetup = function (recipient, participant) {
     var template_params = {
         participant: participant
     };
 
     var mailOptions = make_mail_options(recipient, "HI Energy Rating Portal - New Account", template_params, estore_template, estore_template_pt);
 
-    transporter.sendMail(mailOptions, function(error, info) {
+    transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
             console.log("Could not send email using the following user:")
             console.log(process.env.SMTP_USERNAME)

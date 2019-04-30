@@ -4,6 +4,7 @@ const express = require('express');
 const router = express.Router();
 const default_search_operators = require('../search').params;
 const aw = require('./async_wrap');
+const svg_builder = require('../utils/label_builder.js');
 
 // Route to search (public search)
 router.post('/', aw(async function (req, res) {
@@ -102,6 +103,17 @@ router.get("/:id", aw(async (req, res) => {
         pump: pump,
         participant: pump.participant
     });
+}));
+
+router.get('/:id/svg/label', aw(async (req, res) => {
+    console.log("LABLE");
+    const pump = await req.Circulators.findById(req.params.id).populate('participant').exec();
+    const svg = svg_builder.make_circulator_label(req, pump.participant, pump);
+    if (req.query.download) {
+        res.setHeader('Content-disposition', 'attachment; filename=Energy Rating Label - ' + pump.rating_id + '.svg');
+    }
+    res.setHeader('Content-Type', 'image/svg+xml');
+    res.send(svg);
 }));
 
 // Counts based on min/max er
