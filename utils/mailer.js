@@ -124,7 +124,7 @@ exports.sendDeletionNotification = function (deleted, actor) {
     });
 }
 
-exports.sendListings = function (recipient, pump_excel, circulator_excel) {
+exports.sendListings = function (recipient, pump_excel, circulator_excel, certificate_excel) {
     var template_params = {};
 
     var mailOptions = make_mail_options(recipient, "HI Energy Rating Portal - Energy Rating Listings", template_params, listings_template, listings_template_pt);
@@ -134,6 +134,9 @@ exports.sendListings = function (recipient, pump_excel, circulator_excel) {
     }, {
         filename: 'circulator_energy_ratings.xlsx',
         content: circulator_excel
+    }, {
+        filename: 'extended_product_certificates.xlsx',
+        content: certificate_excel
     }]
     transporter.sendMail(mailOptions, function (error, info) {
         if (error) {

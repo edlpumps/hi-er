@@ -192,8 +192,8 @@ var conn = mongoose.connect(data_connection_str, {
         configure();
         startup();
 
-        /*console.log("STOP PUSHING EMAILS ON STARTUP")
-        push_emails(1);*/
+        console.log("STOP PUSHING EMAILS ON STARTUP")
+        push_emails(1);
     }
 });
 
@@ -371,6 +371,13 @@ const push_emails = async function (interval) {
         console.log("Building c&i excel file");
         const pumps_excel = await get_pump_export_excel();
 
+        console.log("Building certificate excel file");
+        const certificateExport = require('./certificate-export');
+        const certificates = await certificateExport.getCertificates();
+        const certificates_rows = certificateExport.getExportable(certificates);
+        const certificates_excel = certificateExport.toXLXS(certificates_rows);
+        console.log(JSON.stringify(certificates_rows, null, 2));
+
         const subs = await app.locals.db.Subscribers.find({
             interval_days: interval
         }).exec()
@@ -396,7 +403,7 @@ const push_emails = async function (interval) {
         });*/
         console.log("Sending to " + recips.length);
         for (const recip of recips) {
-            mailer.sendListings(recip, pumps_excel, circulator_excel);
+            mailer.sendListings(recip, pumps_excel, circulator_excel, certificates_excel);
         }
     } catch (ex) {
         console.error(ex);
