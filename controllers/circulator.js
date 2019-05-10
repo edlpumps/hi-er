@@ -126,6 +126,7 @@ const extract_row = (sheet, rowNumber, labs) => {
     row.alternative_part_number = readCell(sheet, ALTERNATIVE_PART_NUMBER_COLUMN, rowNumber);
     row.type = readCell(sheet, PUMP_TYPE_COLUMN, rowNumber);
     row.laboratory = findLab(readCell(sheet, LABORATORY_COLUMN, rowNumber), labs);
+    console.log(row.laboratory);
     const lc = resolve_control_method(sheet, LC_CONTROL_METHOD_COLUMN, rowNumber);
     if (lc) {
         row.least = {

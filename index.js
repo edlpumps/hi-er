@@ -1,7 +1,7 @@
 require('dotenv').config({
     silent: true
 });
-
+const fs = require('fs');
 const path = require('path');
 const http = require('http');
 const express = require('express');
@@ -18,13 +18,15 @@ const mongoose = require("mongoose");
 const schemas = require("./schemas");
 const units = require('./utils/uom');
 const MongoStore = require('connect-mongo')(session);
-var session_store = null;
+const passport = require('passport');
+const Strategy = require('passport-local').Strategy;
+
 const port = process.env.PORT || 3003;
 const data_connection_str = process.env.MONGO_CONNECTION_DATA;
 
-const passport = require('passport');
-const Strategy = require('passport-local').Strategy;
-var mainlog = bunyan.createLogger({
+
+let session_store = null;
+let mainlog = bunyan.createLogger({
     name: 'hi',
     level: process.env.LOG_LEVEL
 });
@@ -190,10 +192,8 @@ var conn = mongoose.connect(data_connection_str, {
         configure();
         startup();
 
-        console.log("----------------------------------------------");
-        console.log(process.version);
-        console.log("-----------------------------------------------")
-        //   push_emails(1);
+        console.log("STOP PUSHING EMAILS ON STARTUP")
+        push_emails(1);
     }
 });
 
@@ -202,9 +202,9 @@ var conn = mongoose.connect(data_connection_str, {
 // Authentication
 ////////////////////////////////////////////////////
 passport.use(new Strategy({
-    usernameField: 'email',
-    passReqToCallback: true
-},
+        usernameField: 'email',
+        passReqToCallback: true
+    },
     function (req, email, password, done) {
         var regex = new RegExp("^" + email + "$", "i");
 
@@ -254,22 +254,21 @@ var startup = function () {
     http.createServer(app).listen(port);
 }
 
-var push_daily = function () {
-    push_emails(1);
+var push_daily = async function () {
+    await push_emails(1);
 }
-var push_weekly = function () {
-    push_emails(7);
+var push_weekly = async function () {
+    await push_emails(7);
 }
-var push_twice_a_month = function () {
-    push_emails(15);
+var push_twice_a_month = async function () {
+    await push_emails(15);
 }
 
 
-var push_emails = function (interval) {
-
-    let params = require('./search').params;
-    var operators = params();
-    let headers = [
+const get_pump_export_excel = async () => {
+    const params = require('./search').params;
+    const operators = params();
+    const headers = [
         'rating_id',
         'participant',
         'basic_model',
@@ -319,90 +318,109 @@ var push_emails = function (interval) {
         pei: 'Pump Energy Index',
         date: 'Date listed'
     }
-    app.locals.db.Pumps.aggregate(operators).exec(function (err, docs) {
-        console.log("Aggregation (subscribers)");
-        if (err) {
-            console.error(err);
-        } else {
-            console.log(docs.length + ' pumps to export and email');
+    const docs = await app.locals.db.Pumps.aggregate(operators).exec();
+    console.log("Aggregation (subscribers)");
+    console.log(docs.length + ' pumps to export and email');
+
+    for (const pump of docs) {
+        pump.flow_bep = pump.load120 ? pump.flow.bep100 : pump.flow.bep110;
+        pump.head_bep = pump.load120 ? pump.head.bep100 : pump.head.bep110;
+        if (pump.driver_input_power) {
+            pump.driver_input_power_bep =
+                pump.load120 ? pump.driver_input_power.bep100 : pump.driver_input_power.bep110;
+            if (pump.driver_input_power_bep) {
+                pump.driver_input_power_bep = pump.driver_input_power_bep.toFixed(2);
+            }
         }
-        docs.forEach(function (pump) {
-            pump.flow_bep = pump.load120 ? pump.flow.bep100 : pump.flow.bep110;
-            pump.head_bep = pump.load120 ? pump.head.bep100 : pump.head.bep110;
-            if (pump.driver_input_power) {
-                pump.driver_input_power_bep =
-                    pump.load120 ? pump.driver_input_power.bep100 : pump.driver_input_power.bep110;
-                if (pump.driver_input_power_bep) {
-                    pump.driver_input_power_bep = pump.driver_input_power_bep.toFixed(2);
-                }
+        if (pump.control_power_input) {
+            pump.control_power_input_bep = pump.control_power_input.bep100;
+            if (pump.control_power_input_bep) {
+                pump.control_power_input_bep = pump.control_power_input_bep.toFixed(2);
             }
-            if (pump.control_power_input) {
-                pump.control_power_input_bep = pump.control_power_input.bep100;
-                if (pump.control_power_input_bep) {
-                    pump.control_power_input_bep = pump.control_power_input_bep.toFixed(2);
-                }
-            }
-            pump.pei = pump.pei.toFixed(2);
-            pump.motor_power_rated = pump.motor_power_rated ? pump.motor_power_rated : pump.motor_power_rated_results
-            pump.date = moment(pump.date).format("DD MMM YYYY")
-            pump.lab = pump.laboratory.name + " - " + pump.laboratory.code;
+        }
+        pump.pei = pump.pei.toFixed(2);
+        pump.motor_power_rated = pump.motor_power_rated ? pump.motor_power_rated : pump.motor_power_rated_results
+        pump.date = moment(pump.date).format("DD MMM YYYY")
+        pump.lab = pump.laboratory.name + " - " + pump.laboratory.code;
 
-            pump.diameter = pump.diameter.toFixed(3);
-            pump.flow_bep = pump.flow_bep.toFixed(2);
-            pump.head_bep = pump.head_bep.toFixed(2);
-            pump.motor_power_rated = pump.motor_power_rated.toFixed(2);
+        pump.diameter = pump.diameter.toFixed(3);
+        pump.flow_bep = pump.flow_bep.toFixed(2);
+        pump.head_bep = pump.head_bep.toFixed(2);
+        pump.motor_power_rated = pump.motor_power_rated.toFixed(2);
 
-        });
-        console.log("Create excel export sheet");
-        let toxl = require('jsonexcel');
-        let fs = require('fs');
-        let buffer = toxl(docs, {
-            sort: sorter,
-            headings: headings,
-            filter: filter
-        });
-
-
-        app.locals.db.Subscribers.find({
-            interval_days: interval
-        }, function (err, subs) {
-            let recips = [];
-            if (subs) {
-                subs.forEach(function (s) {
-                    recips = recips.concat(s.recipients);
-                })
-            }
-            console.log("Sending to " + recips.length);
-            recips.forEach(function (recip) {
-                console.log("SENDING SUBSCRIBER EMAIL")
-                mailer.sendListings(recip, buffer);
-            })
-
-            /*fs.writeFile("example.xlsx", buffer, "binary", function(err) {
-                 if (err) {
-                     console.log(err);
-                 } else {
-                     console.log("Saved excel file to example.xlsx");
-                 }
-             });*/
-        })
-
-
+    };
+    console.log("Create excel export sheet");
+    const toxl = require('jsonexcel');
+    const buffer = toxl(docs, {
+        sort: sorter,
+        headings: headings,
+        filter: filter
     });
+    return buffer
 }
 
-var mailer = require('./utils/mailer');
-var sched = require('node-schedule');
-var daily = new sched.RecurrenceRule();
-daily.hour = 7;
-daily.minute = 42;
+const push_emails = async function (interval) {
+    try {
+        console.log("Building circulator excel file");
+        const circulatorExport = require('./circulator-export');
+        const circulators = await circulatorExport.getCirculators();
+        const circulator_rows = circulatorExport.getExportable(circulators);
+        const circulator_excel = circulatorExport.toXLXS(circulator_rows);
+        console.log(JSON.stringify(circulator_rows, null, 2));
 
-var weekly = new sched.RecurrenceRule();
+        console.log("Building c&i excel file");
+        const pumps_excel = await get_pump_export_excel();
+
+        console.log("Building certificate excel file");
+        const certificateExport = require('./certificate-export');
+        const certificates = await certificateExport.getCertificates();
+        const certificates_rows = certificateExport.getExportable(certificates);
+        const certificates_excel = certificateExport.toXLXS(certificates_rows);
+        console.log(JSON.stringify(certificates_rows, null, 2));
+
+        const subs = await app.locals.db.Subscribers.find({
+            interval_days: interval
+        }).exec()
+
+
+        let recips = [];
+        for (const subscriber of subs) {
+            recips = recips.concat(subscriber.recipients);
+        }
+        /*fs.writeFile("example.xlsx", circulator_excel, "binary", function (err) {
+            if (err) {
+                console.log(err);
+            } else {
+                console.log("Saved excel file to example.xlsx");
+            }
+        });
+        fs.writeFile("example-ci.xlsx", pumps_excel, "binary", function (err) {
+            if (err) {
+                console.log(err);
+            } else {
+                console.log("Saved excel file to example.xlsx");
+            }
+        });*/
+        for (const recip of recips) {
+            mailer.sendListings(recip, pumps_excel, circulator_excel, certificates_excel);
+        }
+    } catch (ex) {
+        console.error(ex);
+    }
+}
+
+const mailer = require('./utils/mailer');
+const sched = require('node-schedule');
+const daily = new sched.RecurrenceRule();
+daily.hour = 9;
+daily.minute = 1;
+
+const weekly = new sched.RecurrenceRule();
 weekly.dayOfWeek = 1;
 weekly.hour = 10;
 weekly.minute = 00;
 
-var twiceAMonth = "0 11 1,15 * *"
+const twiceAMonth = "0 11 1,15 * *"
 
 sched.scheduleJob(daily, push_daily);
 sched.scheduleJob(weekly, push_weekly);

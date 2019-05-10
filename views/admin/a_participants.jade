@@ -21,7 +21,8 @@ block content
                                 th Name 
                                 th.hidden-xs Status
                                 th.hidden-xs Subscription Level
-                                th Pumps Listings
+                                th C &amp; I Pumps
+                                th Circulators
                         tbody
                             tr(ng-repeat="participant in app.participants")
                                 td: a(href="/admin/participant/{{participant._id}}") {{participant.name}}
@@ -31,6 +32,8 @@ block content
                                   span(ng-show="participant.subscription.status == 'Active' && participant.subscription.pumps && participant.subscription.pumps !== 'U'") Up to {{participant.subscription.pumps + " Listings"}}
                                   span(ng-show="participant.subscription.status == 'Active' && participant.subscription.pumps == 'U'") Unlimited listings
                                 td 
-                                  a(href="/admin/participant/{{participant._id}}/pumps") View {{ participant.pumpCount }} listings
+                                  a(href="/admin/participant/{{participant._id}}/pumps") View {{ participant.pumpCount }}
+                                td 
+                                  a(href="/admin/participant/{{participant._id}}/circulators") View {{ participant.circulatorCount }}
                                 
      

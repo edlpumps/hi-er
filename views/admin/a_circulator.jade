@@ -1,0 +1,105 @@
+extends layout
+include ../common/pump_page
+include ../common/circulators
+
+block nav
+     +navigation("participant_pumps")
+block script
+    script.
+        
+        new Vue({
+          el: '#vue',
+          data: {
+            pump: null,
+            participant: null,
+            user: null,
+            units: null,
+            selected_value: false,
+
+          },
+
+          mounted: function () {
+            this.units = $('#vue').data('units');
+            this.participant = $('#vue').data('participant');
+            this.user = $('#vue').data('user');
+            this.pump = $('#vue').data('pump');
+          },
+
+          
+
+          methods: {
+            dual_cm: function() {
+              if ( this.pump ) {
+                return  this.pump.most && this.pump.most.control_method;
+              }
+            }
+          }
+        });
+block content
+ 
+ div
+    
+    +vue_circulator_components()
+
+    .container#vue(data-pump=(JSON.stringify(pump)), data-units=(JSON.stringify(units)), data-user=(JSON.stringify(user)), data-participant=(JSON.stringify(participant)))
+     
+      .panel.panel-default(v-if='pump')
+        .panel-heading 
+            h2 #{pump.brand} #{pump.brand ? ' / ' : ''} #{pump.basic_model} #{pump.manufacturer_model}
+        .panel-body
+          .row
+           .col.col-sm-5.text-center
+            .row
+              .col.col-sm-6.text-center
+                pei-label(:value='pump.least.pei')
+              .col.col-sm-6.text-center
+                er-label(:value='pump.least.energy_rating')
+            .row
+              .col
+                img(:src='"/images/" + pump.type.toLowerCase() + ".png"')
+           .col.col-sm-7
+            circulator-details(:pump='pump', :units='units')
+          .row
+            .col.col-xs-12
+              circulator-data-details(:pump='pump', :units='units')  
+          //-.row(v-if='pump')
+            .col.col-xs-12
+              a(:href="'/participant/circulators/'+pump._id+'/export'").btn.btn-danger Download full data
+      .panel.panel-default(v-if='pump')
+        .panel-heading 
+            h2 Downloadable Media
+        .panel-body
+          section.text-center(v-if='pump')
+            
+            img(:src='pump._id+"/svg/label"')
+
+      .panel.panel-default
+        .panel-heading
+          h2 Administrative controls
+        .panel-body
+         form(action="/admin/participant/#{participant._id}/circulators/#{pump._id}", method="post")
+          .row
+           .col.col-xs-12
+            
+              .form-group
+                label(style="margin-right:10px") Pump listing status:   
+                img(height="25" width="25" ng-src="/images/#{pump.listed ? 'active' : 'inactive'}.png")
+                .help-block This setting is controlled by #{participant.name}.  
+          hr
+          .row
+            .col.col-xs-12
+              .form-group
+                label(style="margin-right:10px").text-danger Program Manager listing status override:  
+                input.switchBox(type="checkbox", name="active_admin", checked=(pump.active_admin), data-on-text="Enabled", data-off-text="Disabled")
+                .help-block Program managers may remove pump listings if neeeded.  Marking this pump as disabled will remove the pump from public listings.  You should consider leaving a note below to explain to the participant why this pump is being de-listed.
+              .form-group
+                label(style="margin-right:10px").text-danger Program manager notes  
+                textarea.form-control(name="note_admin", rows="5")
+                  | #{pump.note_admin}
+                .help-block These notes are only visible to the participant, they are never publically seen.
+
+         
+          .row
+            .col.col-xs-12
+               button.btn.btn-danger(type="submit") Save changes
+          
