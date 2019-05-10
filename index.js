@@ -401,7 +401,6 @@ const push_emails = async function (interval) {
                 console.log("Saved excel file to example.xlsx");
             }
         });*/
-        console.log("Sending to " + recips.length);
         for (const recip of recips) {
             mailer.sendListings(recip, pumps_excel, circulator_excel, certificates_excel);
         }
@@ -413,8 +412,8 @@ const push_emails = async function (interval) {
 const mailer = require('./utils/mailer');
 const sched = require('node-schedule');
 const daily = new sched.RecurrenceRule();
-daily.hour = 7;
-daily.minute = 42;
+daily.hour = 9;
+daily.minute = 1;
 
 const weekly = new sched.RecurrenceRule();
 weekly.dayOfWeek = 1;
