@@ -192,7 +192,7 @@ var conn = mongoose.connect(data_connection_str, {
         configure();
         startup();
 
-        console.log("STOP PUSHING EMAILS ON STARTUP")
+        //console.log("STOP PUSHING EMAILS ON STARTUP")
         //push_emails(1);
     }
 });

@@ -32,33 +32,33 @@ var baseline_c_values = {
 var default_motors_powers = [1, 1.5, 2, 3, 5, 7.5, 10, 15, 20, 25, 30, 40, 50, 60, 75, 100, 125, 150, 200, 250];
 
 var motor_control_losses = [{
-    min: 0,
-    max: 5,
-    a: -0.4658,
-    b: 1.4965,
-    c: 0.5303
-},
-{
-    min: 5,
-    max: 20,
-    a: -1.3198,
-    b: 2.9551,
-    c: 0.1052
-},
-{
-    min: 20,
-    max: 50,
-    a: -1.5122,
-    b: 3.0777,
-    c: 0.1847
-},
-{
-    min: 50,
-    max: Infinity,
-    a: -0.8914,
-    b: 2.8846,
-    c: 0.2625
-},
+        min: 0,
+        max: 5,
+        a: -0.4658,
+        b: 1.4965,
+        c: 0.5303
+    },
+    {
+        min: 5,
+        max: 20,
+        a: -1.3198,
+        b: 2.9551,
+        c: 0.1052
+    },
+    {
+        min: 20,
+        max: 50,
+        a: -1.5122,
+        b: 3.0777,
+        c: 0.1847
+    },
+    {
+        min: 50,
+        max: Infinity,
+        a: -0.8914,
+        b: 2.8846,
+        c: 0.2625
+    },
 ]
 
 
@@ -223,7 +223,7 @@ var section345_baseline_common = function (pump, result) {
 
     // Change requested by HI - 12/21/2018.
     // Instead of using pei_baseline, always use 1.    
-    result.pei_baseline = 1; /*result.per_baseline_calculated / result.per_std_calculated*/;
+    result.pei_baseline = 1; /*result.per_baseline_calculated / result.per_std_calculated*/ ;
 
 }
 
@@ -636,7 +636,7 @@ exports.calculate = function (pump, labels) {
         if (!manual_calculators[pump.section]) {
             console.log("Failed to locate calculator for section " + pump.section);
             console.log(manual_calculators);
-            return {};
+            return build_error(`No calculation procedure for given C&I Pump Section [${pump.section}], make sure you are uploading the correct type of pump.`);
         }
         retval = manual_calculators[pump.section](pump);
     }
