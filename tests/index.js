@@ -32,7 +32,7 @@ const INPUT = false;
 const THREE_TO_FIVE = false;
 const THREE_TO_SEVEN = false;
 const FOUR_AND_FIVE_TO_SEVEN = false;
-const CIRCULATOR = true;
+const CIRCULATOR = false;
 
 const assert_precision = (value, target, tolerance) => {
     const t = tolerance || 0.001;
@@ -582,7 +582,8 @@ if (THREE_TO_SEVEN) {
     });
 }
 
+/*
 if (CIRCULATOR) {
-
+    print("WET")
     require('./circulator-tests')
-}
+}*/

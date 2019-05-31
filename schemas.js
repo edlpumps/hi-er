@@ -368,6 +368,7 @@ exports.init = function init(mongoose) {
             type: Schema.Types.ObjectId,
             ref: 'participants'
         },
+        failure: String,
         date: Date,
         rating_id: String,
         brand: String,

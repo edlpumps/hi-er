@@ -85,8 +85,13 @@ router.post("/upload", aw(async (req, res) => {
         return;
     }
 
-    const result = await Circulator.load_file(req.participant, req.labs, units.US, req.files.template.file);
-
+    let result = await Circulator.load_file(req.participant, req.labs, units.US, req.files.template.file);
+    const existing = await req.Circulators.find({}, 'basic_model manufacturer_model listed least.energy_rating most.energy_rating');
+    result.ready = Circulator.check_import(result.ready, existing);
+    for (const f of result.ready.filter(r => r.failure)) {
+        result.failed.push(f);
+    }
+    result.ready = result.ready.filter(r => !r.failure)
     res.render("participant/circulator_upload_confirm", {
         user: req.user,
         participant: req.participant,
