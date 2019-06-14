@@ -49,17 +49,30 @@ describe('Circulator model conflicts', function () {
         }, // Should be OK - different manufactuer model
         {
             basic_model: "C",
-            manufacturer_model: "2"
+            manufacturer_model: "2",
+            least: {
+                energy_rating: 50
+            },
         }, // Should fail because it is part of an import with a conflict.
+        { // Should fail, the least consumptive should always have a higher energy rating.
+            basic_model: "X",
+            manufacturer_model: "1",
+            least: {
+                energy_rating: 50
+            },
+            most: {
+                energy_rating: 90
+            }
+        },
     ]
     before(() => {
-        results = Circulator.check_import(importing, existing)
+        results = Circulator.check_import(importing, existing);
     })
     it('Returns correct number of results', async () => {
-        expect(results.length).to.equal(5);
+        expect(results.length).to.equal(6);
     });
     it('Conflicts with existing on manufacturer', async () => {
-        expect(results[0].failure).to.equal("Manufacturer number conflicts with another active pump under the same basic model number");
+        expect(results[0].failure).to.equal("Manufacturer number or energy rating conflicts with another active pump under the same basic model number");
     });
     it('Allows conflict with existing pump if the existing pump is not active', async () => {
         expect(results[1].failure).to.equal(undefined);
@@ -71,7 +84,10 @@ describe('Circulator model conflicts', function () {
         expect(results[3].failure).to.equal(undefined);
     });
     it('Conflicts when importing pumps contain conflict', async () => {
-        expect(results[4].failure).to.equal("Manufactuer number conflicts with a pump already being imported");
+        expect(results[4].failure).to.equal("Manufactuer number or energy rating conflicts with a pump already being imported");
+    });
+    it('Least consumptive must have higher energy rating', async () => {
+        expect(results[5].failure).to.equal("Least consumptive measure must have higher energy rating than most consumptive.");
     });
 
 });

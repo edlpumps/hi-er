@@ -461,25 +461,41 @@ const er_match = (e1, e2) => {
 
 const conflict = (e, i) => {
     const model_conflict = e.basic_model == i.basic_model && e.manufacturer_model == i.manufacturer_model;
-    if (model_conflict) return true;
+    if (model_conflict) {
+        return true;
+    }
     if (e.basic_model == i.basic_model) {
         let least_conflict = !e.least && !i.least;
         let most_conflict = !e.most && !i.most;
+        if (!i.least && !i.most) return false;
+
         if (e.least && i.least) {
-            if (er_match(e.least.energy_rating, i.least.energy_rating)) least_conflict = true;
+            if (er_match(e.least.energy_rating, i.least.energy_rating)) {
+
+                least_conflict = true;
+            }
         }
         if (e.most && i.most) {
-            if (er_match(e.most.energy_rating, i.most.energy_rating)) most_conflict = true;
+            if (er_match(e.most.energy_rating, i.most.energy_rating)) {
+                most_conflict = true;
+            }
         }
         return least_conflict && most_conflict;
     } else {
         return false;
     }
-
 }
+
+const check_method_conflict = (pump) => {
+    if (pump.least && pump.most) {
+        if (pump.least.energy_rating < pump.most.energy_rating) {
+            pump.failure = 'Least consumptive measure must have higher energy rating than most consumptive.';
+        }
+    }
+}
+
 exports.check_import = (importing, existing) => {
     const active_exist = existing.filter(e => e.listed);
-
     for (let i = 0; i < importing.length; i++) {
         const _import = importing[i];
         const conflicts = active_exist.filter((e) => {
@@ -495,5 +511,7 @@ exports.check_import = (importing, existing) => {
             }
         }
     }
+
+    importing.forEach(check_method_conflict);
     return importing;
 }
