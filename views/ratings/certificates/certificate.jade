@@ -85,12 +85,12 @@ block content
             .col.col-sm-12.text-center
                 span Serial Number:  #{certificate.certificate_number}
                 br
-                span Issuer Name:  #{certificate.packager.company}
+                span Requested By:  #{company.packager.name}, #{certificate.packager.company}
                 br
                 span Issuance Date: #{moment(certificate.date).format('MMMM D, YYYY')}
                 
           section(style='margin-top:2em')
             p.fine-print  
-                | This certificate is valid for a single pump installation.  For more information and to verify validity of certificate, got to the 
+                | This certificate is valid for a single pump installation.  The Extended Product Energy Rating is determined using standard calculations described in Appendix A to Subpart Y of 10 CFR Part 431.  For more information and to verify the certificate, go to the 
                 | ER Certificate database on er.pumps.org.  ER certificates will be removed from the ER database two years after issuance date.
            
