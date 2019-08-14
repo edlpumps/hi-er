@@ -30,10 +30,10 @@ var build_label_params = function (pump, label) {
     var pm = pump.configuration == "bare" ? "- Bare Pump" : "- Motor";
     var config =
         pump.configuration == "bare" || pump.configuration == "pump_motor" ?
-            "" :
-            (pump.configuration == "pump_motor_cc" ?
-                "- Continuous Controls" :
-                "- Non-Continuous Controls");
+        "" :
+        (pump.configuration == "pump_motor_cc" ?
+            "- Continuous Controls" :
+            "- Non-Continuous Controls");
 
     var load = pump.configuration == "bare" || pump.configuration == "pump_motor" ? "CONSTANT LOAD" : "VARIABLE LOAD";
     var load_abbr = pump.configuration == "bare" || pump.configuration == "pump_motor" ? "CL" : "VL";
@@ -138,8 +138,10 @@ var build_circulator_params = function (pump, waip, max) {
 
 
 }
+
 const calc_circ_vals = function (pump) {
-    const waip = pump.least.output_power[3] / pump.least.water_to_wire_efficiency;
+    const waip = pump.least.waip;
+
     let hp = 0;
     if (waip < 1.0 / 30) hp = 0;
     else if (waip < 1.0 / 8) hp = 1;
@@ -148,17 +150,24 @@ const calc_circ_vals = function (pump) {
     const scales = [335.4, 189.6, 158.6, 142.3];
     const maxScale = scales[hp];
     return {
-        waip, maxScale
+        waip,
+        maxScale
     }
 }
 exports.make_circulator_label = function (req, participant, pump) {
     const circulator_label_template = pug.compileFile(circulator_label_template_file);
-    const { waip, maxScale } = calc_circ_vals(pump);
+    const {
+        waip,
+        maxScale
+    } = calc_circ_vals(pump);
     return circulator_label_template(build_circulator_params(pump, waip, maxScale));
 }
 exports.make_circulator_label_small = function (req, participant, pump) {
     const circulator_label_template = pug.compileFile(circulator_small_label_template_file);
-    const { waip, maxScale } = calc_circ_vals(pump);
+    const {
+        waip,
+        maxScale
+    } = calc_circ_vals(pump);
     return circulator_label_template(build_circulator_params(pump, waip, maxScale));
 }
 exports.make_circulator_qr = function (req, participant, pump) {
@@ -170,7 +179,10 @@ exports.make_circulator_qr = function (req, participant, pump) {
     });
 
     datauri.format('.png', code);
-    const { waip, maxScale } = calc_circ_vals(pump);
+    const {
+        waip,
+        maxScale
+    } = calc_circ_vals(pump);
     var qr_params = build_circulator_params(pump, waip, maxScale);
     qr_params.qr = datauri.content
     return qr_template(qr_params);

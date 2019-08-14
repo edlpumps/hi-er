@@ -387,7 +387,8 @@ exports.init = function init(mongoose) {
             input_power: [Number],
             energy_rating: Number,
             output_power: [Number],
-            water_to_wire_efficiency: Number
+            water_to_wire_efficiency: Number,
+            waip: Number
         },
         most: {
             pressure_curve: String,
@@ -396,7 +397,8 @@ exports.init = function init(mongoose) {
             input_power: [Number],
             energy_rating: Number,
             output_power: [Number],
-            water_to_wire_efficiency: Number
+            water_to_wire_efficiency: Number,
+            waip: Number
         },
         laboratory: {
             _id: String,

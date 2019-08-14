@@ -239,6 +239,7 @@ const extract_row = (sheet, rowNumber, labs) => {
     row.least.energy_rating = results.energy_rating;
     row.least.output_power = results.output_power;
     row.least.water_to_wire_efficiency = results.water_to_wire_efficiency;
+    row.least.waip = results.waip;
     row.least.pei_validity = results.pei_validity;
     if (row.least.pei_validity == 'RE-TEST') {
         const v = mc ? '(least consumptive)' : '';
@@ -257,6 +258,7 @@ const extract_row = (sheet, rowNumber, labs) => {
         row.most.energy_rating = results.energy_rating;
         row.most.output_power = results.output_power;
         row.most.water_to_wire_efficiency = results.water_to_wire_efficiency;
+        row.most.waip = results.waip;
         row.most.pei_validity = results.pei_validity;
         if (row.most.pei_validity == 'RE-TEST') {
             row.failure = 'PEI Input is too low (most consumptive).  Please re-test';
@@ -279,6 +281,7 @@ exports.calculate_assembled_circulator = (circulator) => {
     circulator.least.energy_rating = results.energy_rating;
     circulator.least.output_power = results.output_power;
     circulator.least.water_to_wire_efficiency = results.water_to_wire_efficiency;
+    circulator.least.waip = results.waip;
     circulator.least.pei_validity = results.pei_validity;
     if (circulator.most && circulator.most.control_method) {
         const most = {
@@ -292,6 +295,7 @@ exports.calculate_assembled_circulator = (circulator) => {
         circulator.most.energy_rating = results.energy_rating;
         circulator.most.output_power = results.output_power;
         circulator.most.water_to_wire_efficiency = results.water_to_wire_efficiency;
+        circulator.most.wait = results.waip;
         circulator.most.pei_validity = results.pei_validity;
     }
     return circulator;
