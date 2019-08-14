@@ -94,22 +94,22 @@ mixin vue_circulator_components()
 									td: energy-rating(:value='pump.least.energy_rating')
 								tr(v-if='num_input_powers(pump.least.control_method) == 2')
 									td: label WAIP @ Max Speed
-									td {{(pump.least.input_power[0]*units.power.factor).toFixed(2)}} {{units.power.label}}
+									td {{(pump.least.input_power[0]*units.power.factor).toFixed(3)}} {{units.power.label}}
 								tr(v-if='num_input_powers(pump.least.control_method) == 2')
 									td: label WAIP @ Low Speed
-									td {{(pump.least.input_power[1]*units.power.factor).toFixed(2)}} {{units.power.label}}
+									td {{(pump.least.input_power[1]*units.power.factor).toFixed(3)}} {{units.power.label}}
 								tr(v-if='num_input_powers(pump.least.control_method) == 4')
 									td: label Input Power @25% BEP
-									td {{(pump.least.input_power[0]*units.power.factor).toFixed(2)}} {{units.power.label}}
+									td {{(pump.least.input_power[0]*units.power.factor).toFixed(3)}} {{units.power.label}}
 								tr(v-if='num_input_powers(pump.least.control_method) == 4')
 									td: label Input Power @50% BEP
-									td {{(pump.least.input_power[1]*units.power.factor).toFixed(2)}} {{units.power.label}}
+									td {{(pump.least.input_power[1]*units.power.factor).toFixed(3)}} {{units.power.label}}
 								tr(v-if='num_input_powers(pump.least.control_method) == 4')
 									td: label Input Power @75% BEP
-									td {{(pump.least.input_power[2]*units.power.factor).toFixed(2)}} {{units.power.label}}
+									td {{(pump.least.input_power[2]*units.power.factor).toFixed(3)}} {{units.power.label}}
 								tr(v-if='num_input_powers(pump.least.control_method) == 4')
 									td: label Input Power @100% BEP
-									td {{(pump.least.input_power[3]*units.power.factor).toFixed(2)}} {{units.power.label}}
+									td {{(pump.least.input_power[3]*units.power.factor).toFixed(3)}} {{units.power.label}}
 						
 					.col.col-sm-6(v-if='dual_cm()') 
 						h2: control-method(:method='pump.most.control_method')
@@ -124,22 +124,22 @@ mixin vue_circulator_components()
 									td: energy-rating(:value='pump.most.energy_rating')
 								tr(v-if='num_input_powers(pump.most.control_method) == 2')
 									td: label WAIP @ Max Speed
-									td {{(pump.most.input_power[0]*units.power.factor).toFixed(2)}} {{units.power.label}}
+									td {{(pump.most.input_power[0]*units.power.factor).toFixed(3)}} {{units.power.label}}
 								tr(v-if='num_input_powers(pump.most.control_method) == 2')
 									td: label WAIP @ Low Speed
-									td {{(pump.most.input_power[1]*units.power.factor).toFixed(2)}} {{units.power.label}}
+									td {{(pump.most.input_power[1]*units.power.factor).toFixed(3)}} {{units.power.label}}
 								tr(v-if='num_input_powers(pump.most.control_method) == 4')
 									td: label Input Power @25% BEP
-									td {{(pump.most.input_power[0]*units.power.factor).toFixed(2)}} {{units.power.label}}
+									td {{(pump.most.input_power[0]*units.power.factor).toFixed(3)}} {{units.power.label}}
 								tr(v-if='num_input_powers(pump.most.control_method) == 4')
 									td: label Input Power @50% BEP
-									td {{(pump.most.input_power[1]*units.power.factor).toFixed(2)}} {{units.power.label}}
+									td {{(pump.most.input_power[1]*units.power.factor).toFixed(3)}} {{units.power.label}}
 								tr(v-if='num_input_powers(pump.most.control_method) == 4')
 									td: label Input Power @75% BEP
-									td {{(pump.most.input_power[2]*units.power.factor).toFixed(2)}} {{units.power.label}}
+									td {{(pump.most.input_power[2]*units.power.factor).toFixed(3)}} {{units.power.label}}
 								tr(v-if='num_input_powers(pump.most.control_method) == 4')
 									td: label Input Power @100% BEP
-									td {{(pump.most.input_power[3]*units.power.factor).toFixed(2)}} {{units.power.label}}
+									td {{(pump.most.input_power[3]*units.power.factor).toFixed(3)}} {{units.power.label}}
 						
 				
 				

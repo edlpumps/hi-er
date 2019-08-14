@@ -138,15 +138,26 @@ var build_circulator_params = function (pump, waip, max) {
 
 
 }
-
+const average = (values) => {
+    let sum = 0;
+    let count = 0;
+    for (const v of values) {
+        sum += v;
+        count++;
+    }
+    return sum / count;
+}
 const calc_circ_vals = function (pump) {
     const waip = pump.least.waip;
 
+    const nominal_hp = pump.least.output_power[3] / (pump.least.water_to_wire_efficiency / 100);
+
     let hp = 0;
-    if (waip < 1.0 / 30) hp = 0;
-    else if (waip < 1.0 / 8) hp = 1;
-    else if (waip < 3.0 / 4) hp = 2;
+    if (nominal_hp < 1.0 / 30) hp = 0;
+    else if (nominal_hp < 1.0 / 8) hp = 1;
+    else if (nominal_hp < 3.0 / 4) hp = 2;
     else hp = 3;
+
     const scales = [335.4, 189.6, 158.6, 142.3];
     const maxScale = scales[hp];
     return {
