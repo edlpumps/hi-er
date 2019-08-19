@@ -133,7 +133,7 @@ html
         section    
             span Serial Number:  #{certificate.certificate_number}
             br
-            span Requested By:  #{company.packager.name}, #{certificate.packager.company}
+            span Requested By:  #{certificate.packager.name}, #{certificate.packager.company}
             br
             span Issuance Date: #{moment(certificate.date).format('MMMM D, YYYY')}
         section
