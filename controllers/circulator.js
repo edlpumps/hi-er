@@ -70,7 +70,14 @@ const MC_CONTROL_METHOD_COLUMN = 'O';
 
 const findLab = function (imported, labs) {
     if (!imported) return undefined;
+    console.log(labs.map(l => l.code));
     var found = labs.filter(function (lab) {
+        const i_n = parseInt(imported);
+        const l_n = parseInt(lab.code);
+        if (!isNaN(i_n) && !isNaN(l_n)) {
+            console.log(i_n, l_n);
+            if (i_n === l_n) return true;
+        }
         return lab.code == imported || lab.name == imported;
     });
     if (found.length > 0) return found[0];
@@ -118,7 +125,9 @@ const extract_row = (sheet, rowNumber, labs) => {
     const row = {}
     row.template_row = rowNumber;
     row.participant = readCell(sheet, PARTICIPANT_COLUMN, rowNumber);
-    if (!row.participant) return;
+    if (!row.participant) {
+        return;
+    }
 
     row.brand = readCell(sheet, BRAND_COLUMN, rowNumber);
     row.basic_model = readCell(sheet, BASIC_MODEL_COLUMN, rowNumber);
@@ -126,6 +135,10 @@ const extract_row = (sheet, rowNumber, labs) => {
     row.alternative_part_number = readCell(sheet, ALTERNATIVE_PART_NUMBER_COLUMN, rowNumber);
     row.type = readCell(sheet, PUMP_TYPE_COLUMN, rowNumber);
     row.laboratory = findLab(readCell(sheet, LABORATORY_COLUMN, rowNumber), labs);
+    if (!row.laboratory) {
+        row.failure = "Laboratory does not match an approved HI lab";
+        return row;
+    }
     const lc = resolve_control_method(sheet, LC_CONTROL_METHOD_COLUMN, rowNumber);
     if (lc) {
         row.least = {

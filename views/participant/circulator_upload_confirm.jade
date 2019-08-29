@@ -118,4 +118,8 @@ block content
                       if fail.least
                         +control_method(fail.least.control_method)
                    td #{fail.failure}
+      if (!succeeded || succeeded.length == 0) && (!failed || failed.length == 0)
+        .panel.panel-warning
+          .panel-body
+             p.alert.alert-danger No pumps found in template.
             

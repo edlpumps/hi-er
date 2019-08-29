@@ -135,8 +135,6 @@ const calculate_per_ref = (_type, /*_power, */ _head, _flow /*, _pei*/ ) => {
     // PER Ref
     ///////////////////////////////////////////////////////////////////
     const per_ref = average(reference_input_power);
-    console.log("PER_REF");
-    console.log(per_ref);
     return {
         reference_input_power,
         output_power,
