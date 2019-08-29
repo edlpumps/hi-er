@@ -34,6 +34,10 @@ block script
           },
 
           methods: {
+            moment(...args) {
+              // eslint-disable-next-line no-undef
+              return moment(...args);
+            },
             removePump: function(pump) {
                const v = this;
                $.ajax({
@@ -147,7 +151,7 @@ block content
                     img(v-if="pump.pending", height="25", width="25", src="/images/pending.png")
                     img(v-else="pump.pending", height="25", width="25", :src="'/images/'+(pump.listed && pump.active_admin && !pump.pending ? 'active' : 'inactive')+'.png'")
                   td: a(:href="'circulators/'+pump._id") {{pump.rating_id}}
-                  td.hidden-xs {{pump.date}}
+                  td.hidden-xs {{moment(pump.date).format("MMM D, YYYY")}}
                   td.hidden-xs: a(:href="'circulators/'+pump._id")
                     span {{pump.basic_model}}
                     br
