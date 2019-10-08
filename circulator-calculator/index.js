@@ -280,7 +280,7 @@ const calc_with_controls = (pump, coeffs) => {
 }
 
 const commonControl = (pump) => {
-    return calc_with_controls(pump, [0.05, 0.4, 0.4, 0.14])
+    return calc_with_controls(pump, [0.05, 0.4, 0.4, 0.15])
 }
 
 const externalInput = (pump) => {
