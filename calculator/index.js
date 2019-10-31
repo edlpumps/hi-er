@@ -273,13 +273,27 @@ var calc_motor_powers = function (pump, result) {
     result.motor_power_rated = pump.motor_power_rated;
 }
 
+function isNullOrWhitespace(input) {
+    return !input || !input.trim();
+}
 var calc_per_cl = function (pump) {
-    if (pump.control_power_input && pump.control_power_input.bep25) {
+    console.log("----- PER CL Check ------");
+    if (pump.control_power_input && !isNullOrWhitespace(pump.control_power_input.bep25)) {
+        console.log("Case 1:  ", pump.control_power_input);
+        console.log(pump.control_power_input.bep25);
+        console.log(pump.control_power_input.bep50);
+        console.log(pump.control_power_input.bep75);
+        console.log(pump.control_power_input.bep100);
         return (pump.control_power_input.bep25 +
             pump.control_power_input.bep50 +
             pump.control_power_input.bep75 +
             pump.control_power_input.bep100) / 4;
     } else {
+        console.log("Case 1:  ", pump.control_power_input);
+        console.log(pump.driver_input_power.bep75);
+        console.log(pump.driver_input_power.bep100);
+        console.log(pump.driver_input_power.bep110);
+
         // Department of Energy standard specifies 0.3333 instead of full precision 1/3.
         // The calculator must comply, even though this seems sub-optimal.
         return (pump.driver_input_power.bep75 +
@@ -583,6 +597,9 @@ var manual_calculation = function (pump, set_point_threshold) {
     section345_baseline_common(pump, result);
 
     var per_diff = result.per_std / result.per_std_calculated;
+    console.log("--------- PEI CHECK ----------");
+    console.log(result.per_cl);
+    console.log(result.per_std_calculated);
     var target_pei = result.per_cl / result.per_std_calculated;
     result.pei_check = {
         std_percent_difference: per_diff,

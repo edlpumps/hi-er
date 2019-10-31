@@ -402,6 +402,7 @@ router.post("/pumps/save_upload", aw(async (req, res) => {
 
 
 var find_lab = function (imported, labs) {
+    console.log(imported, labs.map(l => l.code));
     if (!imported || !imported.code) return undefined;
     var found = labs.filter(function (lab) {
         return lab.code == imported.code || lab.name == imported.code;
