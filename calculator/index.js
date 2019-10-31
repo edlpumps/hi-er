@@ -273,9 +273,6 @@ var calc_motor_powers = function (pump, result) {
     result.motor_power_rated = pump.motor_power_rated;
 }
 
-function isNullOrWhitespace(input) {
-    return !input || !input.trim();
-}
 var calc_per_cl = function (pump) {
     console.log("----- PER CL Check ------");
     if (pump.control_power_input && pump.control_power_input.bep25) {
