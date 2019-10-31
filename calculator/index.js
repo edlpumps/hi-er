@@ -278,7 +278,7 @@ function isNullOrWhitespace(input) {
 }
 var calc_per_cl = function (pump) {
     console.log("----- PER CL Check ------");
-    if (pump.control_power_input && !isNullOrWhitespace(pump.control_power_input.bep25)) {
+    if (pump.control_power_input && pump.control_power_input.bep25) {
         console.log("Case 1:  ", pump.control_power_input);
         console.log(pump.control_power_input.bep25);
         console.log(pump.control_power_input.bep50);
