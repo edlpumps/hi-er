@@ -163,7 +163,6 @@ var configure = function () {
 // Database configuration
 ////////////////////////////////////////////////////
 var conn = mongoose.connect(data_connection_str, {
-    auto_reconnect: true,
     useMongoClient: true
 }, function (err, res) {
     if (err) {
