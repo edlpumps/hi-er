@@ -461,6 +461,7 @@ router.post("/pumps/upload", get_labels, aw(async (req, res) => {
                 var prop = template.mappings[mapping];
                 var cell = worksheet.getCell(prop.column + r);
                 var value = cell.value;
+                if (value && value.trim) value = value.trim();
                 var enabled = true;
                 if (mapping == "configuration") {
                     value = common.map_config_input(cell.value);

@@ -73,9 +73,9 @@ exports.init = function init(mongoose) {
     }
 
     var PasswordResets = mongoose.model('password_resets', resetSchema, "password_resets");
-    PasswordResets.ensureIndexes(function (err) {
+    /*PasswordResets.ensureIndexes(function (err) {
 
-    })
+    })*/
     exports.PasswordResets = PasswordResets;
 
 
