@@ -34,7 +34,8 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
     text(x="110", y=tt+lh*1.5, style="font-family: 'Arimo';font-weight:bold", font-size="16", text-anchor="start", fill="black") #{basic_model}
     //-text(x="155", y="210", style="font-family: 'Arimo';font-weight:bold", font-size="16", text-anchor="start", fill="black") #{speed}
     
-    text(x="585", y=tt, style="font-family: 'Arimo'; font-weight:bold", font-size="16", text-anchor="end", fill="black") WAIP: #{waip}
+    if waip
+        text(x="585", y=tt, style="font-family: 'Arimo'; font-weight:bold", font-size="16", text-anchor="end", fill="black") WAIP: #{waip}
     //-text(x="330", y="210", style="font-family: 'Arimo'; font-weight:bold", font-size="16", text-anchor="start", fill="black") #{config}
 
     rect(x=left_edge, y="180", rx="0", ry="0", width="555", height="40", style="fill:#000000;stroke: #000000;stroke-width:1;")
