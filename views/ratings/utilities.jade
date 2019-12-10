@@ -19,7 +19,8 @@ block content
              ul.nav.nav-tabs(style='margin-bottom:20px')
               li.active
                a(href="#") C&amp;I Pumps
-              if process.env.CIRCULATORS
+              //- Temporarily disabled circulators on public listings.
+              if process.env.CIRCULATORS and false
                 li
                   a(href="/circulator/ratings/utilities") Circulator Pumps
              .form-group
