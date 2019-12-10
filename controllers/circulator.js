@@ -479,26 +479,31 @@ const er_match = (e1, e2) => {
 const conflict = (e, i) => {
     const model_conflict = e.basic_model == i.basic_model && e.manufacturer_model == i.manufacturer_model;
     if (model_conflict) {
+        // If basic model and manufacturer model agree, this is a conflict.
         return true;
     }
     if (e.basic_model == i.basic_model) {
-        let least_conflict = !e.least && !i.least;
-        let most_conflict = !e.most && !i.most;
         if (!i.least && !i.most) return false;
 
+        // Pumps that have the same basic model must have the same ER rating.
         if (e.least && i.least) {
-            if (er_match(e.least.energy_rating, i.least.energy_rating)) {
-
-                least_conflict = true;
+            if (!er_match(e.least.energy_rating, i.least.energy_rating)) {
+                return true
             }
         }
         if (e.most && i.most) {
-            if (er_match(e.most.energy_rating, i.most.energy_rating)) {
-                most_conflict = true;
+            if (!er_match(e.most.energy_rating, i.most.energy_rating)) {
+                return true;
             }
         }
-        return least_conflict && most_conflict;
+
+        // Pumps that have the same basic model must have the same pump type.
+        if (e.type != i.type) {
+            return true;
+        }
+
     } else {
+        // Basic model is not the same, so no conflict.
         return false;
     }
 }

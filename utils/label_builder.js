@@ -133,7 +133,7 @@ var build_circulator_params = function (pump, waip, max) {
         er_pos: pos,
         logo: hi_logo_data_uri,
         small_logo: hi_logo_data_uri_small,
-        waip: waip.toFixed(3)
+        waip: waip !== undefined ? waip.toFixed(3) : ''
     };
 
 
