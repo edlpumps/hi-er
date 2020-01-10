@@ -28,8 +28,8 @@ const fill_data = (listing, row) => {
         row.pump_basic_model = listing.pump.basic_model;
         row.pump_brand = listing.pump.brand;
         row.pump_doe = listing.pump.doe;
-        row.pump_pei = listing.pei.toFixed(2);
-        row.pump_er = listing.energy_rating.toFixed(1);
+        row.pump_pei = listing.pump.pei.toFixed(2);
+        row.pump_er = listing.pump.energy_rating.toFixed(1);
     }
     if (listing.motor) {
         row.motor_manufacturer = listing.motor.manufacturer;
