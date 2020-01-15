@@ -401,8 +401,8 @@ daily.minute = 1;
 
 const weekly = new sched.RecurrenceRule();
 weekly.dayOfWeek = 1;
-weekly.hour = 10;
-weekly.minute = 00;
+weekly.hour = 13;
+weekly.minute = 10;
 
 const twiceAMonth = "0 11 1,15 * *"
 
