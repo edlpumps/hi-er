@@ -376,7 +376,6 @@ const push_emails = async function (interval) {
         const certificates = await certificateExport.getCertificates();
         const certificates_rows = certificateExport.getExportable(certificates);
         const certificates_excel = certificateExport.toXLXS(certificates_rows);
-        console.log(JSON.stringify(certificates_rows, null, 2));
 
         const subs = await app.locals.db.Subscribers.find({
             interval_days: interval
@@ -387,23 +386,8 @@ const push_emails = async function (interval) {
         for (const subscriber of subs) {
             recips = recips.concat(subscriber.recipients);
         }
-        /*fs.writeFile("example.xlsx", circulator_excel, "binary", function (err) {
-            if (err) {
-                console.log(err);
-            } else {
-                console.log("Saved excel file to example.xlsx");
-            }
-        });
-        fs.writeFile("example-ci.xlsx", pumps_excel, "binary", function (err) {
-            if (err) {
-                console.log(err);
-            } else {
-                console.log("Saved excel file to example.xlsx");
-            }
-        });*/
-        for (const recip of recips) {
-            mailer.sendListings(recip, pumps_excel, circulator_excel, certificates_excel);
-        }
+
+        mailer.sendListings(recips, pumps_excel, circulator_excel, certificates_excel);
     } catch (ex) {
         console.error(ex);
     }

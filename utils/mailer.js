@@ -64,6 +64,23 @@ var make_mail_options = function (recipient, subject, template_params, html, tex
     }
     return mailOptions;
 }
+var make_bcc_mail_options = function (recipients, subject, template_params, html, text) {
+    var sender = process.env.SMTP_SENDING_ADDRESS;
+    recipients = process.env.LIVE_EMAIL ? recipients : [process.env.SMTP_RECIPIENT_OVERRIDE];
+    console.log(recipients);
+    var mailOptions = {
+        from: sender,
+        to: "sfrees@intelliquip.com",
+        bcc: recipients.join(","),
+        subject: subject,
+        html: html(template_params),
+        text: text(template_params)
+    };
+    if (!process.env.LIVE_EMAIL) {
+        console.log("WARNING:  Emails are being sent only to " + process.env.SMTP_RECIPIENT_OVERRIDE + ", to enable emailing to actual recipients you must enable live email by setting LIVE_EMAIL environment variable to true.")
+    }
+    return mailOptions;
+}
 exports.sendAuthenticationEmail = function (base_url, user, creator) {
     var activation_link = base_url + '/activate/' + user.activationKey;
     var template_params = {
@@ -124,10 +141,11 @@ exports.sendDeletionNotification = function (deleted, actor) {
     });
 }
 
-exports.sendListings = function (recipient, pump_excel, circulator_excel, certificate_excel) {
+exports.sendListings = function (recipients, pump_excel, circulator_excel, certificate_excel) {
     var template_params = {};
-
-    var mailOptions = make_mail_options(recipient, "HI Energy Rating Portal - Energy Rating Listings", template_params, listings_template, listings_template_pt);
+    console.log("Sending listings via bcc to ");
+    console.log(recipients);
+    var mailOptions = make_bcc_mail_options(recipients, "HI Energy Rating Portal - Energy Rating Listings", template_params, listings_template, listings_template_pt);
     mailOptions.attachments = [{
         filename: 'ci_energy_ratings.xlsx',
         content: pump_excel
