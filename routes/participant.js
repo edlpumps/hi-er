@@ -382,8 +382,8 @@ router.post("/pumps/save_upload", aw(async (req, res) => {
         pump.listed = list_now;
         pump.participant = req.participant._id;
         if (pump.brand) pump.brand = pump.brand.trim();
-        if (pump.basic_model) pump.brand = pump.basic_model.trim();
-        if (pump.individual_model) pump.brand = pump.individual_model.trim();
+        if (pump.basic_model) pump.basic_model = pump.basic_model.trim();
+        if (pump.individual_model) pump.individual_model = pump.individual_model.trim();
         // Ignore what's in the spreadsheet - the participant name attached to the pump
         // must always be the currently logged in participant.
 
