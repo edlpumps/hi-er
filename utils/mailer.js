@@ -70,7 +70,6 @@ var make_bcc_mail_options = function (recipients, subject, template_params, html
     console.log(recipients);
     var mailOptions = {
         from: sender,
-        to: "sfrees@intelliquip.com",
         bcc: recipients.join(","),
         subject: subject,
         html: html(template_params),
