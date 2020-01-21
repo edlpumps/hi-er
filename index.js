@@ -396,8 +396,8 @@ const push_emails = async function (interval) {
 const mailer = require('./utils/mailer');
 const sched = require('node-schedule');
 const daily = new sched.RecurrenceRule();
-daily.hour = 9;
-daily.minute = 1;
+daily.hour = 11;
+daily.minute = 25;
 
 const weekly = new sched.RecurrenceRule();
 weekly.dayOfWeek = 1;
