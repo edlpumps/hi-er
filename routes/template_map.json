@@ -278,7 +278,7 @@
             "column": "AQ",
             "path": "rating_id",
             "output_only": true,
-            "format": "0"
+            "text": true
         },
         "listing_date": {
             "column": "AR",

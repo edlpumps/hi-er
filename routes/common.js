@@ -257,6 +257,7 @@ exports.build_pump_spreadsheet = function (pump, unit_set, callback) {
                     if (mapping == "configuration") {
                         value = exports.map_config_output(value);
                     }
+
                     if (mapping == "listing_date") {
                         value = moment(value).format("MMM D, YYYY")
                     }
@@ -279,6 +280,9 @@ exports.build_pump_spreadsheet = function (pump, unit_set, callback) {
                             if (!isNaN(v)) {
                                 value = v;
                             }
+                            cell.value = value;
+                        } else if ("text" in prop) {
+                            cell.numFmt = "@";
                             cell.value = value;
                         } else {
                             cell.value = value;
