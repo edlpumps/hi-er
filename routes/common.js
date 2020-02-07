@@ -1,7 +1,7 @@
 "use strict";
 var units = require('../utils/uom');
 var mailer = require('../utils/mailer');
-
+const moment = require('moment');
 
 
 
@@ -256,6 +256,12 @@ exports.build_pump_spreadsheet = function (pump, unit_set, callback) {
                     }
                     if (mapping == "configuration") {
                         value = exports.map_config_output(value);
+                    }
+                    if (mapping == "listing_date") {
+                        value = moment(value).format("MMM D, YYYY")
+                    }
+                    if (mapping == "listing_status") {
+                        value = p.listed ? "Active" : (p.pending ? "Pending" : "Inactive");
                     }
                     if (prop.boolean) {
                         value = exports.map_boolean_output(value);

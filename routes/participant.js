@@ -367,6 +367,9 @@ router.post("/pumps/save_upload", aw(async (req, res) => {
         res.redirect("/unauthorized");
         return;
     }
+    console.log("====================================================================")
+    console.log(req.body.pumps);
+    console.log("====================================================================")
     var pumps = JSON.parse(req.body.pumps);
     for (const pump of pumps) {
         let list_now = req.body.list_pumps ? true : false;
