@@ -276,7 +276,7 @@
         },
         "rating_id": {
             "column": "AQ",
-            "path": "energy_rating",
+            "path": "rating_id",
             "output_only": true,
             "format": "0"
         },
