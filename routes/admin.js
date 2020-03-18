@@ -167,19 +167,27 @@ router.post('/participant/:id/delete', function (req, res) {
 })
 
 router.get('/participant/:id/pumps', aw(async (req, res) => {
+
     const participant = await req.Participants.findById(req.params.id).exec();
-    const pumps = await req.Pumps.find({
-        participant: req.params.id
-    }).sort({
-        basic_model: 1,
-        individual_model: 1
-    }).lean().exec();
+    const skip = parseInt(req.query.skip || 0);
+    const limit = parseInt(req.query.limit && req.query.limit < 100 ? req.query.limit : 10);
+    const response = await req.Pumps.search(participant, req.query.search, parseInt(skip), parseInt(limit));
 
     req.log.debug("Rendering participant pumps page for administrative portal");
     res.render("admin/a_pumps", {
         user: req.user,
-        pumps: pumps,
+        pumps: response.pumps,
         participant: participant,
+        pagination: {
+            search: req.query.search,
+            count: response.count,
+            back: skip > 0 ? skip - limit : undefined,
+            next: skip + limit < response.count ? skip + limit : undefined,
+            range: {
+                min: Math.min(skip + 1, response.count),
+                max: Math.min(skip + limit, response.count)
+            }
+        },
         getConfigLabel: function (config) {
             switch (config) {
                 case "bare":

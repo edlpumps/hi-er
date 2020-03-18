@@ -10,6 +10,24 @@ block content
             h2 Pump listings for #{participant.name}
         .panel-body
           .row
+            .col.col-xs-8
+              form(action='pumps', method='get')
+                .form-group
+                  .icon-addon.addon-lg
+                    input.form-control(name='search', placeholder="Search by Rating ID / Basic model number / Individual model number.", value=pagination.search)
+                    label.glyphicon.glyphicon-search(for="search", title="Filter pumps", rel="tooltip")
+                .form-group
+                  button.btn.btn-primary(type='submit') Search
+           
+            .col.col-xs-4
+              p Results #{pagination.range.min} - #{pagination.range.max} of #{pagination.count}
+              p
+                if pagination.back !== undefined
+                 a.btn.btn-primary.btn-space(href="pumps?skip="+pagination.back) Back
+                if pagination.next
+                 a.btn.btn-primary.btn-space(href="pumps?skip="+pagination.next) Next
+            
+          .row
            .col.col-xs-12
             .table-responsive
               table.table.table-striped

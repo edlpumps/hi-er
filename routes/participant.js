@@ -822,15 +822,9 @@ router.post("/api/model_check", function (req, res) {
 
 
 router.get("/api/pumps", aw(async (req, res) => {
-    console.log("GET VIA API")
-    console.log(req.query);
     const skip = req.query.skip || 0;
     const limit = req.query.limit && req.query.limit < 100 ? req.query.limit : 10;
-    console.log("Skip = " + skip);
-    console.log("Limit = " + limit);
     const response = await req.Pumps.search(req.participant, req.query.search, parseInt(skip), parseInt(limit));
-
-
     res.json(response);
 }));
 
