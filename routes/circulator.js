@@ -31,17 +31,6 @@ router.use(async (req, res, next) => {
 
 router.get('/', aw(async (req, res) => {
     req.log.debug("Rendering participant portal (circulator pumps)");
-    console.warn("------------------------------------------------------------");
-    console.warn("Unimplemented:  Published pump conflict");
-    console.warn("------------------------------------------------------------");
-    /*const pumps = await req.Pumps.find({
-        participant: req.participant._id
-    }).sort({
-        basic_model: 1,
-        individual_model: 1
-    }).lean().exec();
-    const published = pumps.filter(p => p.listed);*/
-
     res.render("participant/p_circulators", {
         user: req.user,
         participant: req.participant,

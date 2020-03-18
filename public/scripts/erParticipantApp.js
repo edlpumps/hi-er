@@ -1,21 +1,21 @@
 "use strict";
 
 var configurations = [{
-  value: "bare",
-  label: "Bare Pump"
-},
-{
-  value: "pump_motor",
-  label: "Pump + Motor"
-},
-{
-  value: "pump_motor_cc",
-  label: "Pump + Motor w/ Continuous Controls"
-},
-{
-  value: "pump_motor_nc",
-  label: "Pump + Motor w/ Non-continuous Controls"
-}
+    value: "bare",
+    label: "Bare Pump"
+  },
+  {
+    value: "pump_motor",
+    label: "Pump + Motor"
+  },
+  {
+    value: "pump_motor_cc",
+    label: "Pump + Motor w/ Continuous Controls"
+  },
+  {
+    value: "pump_motor_nc",
+    label: "Pump + Motor w/ Non-continuous Controls"
+  }
 ];
 
 var app = angular.module('ERParticipantApp', []).directive('bootstrapSwitch', [
@@ -63,8 +63,10 @@ var service = app.factory('service', function ($http) {
           return docs.data;
         });
     },
-    getPumps: function () {
-      return $http.get('/participant/api/pumps', {})
+    getPumps: function (params) {
+      return $http.get('/participant/api/pumps', {
+          params: params
+        })
         .then(function (docs) {
           return docs.data;
         });
@@ -83,8 +85,8 @@ var service = app.factory('service', function ($http) {
     },
     updateLab: function (id, available) {
       return $http.post('/participant/api/labs/' + id, {
-        available: available
-      })
+          available: available
+        })
         .success(function (docs) {
           return docs.data;
         })
@@ -94,8 +96,8 @@ var service = app.factory('service', function ($http) {
     },
     saveNewUser: function (user) {
       return $http.post('/participant/api/users/add', {
-        user: user
-      })
+          user: user
+        })
         .success(function (docs) {
           return docs.data;
         })
@@ -105,8 +107,8 @@ var service = app.factory('service', function ($http) {
     },
     saveUser: function (user) {
       return $http.post('/participant/api/users/save', {
-        user: user
-      })
+          user: user
+        })
         .success(function (docs) {
           return docs.data;
         })
@@ -134,16 +136,16 @@ var service = app.factory('service', function ($http) {
     },
     saveSettings: function (participant) {
       return $http.post('/participant/api/settings', {
-        participant: participant
-      })
+          participant: participant
+        })
         .then(function (docs) {
           return docs.data;
         });
     },
     saveSearchQuery: function (q) {
       return $http.post('/participant/api/search', {
-        pump_search_query: q
-      })
+          pump_search_query: q
+        })
         .then(function (docs) {
           return docs.data;
         });
@@ -157,14 +159,18 @@ var ERParticipantController = function ($scope, $location, service) {
 
   vm.base_url = make_base_url($location);
   vm.settings_readonly = true;
+  vm.count = 0;
+  vm.skip = 0;
+  vm.limit = 10;
+
 
   vm.post_search_query = function () {
     service.saveSearchQuery(vm.pump_search_query);
   }
 
   vm.pump_search_results = function () {
-    if (!vm.pump_search_query) return vm.pumps;
-
+    return vm.pumps;
+    /*
     var needle = vm.pump_search_query.toLowerCase();
     return vm.pumps.filter(function (pump) {
       var haystacks = [
@@ -177,6 +183,7 @@ var ERParticipantController = function ($scope, $location, service) {
       }).length;
       return hits > 0;
     });
+    */
   }
 
   vm.refreshUsers = function (callback) {
@@ -217,8 +224,14 @@ var ERParticipantController = function ($scope, $location, service) {
 
   vm.refreshPumps = function (callback) {
     vm.searching_pumps = true;
-    service.getPumps().then(function (results) {
+    service.getPumps({
+      search: vm.pump_search_query,
+      skip: vm.skip,
+      limit: vm.limit
+    }).then(function (results) {
       vm.pumps = results.pumps;
+      vm.count = results.count;
+      console.log(results);
       vm.pumps_error = false;
       vm.searching_pumps = false;
       if (callback) {
@@ -464,21 +477,21 @@ var ERNewManualPumpController = function ($scope, $location, service) {
   var vm = this;
 
   vm.configurations = [{
-    value: "bare",
-    label: "Bare Pump"
-  },
-  {
-    value: "pump_motor",
-    label: "Pump + Motor"
-  },
-  {
-    value: "pump_motor_cc",
-    label: "Pump + Motor w/ Continuous Controls"
-  },
-  {
-    value: "pump_motor_nc",
-    label: "Pump + Motor w/ Non-continuous Controls"
-  }
+      value: "bare",
+      label: "Bare Pump"
+    },
+    {
+      value: "pump_motor",
+      label: "Pump + Motor"
+    },
+    {
+      value: "pump_motor_cc",
+      label: "Pump + Motor w/ Continuous Controls"
+    },
+    {
+      value: "pump_motor_nc",
+      label: "Pump + Motor w/ Non-continuous Controls"
+    }
   ];
 
 

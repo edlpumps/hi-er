@@ -171,20 +171,16 @@ router.get('/labs', function (req, res) {
 
 router.get('/pumps', aw(async (req, res) => {
     req.log.debug("Rendering participant portal (pumps)");
-    const pumps = await req.Pumps.find({
-        participant: req.participant._id
-    }).sort({
-        basic_model: 1,
-        individual_model: 1
-    }).lean().exec();
-    const published = pumps.filter(p => p.listed);
+    const published = await req.Pumps.count({
+        participant: req.participant._id,
+        limit: true
+    });
+
     res.render("participant/p_pumps", {
         user: req.user,
-        //pumps: pumps,
-        //published: published,
         participant: req.participant,
         section_label: common.section_label,
-        subscription_limit: published.length >= req.participant.subscription.pumps,
+        subscription_limit: published >= req.participant.subscription.pumps,
         subscription_missing: req.participant.subscription.status != 'Active',
         pump_search_query: req.session.pump_search_query
     });
@@ -247,7 +243,6 @@ router.get("/pumps/:id/revise", aw(async (req, res) => {
         value: pump.configuration
     };
     var help = require("../public/resources/help.json");
-    console.log(pump);
     res.render("participant/new_pump", {
         user: req.user,
         participant: req.participant,
@@ -367,9 +362,6 @@ router.post("/pumps/save_upload", aw(async (req, res) => {
         res.redirect("/unauthorized");
         return;
     }
-    console.log("====================================================================")
-    console.log(req.body.pumps);
-    console.log("====================================================================")
     var pumps = JSON.parse(req.body.pumps);
     for (const pump of pumps) {
         let list_now = req.body.list_pumps ? true : false;
@@ -830,18 +822,16 @@ router.post("/api/model_check", function (req, res) {
 
 
 router.get("/api/pumps", aw(async (req, res) => {
-    const pumps = await req.Pumps.find({
-        participant: req.participant._id
-    }).sort({
-        basic_model: 1,
-        individual_model: 1
-    }).lean().exec();
+    console.log("GET VIA API")
+    console.log(req.query);
+    const skip = req.query.skip || 0;
+    const limit = req.query.limit && req.query.limit < 100 ? req.query.limit : 10;
+    console.log("Skip = " + skip);
+    console.log("Limit = " + limit);
+    const response = await req.Pumps.search(req.participant, req.query.search, parseInt(skip), parseInt(limit));
 
-    res.setHeader('Content-Type', 'application/json');
 
-    res.end(JSON.stringify({
-        pumps: pumps
-    }));
+    res.json(response);
 }));
 
 router.post("/api/pumps/delete/:id", aw(async (req, res) => {

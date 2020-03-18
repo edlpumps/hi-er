@@ -328,7 +328,38 @@ exports.init = function init(mongoose) {
     });
 
 
+    pumpSchema.statics.search = async (participant, search, skip, limit) => {
+        const query = {
+            participant: participant._id
+        }
+        const fuzzy_fields = ['rating_id', 'basic_model', 'individual_model'];
+        if (search) {
+            const regex = new RegExp(search.replace(/[-[\]{}()*+?.,\\/^$|#\s]/g, "\\$&"), "ig");
 
+            const or = [];
+            for (const field of fuzzy_fields) {
+                const q = {}
+                q[field] = {
+                    $regex: regex
+                };
+
+                or.push(q);
+            }
+            query.$or = or;
+        }
+
+        const pumps = await Pumps.find(query).sort({
+            basic_model: 1,
+            individual_model: 1
+        }).skip(parseInt(skip)).limit(parseInt(limit)).lean().exec();
+
+        const count = await Pumps.count(query);
+        return {
+            pumps: pumps,
+            count: count
+        }
+
+    };
     pumpSchema.statics.countsByParticipant = async (listed, participants) => {
         const pipeline = [];
         if (listed !== undefined) {
@@ -359,6 +390,13 @@ exports.init = function init(mongoose) {
         } else
             return result;
     }
+
+    pumpSchema.index({
+        rating_id: 'text',
+        basic_model: 'text',
+        individual_model: 'text'
+    });
+
     const Pumps = mongoose.model('pumps', pumpSchema);
     exports.Pumps = Pumps;
 

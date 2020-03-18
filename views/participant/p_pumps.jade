@@ -20,7 +20,7 @@ block content
             .modal-footer
               div
                 button.btn.btn-danger(type="button", data-dismiss='modal', ng-click="app.removePump(app.pump_to_delete)") Delete pump
-                button.btn.btn-default(type='button' data-dismiss='modal') Dismiss
+                button.btn.btn-default(type='button', data-dismiss='modal') Dismiss
 
 
       .panel.panel-default
@@ -54,11 +54,17 @@ block content
                a.btn.btn-default.btn-space(href="/participant/pumps/download") Download pumps
                a(href="/ratings/glossary#status_explanation", title="Help documentation", target="_blank", style="margin-left:1em") Learn about pump listing status and revision/redesigns.
           .row.solo
-           .col.col-xs-12
+           .col.col-xs-8
             .form-group
               .icon-addon.addon-lg
-               input.form-control(id="search", ng-change="app.post_search_query();", ng-model="app.pump_search_query", placeholder="Filter by Rating ID / Basic model number / Individual model number.")
+               input.form-control(id="search", ng-change="app.refreshPumps();", ng-model="app.pump_search_query", placeholder="Filter by Rating ID / Basic model number / Individual model number.")
                label.glyphicon.glyphicon-search(for="search", title="Filter pumps", rel="tooltip")
+           .col.col-xs-4
+            .form-group(ng-show='app.pump_search_results().length > 0')
+              p Results {{app.skip+1}} - {{app.skip+app.limit}} of {{app.count}}
+              p
+                button.btn.btn-primary.btn-space(ng-show='app.skip > 0', ng-click='app.skip = app.skip - app.limit; app.refreshPumps();') Back
+                button.btn.btn-primary.btn-space(ng-show='app.skip < app.count-app.limit', ng-click='app.skip = app.skip + app.limit; app.refreshPumps();') Next
           .row.solo
            .col.col-xs-12
             p.text-center(ng-show='app.searching_pumps')

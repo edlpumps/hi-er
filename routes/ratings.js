@@ -70,13 +70,11 @@ router.get('/api/brands', aw(async (req, res) => {
             query['participant'] = participant._id;
         }
     }
-    req.Pumps.find(query, function (err, pumps) {
-        var brands = pumps.map(p => p.brand);
-        res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify({
-            brands: Array.from(new Set(brands))
-        }));
-    });
+    const brands = await req.Pumps.distinct('brand', query);
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify({
+        brands: brands
+    }));
 }));
 
 router.get('/home', function (req, res) {
