@@ -198,11 +198,25 @@ router.post("/search", function (req, res) {
             individual_model: 1
         }
     })
+    operators.push({
+        $project: {
+            rating_id: 1,
+            brand: 1,
+            individual_model: 1,
+            'joined_participant.name': 1,
+            doe: 1,
+            configuration: 1,
+            diameter: 1,
+            speed: 1,
+            stages: 1,
+            energy_rating: 1,
+            pei: 1
+        }
+    })
     req.Pumps.aggregate(operators).exec(function (err, docs) {
-        res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify({
+        res.json({
             pumps: docs
-        }));
+        });
     });
 });
 
