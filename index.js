@@ -55,7 +55,11 @@ var configure = function () {
     app.use(helmet());
     app.use(flash());
     busboy.extend(app, {
-        upload: true
+        upload: true,
+        limits: {
+            fieldSize: 1024 * 1024 * 1024,
+
+        }
     });
 
     ////////////////////////////////////////////////////
