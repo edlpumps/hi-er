@@ -84,6 +84,9 @@ router.get('/', aw(async (req, res) => {
         }
     };
 
+    console.log("Contacting ESTORE")
+    console.log(JSON.stringify(options, null, 2));
+
 
 
     function callback(error, response, body) {

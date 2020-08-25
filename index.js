@@ -20,7 +20,7 @@ const units = require('./utils/uom');
 const MongoStore = require('connect-mongo')(session);
 const passport = require('passport');
 const Strategy = require('passport-local').Strategy;
-
+const lcc = require('./lcc');
 const port = process.env.PORT || 3003;
 const data_connection_str = process.env.MONGO_CONNECTION_DATA;
 
@@ -126,6 +126,12 @@ var configure = function () {
     app.use("/ratings", ratings);
     app.use("/circulator/ratings", circulator_ratings);
 
+    root.get("/lcc", async (req, res) => {
+        const csv = await lcc.generate();
+
+        res.header('Content-Type', 'text/csv');
+        return res.send(csv);
+    });
     root.post('/login',
         passport.authenticate('local', {
             failureRedirect: '/portal'
