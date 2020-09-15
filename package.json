@@ -47,6 +47,7 @@
     "momentjs": "2.0.0",
     "mongoose": "^4.12.2",
     "multer": "1.2.0",
+    "node-cache": "^5.1.2",
     "node-schedule": "^1.2.5",
     "node-schedule-tz": "^1.2.1-4",
     "nodemailer": "2.7.0",

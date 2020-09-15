@@ -23,7 +23,8 @@ const Strategy = require('passport-local').Strategy;
 const lcc = require('./lcc');
 const port = process.env.PORT || 3003;
 const data_connection_str = process.env.MONGO_CONNECTION_DATA;
-
+const NodeCache = require("node-cache");
+const cache = new NodeCache({ stdTTL: 60 * 60 * 24, checkperiod: 600 });
 
 let session_store = null;
 let mainlog = bunyan.createLogger({
@@ -127,7 +128,14 @@ var configure = function () {
     app.use("/circulator/ratings", circulator_ratings);
 
     root.get("/lcc", async (req, res) => {
-        const csv = await lcc.generate();
+        let csv = cache.get("lcc")
+        if (!csv) {
+            console.log("LCC request rebuild")
+            csv = await lcc.generate();
+            cache.set("lcc", csv);
+        } else {
+            console.log("LCC cached");
+        }
 
         res.header('Content-Type', 'text/csv');
         return res.send(csv);
@@ -212,9 +220,9 @@ var conn = mongoose.connect(data_connection_str, {
 // Authentication
 ////////////////////////////////////////////////////
 passport.use(new Strategy({
-        usernameField: 'email',
-        passReqToCallback: true
-    },
+    usernameField: 'email',
+    passReqToCallback: true
+},
     function (req, email, password, done) {
         var regex = new RegExp("^" + email + "$", "i");
 
