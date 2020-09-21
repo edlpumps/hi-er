@@ -402,7 +402,7 @@ const push_emails = async function (interval, override) {
 
         let recips = [];
         if (override !== undefined) {
-            recops = [override]
+            recips = [override]
         } else {
             for (const subscriber of subs) {
                 recips = recips.concat(subscriber.recipients);
