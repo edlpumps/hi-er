@@ -211,7 +211,7 @@ var conn = mongoose.connect(data_connection_str, {
         startup();
 
         //console.log("STOP PUSHING EMAILS ON STARTUP")
-        //push_emails(1);
+        push_emails(1, "scott@freesconsulting.com");
     }
 });
 
@@ -377,7 +377,7 @@ const get_pump_export_excel = async () => {
     return buffer
 }
 
-const push_emails = async function (interval) {
+const push_emails = async function (interval, override) {
     try {
         console.log("Building circulator excel file");
         const circulatorExport = require('./circulator-export');
@@ -401,8 +401,12 @@ const push_emails = async function (interval) {
 
 
         let recips = [];
-        for (const subscriber of subs) {
-            recips = recips.concat(subscriber.recipients);
+        if (override !== undefined) {
+            recops = [override]
+        } else {
+            for (const subscriber of subs) {
+                recips = recips.concat(subscriber.recipients);
+            }
         }
 
         mailer.sendListings(recips, pumps_excel, circulator_excel, certificates_excel);
