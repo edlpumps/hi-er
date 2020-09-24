@@ -5,6 +5,7 @@ const common = require('./common');
 const mailer = require('../utils/mailer');
 const aw = require('./async_wrap');
 const svg_builder = require('../utils/label_builder.js');
+const exporter = require('../exporter');
 module.exports = router;
 
 // All resources served from here are restricted to administrators.
@@ -23,6 +24,8 @@ router.get('/', function (req, res) {
         user: req.user
     });
 });
+
+
 
 router.get('/labels', function (req, res) {
     req.Labels.find({}, function (err, labels) {
@@ -413,14 +416,14 @@ router.post("/api/labels/", function (req, res) {
 router.get("/api/users", function (req, res) {
     req.log.debug("Returning user listings");
     req.Users.find({
-            admin: true
-        }, {
-            name: true,
-            email: true,
-            _id: true,
-            needsActivation: true,
-            activationKey: true
-        },
+        admin: true
+    }, {
+        name: true,
+        email: true,
+        _id: true,
+        needsActivation: true,
+        activationKey: true
+    },
         function (err, users) {
             if (err) {
                 res.status(500).send({
@@ -485,13 +488,13 @@ router.post("/api/labs/add", function (req, res) {
 router.post("/api/labs/save", function (req, res) {
     var lab = req.body.lab;
     req.Labs.update({
-            code: lab.code
-        }, {
-            $set: {
-                name: lab.name,
-                address: lab.address
-            }
-        },
+        code: lab.code
+    }, {
+        $set: {
+            name: lab.name,
+            address: lab.address
+        }
+    },
         function (err, labs) {
             if (err) {
                 res.status(500).send({
@@ -538,3 +541,24 @@ router.post("/api/labs/delete/:id", function (req, res) {
 
 router.post("/api/users/delete/:id", common.deleteUser);
 router.post("/api/users/add", common.addUser)
+
+
+
+router.get("/export/pumps", async (req, res) => {
+    const { pumps, circulators, certificates } = await exporter.create();
+    res.setHeader('Content-disposition', 'attachment; filename=pumps.xlsx');
+    res.header('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    console.log(pumps)
+    return res.send(pumps);
+})
+router.get("/export/circulators", async (req, res) => {
+    const { pumps, circulators, certificates } = await exporter.create();
+    res.setHeader('Content-disposition', 'attachment; filename=pumps.xlsx');
+    res.header('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    return res.send(circulators);
+})
+router.get("/export/certificates", async (req, res) => {
+    const { pumps_excel, circulator_excel, certificates_excel } = await exporter.create();
+    res.header('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    return res.send(certificates_excel);
+})

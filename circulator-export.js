@@ -1,6 +1,6 @@
 const schemas = require("./schemas");
 const toxl = require('jsonexcel');
-
+const moment = require('moment');
 
 const has4 = (control) => {
     switch (control) {
@@ -82,6 +82,15 @@ const prep_for_export = (listings) => {
             fill_data(listing, row, 'most');
         }
 
+        row.date = moment(listing.date).format("DD MMM YYYY")
+        if (listing.revisions.length > 0) {
+            row.date = moment(listing.revisions[0].date).format("DD MM YYYY");
+        }
+        if (row.revisions && row.revisions.length > 1) {
+            row.revision = moment(listing.revisions[listing.revisions.length - 1].date).format("DD MM YYYY");
+        } else {
+            row.revision = "-";
+        }
 
         rows.push(row);
     }
@@ -136,6 +145,9 @@ const toXLXS = (rows) => {
 
         'most_pei',
         'most_energy_rating',
+
+        'date',
+        'revision'
     ];
 
     let sorter = function (a, b) {
@@ -192,6 +204,9 @@ const toXLXS = (rows) => {
         'least_energy_rating': "Rated (Least consumptive) HI Energy Rating",
 
         'most_energy_rating': "Most consumptive HI Energy Rating",
+
+        date: 'Date listed',
+        revision: 'Date updated'
     };
     console.log("MAKING CIRCULATOR EXCEL");
     console.log(JSON.stringify(rows, null, 2));

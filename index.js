@@ -13,7 +13,7 @@ const cookieParser = require('cookie-parser');
 const flash = require('express-flash')
 const helmet = require('helmet');
 const bunyan = require('bunyan');
-const moment = require('moment');
+
 const mongoose = require("mongoose");
 const schemas = require("./schemas");
 const units = require('./utils/uom');
@@ -25,6 +25,7 @@ const port = process.env.PORT || 3003;
 const data_connection_str = process.env.MONGO_CONNECTION_DATA;
 const NodeCache = require("node-cache");
 const cache = new NodeCache({ stdTTL: 60 * 60 * 24, checkperiod: 600 });
+const exporter = require('./exporter');
 
 let session_store = null;
 let mainlog = bunyan.createLogger({
@@ -211,7 +212,8 @@ var conn = mongoose.connect(data_connection_str, {
         startup();
 
         //console.log("STOP PUSHING EMAILS ON STARTUP")
-        push_emails(1, "scott@freesconsulting.com");
+        //push_emails(1, "scott@freesconsulting.com");
+
     }
 });
 
@@ -283,117 +285,13 @@ var push_twice_a_month = async function () {
 }
 
 
-const get_pump_export_excel = async () => {
-    const params = require('./search').params;
-    const operators = params();
-    const headers = [
-        'rating_id',
-        'participant',
-        'basic_model',
-        'individual_model',
-        'brand',
-        'lab',
-        'configuration',
-        'doe',
-        'diameter',
-        'speed',
-        'stages',
-        'flow_bep',
-        'head_bep',
-        'driver_input_power_bep',
-        'control_power_input_bep',
-        'control_power_input_bep',
-        'motor_power_rated',
-        'pei',
-        'energy_rating'
-    ]
-    let filter = function (key) {
-        return headers.indexOf(key) >= 0;
-    }
-    let sorter = function (a, b) {
-        let i = headers.indexOf(a.value);
-        let j = headers.indexOf(b.value);
-        return i - j;
-    }
-    let headings = {
-        rating_id: "Rating ID",
-        participant: "Participant",
-        configuration: "Configuration",
-        basic_model: "Basic model designation",
-        individual_model: "Manufacturer's model designation",
-        brand: 'Brand',
-        diameter: 'Full impeller diameter',
-        speed: 'Nominal Speed',
-        lab: 'HI Approved laboratory',
-        stages: 'Stages',
-        doe: 'DOE product category',
-        energy_rating: 'Pump Energy Rating',
-        flow_bep: 'BEP Flow rate',
-        head_bep: 'BEP Head',
-        driver_input_power_bep: 'BEP Driver input power',
-        control_power_input_bep: 'BEP Control input power',
-        motor_power_rated: 'Rated motor power',
-        pei: 'Pump Energy Index',
-        date: 'Date listed'
-    }
-    const docs = await app.locals.db.Pumps.aggregate(operators).exec();
-    console.log("Aggregation (subscribers)");
-    console.log(docs.length + ' pumps to export and email');
 
-    for (const pump of docs) {
-        pump.flow_bep = pump.load120 ? pump.flow.bep100 : pump.flow.bep110;
-        pump.head_bep = pump.load120 ? pump.head.bep100 : pump.head.bep110;
-        if (pump.driver_input_power) {
-            pump.driver_input_power_bep =
-                pump.load120 ? pump.driver_input_power.bep100 : pump.driver_input_power.bep110;
-            if (pump.driver_input_power_bep) {
-                pump.driver_input_power_bep = pump.driver_input_power_bep.toFixed(2);
-            }
-        }
-        if (pump.control_power_input) {
-            pump.control_power_input_bep = pump.control_power_input.bep100;
-            if (pump.control_power_input_bep) {
-                pump.control_power_input_bep = pump.control_power_input_bep.toFixed(2);
-            }
-        }
-        pump.pei = pump.pei.toFixed(2);
-        pump.motor_power_rated = pump.motor_power_rated ? pump.motor_power_rated : pump.motor_power_rated_results
-        pump.date = moment(pump.date).format("DD MMM YYYY")
-        pump.lab = pump.laboratory.name + " - " + pump.laboratory.code;
 
-        pump.diameter = pump.diameter.toFixed(3);
-        pump.flow_bep = pump.flow_bep.toFixed(2);
-        pump.head_bep = pump.head_bep.toFixed(2);
-        pump.motor_power_rated = pump.motor_power_rated.toFixed(2);
 
-    };
-    console.log("Create excel export sheet");
-    const toxl = require('jsonexcel');
-    const buffer = toxl(docs, {
-        sort: sorter,
-        headings: headings,
-        filter: filter
-    });
-    return buffer
-}
 
 const push_emails = async function (interval, override) {
     try {
-        console.log("Building circulator excel file");
-        const circulatorExport = require('./circulator-export');
-        const circulators = await circulatorExport.getCirculators();
-        const circulator_rows = circulatorExport.getExportable(circulators);
-        const circulator_excel = circulatorExport.toXLXS(circulator_rows);
-        console.log(JSON.stringify(circulator_rows, null, 2));
-
-        console.log("Building c&i excel file");
-        const pumps_excel = await get_pump_export_excel();
-
-        console.log("Building certificate excel file");
-        const certificateExport = require('./certificate-export');
-        const certificates = await certificateExport.getCertificates();
-        const certificates_rows = certificateExport.getExportable(certificates);
-        const certificates_excel = certificateExport.toXLXS(certificates_rows);
+        const { pumps, circulators, certificates } = await exporter.create();
 
         const subs = await app.locals.db.Subscribers.find({
             interval_days: interval
@@ -409,7 +307,7 @@ const push_emails = async function (interval, override) {
             }
         }
 
-        mailer.sendListings(recips, pumps_excel, circulator_excel, certificates_excel);
+        mailer.sendListings(recips, pumps, circulators, certificates);
     } catch (ex) {
         console.error(ex);
     }
