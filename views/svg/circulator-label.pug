@@ -20,6 +20,8 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
     -var tick_scale = 2.25;
     -var er_rated = min_er + er/max * (max_er-min_er);
     -var er_most_consumptive = min_er + er_most/max * (max_er-min_er);
+    -var m_anchor = Math.abs(er-er_most) < 25 ? "end" : "middle";
+    -var l_anchor = Math.abs(er-er_most) < 25 ? "start" : "middle";
     rect(x="0", y="0", rx="0", ry="0", width="620", height="720", style="fill:#FFFFFF;;stroke: #222222;;stroke-width:1;")
     image(x="25", y="15", height="100px", width="565px", xlink:href=logo)
     //-line(x1="21", y1="25", x2="21", y2="310", stroke-width="2", stroke="#000000")
@@ -56,14 +58,15 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
     text(x=min_er, y=er_line+er_tick+lh, style="font-family: 'Arimo', Helvetica; ", font-size="16", text-anchor="start", fill="black") Most Consumptive
     text(x=max_er, y=er_line+er_tick+lh, style="font-family: 'Arimo', Helvetica; ", font-size="16", text-anchor="end", fill="black") Least Consumptive
     text(x=middle, y=er_line+er_tick+lh, style="font-family: 'Arimo', Helvetica; ", font-size="16", text-anchor="middle", fill="black") RANGE
-    text(x=er_rated, y=er_line- tick_scale*1.2*lh,style="font-family: 'Arimo', Helvetica; font-weight:bold", font-size="40", text-anchor="middle", fill="black") #{er}
+    
+    text(x=er_rated, y=er_line- tick_scale*1.2*lh,style="font-family: 'Arimo', Helvetica; font-weight:bold", font-size="40", text-anchor=l_anchor, fill="black") #{er}
     - var hw = 10;
     - var mps = `${er_rated}, ${(er_line- er_tick)} ${er_rated-hw}, ${er_line-tick_scale*lh} ${er_rated+hw}, ${er_line-tick_scale*lh}`;    
     polygon(fill="#000000", stroke="#000000", stroke-width="1", points=mps)
     if dual
         - var mps = `${er_most_consumptive}, ${(er_line- er_tick)} ${er_most_consumptive-hw}, ${er_line-tick_scale*lh} ${er_most_consumptive+hw}, ${er_line-tick_scale*lh}`;    
         polygon(fill="#000000", stroke="#000000", stroke-width="1", points=mps)
-        text(x=er_most_consumptive, y=er_line- tick_scale*1.2*lh,style="font-family: 'Arimo', Helvetica; font-weight:bold", font-size="40", text-anchor="middle", fill="black") #{er_most}
+        text(x=er_most_consumptive, y=er_line- tick_scale*1.2*lh,style="font-family: 'Arimo', Helvetica; font-weight:bold", font-size="40", text-anchor=m_anchor, fill="black") #{er_most}
         rect(x=Math.min(er_rated, er_most_consumptive), y=er_line-er_tick+3, rx="0", ry="0", width=Math.abs(er_rated-er_most_consumptive), height=er_tick-3, style="fill:#000000;stroke: #000000;stroke-width:1;")
     
     

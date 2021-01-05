@@ -166,7 +166,7 @@ const toXLXS = (rows) => {
         'type': "Pump Type",
         'laboratory': "HI Laboratory Number",
 
-        'control_methods_no-speed-control': "No Speed Control",
+        'control_methods_no-speed-control': "Full Speed",
         'control_methods_pressure-control': "Pressure Control",
         'control_methods_temperature-control': "Temperature Control ",
         'control_methods_manual-control': "Manual Speed Control",

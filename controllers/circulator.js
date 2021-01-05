@@ -8,7 +8,7 @@ const fs = require('fs');
 
 const NO_SPEED_CONTROL = {
     label: 'no-speed-control',
-    input: 'No Speed Control',
+    input: 'Full Speed',
     display: "Full Speed",
     column: 'H',
     number: 1
@@ -37,7 +37,7 @@ const EXTERNAL_CONTROL = {
 const EXTERNAL_AND_OTHER_CONTROL = {
     label: 'external-other-control',
     input: 'External Input Signal and Other Controls',
-    display: "Adaptive Pressure",
+    display: "External Input Signal and Other Controls",
     column: 'L',
     number: 5
 };

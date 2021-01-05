@@ -1,6 +1,6 @@
 mixin control_method(cm)
 	if (cm == 'no-speed-control')
-		span No Speed Control
+		span Full Speed
 	else if (cm == 'pressure-control')
 		span Pressure Control
 	else if (cm == 'temperature-control')
@@ -21,7 +21,7 @@ mixin vue_circulator_components()
 				.col.col-xs-7.col-sm-4
 					select.form-control(v-model='method.control_method', :readonly='readonly')
 						option(value='no-speed-control')
-							span No Speed Control
+							span Full Speed
 						option(value='pressure-control')
 							span Pressure Control
 						option(value='temperature-control')
@@ -315,7 +315,7 @@ mixin vue_circulator_components()
 			computed: {
 				text() {
 					if (this.method == 'no-speed-control')
-						return "No Speed Control";
+						return "Full Speed";
 					else if (this.method == 'pressure-control')
 						return "Pressure Control";
 					else if (this.method == 'temperature-control')

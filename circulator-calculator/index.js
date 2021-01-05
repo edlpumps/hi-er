@@ -62,7 +62,7 @@ const check_pei = (input, calculated) => {
     }
     return pei_validity;
 }
-const calculate_per_ref = (_type, /*_power, */ _head, _flow /*, _pei*/ ) => {
+const calculate_per_ref = (_type, /*_power, */ _head, _flow /*, _pei*/) => {
     ///////////////////////////////////////////////////////////////////
     // Input Checks
     ///////////////////////////////////////////////////////////////////
@@ -284,7 +284,8 @@ const commonControl = (pump) => {
 }
 
 const externalInput = (pump) => {
-    return calc_with_controls(pump, [0.7, 0.3])
+    // Change requested 1/4/2021 - swap 0.7/0.3
+    return calc_with_controls(pump, [0.3, 0.7])
 }
 
 const manualControl = (pump) => {
