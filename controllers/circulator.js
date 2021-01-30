@@ -43,8 +43,8 @@ const EXTERNAL_AND_OTHER_CONTROL = {
 };
 const MANUAL_CONTROL = {
     label: 'manual-control',
-    input: 'Manual Speed Controls',
-    display: "Manual Speed",
+    input: 'Manual Speed Control',
+    display: "Manual Speed Control",
     column: 'M',
     number: 6
 };
@@ -114,6 +114,7 @@ const resolve_control_method = (sheet, column, row) => {
     if (!text) return;
     for (const control_method of control_methods) {
         if (control_method.input.toUpperCase() == text.toUpperCase()) {
+            console.log(control_method)
             return control_method;
         }
     }
