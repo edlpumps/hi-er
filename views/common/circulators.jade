@@ -87,7 +87,7 @@ mixin vue_circulator_components()
 						table.table
 							tbody
 								tr
-									td: label PEI
+									td: label CEI
 									td: pei(:value='pump.least.pei')
 								tr
 									td: label ER
@@ -117,7 +117,7 @@ mixin vue_circulator_components()
 						table.table
 							tbody
 								tr
-									td: label PEI
+									td: label CEI
 									td: pei(:value='pump.most.pei')
 								tr
 									td: label ER
@@ -211,7 +211,7 @@ mixin vue_circulator_components()
 	script.
 		Vue.component('pei-label', {
 		  props: ['value'],
-		  template: '<p><span>Pump Energy Index</span><br/><span class="pei_display"><pei :value="value"/></span></p>'
+		  template: '<p><span>Circulator Energy Index</span><br/><span class="pei_display"><pei :value="value"/></span></p>'
 		});
 		Vue.component('er-label', {
 		  props: ['value'],

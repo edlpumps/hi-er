@@ -39,6 +39,9 @@ const fill_control_method_bools = (listing, row) => {
 
 const fill_data = (listing, row, prefix) => {
     row[`${prefix}_control_method`] = listing[prefix].control_method;
+    if (row[`${prefix}_control_method`] == "no-speed-control") {
+        row[`${prefix}_control_method`] = "full-speed"
+    }
     row[`${prefix}_pressure_curve`] = listing[prefix].pressure_curve;
     row[`${prefix}_pei`] = listing[prefix].pei ? listing[prefix].pei.toFixed(2) : "";
     row[`${prefix}_energy_rating`] = listing[prefix].energy_rating ? listing[prefix].energy_rating.toFixed(0) : "";
@@ -174,7 +177,7 @@ const toXLXS = (rows) => {
         'control_methods_external-other-control': "External Input Speed and Other Controls",
 
 
-        'least_control_method': "Rated Consumptive Control Method",
+        'least_control_method': "Least Consumptive Control Method",
         'least_pressure_curve': "Rated Pressure Curve",
 
         'least_input_power_25': "Rated load point driver or control input power at 25% of BEP",
@@ -199,11 +202,11 @@ const toXLXS = (rows) => {
         'head_100': "Load point head at 100% of BEP at max speed",
         'flow': "Load point flow rate at 100% of BEP",
 
-        'least_pei': "Least Consumptive Pump Energy Index on nameplate",
-        'most_pei': "Least Consumptive Pump Energy Index on nameplate",
-        'least_energy_rating': "Rated (Least consumptive) HI Energy Rating",
+        'least_pei': "Least Consumptive Circulator Energy Index",
+        'most_pei': "Most Consumptive Circulator Energy Index",
+        'least_energy_rating': "Least Consumptive Energy Rating",
 
-        'most_energy_rating': "Most consumptive HI Energy Rating",
+        'most_energy_rating': "Most Consumptive Energy Rating",
 
         date: 'Date listed',
         revision: 'Date updated'
