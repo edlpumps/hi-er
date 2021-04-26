@@ -30,10 +30,10 @@ var build_label_params = function (pump, label) {
     var pm = pump.configuration == "bare" ? "- Bare Pump" : "- Motor";
     var config =
         pump.configuration == "bare" || pump.configuration == "pump_motor" ?
-        "" :
-        (pump.configuration == "pump_motor_cc" ?
-            "- Continuous Controls" :
-            "- Non-Continuous Controls");
+            "" :
+            (pump.configuration == "pump_motor_cc" ?
+                "- Continuous Controls" :
+                "- Non-Continuous Controls");
 
     var load = pump.configuration == "bare" || pump.configuration == "pump_motor" ? "CONSTANT LOAD" : "VARIABLE LOAD";
     var load_abbr = pump.configuration == "bare" || pump.configuration == "pump_motor" ? "CL" : "VL";
@@ -158,7 +158,7 @@ const calc_circ_vals = function (pump) {
     else if (nominal_hp < 3.0 / 4) hp = 2;
     else hp = 3;
 
-    const scales = [335.4, 189.6, 158.6, 142.3];
+    const scales = [200, 190, 130, 145];
     const maxScale = scales[hp];
     return {
         waip,

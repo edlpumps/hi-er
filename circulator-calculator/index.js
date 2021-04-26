@@ -9,7 +9,7 @@ const PT_100 = 3;
 const VALID = 'VALID';
 const RETEST = 'RE-TEST';
 const CHECKSIGN = 'CHECK SIGN';
-const CONSERVATIVE_PEI = 'CONSERVATIVE PEI';
+const CONSERVATIVE_PEI = 'CONSERVATIVE CEI';
 const ERROR = 'ERROR';
 
 const CP1 = 'CP1';
