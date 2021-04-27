@@ -20,8 +20,8 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
     -var tick_scale = 2.25;
     -var er_rated = min_er + er/max * (max_er-min_er);
     -var er_most_consumptive = min_er + er_most/max * (max_er-min_er);
-    -var m_anchor = Math.abs(er-er_most) < 25 ? "end" : "middle";
-    -var l_anchor = Math.abs(er-er_most) < 25 ? "start" : "middle";
+    -var m_anchor = Math.abs(er-er_most) < 15 ? "end" : "middle";
+    -var l_anchor = Math.abs(er-er_most) < 15 ? "start" : "middle";
     rect(x="0", y="0", rx="0", ry="0", width="620", height="720", style="fill:#FFFFFF;;stroke: #222222;;stroke-width:1;")
     image(x="25", y="15", height="100px", width="565px", xlink:href=logo)
     //-line(x1="21", y1="25", x2="21", y2="310", stroke-width="2", stroke="#000000")

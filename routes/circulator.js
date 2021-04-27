@@ -362,7 +362,7 @@ router.get('/:id/png/sm-label', aw(async (req, res) => {
     const svg = svg_builder.make_circulator_label_small(req, pump.participant, pump);
     const png_buffer = await svg2png(svg, {});
     if (req.query.download) {
-        res.setHeader('Content-disposition', 'attachment; filename=Energy Rating QR - ' + pump.rating_id + '.png');
+        res.setHeader('Content-disposition', 'attachment; filename=Energy Rating Label (sm)  - ' + pump.rating_id + '.png');
     }
     res.setHeader('Content-Type', 'image/png');
     res.setHeader('Content-Length', png_buffer.length);
@@ -372,7 +372,7 @@ router.get('/:id/svg/qr', aw(async (req, res) => {
     const pump = await req.Circulators.findById(req.params.id).populate('participant').exec();
     const svg = svg_builder.make_circulator_qr(req, pump.participant, pump);
     if (req.query.download) {
-        res.setHeader('Content-disposition', 'attachment; filename=Energy Rating Label - ' + pump.rating_id + '.svg');
+        res.setHeader('Content-disposition', 'attachment; filename=Energy Rating QR - ' + pump.rating_id + '.svg');
     }
     res.setHeader('Content-Type', 'image/svg+xml');
     res.send(svg)
