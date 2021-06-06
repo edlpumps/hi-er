@@ -44,7 +44,7 @@ const EXTERNAL_AND_OTHER_CONTROL = {
 const MANUAL_CONTROL = {
     label: 'manual-control',
     input: 'Manual Speed Control',
-    display: "Manual Speed Control",
+    display: "Manual Speed",
     column: 'M',
     number: 6
 };

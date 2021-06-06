@@ -115,7 +115,8 @@ var build_circulator_params = function (pump, waip, max) {
             if (pump.least.control_method == cm.label) {
                 c += " (Rated)";
             }
-            methods.push(c);
+            if (cm.display !== "External Input Signal and Other Controls")
+                methods.push(c);
         }
     }
     return {
