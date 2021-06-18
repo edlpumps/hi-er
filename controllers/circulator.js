@@ -37,7 +37,7 @@ const EXTERNAL_CONTROL = {
 const EXTERNAL_AND_OTHER_CONTROL = {
     label: 'external-other-control',
     input: 'External Input Signal and Other Controls',
-    display: "External Input Signal and Other Controls",
+    display: "External Input Signal",
     column: 'L',
     number: 5
 };

@@ -106,7 +106,6 @@ router.get("/:id", aw(async (req, res) => {
 }));
 
 router.get('/:id/svg/label', aw(async (req, res) => {
-    console.log("LABLE");
     const pump = await req.Circulators.findById(req.params.id).populate('participant').exec();
     const svg = svg_builder.make_circulator_label(req, pump.participant, pump);
     if (req.query.download) {
