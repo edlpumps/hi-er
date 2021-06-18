@@ -92,10 +92,15 @@ router.get("/:id", aw(async (req, res) => {
     if (!pump || !pump.participant.active ||
         pump.pending || !pump.active_admin ||
         pump.participant.subscription.circulator.status != 'Active') {
-
+        let error_code;
+        if (!pump) error_code = "1";
+        else if (!pump.participant.active) error_code = "2";
+        else if (pump.pending) error_code = "3";
+        else if (!pump.active_admin) error_code = "4";
+        else if (pump.participant.subscription.circulator.status != 'Active') error_code = "5-" + pump.participant.subscription.circulator.status;
         req.flash("errorTitle", "Not Available");
         req.flash("errorMessage",
-            "No pump corresponding to this ID is listed in the Hydraulic Institute Energy Ratings Program");
+            `No pump corresponding to this ID is listed in the Hydraulic Institute Energy Ratings Program. [${error_code}]`);
         res.redirect("/error");
         return;
     }
