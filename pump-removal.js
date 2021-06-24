@@ -77,7 +77,7 @@ const perform_maintenance = async () => {
                     participant: p,
                     rating_id: pump
                 };
-                const result = await schemas.Pumps.remove(query);
+                const result = await schemas.Circulators.remove(query);
                 const succeeded = result && result.result.n === 1;
                 const message = succeeded ? "success" : "failed";
                 console.log(` - Remove pump with Rating ID = ${pump} ... ${message}`);

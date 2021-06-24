@@ -29,7 +29,7 @@ const TEMPERATURE_CONTROL = {
 };
 const EXTERNAL_CONTROL = {
     label: 'external-control',
-    input: 'External Input Signal Only Control',
+    input: 'External Input Signal Control Only',
     display: "External Input Signal",
     column: 'K',
     number: 4
