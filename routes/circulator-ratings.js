@@ -48,7 +48,8 @@ router.get('/', aw(async function (req, res) {
     }
     const filter = {
         $match: {
-            listed: true
+            listed: true,
+            pending: false
         }
     };
     const group = {
