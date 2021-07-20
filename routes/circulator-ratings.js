@@ -26,7 +26,7 @@ router.post('/', aw(async function (req, res) {
         q.brand = req.body.brand;
         valid = true;
     }
-    q, pending = { $ne: true };
+    q.pending = { $ne: true };
     if (!valid) {
         return res.json([]);
     }
