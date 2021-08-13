@@ -109,7 +109,9 @@ block content
 										button.btn.btn-primary(v-if='search_ready', type="button", @click='findPumps') Search for Rated Pumps
 					.panel.panel-default
 						.panel-heading
-							h1 Results 
+							h1 
+								span Results 
+								span(v-if='!searching') ({{pumps.length}})
 						.panel-body(v-if='searching')
 							p.text-center 
 								img(src='/images/loading-bar.gif')
