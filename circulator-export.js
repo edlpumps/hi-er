@@ -49,11 +49,11 @@ const fill_data = (listing, row, prefix) => {
         /*row[`${prefix}_input_power_25`] = listing[prefix].input_power[0] ? listing[prefix].input_power[0].toFixed(1) : "";
         row[`${prefix}_input_power_50`] = listing[prefix].input_power[1] ? listing[prefix].input_power[1].toFixed(1) : "";
         row[`${prefix}_input_power_75`] = listing[prefix].input_power[2] ? listing[prefix].input_power[2].toFixed(1) : "";*/
-        row[`${prefix}_input_power_100`] = listing[prefix].input_power[3] ? listing[prefix].input_power[3].toFixed(1) : "";
+        row[`${prefix}_input_power_100`] = listing[prefix].input_power[3] ? listing[prefix].input_power[3].toFixed(3) : "";
 
     } else {
-        row[`${prefix}_input_power_max`] = listing[prefix].input_power[0] ? listing[prefix].input_power[0].toFixed(1) : "";
-        row[`${prefix}_input_power_reduced`] = listing[prefix].input_power[1] ? listing[prefix].input_power[1].toFixed(1) : "";
+        row[`${prefix}_input_power_max`] = listing[prefix].input_power[0] ? listing[prefix].input_power[0].toFixed(3) : "";
+        row[`${prefix}_input_power_reduced`] = listing[prefix].input_power[1] ? listing[prefix].input_power[1].toFixed(3) : "";
     }
 }
 
