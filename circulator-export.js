@@ -42,13 +42,13 @@ const fill_data = (listing, row, prefix) => {
     if (row[`${prefix}_control_method`] == "no-speed-control") {
         row[`${prefix}_control_method`] = "full-speed"
     }
-    row[`${prefix}_pressure_curve`] = listing[prefix].pressure_curve;
+    //row[`${prefix}_pressure_curve`] = listing[prefix].pressure_curve;
     row[`${prefix}_pei`] = listing[prefix].pei ? listing[prefix].pei.toFixed(2) : "";
     row[`${prefix}_energy_rating`] = listing[prefix].energy_rating ? listing[prefix].energy_rating.toFixed(0) : "";
     if (has4(listing[prefix].control_method)) {
-        row[`${prefix}_input_power_25`] = listing[prefix].input_power[0] ? listing[prefix].input_power[0].toFixed(1) : "";
+        /*row[`${prefix}_input_power_25`] = listing[prefix].input_power[0] ? listing[prefix].input_power[0].toFixed(1) : "";
         row[`${prefix}_input_power_50`] = listing[prefix].input_power[1] ? listing[prefix].input_power[1].toFixed(1) : "";
-        row[`${prefix}_input_power_75`] = listing[prefix].input_power[2] ? listing[prefix].input_power[2].toFixed(1) : "";
+        row[`${prefix}_input_power_75`] = listing[prefix].input_power[2] ? listing[prefix].input_power[2].toFixed(1) : "";*/
         row[`${prefix}_input_power_100`] = listing[prefix].input_power[3] ? listing[prefix].input_power[3].toFixed(1) : "";
 
     } else {
@@ -73,9 +73,9 @@ const prep_for_export = (listings) => {
         }
 
         fill_control_method_bools(listing, row);
-        row.head_25 = listing.head[0].toFixed(2);
+        /*row.head_25 = listing.head[0].toFixed(2);
         row.head_50 = listing.head[1].toFixed(2);
-        row.head_75 = listing.head[2].toFixed(2);
+        row.head_75 = listing.head[2].toFixed(2);*/
         row.head_100 = listing.head[3].toFixed(2);
         row.flow = listing.flow.toFixed(2);
         if (listing.least) {
@@ -119,27 +119,27 @@ const toXLXS = (rows) => {
         'control_methods_manual-control',
 
         'least_control_method',
-        'least_pressure_curve',
+        /*'least_pressure_curve',*/
 
-        'least_input_power_25',
+        /*'least_input_power_25',
         'least_input_power_50',
-        'least_input_power_75',
+        'least_input_power_75',*/
         'least_input_power_100',
         'least_input_power_max',
         'least_input_power_reduced',
 
         'most_control_method',
-        'most_pressure_curve',
-        'most_input_power_25',
+        /*'most_pressure_curve',*/
+        /*'most_input_power_25',
         'most_input_power_50',
-        'most_input_power_75',
+        'most_input_power_75',*/
         'most_input_power_100',
         'most_input_power_max',
         'most_input_power_reduced',
 
-        'head_25',
+        /*'head_25',
         'head_50',
-        'head_75',
+        'head_75',*/
         'head_100',
         'flow',
 
@@ -178,35 +178,35 @@ const toXLXS = (rows) => {
 
 
         'least_control_method': "Least Consumptive Control Method",
-        'least_pressure_curve': "Rated Pressure Curve",
+        /*'least_pressure_curve': "Rated Pressure Curve",*/
 
-        'least_input_power_25': "Rated load point driver or control input power at 25% of BEP",
+        /*'least_input_power_25': "Rated load point driver or control input power at 25% of BEP",
         'least_input_power_50': "Rated load point driver or control input power at 50% of BEP",
-        'least_input_power_75': "Rated load point driver or control input power at 75% of BEP",
-        'least_input_power_100': "Rated load point driver or control input power at 100% of BEP",
+        'least_input_power_75': "Rated load point driver or control input power at 75% of BEP",*/
+        'least_input_power_100': "Rated BEP input power",
         'least_input_power_max': "Rated load point weighted average input power at maximum rotating speed",
         'least_input_power_reduced': "Rated load point weighted average input power at maximum rotating speed",
 
         'most_control_method': "Most Consumptive Control Method",
-        'most_pressure_curve': "Most Consumptive Pressure Curve",
-        'most_input_power_25': "Most Consumptive load point driver or control input power at 25% of BEP",
+        /*'most_pressure_curve': "Most Consumptive Pressure Curve",*/
+        /*'most_input_power_25': "Most Consumptive load point driver or control input power at 25% of BEP",
         'most_input_power_50': "Most Consumptive load point driver or control input power at 50% of BEP",
-        'most_input_power_75': "Most Consumptive load point driver or control input power at 75% of BEP",
-        'most_input_power_100': "Most Consumptive load point driver or control input power at 100% of BEP",
+        'most_input_power_75': "Most Consumptive load point driver or control input power at 75% of BEP",*/
+        'most_input_power_100': "Most Consumptive BEP input power",
         'most_input_power_max': "Most Consumptive load point weighted average input power at maximum rotating speed",
         'most_input_power_reduced': "Most Consumptive load point weighted average input power at maximum rotating speed",
 
-        'head_25': "Load point head at 25% of BEP at max speed ",
+        /*'head_25': "Load point head at 25% of BEP at max speed ",
         'head_50': "Load point head at 50% of BEP at max speed",
-        'head_75': "Load point head at 75% of BEP at max speed",
-        'head_100': "Load point head at 100% of BEP at max speed",
-        'flow': "Load point flow rate at 100% of BEP",
+        'head_75': "Load point head at 75% of BEP at max speed",*/
+        'head_100': "BEP head at max speed",
+        'flow': "BEP flow rate",
 
-        'least_pei': "Least Consumptive Circulator Energy Index",
-        'most_pei': "Most Consumptive Circulator Energy Index",
-        'least_energy_rating': "Least Consumptive Energy Rating",
+        'least_pei': "Least Consumptive CEI",
+        'most_pei': "Most Consumptive Circulator CEI",
+        'least_energy_rating': "Least Consumptive ER",
 
-        'most_energy_rating': "Most Consumptive Energy Rating",
+        'most_energy_rating': "Most Consumptive ER",
 
         date: 'Date listed',
         revision: 'Date updated'
