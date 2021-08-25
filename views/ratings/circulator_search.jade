@@ -15,15 +15,46 @@ block script
 						search: {
 							rating_id: null,
 							basic_model: null,
-							participant: null
+							participant: null,
+							brand: undefined
 						},
 						participants: [],
-						searching: false
+						searching: false,
+						restoring: false
 					},
 
 					mounted: function () {
 						this.units = $('#vue').data('units');
 						this.participants = $('#vue').data('participants');
+
+						const saved = localStorage.getItem('circulator_search');
+						console.log(saved);
+						console.log(JSON.stringify(this.participants, null, 2))
+						if (saved) {
+							this.restoring = true;
+							const _saved = JSON.parse(saved);
+							if (_saved.rating_id) this.search.rating_id = _saved.rating_id;
+							if (_saved.basic_model) this.search.basic_model = _saved.basic_model;
+							if (_saved.participant) {
+								console.log("Restoring participant");
+								const index = this.participants.map(p => p._id).indexOf(_saved.participant);
+								if (index >= 0) {
+									console.log("Setting to index " + index)
+									this.search.participant = this.participants[index];
+								}
+								else {
+									console.log("No participant in list")
+								}
+							}
+							if (this.search.participant && _saved.brand) {
+								this.search.brand = _saved.brand;
+							}
+
+							console.log(this.search);
+							if (this.search_ready) {
+								this.findPumps();
+							}
+						}
 					},
 
 					computed: {
@@ -33,6 +64,10 @@ block script
 					},         
 					watch: {
 						'search.participant': function() {
+							if ( this.restoring ) {
+								this.restoring = false;
+								return;
+							}
 							this.search.brand = undefined;
 							console.log("brand cleared");
 						}
@@ -47,6 +82,7 @@ block script
 								participant: this.search.participant ? this.search.participant._id : undefined,
 								brand: this.search.brand
 							}
+							localStorage.setItem('circulator_search', JSON.stringify(search));
 							const v = this;
 							$.ajax({
 								method: 'post',
@@ -96,7 +132,7 @@ block content
 									.col.col-sm-6
 										select.form-control(v-model="search.participant")
 											option(value="")
-												option(v-for='participant in participants', :value='participant') {{participant.name}}
+											option(v-for='participant in participants', :value='participant') {{participant.name}}
 							.form-group(v-if="search.participant && search.participant.brands && search.participant.brands.length")
 									label.col-sm-3.control-label Brand
 									.col.col-sm-6
