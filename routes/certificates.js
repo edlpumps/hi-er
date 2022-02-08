@@ -238,7 +238,6 @@ router.get('/cart/delete/:number', aw(async (req, res) => {
 }))
 
 router.get("/cart", aw(async (req, res) => {
-
     res.render("ratings/certificates/cart", {
         cart: req.session.certificate_cart
     });

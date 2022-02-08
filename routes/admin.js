@@ -61,7 +61,16 @@ router.get('/participant/:id', aw(async (req, res) => {
         return;
     }
     req.log.debug("Lookup of participant succeeded - " + participant.name);
+    const users = await req.Users.find({
+        participant: req.params.id
+    }).exec();
+    res.render("admin/a_participant", {
+        user: req.user,
+        participant: participant,
+        users: users
+    });
 
+    /*
     const response_handler = async () => {
         const users = await req.Users.find({
             participant: req.params.id
@@ -105,7 +114,7 @@ router.get('/participant/:id', aw(async (req, res) => {
         response_handler();
     }
     request(options, callback);
-
+    */
 
 }));
 
@@ -306,6 +315,24 @@ router.post("/participant/:id", function (req, res) {
             } else {
                 participant.active = true;
             }
+            console.log(req.body);
+            if (!req.body || !req.body.participant || !req.body.participant.status) {
+                participant.subscription.status = "No Account";
+            } else {
+                participant.subscription.status = "Active";
+            }
+
+            if (!req.body || !req.body.participant || req.body.participant.pumps) {
+                participant.subscription.pumps = req.body.participant.pumps;
+            }
+
+            if (!req.body || !req.body.participant || !req.body.participant.circ_status) {
+                participant.subscription.circulator.status = "No Account";
+            } else {
+                participant.subscription.circulator.status = "Active";
+            }
+
+            console.log(JSON.stringify(participant.subscription, null, 2))
             participant.save(function (err, participant) {
                 res.redirect("/admin/participants");
             })

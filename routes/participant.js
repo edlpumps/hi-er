@@ -54,6 +54,13 @@ router.get('/', aw(async (req, res) => {
         // listed: true
     }).exec()
 
+    res.render("participant/p_home", {
+        user: req.user,
+        participant: req.participant,
+        listed: listed
+    });
+    console.log("Skipped E-store consultation");
+    /*
     const response_handler = () => {
         res.render("participant/p_home", {
             user: req.user,
@@ -121,6 +128,7 @@ router.get('/', aw(async (req, res) => {
     }
 
     request(options, callback);
+    */
 
 }));
 
@@ -513,7 +521,7 @@ router.post("/pumps/upload", get_labels, aw(async (req, res) => {
             pump.energy_savings = pump.results.energy_savings;
             // Change requested by HI - 12/21/2018.
             // Instead of using pei_baseline, always use 1.
-            pump.pei_baseline = 1 /*pump.results.pei_baseline*/ ;
+            pump.pei_baseline = 1 /*pump.results.pei_baseline*/;
             delete pump.results.pump;
 
             pump.laboratory = find_lab(pump.laboratory, labs);
@@ -592,14 +600,14 @@ router.get('/pumps/:id', aw(async (req, res) => {
     var load = pump.configuration == "bare" || pump.configuration == "pump_motor" ? "CL" : "VL";
 
     const label = await req.Labels.findOne().and([{
-            speed: pump.speed
-        },
-        {
-            doe: pump.doe
-        },
-        {
-            load: load
-        }
+        speed: pump.speed
+    },
+    {
+        doe: pump.doe
+    },
+    {
+        load: load
+    }
     ]).exec();
     var qr_svg = svg_builder.make_qr(req, req.participant, pump, label);
     var label_svg = svg_builder.make_label(req, req.participant, pump, label);
@@ -775,8 +783,8 @@ const model_check = async (req, pump, participant, additional_pumps) => {
     if (additional_pumps) {
         inds += additional_pumps.filter(
             p => p.individual_model == pump.individual_model &&
-            p.listed &&
-            p.rating_id != pump.rating_id).length;
+                p.listed &&
+                p.rating_id != pump.rating_id).length;
     }
 
     if (inds > 0) {
@@ -802,9 +810,9 @@ const model_check = async (req, pump, participant, additional_pumps) => {
     if (additional_pumps) {
         ers += additional_pumps.filter(
             p => p.basic_model == pump.basic_model &&
-            p.listed &&
-            p.energy_rating != pump.energy_rating &&
-            p.rating_id != pump.rating_id).length;
+                p.listed &&
+                p.energy_rating != pump.energy_rating &&
+                p.rating_id != pump.rating_id).length;
     }
 
     if (ers > 0) {
@@ -954,17 +962,17 @@ router.get("/api/active_labs", function (req, res) {
 router.get("/api/users", function (req, res) {
     req.log.debug("Returning user listings for participating organization");
     req.Users.find({
-            participant: req.participant._id
-        }, {
-            name: true,
-            email: true,
-            _id: true,
-            needsActivation: true,
-            activationKey: true,
-            participant_admin: true,
-            participant_edit: true,
-            participant_view: true
-        },
+        participant: req.participant._id
+    }, {
+        name: true,
+        email: true,
+        _id: true,
+        needsActivation: true,
+        activationKey: true,
+        participant_admin: true,
+        participant_edit: true,
+        participant_view: true
+    },
         function (err, users) {
             if (err) {
                 res.status(500).send({
