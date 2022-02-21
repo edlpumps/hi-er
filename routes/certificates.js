@@ -270,12 +270,12 @@ router.get("/checkout", aw(async (req, res) => {
     const estore = `${process.env.ESTORE_CERTIFICATE_URL}?TID=${ct._id}&qty=${quantity}`;
 
 
-    res.redirect(estore);
+    //res.redirect(estore);
 
-    /*res.render("ratings/certificates/estore-standin", {
+    res.render("ratings/certificates/estore-standin", {
         cart: req.session.certificate_cart,
         transaction: ct
-    });*/
+    });
 }));
 
 const authorize_confirmation = (req, transactionId) => {
