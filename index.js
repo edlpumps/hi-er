@@ -4,6 +4,8 @@ require('dotenv').config({
 const fs = require('fs');
 const path = require('path');
 const http = require('http');
+// https://mishkaorakzai.medium.com/how-to-redirect-your-node-js-app-hosted-on-heroku-from-http-to-https-50ef80130bff
+const sslRedirect = require('heroku-ssl-redirect');
 const express = require('express');
 const app = express();
 const busboy = require('express-busboy');
@@ -43,6 +45,7 @@ app.set('view engine', 'jade');
 
 
 var configure = function () {
+    app.use(sslRedirect());
     app.use(favicon(__dirname + '/public/images/favicon.ico'));
     app.use(require('less-middleware')(__dirname + '/public'));
     app.use(express.static(__dirname + '/public'));
