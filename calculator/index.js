@@ -664,10 +664,20 @@ exports.calculate = function (pump, labels) {
     })[0];
 
     if (retval && retval.success) {
-        if (retval.energy_rating < range.min || retval.energy_rating > range.max) {
+        if (retval.energy_rating < range.min) {
             retval.success = false;
             retval.reasons = [];
             retval.reasons.push("The energy rating range for this load/speed/category of pump is between " + range.min + " and " + range.max + ".  Your calculated energy rating of " + retval.energy_rating + " cannot be listed.  Please contact the HI Program Administrator if you believe this pump should be listed");
+        }
+        else if (retval.energy_rating > range.max) {
+            retval.success = true; // set to true and then disable the pump to allow admin to enable if ok.
+            retval.warnings = ["this is a warning!!"]; 
+            retval.active_admin = false;
+            retval.note_admin = "Exceeded max range. Must approve to apply.";
+        
+
+            //retval.reasons = [];
+            //retval.reasons.push("The energy rating range for this load/speed/category of pump is between " + range.min + " and " + range.max + ".  Your calculated energy rating of " + retval.energy_rating + " cannot be listed.  Please contact the HI Program Administrator if you believe this pump should be listed");
         }
     }
     return retval;
