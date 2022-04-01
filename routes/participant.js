@@ -517,6 +517,10 @@ router.post("/pumps/upload", get_labels, aw(async (req, res) => {
             var calculator = require("../calculator");
             var results = calculator.calculate(pump, req.current_labels);
             pump.results = results;
+
+            pump.active_admin = results.active_admin;
+            pump.note_admin = results.note_admin;
+
             pump.energy_rating = pump.results.energy_rating;
             pump.energy_savings = pump.results.energy_savings;
             // Change requested by HI - 12/21/2018.
