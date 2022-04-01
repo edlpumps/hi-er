@@ -393,7 +393,6 @@ router.post("/pumps/save_upload", aw(async (req, res) => {
         // Ignore what's in the spreadsheet - the participant name attached to the pump
         // must always be the currently logged in participant.
 
-        console.log(pump);
         const toSave = new req.Pumps(pump);
         toSave.revisions.push({
             date: new Date(),
