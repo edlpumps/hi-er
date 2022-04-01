@@ -665,11 +665,11 @@ exports.calculate = function (pump, labels) {
 
     if (retval && retval.success) {
         var message = "The energy rating range for this load/speed/category of pump is between " + range.min + " and " + range.max + ". ";
-        var underMinMessage = message + "Your calculated energy rating of " + retval.energy_rating + " cannot be listed.  Please contact the HI Program Administrator if you believe this pump should be listed";
+        var underMinMessage = message + "Your calculated energy rating of " + retval.energy_rating + " is below the current min scale value and cannot be listed.  Please contact the HI Program Administrator if you believe this pump should be listed";
         var overMaxMessage = message + "Your calculated energy rating of " + retval.energy_rating + " exceeds the current max scale value. Once added, this pump listing will automatically be disabled. Please contact the HI Program Administrator to enable this pump listing.";
         if (retval.energy_rating < range.min) {
             retval.success = false;
-            retval.reasons = [underMinMessage];
+            retval.reasons = [];
             retval.reasons.push(underMinMessage);
         }
         else if (retval.energy_rating > range.max) {
