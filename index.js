@@ -132,7 +132,7 @@ var configure = function () {
     app.use("/ratings", ratings);
     app.use("/circulator/ratings", circulator_ratings);
 
-    root.get("/reports/circulator-ratings-summary.csv", async (req, res) => {
+    root.get("/circulator-ratings-summary", async (req, res) => {
         res.header("Content-Type", "text/csv");
 
         const csv = await circulatorExport.getCirculatorDatabaseSummaryCsv();
