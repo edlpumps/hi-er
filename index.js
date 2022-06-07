@@ -26,8 +26,9 @@ const lcc = require('./lcc');
 const port = process.env.PORT || 3003;
 const data_connection_str = process.env.MONGO_CONNECTION_DATA;
 const NodeCache = require("node-cache");
-const cache = new NodeCache({ stdTTL: 60 * 60 * 24, checkperiod: 600 });
+const cache = new NodeCache({ stdTTL: 60 * 60 * 24, checkperiod: 600 });  // one day ttl, check every 10 minutes
 const exporter = require('./exporter');
+const circulatorExport = require("./circulator-export");
 
 let session_store = null;
 let mainlog = bunyan.createLogger({
@@ -131,6 +132,14 @@ var configure = function () {
     app.use("/ratings", ratings);
     app.use("/circulator/ratings", circulator_ratings);
 
+    root.get("/downloads/circulator-ratings-summary.csv", async (req, res) => {
+        res.header("Content-Type", "text/csv");
+
+        const csv = await circulatorExport.getCirculatorDatabaseSummaryCsv();
+
+        res.send(csv);
+    });
+
     root.get("/lcc", async (req, res) => {
         let csv = cache.get("lcc")
         if (!csv) {
@@ -144,6 +153,7 @@ var configure = function () {
         res.header('Content-Type', 'text/csv');
         return res.send(csv);
     });
+
     root.post('/login',
         passport.authenticate('local', {
             failureRedirect: '/portal'
