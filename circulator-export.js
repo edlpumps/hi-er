@@ -1,8 +1,8 @@
 const schemas = require("./schemas");
-const control_methods = require("./controllers/circulator").control_methods;
 const toxl = require('jsonexcel');
 const moment = require('moment');
-const { sum } = require("lodash");
+const _ = require('lodash');
+
 
 const has4 = (control) => {
     switch (control) {
@@ -241,12 +241,12 @@ const summarySizeBins = [
 const getLCCMGroups = (details) => {
     const groups = details.reduce((group, detail) => {
         const { least_control_method, most_input_power_100 } = detail;
-        group[least_control_method] = group[least_control_method] ?? {};
+        group[least_control_method] = group[least_control_method] || {};
 
         const bin = summarySizeBins.find(b => most_input_power_100 >= b[0] && most_input_power_100 <= b[1]);
         const label = `${bin[0].toLocaleString(undefined, { minimumIntegerDigits: 1, minimumFractionDigits: 3})}-${bin[1].toLocaleString(undefined, { minimumIntegerDigits: 1, minimumFractionDigits: 3})}`;
 
-        group[least_control_method][label] = group[least_control_method][label] ?? []
+        group[least_control_method][label] = group[least_control_method][label] || []
         group[least_control_method][label].push(detail);
 
         return group;
@@ -272,7 +272,15 @@ const calcCirculatorDatabaseSummary = (groups) => {
                 mostPei: 0,
                 leastPei: 0,
                 leastMin: 0,
-                leastMax: 0
+                leastMax: 0,
+                details: groups[lcm][bin].map(g => ({
+                    rating_id: g.rating_id,
+                    most_input_power_100: g.most_input_power_100,
+                    most_pei: g.most_pei,
+                    least_pei: g.least_pei,
+                    least_energy_rating: g.least_energy_rating,
+                    most_energy_rating: g.most_energy_rating
+                }))
             })
 
             reduction.mostBep /= count;
@@ -289,7 +297,7 @@ const calcCirculatorDatabaseSummary = (groups) => {
         return binStats;
     });
 
-    return stats.flat();
+    return _.flatten(stats);
 }
 
 const generateCirculatorRatingsSummaryCsv = (summaries) => {
@@ -314,7 +322,31 @@ const generateCirculatorRatingsSummaryCsv = (summaries) => {
     return text;
 }
 
-const getCirculatorDatabaseSummaryCsv = async () => {
+const generateCirculatorRatingsSummaryDetailsCsv = (summaries) => {
+    const heading = [
+        "Least Consumptive Control Method",
+        "Size Bin",
+        "rating_id",
+        "most_input_power_100",
+        "most_pei",
+        "least_pei",
+        "least_energy_rating",
+        "most_energy_rating"
+    ];
+
+    const csv = [];
+    csv.push(heading);
+    summaries.forEach(s => {
+        const details = s.details.map(d => [s.lcm, s.bin, d.rating_id, d.most_input_power_100, d.most_pei, d.least_pei, d.least_energy_rating, d.most_energy_rating]);
+        csv.push(...details);
+    })
+
+    const text = csv.map(l => l.join(",")).join("\n");
+
+    return text;
+}
+
+const getCirculatorDatabaseSummaryCsv = async (showDetails) => {
     try {
         const circulators = await get_listed();
         const detailData = await prep_for_export(circulators);
@@ -324,7 +356,12 @@ const getCirculatorDatabaseSummaryCsv = async () => {
         const summaries = calcCirculatorDatabaseSummary(lccmGroups);
         console.log(summaries);
 
-        return generateCirculatorRatingsSummaryCsv(summaries);
+        if (showDetails) {
+            return generateCirculatorRatingsSummaryDetailsCsv(summaries);
+        }
+        else {
+            return generateCirculatorRatingsSummaryCsv(summaries);
+        }
     }
     catch(error) {
         console.log(error);

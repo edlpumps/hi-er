@@ -49,6 +49,10 @@ html.ng-cloak(ng-app='ERAdminApp')
                     a(href="/admin/labels") 
                      .glyphicon.glyphicon-wrench.margin-right
                      | Settings
+                  li(class=(active == 'downloads' ? 'active' : ''))
+                    a(href="/downloads") 
+                     .glyphicon.glyphicon-list-alt.margin-right
+                     | Downloads
                 ul.nav.navbar-nav.navbar-right
                   li: a(href="/ratings/home") 
                         .glyphicon.glyphicon-eye-open.margin-right

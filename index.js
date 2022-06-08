@@ -22,13 +22,9 @@ const units = require('./utils/uom');
 const MongoStore = require('connect-mongo')(session);
 const passport = require('passport');
 const Strategy = require('passport-local').Strategy;
-const lcc = require('./lcc');
 const port = process.env.PORT || 3003;
 const data_connection_str = process.env.MONGO_CONNECTION_DATA;
-const NodeCache = require("node-cache");
-const cache = new NodeCache({ stdTTL: 60 * 60 * 24, checkperiod: 600 });  // one day ttl, check every 10 minutes
 const exporter = require('./exporter');
-const circulatorExport = require("./circulator-export");
 
 let session_store = null;
 let mainlog = bunyan.createLogger({
@@ -43,7 +39,6 @@ let mainlog = bunyan.createLogger({
 app.set('port', port);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
-
 
 var configure = function () {
     app.use(sslRedirect());
@@ -115,7 +110,6 @@ var configure = function () {
         next();
     });
 
-
     const root = require("./routes/registration");
     const participant = require("./routes/participant");
     const admin = require("./routes/admin");
@@ -123,6 +117,7 @@ var configure = function () {
     const labels = require("./routes/labels");
     const ratings = require("./routes/ratings");
     const circulator_ratings = require("./routes/circulator-ratings");
+    const downloads = require("./routes/downloads");
 
     app.use("/", root);
     app.use("/participant", participant);
@@ -131,28 +126,19 @@ var configure = function () {
     app.use("/labels", labels);
     app.use("/ratings", ratings);
     app.use("/circulator/ratings", circulator_ratings);
-
-    root.get("/circulator-ratings-summary", async (req, res) => {
-        res.header("Content-Type", "text/csv");
-
-        const csv = await circulatorExport.getCirculatorDatabaseSummaryCsv();
-
-        res.send(csv);
-    });
+    app.use("/downloads", downloads);
 
     root.get("/lcc", async (req, res) => {
-        let csv = cache.get("lcc")
-        if (!csv) {
-            console.log("LCC request rebuild")
-            csv = await lcc.generate();
-            cache.set("lcc", csv);
-        } else {
-            console.log("LCC cached");
-        }
-
-        res.header('Content-Type', 'text/csv');
-        return res.send(csv);
+        res.redirect("/downloads/lcc.csv");
     });
+
+    root.get("/circulator-ratings-summary", (req, res) => {
+        res.redirect("/downloads/circulator-ratings/summary.csv");
+    })
+
+    root.get("/circulator-ratings-summary-details", (req, res) => {
+        res.redirect("/downloads/circulator-ratings/summary-details.csv");
+    })
 
     root.post('/login',
         passport.authenticate('local', {

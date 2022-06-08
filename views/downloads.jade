@@ -1,0 +1,17 @@
+extends admin/layout
+
+block nav
+   +navigation("downloads")
+
+block content
+    .container
+        .panel.panel-default
+            .panel-heading
+                h3 Available Downloads
+            .panel-body
+                ul.list-group 
+                    each item in routes 
+                        li.list-group-item
+                            a(href="#{item}" target="_blank")
+                             .glyphicon.glyphicon-download.margin-right 
+                             | #{item}
