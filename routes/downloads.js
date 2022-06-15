@@ -49,12 +49,12 @@ router.get("/circulator-ratings/summary.csv", async (req, res) => {
     res.send(csv);
 });
 
-router.get("/circulator-ratings/summary-details.csv", async (req, res) => {
-    const csv = await circulatorExport.getCirculatorDatabaseSummaryCsv(true);
+// router.get("/circulator-ratings/summary-details.csv", async (req, res) => {
+//     const csv = await circulatorExport.getCirculatorDatabaseSummaryCsv(true);
 
-    res.header("Content-Type", "text/csv");
-    res.header("Content-Disposition", "attachment; filename=circulator-ratings-summary-details.csv")
-    res.send(csv);
-});
+//     res.header("Content-Type", "text/csv");
+//     res.header("Content-Disposition", "attachment; filename=circulator-ratings-summary-details.csv")
+//     res.send(csv);
+// });
 
 module.exports = router;
