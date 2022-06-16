@@ -355,7 +355,6 @@ const getCirculatorDatabaseSummaryCsv = async (showDetails) => {
         const lccmGroups = getLCCMGroups(detailData);
 
         const summaries = calcCirculatorDatabaseSummary(lccmGroups);
-        console.log(summaries);
 
         if (showDetails) {
             return generateCirculatorRatingsSummaryDetailsCsv(summaries);
