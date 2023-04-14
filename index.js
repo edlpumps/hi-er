@@ -181,10 +181,9 @@ var configure = function () {
 // Database configuration
 ////////////////////////////////////////////////////
 var conn = mongoose.connect(data_connection_str, {
-    useMongoClient: true
 }, function (err, res) {
     if (err) {
-        mainlog.fatal("Could not connect to mongo database at %s", data_connection_str)
+        mainlog.fatal("Could not connect to mongo database at %s", data_connection_str);
     } else {
         mainlog.info("Connected to mongo database at %s", data_connection_str);
         schemas.init(mongoose);
@@ -204,15 +203,11 @@ var conn = mongoose.connect(data_connection_str, {
             PasswordResets: schemas.PasswordResets
         };
 
-        session_store = new MongoStore({
-            db: mongoose.connection.db
-        });
         configure();
         startup();
 
         //console.log("STOP PUSHING EMAILS ON STARTUP")
         push_emails(1, "scott@freesconsulting.com");
-
     }
 });
 

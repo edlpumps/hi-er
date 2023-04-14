@@ -30,7 +30,7 @@ const exporter = require('./exporter');
 
 const go = async function (interval, override) {
     var conn = mongoose.connect(process.env.MONGO_CONNECTION_DATA, {
-        useMongoClient: true
+        useNewUrlParser: true
     }, async function (err, res) {
         if (err) {
             console.log("Could not connect to mongo database at %s", data_connection_str)
