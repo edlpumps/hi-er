@@ -12,9 +12,9 @@ exports.init = function init(mongoose) {
 
     exports.getNextRatingsId = async () => {
         return new Promise((resolve, reject) => {
-            var ret = counters.collection.findAndModify({
+            var ret = counters.collection.findOneAndUpdate({
                     name: "ratings"
-                }, {}, {
+                }, {
                     $inc: {
                         seq: 1
                     }
@@ -28,9 +28,9 @@ exports.init = function init(mongoose) {
     }
     exports.getNextCertificateOrderNumber = async () => {
         return new Promise((resolve, reject) => {
-            var ret = counters.collection.findAndModify({
+            var ret = counters.collection.findOneAndUpdate({
                     name: "certificate_orders"
-                }, {}, {
+                }, {
                     $inc: {
                         seq: 1
                     }
@@ -44,9 +44,9 @@ exports.init = function init(mongoose) {
     }
     exports.getNextCertificateNumber = async () => {
         return new Promise((resolve, reject) => {
-            var ret = counters.collection.findAndModify({
+            var ret = counters.collection.findOneAndUpdate({
                     name: "certificates"
-                }, {}, {
+                }, {
                     $inc: {
                         seq: 1
                     }
