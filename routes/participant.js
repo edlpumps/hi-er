@@ -475,6 +475,9 @@ router.post("/pumps/upload", get_labels, aw(async (req, res) => {
                 if (mapping == "configuration") {
                     value = common.map_config_input(cell.value);
                 }
+                if (mapping == "motor_type") {
+                    value = common.map_type_input(cell.value);
+                }
                 if (prop.boolean) {
                     value = common.map_boolean_input(cell.value);
                 }
