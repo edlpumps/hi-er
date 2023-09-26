@@ -55,7 +55,15 @@ $> npm audit fix <== if needed
 
 ## Local Database
 You must be connected to a local Mongoose database
-TBD
+install MongoDB
+install MongoDB Compass
+create .env with:  MONGO_CONNECTION_DATA = mongodb://127.0.0.1:27017/er and ADMIN_PASSWORD_OVERRIDE=test
+You will need to have your user information in the database.
+$>npm init
+$>npm install
+$>npm -g install supervisor
+$>supervisor index.js
+
 
 ## Local Preview - Debugging
 The easiest way to do your development is to execute the following command from the root project directory in a Terminal window:
@@ -74,7 +82,7 @@ Use the debug toolbar to restart the code and stop execution
 
 Connect to the localhost on port: 
 ```
-http://localhost:3003
+http://127.0.0.1:3003
 ```
 
 ## Deploying a GitHub branch to Heroku
