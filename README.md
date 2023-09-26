@@ -84,7 +84,7 @@ Use the debug toolbar to restart the code and stop execution
 
 Connect to the localhost on port: 
 ```
-http://localhost:3003
+http://127.0.0.1:3003
 ```
 
 ## Deploying a GitHub branch to Heroku

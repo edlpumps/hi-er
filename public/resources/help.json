@@ -81,6 +81,12 @@
 			"Bowl diameter is only applicable to ST pumps.  ST pumps are within scope up to a 6 inch bowl diameter. Please indicate the nominal diameter of the bowls for the ST pump being listed."
 		]
 	},
+	"motor_type": {
+		"title": "Motor Type",
+		"portal_help": [
+			"This is the type of Motor."
+		]
+	},
 	"motor_regulated": {
 		"title": "Is Motor Regulated under 10 CFR?",
 		"portal_help": [
