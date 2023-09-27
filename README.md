@@ -57,7 +57,9 @@ $> npm audit fix <== if needed
 You must be connected to a local Mongoose database
 install MongoDB
 install MongoDB Compass
-create .env with:  MONGO_CONNECTION_DATA = mongodb://127.0.0.1:27017/er and ADMIN_PASSWORD_OVERRIDE=test
+create .env with:  
+- MONGO_CONNECTION_DATA = mongodb://127.0.0.1:27017/er 
+- ADMIN_PASSWORD_OVERRIDE=test
 You will need to have your user information in the database.
 $>npm init
 $>npm install
