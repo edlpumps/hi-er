@@ -119,7 +119,7 @@ var build_circulator_params = function (pump, waip, max) {
                 methods.push(c);
         }
     }
-    return {
+    var retval= {
         methods: methods,
         dual: pump.most && pump.most.control_method,
         er_most: pump.most && pump.most.control_method ? pump.most.energy_rating.toFixed(0) : 0,
@@ -136,8 +136,11 @@ var build_circulator_params = function (pump, waip, max) {
         small_logo: hi_logo_data_uri_small,
         waip: waip !== undefined ? waip.toFixed(3) : ''
     };
-
-
+    
+    if (retval.er_most == retval.er) {
+        delete retval.er_most;
+    }
+    return retval;
 }
 const average = (values) => {
     let sum = 0;

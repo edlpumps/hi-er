@@ -55,7 +55,17 @@ $> npm audit fix <== if needed
 
 ## Local Database
 You must be connected to a local Mongoose database
-TBD
+install MongoDB
+install MongoDB Compass
+create .env with:  
+- MONGO_CONNECTION_DATA = mongodb://127.0.0.1:27017/er 
+- ADMIN_PASSWORD_OVERRIDE=test
+You will need to have your user information in the database so you can log in.
+$>npm init
+$>npm install
+$>npm -g install supervisor
+$>supervisor index.js
+
 
 ## Local Preview - Debugging
 The easiest way to do your development is to execute the following command from the root project directory in a Terminal window:
