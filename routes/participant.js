@@ -343,6 +343,7 @@ router.post("/pumps/new", aw(async (req, res) => {
     pump.laboratory = lab;
     pump.participant = req.participant._id;
     pump.rating_id = hashids.encode(nextId.value.seq);
+    pump.motor_type_name = common.map_type_output(pump.motor_type);
     const view = pump.pei_input_type == 'calculate' ? "participant/calculate_pump" : "participant/manual_pump";
     const help = require("../public/resources/help.json");
     res.render(view, {
