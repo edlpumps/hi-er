@@ -189,6 +189,30 @@ exports.map_config_output = function (value) {
     else return null;
 }
 
+exports.map_type_input = function (input) {
+    /*
+    Polyphase Electric Motor
+    Single-Phase Induction Motor
+    Inverter Only Synchronous Electric Motor
+    */
+    var result = null;
+    if (!input) { return null; }
+    if (input.toLowerCase().indexOf("single") >= 0) {
+        result = "single_induction";
+    } else if (input.toLowerCase().indexOf("inverter") >= 0) {
+        result = "inverter_electric";
+    } else if (input.toLowerCase().indexOf("poly") >= 0) {
+        result = "poly_electric";
+    }
+    return result;
+}
+exports.map_type_output = function (value) {
+    if (value == "poly_electric") return "Polyphase Electric Motor";
+    else if (value == "single_induction") return "Single-Phase Induction Motor";
+    else if (value == "inverter_electric") return "Inverter Only Synchronous Electric Motor";
+    else return null;
+}
+
 exports.build_pump_spreadsheet = function (pump, unit_set, callback) {
     const _ = require('lodash');
     const template = require('./template_map.json');
@@ -261,9 +285,15 @@ exports.build_pump_spreadsheet = function (pump, unit_set, callback) {
                     if (mapping == "listing_date") {
                         value = moment(value).format("MMM D, YYYY")
                     }
+
                     if (mapping == "listing_status") {
                         value = p.listed ? "Active" : (p.pending ? "Pending" : "Inactive");
                     }
+
+                    if (mapping == "motor_type") {
+                        value = exports.map_type_output(value);
+                    }
+
                     if (prop.boolean) {
                         value = exports.map_boolean_output(value);
                     }
@@ -271,6 +301,7 @@ exports.build_pump_spreadsheet = function (pump, unit_set, callback) {
                     if (prop.sections) {
                         enabled = enabled && prop.sections.indexOf(p.section) >= 0;
                     }
+
                     if (enabled && value) {
                         var address = prop.column + r;
                         var cell = worksheet.getCell(address);
@@ -287,7 +318,6 @@ exports.build_pump_spreadsheet = function (pump, unit_set, callback) {
                         } else {
                             cell.value = value;
                         }
-
                     }
                 }
                 r++;

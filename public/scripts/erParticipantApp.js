@@ -18,6 +18,21 @@ var configurations = [{
   }
 ];
 
+var motor_types = [{
+  value: "single_induction",
+  label: "Single-Phase Induction Motor"
+},
+{
+  value: "inverter_electric",
+  label: "Inverter Only Synchronous Electric Motor"
+},
+{
+  value: "poly_electric",
+  label: "Polyphase Electric Motor"
+}
+];
+
+
 var app = angular.module('ERParticipantApp', []).directive('bootstrapSwitch', [
   function () {
     return {
@@ -360,6 +375,15 @@ var ERParticipantController = function ($scope, $location, service) {
     return retval.length ? retval[0] : "Unknown";
   }
 
+  vm.getMotorTypeLabel = function (config) {
+    var retval = motor_types.filter(function (c) {
+      return config == c.value;
+    }).map(function (c) {
+      return c.label;
+    })
+    return retval.length ? retval[0] : "Unknown";
+  }
+
   vm.section_label = function () {
     if (!vm.pump.section) return undefined;
     switch (vm.pump.section) {
@@ -415,6 +439,7 @@ var ERNewPumpController = function ($scope, $location, service) {
   var vm = this;
 
   vm.configurations = configurations;
+  vm.motor_types = motor_types;
 
   vm.refreshActiveLabs = function (callback) {
     service.getActiveLabs().then(function (results) {
@@ -476,26 +501,9 @@ app.controller('ERNewPumpController', ERNewPumpController);
 var ERNewManualPumpController = function ($scope, $location, service) {
   var vm = this;
 
-  vm.configurations = [{
-      value: "bare",
-      label: "Bare Pump"
-    },
-    {
-      value: "pump_motor",
-      label: "Pump + Motor"
-    },
-    {
-      value: "pump_motor_cc",
-      label: "Pump + Motor w/ Continuous Controls"
-    },
-    {
-      value: "pump_motor_nc",
-      label: "Pump + Motor w/ Non-continuous Controls"
-    }
-  ];
+  vm.configurations = configurations;
 
-
-
+  vm.motor_types = motor_types;
 }
 
 

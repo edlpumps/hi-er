@@ -60,7 +60,7 @@ install MongoDB Compass
 create .env with:  
 - MONGO_CONNECTION_DATA = mongodb://127.0.0.1:27017/er 
 - ADMIN_PASSWORD_OVERRIDE=test
-You will need to have your user information in the database so you can log in.
+You will need to have your user information in the database.
 $>npm init
 $>npm install
 $>npm -g install supervisor
@@ -84,7 +84,7 @@ Use the debug toolbar to restart the code and stop execution
 
 Connect to the localhost on port: 
 ```
-http://localhost:3003
+http://127.0.0.1:3003
 ```
 
 ## Deploying a GitHub branch to Heroku
