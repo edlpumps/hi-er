@@ -196,6 +196,7 @@ exports.map_type_input = function (input) {
     Inverter Only Synchronous Electric Motor
     */
     var result = null;
+    if (!input) { return null; }
     if (input.toLowerCase().indexOf("single") >= 0) {
         result = "single_induction";
     } else if (input.toLowerCase().indexOf("inverter") >= 0) {
