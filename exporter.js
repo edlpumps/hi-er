@@ -35,6 +35,7 @@ const get_pump_export_excel = async () => {
         'participant',
         'basic_model',
         'individual_model',
+        'motor_type',
         'brand',
         'lab',
         'section',
@@ -68,6 +69,7 @@ const get_pump_export_excel = async () => {
         configuration: "Configuration",
         basic_model: "Basic model designation",
         individual_model: "Manufacturer's model designation",
+        motor_type: "Motor Type",
         brand: 'Brand',
         diameter: 'Full impeller diameter',
         speed: 'Nominal Speed',
@@ -122,6 +124,8 @@ const get_pump_export_excel = async () => {
         pump.flow_bep = pump.flow_bep.toFixed(2);
         pump.head_bep = pump.head_bep.toFixed(2);
         pump.motor_power_rated = pump.motor_power_rated.toFixed(2);
+
+        pump.motor_type = pump.motor_type ? pump.motor_type:null;
 
     };
     console.log("Create excel export sheet");

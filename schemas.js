@@ -241,7 +241,10 @@ exports.init = function init(mongoose) {
         stages: Number,
         doe: String,
         bowl_diameter: Number,
-        motor_type: String,
+        motor_type: {
+            type: String,
+            default: null
+        },
         motor_regulated: Boolean,
         motor_power_rated: Number,
         motor_efficiency: Number,

@@ -195,11 +195,13 @@ exports.map_type_input = function (input) {
     Single-Phase Induction Motor
     Inverter Only Synchronous Electric Motor
     */
-    var result = "poly_electric";
+    var result = null;
     if (input.toLowerCase().indexOf("single") >= 0) {
         result = "single_induction";
     } else if (input.toLowerCase().indexOf("inverter") >= 0) {
         result = "inverter_electric";
+    } else if (input.toLowerCase().indexOf("poly") >= 0) {
+        result = "poly_electric";
     }
     return result;
 }
