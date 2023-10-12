@@ -227,6 +227,10 @@ router.get("/pumps/new", aw(async (req, res) => {
         value: "bare"
     };
 
+    pump.motor_type = {
+        value: "single_induction"
+    };
+
 
     var help = require("../public/resources/help.json");
     res.render("participant/new_pump", {
@@ -252,6 +256,9 @@ router.get("/pumps/:id/revise", aw(async (req, res) => {
     }
     pump.configuration = {
         value: pump.configuration
+    };
+    pump.motor_type = {
+        value: pump.motor_type
     };
     var help = require("../public/resources/help.json");
     res.render("participant/new_pump", {

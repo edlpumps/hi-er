@@ -36,7 +36,6 @@ mixin calculator(er, mode)
             input(type="hidden", name="pump[flow][bep75]", ng-value="app.pump.flow.bep75")
             input(type="hidden", name="pump[flow][bep100]", ng-value="app.pump.flow.bep100")
             input(type="hidden", name="pump[flow][bep110]", ng-value="app.pump.flow.bep110")
-            input(type="hidden", name="pump[motor_type]", ng-value="app.pump.motor_type")
             
             .row
               .col.col-xs-12
@@ -70,7 +69,15 @@ mixin calculator(er, mode)
                     +help(help.individual_model_number, er)
                   .col.col-xs-7.col-sm-4
                     input.form-control(type="text" ng-model="app.pump.individual_model" name="pump[individual_model]")
-            
+              
+            .row 
+              .form-group
+                .col.col-xs-5
+                    label.text-primary Motor Type
+                    +help(help.motor_type, true)
+                .col.col-xs-7
+                    select.form-control(name="pump[motor_type]", data-width="auto", ng-model="app.pump.motor_type", ng-options="config as config.label for config in app.motor_types track by config.value")  
+
             .row 
               .form-group
                 .col.col-xs-5
@@ -146,7 +153,14 @@ mixin calculator(er, mode)
               .col.col-xs-12
                 fieldset
                   legend Motor performance method
-            
+            .row 
+              .form-group
+                .col.col-xs-5
+                    label.text-primary Motor Type
+                    +help(help.motor_type, true)
+                .col.col-xs-7
+                    .form-control-static {{app.pump.motor_type.label}}
+
             .row 
                 .form-group
                   .col.col-xs-5
@@ -236,7 +250,7 @@ mixin calculator(er, mode)
                   .col.col-xs-5
                     label Motor Type:
                   .col.col-xs-7
-                    .form-control-static {{app.pump.motor_type_name}}
+                    .form-control-static {{app.pump.motor_type.label}}
             .row(ng-show="app.pump.basic_model || app.pump.individual_model")  
                 .form-group
                   .col.col-xs-5
@@ -368,7 +382,7 @@ mixin calculator(er, mode)
                   .col.col-xs-5
                     label Motor Type:
                   .col.col-xs-7
-                    .form-control-static {{app.pump.motor_type_name}}
+                    .form-control-static {{app.pump.motor_type.label}}
             .row(ng-show="pp.pump.basic_model || app.pump.individual_model")  
                 .form-group
                   .col.col-xs-5

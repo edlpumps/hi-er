@@ -301,6 +301,7 @@ var PEIController = function($scope, $location, $window, service) {
           vm.pump = pump;
           vm.pump.auto = mode == "calculator";
           vm.pump.configuration = vm.configurations.filter(function(c) { return c.value == pump.configuration})[0];
+          vm.pump.motor_type = vm.motor_types.filter(function(c) {return c.value == pump.motor_type})[0];
           vm.pump.diameter = parseFloat(pump.diameter);
           if ( vm.pump.stages ) {
               vm.pump.stages = parseInt(vm.pump.stages);
