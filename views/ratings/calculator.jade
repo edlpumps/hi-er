@@ -73,7 +73,7 @@ mixin calculator(er, mode)
             .row 
               .form-group
                 .col.col-xs-5
-                    label.text-primary Motor Type
+                    label.text-primary Motor Type:
                     +help(help.motor_type, true)
                 .col.col-xs-7
                     select.form-control(name="pump[motor_type]", data-width="auto", ng-model="app.pump.motor_type", ng-options="config as config.label for config in app.motor_types track by config.value")  
@@ -156,8 +156,7 @@ mixin calculator(er, mode)
             .row 
               .form-group
                 .col.col-xs-5
-                    label.text-primary Motor Type
-                    +help(help.motor_type, true)
+                    label Motor Type:
                 .col.col-xs-7
                     .form-control-static {{app.pump.motor_type.label}}
 
