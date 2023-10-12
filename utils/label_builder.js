@@ -73,7 +73,7 @@ var build_label_params = function (pump, label) {
 
 exports.make_qr = function (req, participant, pump, label) {
     const port = req.app.settings.port || cfg.port;
-    const base = req.protocol + '://' + req.host;
+    const base = req.protocol + '://' + req.hostname;
     const url = base + "/ratings/" + pump.rating_id;
     const code = qr.imageSync(url, {
         type: 'png'

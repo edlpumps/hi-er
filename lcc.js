@@ -5,6 +5,7 @@ const DOE = ["ESCC", "ESFM", "IL", "RSV", "ST"];
 const FLOW_BINS = [50, 100, 150, 200, 300, 800, Number.MAX_VALUE];
 const HEAD_BINS = [50, 100, Number.MAX_VALUE];
 const CONFIGS = ['bare', 'pump_motor', 'pump_motor_cc', 'pump_motor_nc'];
+const MOTOR_TYPES = ['single_induction', 'inverter_electric', 'poly_electric'];
 const VARIABLE_SPEED = 'pump_motor_cc';
 const fs = require('fs');
 

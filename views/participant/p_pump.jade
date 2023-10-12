@@ -5,7 +5,7 @@ block nav
      +navigation("pump")
 
 block content
- div.ng-cloak(ng-app='ERParticipantApp')
+  div.ng-cloak(ng-app='ERParticipantApp')
     .modal.fade#activate(tabindex='-1', role='dialog' aria-labelledby='titleLabel', aria-hidden='true')
         .modal-dialog
           .modal-content
@@ -77,7 +77,7 @@ block content
             h2 Load Point Data
             .help-block This data is not visible to the public, it is only visible to members of your organization.
         .panel-body
-           table.table
+          table.table
             thead
               tr 
                 th &nbsp;
@@ -102,11 +102,11 @@ block content
                   td #{(pump.driver_input_power.bep100 * units.power.factor).toFixed(2)}
                   td #{(pump.driver_input_power.bep110 * units.power.factor).toFixed(2)}
         
-           if pump.section == '6' || pump.section == '6a' || pump.section == '6b' || pump.section == '7'
+          if pump.section == '6' || pump.section == '6a' || pump.section == '6b' || pump.section == '7'
             table.table
               thead
                 tr
-                  th &nbsp
+                  th &nbsp;
                   th Control input power (#{units.power.label})
                   
               tbody
@@ -123,6 +123,23 @@ block content
                  td 100% BEP
                  td #{(pump.control_power_input.bep100 * units.power.factor).toFixed(2)}
 
+      .panel.panel-default
+        .panel-heading 
+            h2 Additional Data
+            .help-block This data is not visible to the public, it is only visible to members of your organization.
+        .panel-body
+          table.table
+            thead
+              tr 
+                th Item
+                th Description
+            tbody
+            tr 
+              td Motor Type
+              - if (pump.motor_type)
+                td #{pump.motor_type.includes("single") ? "Single-Phase Induction Motor" : (pump.motor_type.includes("inverter") ? "Inverter Only Synchronous Electric Motor" : "Polyphase Electric Motor")}
+              - else 
+                td Unknown
       
       .panel.panel-default
         .panel-heading 

@@ -134,6 +134,12 @@ var PEIController = function($scope, $location, $window, service) {
        { value: "pump_motor_nc", label: "Pump + Motor w/ Non-continuous Controls"}
   ];
  
+  vm.motor_types = [
+    { value: "single_induction", label: "Single-Phase Induction Motor"},
+    { value: "inverter_electric", label: "Inverter Only Synchronous Electric Motor" },
+    { value: "poly_electric", label: "Polyphase Electric Motor"}
+  ];
+  
   vm.doe_opts = [
       {value: "ESCC", label:"ESCC"},
       {value: "ESFM", label:"ESFM"},
