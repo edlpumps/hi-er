@@ -375,7 +375,7 @@ var ERParticipantController = function ($scope, $location, service) {
     return retval.length ? retval[0] : "Unknown";
   }
 
-  vm.getMotorTypeLabel = function (config) {
+  vm.getMotorTypeLabel = function (motor_type) {
     var retval = motor_types.filter(function (c) {
       return config == c.value;
     }).map(function (c) {
