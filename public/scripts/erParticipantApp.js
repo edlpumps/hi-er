@@ -377,7 +377,7 @@ var ERParticipantController = function ($scope, $location, service) {
 
   vm.getMotorTypeLabel = function (motor_type) {
     var retval = motor_types.filter(function (c) {
-      return config == c.value;
+      return motor_type == c.value;
     }).map(function (c) {
       return c.label;
     })
