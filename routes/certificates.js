@@ -245,7 +245,8 @@ router.get("/cart", aw(async (req, res) => {
 
 
 router.get("/checkout", aw(async (req, res) => {
-
+    //This has been modified to skip the EStore so it handles the 'pending' and 'completed' states
+    //of the checkout process
     let quantity = 0;
     for (const c of req.session.certificate_cart) {
         quantity += parseInt(c.quantity);
@@ -264,20 +265,67 @@ router.get("/checkout", aw(async (req, res) => {
     }
     req.session.certificate_transactions.push(ct);
 
+    const d = new Date();
+    const purchased = [];
+    for (const c of ct.cart) {
+        for (let i = 0; i < c.quantity; i++) {
+            var nextId;
+            var cnumber;
+            var exists;
+            console.log('==============Certificate: '+(i+1)+' of '+ c.quantity+' for Pump: '+c.pump_record._id+'=================');
+            do {
+                nextId = await req.getNextCertificateNumber();
+                console.log("Next Cert ID: "+nextId);
+                cnumber = hashids.encode(nextId);
+                console.log("CertNumber: "+cnumber);
+                //Does it already exist?
+                exists = await req.Certificates.findOne({
+                    certificate_number: cnumber
+                }).populate('pump').exec();
+                console.log('---------------------')
+            } while (exists)
+            console.log('==========================================================')
+            const certificate = await req.Certificates.create({
+                packager: c.packager,
+                installation_site: c.installation_site,
+                pump: c.pump_record._id,
+                motor: c.motor,
+                vfd: c.driver,
+                pei: c.pei,
+                energy_rating: c.energy_rating,
+                certificate_number: cnumber,
+                date: d,
+                transaction: ct._id
+            });
+            purchased.push(certificate);
+        }
+    }
+    ct.state = 'completed';
 
+    await ct.save();
+   
+    req.session.purchased = await req.Certificates.find({
+        transaction: ct._id
+    }).populate('pump').exec();
+    req.session.certificate_cart = [];
 
-
-    const estore = `${process.env.ESTORE_CERTIFICATE_URL}?TID=${ct._id}&qty=${quantity}`;
-
+    res.render("ratings/certificates/purchased", {
+        purchased: req.session.purchased,
+        transaction: ct
+    });
+    //Enable this for EStore and modify code above to use estore redirect
+    //Look for EStore removal around 10/15/2023
+    /*const estore = `${process.env.ESTORE_CERTIFICATE_URL}?TID=${ct._id}&qty=${quantity}`;
 
     //res.redirect(estore);
 
     res.render("ratings/certificates/estore-standin", {
         cart: req.session.certificate_cart,
         transaction: ct
-    });
+    });*/
 }));
 
+//Only used by EStore
 const authorize_confirmation = (req, transactionId) => {
     const crypto = require('crypto');
     debug_estore(`Checking confirmation of transaction ${transactionId}`)
@@ -303,6 +351,7 @@ const authorize_confirmation = (req, transactionId) => {
     }
 }
 
+//Only used by EStore
 router.post("/confirmed/:transactionId", aw(async (req, res) => {
     const ct = await req.CertificateTransactions.findById(req.params.transactionId).exec();
     if (!ct) {
@@ -341,10 +390,9 @@ router.post("/confirmed/:transactionId", aw(async (req, res) => {
 
     await ct.save();
     res.sendStatus(200);
-    /*
     
     res.redirect(`/ratings/certificates/purchased/${ct._id}`)
-    */
+    
 }))
 
 router.get("/purchased/:transactionId", aw(async (req, res) => {
@@ -357,6 +405,7 @@ router.get("/purchased/:transactionId", aw(async (req, res) => {
         transaction: ct._id
     }).populate('pump').exec();
     req.session.certificate_cart = [];
+
     res.render("ratings/certificates/purchased", {
         purchased: req.session.purchased,
         transaction: ct
