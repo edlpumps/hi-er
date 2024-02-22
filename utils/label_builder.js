@@ -64,6 +64,7 @@ var build_label_params = function (pump, label) {
         rating_id: pump.rating_id,
         bar_width: distance * 500 - 1,
         er_pos: pos,
+        motor_power: pump.motor_power_rated.toString() + " hp",
         logo: hi_logo_data_uri,
         load_abbr: load_abbr
     };
@@ -97,6 +98,7 @@ exports.make_sm_label = function (req, participant, pump, label) {
 
 
 var build_circulator_params = function (pump, waip, max) {
+    //KK
     var datetime = pump.date
     var locale = "en-us";
 
@@ -132,6 +134,7 @@ var build_circulator_params = function (pump, waip, max) {
         rating_id: pump.rating_id,
         bar_width: distance * 500 - 1,
         er_pos: pos,
+        motor_power: 3,
         logo: hi_logo_data_uri,
         small_logo: hi_logo_data_uri_small,
         waip: waip !== undefined ? waip.toFixed(3) : ''
@@ -175,6 +178,7 @@ exports.make_circulator_label = function (req, participant, pump) {
         waip,
         maxScale
     } = calc_circ_vals(pump);
+    //KK
     return circulator_label_template(build_circulator_params(pump, waip, maxScale));
 }
 exports.make_circulator_label_small = function (req, participant, pump) {

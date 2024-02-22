@@ -1,6 +1,7 @@
 include common.pug
 
 doctype xml
+<meta charset='utf-8'>
 svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.w3.org/1999/xlink", version="1.1", width="620", height="720", preserveAspectRatio="xMinYMin meet", viewBox="0 0 620 620")
 
     defs
@@ -53,7 +54,7 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
     
     
     line(x1=start, y1=v_start+80, x2=(start + scale_width), y2=v_start+80, stroke-width='2', stroke='black')
-
+ 
     - var center = er_pos
     - var label_edge_padding = (32 * (er.toString().length - 1)) + 16;
     - var label_left = center - label_edge_padding;
@@ -81,11 +82,11 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
     text(x="560", y=v_start+130, style="font-family: 'Arimo'; font-weight:bold", font-size="16", text-anchor="end", fill="black") Most Efficient
     
 
-    text(x="30", y="620", style="font-family: 'Arimo';", font-size="15", text-anchor="start",fill="black") Power savings over baseline can be estimated by multiplying ER by motor input 
+    text(x="25", y="620", style="font-family: 'Arimo';", font-size="12", text-anchor="start",fill="black") &#x87;Estimated annual savings are based on the #{motor_power} motor, 4000 annual run hours, and 15&#x00a2; per kWh,
     
-    text(x="30", y="640", style="font-family: 'Arimo';", font-size="15", text-anchor="start", fill="black") power (kw) and dividing by 100.  Multiplying power savings by operating hours and 
+    text(x="28", y="640", style="font-family: 'Arimo';", font-size="12", text-anchor="start", fill="black") when compared to the least efficient pump allowed on the market. Actual savings may vary. 
     
-    text(x="30", y="660", style="font-family: 'Arimo';", font-size="15", text-anchor="start", fill="black") cost of energy will yield estimated cost.
+    text(x="28", y="660", style="font-family: 'Arimo';", font-size="12", text-anchor="start", fill="black") Visit the Pump Savings Calculator at www.pumps.org/psc.
     
     +footer(30, 585, 700)
 
