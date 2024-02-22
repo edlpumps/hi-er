@@ -28,10 +28,10 @@ router.post('/', aw(async function (req, res) {
         valid = true;
     }
     q.pending = { $ne: true };
-    // If the search does not include a rating ID, inactive pumps
+    // If the search does not include a rating ID, unlisted pumps
     // are never returned.
     if (!req.body.rating_id) {
-        q.listed = { $ne: false}
+        q.listed = { $eq: true}
     }
     if (!valid) {
         //console.log("Invalid");
