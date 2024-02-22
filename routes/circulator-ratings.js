@@ -10,6 +10,7 @@ const svg_builder = require('../utils/label_builder.js');
 router.post('/', aw(async function (req, res) {
     const q = {};
     let valid = false;
+    //console.log("Search Request: "+JSON.stringify(req.body));
     if (req.body.participant) {
         q.participant = req.body.participant;
         valid = true;
@@ -27,10 +28,16 @@ router.post('/', aw(async function (req, res) {
         valid = true;
     }
     q.pending = { $ne: true };
+    // If the search does not include a rating ID, inactive pumps
+    // are never returned.
+    if (!req.body.rating_id) {
+        q.listed = { $ne: false}
+    }
     if (!valid) {
+        //console.log("Invalid");
         return res.json([]);
     }
-
+    //console.log("Query: "+JSON.stringify(q));
     const results = await req.Circulators.find(q).populate('participant').exec();
 
     res.json(results)
