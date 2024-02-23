@@ -142,7 +142,8 @@ exports.sendDeletionNotification = function (deleted, actor) {
 
 exports.sendListings = function (recipients, pump_excel, circulator_excel, certificate_excel) {
     var template_params = {};
-    console.log("Sending listings via bcc to ");
+    console.log("NOT Sending listings via bcc to ");
+    return;
     console.log(recipients);
     var mailOptions = make_bcc_mail_options(recipients, "HI Energy Rating Portal - Energy Rating Listings", template_params, listings_template, listings_template_pt);
     mailOptions.attachments = [{
