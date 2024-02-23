@@ -64,7 +64,7 @@ var build_label_params = function (pump, label) {
         rating_id: pump.rating_id,
         bar_width: distance * 500 - 1,
         er_pos: pos,
-        motor_power: pump.motor_power_rated.toString() + " hp",
+        motor_power: pump.motor_power_rated,
         logo: hi_logo_data_uri,
         load_abbr: load_abbr
     };
