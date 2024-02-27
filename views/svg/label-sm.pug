@@ -1,7 +1,6 @@
 include common.pug
 
 doctype xml
-<meta charset='utf-8'>
 svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.w3.org/1999/xlink", version="1.1", width="620", height="1033", preserveAspectRatio="xMinYMin meet", viewBox="0 0 620 620")
 
     defs
@@ -107,7 +106,7 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
     rect(x="30", y=v_start+180, rx="0", ry="0", width=box_width, height="100", style="fill:none;stroke: #000000;stroke-width:2;" )
     text(x=30+box_mid-string_mid-10-comma_size, y=v_start+230, style="font-family: 'Arimo'; font-weight:bold", font-size=font_size, text-anchor="start", fill="black") #{e_string}
     text(x=30+box_mid+string_mid+comma_size, y=v_start+230, style="font-family: 'Arimo'; font-weight:bold", font-size="20", text-anchor="start", fill="black") kWh
-    text(x="65", y=v_start+260, style="font-family: 'Arimo';", font-size="20", text-anchor="start", fill="black") Annual Energy Savings&#x87;
+    text(x="65", y=v_start+260, style="font-family: 'Arimo';", font-size="20", text-anchor="start", fill="black") Annual Energy Savings&#x2021;
     
     //Calculate Annual Cost Savings
     - len = c_savings.toString().length;
@@ -116,14 +115,15 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
 
     rect(x=30+box_width+20, y=v_start+180, rx="0", ry="0", width=box_width, height="100", style="fill:none;stroke: #000000;stroke-width:2;" )
     text(x=30+box_width+box_mid-string_mid-10-comma_size, y=v_start+230, style="font-family: 'Arimo'; font-weight:bold", font-size=font_size, text-anchor="start", fill="black") $#{c_string}
-    text(x=30+box_width+55, y=v_start+260, style="font-family: 'Arimo';", font-size="20", text-anchor="start", fill="black") Annual Cost Savings&#x87;
+    text(x=30+box_width+55, y=v_start+260, style="font-family: 'Arimo';", font-size="20", text-anchor="start", fill="black") Annual Cost Savings&#x2021;
     
     //Bottom part
-    text(x="25", y="820", style="font-family: 'Arimo';", font-size="18", text-anchor="start",fill="black") &#x87;Estimated annual savings are based on the #{motor_power} hp motor,  
+    text(x="25", y="820", style="font-family: 'Arimo';", font-size="18", text-anchor="start",fill="black") &#x2021;Estimated annual savings are based on the #{motor_power} hp motor,  
     text(x="28", y="850", style="font-family: 'Arimo';", font-size="18", text-anchor="start", fill="black") 4000 annual run hours, and 15&#x00a2; per kWh, when compared to the     
     text(x="28", y="880", style="font-family: 'Arimo';", font-size="18", text-anchor="start", fill="black") least efficient pump allowed on the market. Actual savings may vary.  
     text(x="28", y="910", style="font-family: 'Arimo';", font-size="18", text-anchor="start", fill="black") Visit the Pump Savings Calculator at www.pumps.org/psc.
     +footer(30, 585, 980, 24)
+
 
     
         
