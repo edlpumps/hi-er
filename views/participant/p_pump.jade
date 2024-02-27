@@ -66,7 +66,7 @@ block content
                 .col.col-sm-12
                  img(src="/images/doe/#{pump_drawing}").hidden-xs
                  img(src="/images/doe/#{pump_drawing}", style="width:90%").hidden-md.hidden-lg.hidden-sm
-                 p.solo: a.btn.btn-danger(href="/participant/pumps/#{pump._id}/download") Download full data
+                 p.solo: a.btn.btn-danger(href="/participant/pumps/#{pump._id}/#{backdoor}/download") Download full data
            .col.col-sm-7
              +pump_page_info(pump)
              
@@ -148,23 +148,23 @@ block content
           
           .row.solo
             .col.col-xs-12.text-center
-              img(src="/labels/#{participant._id}/#{pump._id}/png", style="width:100%; max-width:600px;")
+              img(src="/labels/#{participant._id}/#{pump._id}/#{backdoor}/png", style="width:100%; max-width:600px;")
               p 
-               a(href="/labels/#{participant._id}/#{pump._id}/png?download=true") Download as PNG
+               a(href="/labels/#{participant._id}/#{pump._id}/#{backdoor}/png?download=true") Download as PNG
                | &nbsp;&nbsp; - &nbsp;&nbsp; 
-               a(href="/labels/#{participant._id}/#{pump._id}/svg?download=true") Download as SVG 
+               a(href="/labels/#{participant._id}/#{pump._id}/#{backdoor}/svg?download=true") Download as SVG 
           .row.solo
             .col.col-xs-12.text-center
-              img(src="/labels/#{participant._id}/#{pump._id}/png-sm", style="width:100%; max-width:400px;")
+              img(src="/labels/#{participant._id}/#{pump._id}/#{backdoor}/png-sm", style="width:100%; max-width:400px;")
               p 
-               a(href="/labels/#{participant._id}/#{pump._id}/png-sm?download=true") Download as PNG
+               a(href="/labels/#{participant._id}/#{pump._id}/#{backdoor}/png-sm?download=true") Download as PNG
                | &nbsp;&nbsp; - &nbsp;&nbsp; 
-               a(href="/labels/#{participant._id}/#{pump._id}/svg-sm?download=true") Download as SVG 
+               a(href="/labels/#{participant._id}/#{pump._id}/#{backdoor}/svg-sm?download=true") Download as SVG 
           .row.solo
             .col.col-xs-12.text-center
-              img(src="/labels/#{participant._id}/#{pump._id}/qr/png", style="width:100%; max-width:600px;")
+              img(src="/labels/#{participant._id}/#{pump._id}/#{backdoor}/qr/png", style="width:100%; max-width:600px;")
               p
-               a(href="/labels/#{participant._id}/#{pump._id}/qr/png?download=true") Download as PNG
+               a(href="/labels/#{participant._id}/#{pump._id}/#{backdoor}/qr/png?download=true") Download as PNG
                | &nbsp;&nbsp; - &nbsp;&nbsp; 
                a(href="/labels/#{participant._id}/#{pump._id}/qr?download=true") Download as SVG 
               

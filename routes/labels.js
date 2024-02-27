@@ -35,8 +35,12 @@ const render_svg = async (req, res, svg_maker, callback) => {
 
 
 
-router.get('/:participant_id/:id/svg', function (req, res) {
-    render_svg(req, res, svg_builder.make_label, function (err, svg, pump) {
+router.get('/:participant_id/:id/:backdoor/svg', function (req, res) {
+    var use_label_maker = svg_builder.make_label;
+    if (req.params.backdoor == 'true') {
+        use_label_maker = svg_builder.make_bd_label;
+    }
+    render_svg(req, res, use_label_maker, function (err, svg, pump) {
         if (err) {
             res.status(500).send(err);
             return;
@@ -49,8 +53,12 @@ router.get('/:participant_id/:id/svg', function (req, res) {
     });
 });
 
-router.get('/:participant_id/:id/svg-sm', function (req, res) {
-    render_svg(req, res, svg_builder.make_sm_label, function (err, svg, pump) {
+router.get('/:participant_id/:id/:backdoor/svg-sm', function (req, res) {
+    var use_label_maker = svg_builder.make_sm_label;
+    if (req.params.backdoor == 'true') {
+        use_label_maker = svg_builder.make_bd_sm_label;
+    }
+    render_svg(req, res, use_label_maker, function (err, svg, pump) {
         if (err) {
             res.status(500).send(err);
             return;
@@ -66,8 +74,12 @@ router.get('/:participant_id/:id/svg-sm', function (req, res) {
 
 
 
-router.get('/:participant_id/:id/png', function (req, res) {
-    render_svg(req, res, svg_builder.make_label, function (err, svg, pump) {
+router.get('/:participant_id/:id/:backdoor/png', function (req, res) {
+    var use_label_maker = svg_builder.make_label;
+    if (req.params.backdoor == 'true') {
+        use_label_maker = svg_builder.make_bd_label;
+    }
+    render_svg(req, res, use_label_maker, function (err, svg, pump) {
         if (err) {
             res.status(500).send(err);
             return;
@@ -86,8 +98,12 @@ router.get('/:participant_id/:id/png', function (req, res) {
     });
 });
 
-router.get('/:participant_id/:id/png-sm', function (req, res) {
-    render_svg(req, res, svg_builder.make_sm_label, function (err, svg, pump) {
+router.get('/:participant_id/:id/:backdoor/png-sm', function (req, res) {
+    var use_label_maker = svg_builder.make_sm_label;
+    if (req.params.backdoor == 'true') {
+        use_label_maker = svg_builder.make_bd_sm_label;
+    }
+    render_svg(req, res, use_label_maker, function (err, svg, pump) {
         if (err) {
             res.status(500).send(err);
             return;
@@ -120,7 +136,7 @@ router.get('/:participant_id/:id/qr', function (req, res) {
     });
 });
 
-router.get('/:participant_id/:id/qr/png', function (req, res) {
+router.get('/:participant_id/:id/:backdoor/qr/png', function (req, res) {
     render_svg(req, res, svg_builder.make_qr, function (err, svg, pump) {
         if (err) {
             res.status(500).send(err);

@@ -30,7 +30,7 @@ block content
               .col.col-sm-12.text-center
                 img(src="/images/doe/#{pump_drawing}").hidden-xs
                 img(src="/images/doe/#{pump_drawing}", style="width:90%").hidden-md.hidden-lg.hidden-sm
-                p.solo: a.btn.btn-danger(href="/admin/participant/#{participant._id}/pumps/#{pump._id}/download") Download full data
+                p.solo: a.btn.btn-danger(href="/admin/participant/#{participant._id}/pumps/#{pump._id}/#{backdoor}/download") Download full data
            .col.col-sm-7
              +pump_page_info(pump)
 
@@ -42,14 +42,14 @@ block content
           
           .row.solo
             .col.col-xs-12.text-center
-              img(src="/labels/#{participant._id}/#{pump._id}/png", style="width:100%; max-width:600px;")
+              img(src="/labels/#{participant._id}/#{pump._id}/#{backdoor}/png", style="width:100%; max-width:600px;")
           .row.solo
             .col.col-xs-12.text-center
-              img(src="/labels/#{participant._id}/#{pump._id}/png-sm", style="width:100%; max-width:400px;")
+              img(src="/labels/#{participant._id}/#{pump._id}/#{backdoor}/png-sm", style="width:100%; max-width:400px;")
           
           .row.solo
             .col.col-xs-12.text-center
-              img(src="/labels/#{participant._id}/#{pump._id}/qr/png", style="width:100%; max-width:600px;")
+              img(src="/labels/#{participant._id}/#{pump._id}/#{backdoor}/qr/png", style="width:100%; max-width:600px;")
 
       if pump.revisions && pump.revisions.length > 1
        .panel.panel-default

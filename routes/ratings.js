@@ -109,7 +109,12 @@ router.get('/utilities', function (req, res) {
     });
 });
 
+//KK
 router.get("/:id", aw(async (req, res) => {
+    var bd = req.params.id.slice(-3) == '-bd';
+    if (bd) {
+        req.params.id = req.params.id.slice(0,-3)
+    }
     const pump = await req.Pumps.findOne({
         rating_id: req.params.id
     }).populate('participant').exec();
@@ -122,6 +127,7 @@ router.get("/:id", aw(async (req, res) => {
     }
     res.render("ratings/r_pump", {
         pump: pump,
+        backdoor: bd,
         participant: pump.participant,
         pump_drawing: pump.doe ? pump.doe.toLowerCase() + ".png" : ""
     });

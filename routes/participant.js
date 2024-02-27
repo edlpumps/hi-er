@@ -603,6 +603,10 @@ router.get('/pumps/download', aw(async (req, res) => {
 router.get('/pumps/:id', aw(async (req, res) => {
     req.log.debug("Rendering participant portal (pump id = " + req.params.id);
 
+    var bd = req.params.id.slice(-3) == '-bd';
+    if (bd) {
+        req.params.id = req.params.id.slice(0,-3)
+    }
     const pump = await req.Pumps.findOne({
         _id: req.params.id
     }).exec();
@@ -628,6 +632,7 @@ router.get('/pumps/:id', aw(async (req, res) => {
     var label_svg = svg_builder.make_label(req, req.participant, pump, label);
     res.render("participant/p_pump", {
         user: req.user,
+        backdoor: bd,
         subscription_limit: published >= req.participant.subscription.pumps,
         participant: req.participant,
         pump: pump,

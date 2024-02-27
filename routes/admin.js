@@ -236,10 +236,15 @@ router.get('/participant/:id/circulators', aw(async (req, res) => {
 
 
 router.get('/participant/:id/pumps/:pump_id', aw(async (req, res) => {
+    var bd = req.params.id.slice(-3) == '-bd';
+    if (bd) {
+        req.params.id = req.params.id.slice(0,-3)
+    }
     const participant = await req.Participants.findById(req.params.id).exec();
     const pump = await req.Pumps.findById(req.params.pump_id).lean().exec();
     res.render("admin/a_pump", {
         user: req.user,
+        backdoor: bd,
         participant: participant,
         pump: pump,
         pump_drawing: pump.doe ? pump.doe.toLowerCase() + ".png" : "",
@@ -281,6 +286,10 @@ router.get('/participant/:id/pumps/:pump_id/download', aw(async (req, res) => {
 
 
 router.post('/participant/:id/:type/:pump_id', aw(async (req, res) => {
+    var bd = req.params.id.slice(-3) == '-bd';
+    if (bd) {
+        req.params.id = req.params.id.slice(0,-3)
+    }
     const participant = await req.Participants.findById(req.params.id).exec();
     const collection = req.params.type == 'pumps' ? req.Pumps : req.Circulators;
     const view = req.params.type == 'pumps' ? "admin/a_pump" : "admin/a_circulator";
@@ -288,9 +297,13 @@ router.post('/participant/:id/:type/:pump_id', aw(async (req, res) => {
     pump.active_admin = req.body.active_admin ? true : false;
     pump.note_admin = req.body.note_admin;
     await pump.save();
+    if (req.params.type != 'pumps') {
+        bd = false;
+    }
     res.render(view, {
         user: req.user,
         participant: participant,
+        backdoor: bd,
         pump: pump,
         pump_drawing: pump.doe ? pump.doe.toLowerCase() + ".png" : "",
         section_label: common.section_label

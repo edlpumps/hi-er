@@ -16,8 +16,12 @@ const qr_template_file = path.join(__dirname, "../views/svg/qr.pug");
 const qr_template = pug.compileFile(qr_template_file);
 const label_template_file = path.join(__dirname, "../views/svg/label.pug");
 const label_sm_template_file = path.join(__dirname, "../views/svg/label-sm.pug");
+const label_backdoor_template_file = path.join(__dirname, "../views/svg/label_bd.pug");
+const label_backdoor_sm_template_file = path.join(__dirname, "../views/svg/label-sm_bd.pug");
 const label_template = pug.compileFile(label_template_file);
 const label_sm_template = pug.compileFile(label_sm_template_file);
+const bd_label_template = pug.compileFile(label_backdoor_template_file);
+const bd_label_sm_template = pug.compileFile(label_backdoor_sm_template_file);
 
 
 
@@ -96,9 +100,18 @@ exports.make_sm_label = function (req, participant, pump, label) {
     return label_sm_template(params);
 }
 
+exports.make_bd_label = function (req, participant, pump, label) {
+    var params = build_label_params(pump, label);
+    return bd_label_template(params);
+}
+
+exports.make_bd_sm_label = function (req, participant, pump, label) {
+    var params = build_label_params(pump, label);
+    return bd_label_sm_template(params);
+}
+
 
 var build_circulator_params = function (pump, waip, max) {
-    //KK
     var datetime = pump.date
     var locale = "en-us";
 
@@ -178,7 +191,7 @@ exports.make_circulator_label = function (req, participant, pump) {
         waip,
         maxScale
     } = calc_circ_vals(pump);
-    //KK
+    
     return circulator_label_template(build_circulator_params(pump, waip, maxScale));
 }
 exports.make_circulator_label_small = function (req, participant, pump) {
