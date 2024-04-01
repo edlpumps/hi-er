@@ -112,11 +112,11 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
     - var comma_pixels = (e_string.split(",").length-1) * comma_char_size * mm_to_pixels;
     - var e_string_mid = (e_str_pixels + comma_pixels + kwh_pixels)/2;
  
-    rect(x="30", y=v_start+180, rx="0", ry="0", width=box_width, height="100", style="fill:none;stroke: #000000;stroke-width:2;" )
+    rect(x=30, y=v_start+180, rx="0", ry="0", width=box_width, height="100", style="fill:none;stroke: #000000;stroke-width:2;" )
     text(x=e_middle-e_string_mid, y=v_start+230, style="font-family: 'Arimo'; font-weight:bold", font-size=font_size, text-anchor="start", fill="black") #{e_string}
     text(x=e_middle+(e_string_mid-kwh_pixels)+3, y=v_start+230, style="font-family: 'Arimo'; font-weight:bold", font-size="20", text-anchor="start", fill="black") kWh
-    text(x="65", y=v_start+260, style="font-family: 'Arimo';", font-size="20", text-anchor="start", fill="black") Annual Energy Savings
-    text(x="265", y=v_start+255, style="font-family: 'Arimo';", font-size="13", text-anchor="start", fill="black") &#x2021;
+    text(x=63, y=v_start+260, style="font-family: 'Arimo';", font-size="20", text-anchor="start", fill="black") Annual Energy Savings
+    text(x=270, y=v_start+255, style="font-family: 'Arimo';", font-size="13", text-anchor="start", fill="black") &#x2021;
     
     //Right - Annual Cost Savings
     - var c_len = c_savings.toString().length;
@@ -129,7 +129,7 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
     rect(x=30+box_width+20, y=v_start+180, rx="0", ry="0", width=box_width, height="100", style="fill:none;stroke: #000000;stroke-width:2;" )
     text(x=c_middle-c_string_mid, y=v_start+230, style="font-family: 'Arimo'; font-weight:bold", font-size=font_size, text-anchor="start", fill="black") $#{c_string}
     text(x=30+box_width+63, y=v_start+260, style="font-family: 'Arimo';", font-size="20", text-anchor="start", fill="black") Annual Cost Savings
-    text(x=273+box_width, y=v_start+255, style="font-family: 'Arimo';", font-size="13", text-anchor="start", fill="black") &#x2021;
+    text(x=278+box_width, y=v_start+255, style="font-family: 'Arimo';", font-size="13", text-anchor="start", fill="black") &#x2021;
     
     //Bottom part
     - var footer_x=820;
