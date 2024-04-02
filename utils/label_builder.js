@@ -44,7 +44,9 @@ var build_label_params = function (pump, label) {
     var date = datetime.toLocaleString(locale, {
         month: "short"
     });
+    console.log('er: '+er+' min: '+label.min+' max: '+label.max);
     var span = label.max - label.min;
+    console.log('span: '+span);
     var distance = (er - label.min) / span;
     var pos = Math.round(distance * 500 + 60);
     date += " " + datetime.getFullYear()
@@ -91,14 +93,14 @@ exports.make_qr = function (req, participant, pump, label) {
 exports.make_label = function (req, participant, pump, label) {
     var params = build_label_params(pump, label);
     var output = label_template(params);
-    console.log(output);
+    //console.log(output);
     return output;
 }
 
 exports.make_sm_label = function (req, participant, pump, label) {
     var params = build_label_params(pump, label);
     var output = label_sm_template(params);
-    console.log(output);
+    //console.log(output);
     return output; 
 }
 
