@@ -48,6 +48,7 @@ var build_label_params = function (pump, label) {
     var distance = (er - label.min) / span;
     var pos = Math.round(distance * 500 + 60);
     date += " " + datetime.getFullYear()
+    console.log('distance: '+distance+' pos: '+pos);
 
     return {
         pei: pump.pei.toFixed(2),
@@ -66,7 +67,8 @@ var build_label_params = function (pump, label) {
         er_pos: pos,
         motor_power: pump.motor_power_rated,
         logo: hi_logo_data_uri,
-        load_abbr: load_abbr
+        load_abbr: load_abbr,
+        distance: distance
     };
 
 
@@ -88,12 +90,16 @@ exports.make_qr = function (req, participant, pump, label) {
 
 exports.make_label = function (req, participant, pump, label) {
     var params = build_label_params(pump, label);
-    return label_template(params);
+    var output = label_template(params);
+    console.log(output);
+    return output;
 }
 
 exports.make_sm_label = function (req, participant, pump, label) {
     var params = build_label_params(pump, label);
-    return label_sm_template(params);
+    var output = label_sm_template(params);
+    console.log(output);
+    return output; 
 }
 
 
