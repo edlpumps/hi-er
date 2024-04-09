@@ -153,6 +153,22 @@ exports.labs = function (req, res) {
     )
 }
 
+exports.calculate_energy_savings = function (er, hp) {
+    var e_savings = Math.round(er * hp * 29.828);
+    var e_string = exports.add_commas(e_savings);
+    return {value: e_savings, string: e_string}
+}
+
+exports.calculate_cost_savings = function (er, hp) {
+    var c_savings = Math.round(er * hp * 4.4742);
+    var c_string = exports.add_commas(c_savings);
+    return {value: c_savings, string: c_string}
+}
+
+exports.add_commas = function (value) {
+    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
 exports.map_boolean_input = function (input) {
     if (input) {
         var entered = input.toLowerCase();
@@ -239,7 +255,11 @@ exports.build_pump_spreadsheet = function (pump, unit_set, callback) {
                 if (prop.unit) {
                     var address = prop.column + unit_row;
                     var cell = worksheet.getCell(address);
-                    cell.value = units.labels[prop.unit][unit_set];
+                    try {
+                        cell.value = units.labels[prop.unit][unit_set];
+                    } catch (ex) {
+                        cell.value = prop.unit;
+                    }
                 }
             }
 
@@ -294,16 +314,13 @@ exports.build_pump_spreadsheet = function (pump, unit_set, callback) {
                         value = exports.map_type_output(value);
                     }
 
-                    if ((mapping == "annual_energy_savings") || (mapping == "annual_cost_savings")){
-                        //These calculations are also used in label.pug and label-sm.pug
-                        value = Math.round(p.energy_rating * p.motor_power_rated * (mapping == "annual_energy_savings"?29.828:4.4742));
-                        value = value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-                        if (mapping == "annual_cost_savings"){
-                            value = "$" + value;
-                        }
-                        /*else {
-                            value = value + " kWh";
-                        }*/
+                    if (mapping == "annual_energy_savings") {
+                        let savings = exports.calculate_energy_savings(p.energy_rating, p.motor_power_rated);
+                        value = savings.string;
+                    }
+                    if (mapping == "annual_cost_savings"){
+                        let savings = exports.calculate_cost_savings(p.energy_rating, p.motor_power_rated);
+                        value = "$" + savings.string;
                     }
 
                     if (prop.boolean) {

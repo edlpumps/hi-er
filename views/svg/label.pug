@@ -86,15 +86,11 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
     - var mm_to_pixels = 3.55;
     - var box_mid = box_width / 2;
 
-    // Two rectangles
-    //Left - Annual Energy Savings 
-    //This calculation is also used in common.js
-    - var e_savings = Math.round(er * motor_power * 29.828);
-    - var e_string = e_savings.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    //Right Cost Savings
-    //This calculation is also used in common.js
-    - var c_savings = Math.round(er * motor_power * 4.4742);
-    - var c_string = c_savings.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    // Savings Data
+    - var e_string = annual_energy_savings.string;
+    - var e_savings = annual_energy_savings.value;
+    - var c_string = annual_cost_savings.string;
+    - var c_savings = annual_cost_savings.value;
 
     //Figure out the longest string to determine the font size
     - var max_len = Math.max(e_string.length, c_string.length);
@@ -102,7 +98,7 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
     - var char_size = (max_len > 6 ? 5 : 7); //mm
     - var comma_char_size = 4; //mm
     
-    //Calculate Annual Energy Savings
+    //Left - Annual Energy Savings
     - var e_len = e_savings.toString().length;
     - var kwh_pixels = 13 * mm_to_pixels;
     - var e_str_pixels = ((char_size * e_len) + (1 * (e_len-1))) * mm_to_pixels;

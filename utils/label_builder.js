@@ -5,6 +5,7 @@ const router = express.Router();
 const fs = require('fs')
 const path = require('path');
 const pug = require('pug');
+const common = require('../routes/common');
 const qr = require('qr-image');
 const Datauri = require('datauri');
 const datauri = new Datauri();
@@ -48,7 +49,8 @@ var build_label_params = function (pump, label) {
     var distance = (er - label.min) / span;
     var pos = Math.round(distance * 500 + 60);
     date += " " + datetime.getFullYear()
-
+    var annual_cost_savings = common.calculate_cost_savings(pump.energy_rating, pump.motor_power_rated);
+    var annual_energy_savings = common.calculate_energy_savings(pump.energy_rating, pump.motor_power_rated);
     return {
         pei: pump.pei.toFixed(2),
         doe: pump.doe,
@@ -66,7 +68,9 @@ var build_label_params = function (pump, label) {
         er_pos: pos,
         motor_power: pump.motor_power_rated,
         logo: hi_logo_data_uri,
-        load_abbr: load_abbr
+        load_abbr: load_abbr,
+        annual_cost_savings: annual_cost_savings,
+        annual_energy_savings: annual_energy_savings
     };
 
 
