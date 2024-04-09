@@ -294,6 +294,18 @@ exports.build_pump_spreadsheet = function (pump, unit_set, callback) {
                         value = exports.map_type_output(value);
                     }
 
+                    if ((mapping == "annual_energy_savings") || (mapping == "annual_cost_savings")){
+                        //These calculations are also used in label.pug and label-sm.pug
+                        value = Math.round(p.energy_rating * p.motor_power_rated * (mapping == "annual_energy_savings"?29.828:4.4742));
+                        value = value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                        if (mapping == "annual_cost_savings"){
+                            value = "$" + value;
+                        }
+                        /*else {
+                            value = value + " kWh";
+                        }*/
+                    }
+
                     if (prop.boolean) {
                         value = exports.map_boolean_output(value);
                     }
@@ -318,6 +330,11 @@ exports.build_pump_spreadsheet = function (pump, unit_set, callback) {
                         } else {
                             cell.value = value;
                         }
+                        if ("align" in prop) {
+                            cell.alignment = {
+                                horizontal: prop.align
+                            }
+                        }   
                     }
                 }
                 r++;

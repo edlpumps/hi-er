@@ -92,10 +92,10 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
 
     // Two rectangles
     //Left - Annual Energy Savings 
-    - var e_savings = Math.round(er * motor_power * 29.84);
+    - var e_savings = Math.round(er * motor_power * 29.828);
     - var e_string = e_savings.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     //Right Cost Savings
-    - var c_savings = Math.round(er * motor_power * 4.476);
+    - var c_savings = Math.round(er * motor_power * 4.4742);
     - var c_string = c_savings.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     //Figure out the longest string to determine the font size
     - var max_len = Math.max(e_string.length, c_string.length);

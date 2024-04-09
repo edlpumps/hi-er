@@ -289,6 +289,20 @@
             "column": "AO",
             "path": "date",
             "output_only": true
+        },
+        "annual_energy_savings": {
+            "column": "AP",
+            "path": "annual_energy_savings",
+            "output_only": true,
+            "text": true,
+            "align": "right"
+        },
+        "annual_cost_savings": {
+            "column": "AQ",
+            "path": "annual_cost_savings",
+            "output_only": true,
+            "text": true,
+            "align": "right"
         }
     }
 
