@@ -5,6 +5,7 @@ const router = express.Router();
 const fs = require('fs')
 const path = require('path');
 const pug = require('pug');
+const common = require('../routes/common');
 const qr = require('qr-image');
 const Datauri = require('datauri');
 const datauri = new Datauri();
@@ -48,7 +49,8 @@ var build_label_params = function (pump, label) {
     var distance = (er - label.min) / span;
     var pos = Math.round(distance * 500 + 60);
     date += " " + datetime.getFullYear()
-
+    var annual_cost_savings = common.calculate_cost_savings(pump.energy_rating, pump.motor_power_rated);
+    var annual_energy_savings = common.calculate_energy_savings(pump.energy_rating, pump.motor_power_rated);
     return {
         pei: pump.pei.toFixed(2),
         doe: pump.doe,
@@ -64,8 +66,11 @@ var build_label_params = function (pump, label) {
         rating_id: pump.rating_id,
         bar_width: distance * 500 - 1,
         er_pos: pos,
+        motor_power: pump.motor_power_rated,
         logo: hi_logo_data_uri,
-        load_abbr: load_abbr
+        load_abbr: load_abbr,
+        annual_cost_savings: annual_cost_savings,
+        annual_energy_savings: annual_energy_savings
     };
 
 
@@ -87,12 +92,15 @@ exports.make_qr = function (req, participant, pump, label) {
 
 exports.make_label = function (req, participant, pump, label) {
     var params = build_label_params(pump, label);
-    return label_template(params);
+    var output = label_template(params);
+    return output;
 }
 
 exports.make_sm_label = function (req, participant, pump, label) {
     var params = build_label_params(pump, label);
-    return label_sm_template(params);
+    var output = label_sm_template(params);
+    //console.log(output);
+    return output; 
 }
 
 
@@ -132,6 +140,7 @@ var build_circulator_params = function (pump, waip, max) {
         rating_id: pump.rating_id,
         bar_width: distance * 500 - 1,
         er_pos: pos,
+        motor_power: 3,
         logo: hi_logo_data_uri,
         small_logo: hi_logo_data_uri_small,
         waip: waip !== undefined ? waip.toFixed(3) : ''

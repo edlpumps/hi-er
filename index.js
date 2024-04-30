@@ -206,8 +206,7 @@ var conn = mongoose.connect(data_connection_str, {
         configure();
         startup();
 
-        //console.log("STOP PUSHING EMAILS ON STARTUP")
-        push_emails(1, "scott@freesconsulting.com");
+        push_emails(1, "higladetech@gmail.com");
     }
 });
 
