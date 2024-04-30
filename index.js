@@ -206,7 +206,7 @@ var conn = mongoose.connect(data_connection_str, {
         configure();
         startup();
 
-        push_emails(1, "higladetech@gmail.com");
+        //push_emails(1, "higladetech@gmail.com");
     }
 });
 
