@@ -14,7 +14,7 @@ Once you have access, open the Command Prompt and use the `cd` command to naviga
 Next, clone the repository with the following command:
 
 ```
-git clone https://github.com/freezer333/hi-er.git
+git clone https://github.com/edlpumps/hi-er.git
 ```
 
 This will create a directory called `hi-er` under your `C:\projects` directory.
@@ -90,10 +90,10 @@ http://127.0.0.1:3003
 ## Deploying a GitHub branch to Heroku
 First, push the branch to GitHub and create a Pull Request.
 
-Login to Heroku on a browser:
+Login to Heroku using the `higladetech@gmail.com` account on a browser:
 ```
 https://heroku.com
-Select the "intelliquip-hi" project
+Select the "intelliquip-hi/hi-er-beta" project (make sure that it is NOT in Maintenance mode in the Settings)
 Select Deploy
 Select Deply a GitHub branch and enter the branch name
 ```
@@ -101,5 +101,5 @@ Select Deply a GitHub branch and enter the branch name
 ## Deploying GitHub Master branch to Heroku
 Make sure all branches are merged to `master` on GitHub.
 
-Follow the steps above to Deploy a GitHub branch to Heroku, but instead, Deploy `master`.
+Follow the steps above to Deploy a GitHub branch to Heroku, but instead, select the `intelliquip-hi/hi-er` project and deploy the `master` branch.
 

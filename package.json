@@ -46,7 +46,6 @@
     "less-middleware": "2.2.0",
     "lodash": "4.17.2",
     "moment": "^2.24.0",
-    "momentjs": "2.0.0",
     "mongoose": "^6.5.0",
     "multer": "1.2.0",
     "node-cache": "^5.1.2",

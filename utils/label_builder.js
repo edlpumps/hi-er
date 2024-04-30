@@ -105,7 +105,6 @@ exports.make_sm_label = function (req, participant, pump, label) {
 
 
 var build_circulator_params = function (pump, waip, max) {
-    //KK
     var datetime = pump.date
     var locale = "en-us";
 
@@ -185,7 +184,6 @@ exports.make_circulator_label = function (req, participant, pump) {
         waip,
         maxScale
     } = calc_circ_vals(pump);
-    //KK
     return circulator_label_template(build_circulator_params(pump, waip, maxScale));
 }
 exports.make_circulator_label_small = function (req, participant, pump) {
