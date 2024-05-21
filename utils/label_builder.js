@@ -116,6 +116,9 @@ var build_circulator_params = function (pump, waip, max) {
     var pos = Math.round(distance * 500 + 60);
     date += " " + datetime.getFullYear()
 
+    // Find the maximum end of the energy rating scale
+    max = Math.max(max, pump.least.energy_rating.toFixed(0))
+
     const methods = [];
     for (const cm of circulator.control_methods) {
         if (pump.control_methods.indexOf(cm.label) >= 0) {
@@ -146,9 +149,10 @@ var build_circulator_params = function (pump, waip, max) {
         waip: waip !== undefined ? waip.toFixed(3) : ''
     };
     
-    if (retval.er_most == retval.er) {
-        delete retval.er_most;
-    }
+    //if (retval.er_most == retval.er) {
+    //    delete retval.er_most;
+    //}
+    //console.log(JSON.stringify(retval, null, 2));
     return retval;
 }
 const average = (values) => {
