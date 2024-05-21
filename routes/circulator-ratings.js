@@ -20,7 +20,9 @@ router.post('/', aw(async function (req, res) {
         valid = true;
     }
     if (req.body.basic_model) {
-        q.basic_model = req.body.basic_model;
+        q.basic_model = {
+            $regex: new RegExp(req.body.basic_model, "ig")
+        };
         valid = true;
     }
     if (req.body.brand) {
