@@ -57,7 +57,7 @@ block content
               label.col-sm-3.control-label 
                
               .col.col-sm-5
-               button.btn.btn-primary(ng-hide='app.search_error', type="button", ng-click="app.getPumps(); app.searched = true") Search for Rated Pumps
+               button.btn.btn-primary(ng-hide="!app.search_ready()", type="button", ng-click="app.getPumps(); app.searched = true") Search for Rated Pumps
             
          p.alert.alert-warning(ng-show="app.pumps_error") {{app.pumps_error}}
          p.alert.alert-warning(ng-show="app.search_error") {{app.search_error}}

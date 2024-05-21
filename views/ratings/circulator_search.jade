@@ -82,6 +82,8 @@ block script
 								participant: this.search.participant ? this.search.participant._id : undefined,
 								brand: this.search.brand
 							}
+							console.log("Circ Search Parameters: "+JSON.stringify(search,null,2));
+    
 							localStorage.setItem('circulator_search', JSON.stringify(search));
 							const v = this;
 							$.ajax({
