@@ -89,6 +89,7 @@ var ERRatingsController = function ($scope, $location, service, $http) {
 
     vm.pumps_error = false;
     vm.searching = true;
+    console.log('C&I Search Parameters: '+JSON.stringify(vm.search,null,2));
     service.search(vm.search).then(function (results) {
       vm.searching = false;
       vm.pumps = results.data.pumps;
