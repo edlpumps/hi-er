@@ -40,7 +40,7 @@ router.post('/', aw(async function (req, res) {
         return res.json([]);
     }
     //console.log("Query: "+JSON.stringify(q));
-    const results = await req.Circulators.find(q).populate('participant').exec();
+    const results = await req.Circulators.find(q).sort({'least.pei': 1, 'basic_model': 1}).populate('participant').exec();
 
     res.json(results)
 }));

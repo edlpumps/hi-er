@@ -194,6 +194,7 @@ router.post("/search", function (req, res) {
     var operators = default_search_operators(search_params, true);
     operators.push({
         $sort: {
+            pei: 1,
             basic_model: 1,
             individual_model: 1
         }
@@ -213,6 +214,7 @@ router.post("/search", function (req, res) {
             pei: 1
         }
     })
+    console.log(operators);
     req.Pumps.aggregate(operators).exec(function (err, docs) {
         res.json({
             pumps: docs
