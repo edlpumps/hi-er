@@ -214,7 +214,7 @@ router.post("/search", function (req, res) {
             pei: 1
         }
     })
-    console.log(operators);
+    //console.log(operators);
     req.Pumps.aggregate(operators).exec(function (err, docs) {
         res.json({
             pumps: docs
