@@ -60,11 +60,13 @@ install MongoDB Compass
 create .env with:  
 - MONGO_CONNECTION_DATA = mongodb://127.0.0.1:27017/er 
 - ADMIN_PASSWORD_OVERRIDE=test
+
 You will need to have your user information in the database.
-$>npm init
-$>npm install
-$>npm -g install supervisor
-$>supervisor index.js
+
+If MongoDB Compass is running but it won't connect to the local database:
+- Open Task Manager
+- Click on the Services tab
+- Make sure MongoDB Server is running
 
 
 ## Local Preview - Debugging
@@ -81,7 +83,16 @@ Step through code
 Use the debug toolbar to step into/over code
 Use the debug toolbar to restart the code and stop execution
 ```
-
+To monitor for code changes while running index.js, install `supervisor`:
+```
+$>npm init
+$>npm install
+$>npm -g install supervisor
+```
+Then run the code using `supervisor`:
+```
+$>supervisor index.js
+```
 Connect to the localhost on port: 
 ```
 http://127.0.0.1:3003
@@ -103,3 +114,10 @@ Make sure all branches are merged to `master` on GitHub.
 
 Follow the steps above to Deploy a GitHub branch to Heroku, but instead, select the `intelliquip-hi/hi-er` project and deploy the `master` branch.
 
+
+## Generate README.PDF
+- Make sure the `Markdown PDF` extension is installed on Visual Studio Code (Author yzane).
+- Open the README.md file
+- Press the 'F1' key
+- Select the `Markdown PDF` extension (or search for it).
+The README.pdf file will automatically be generated.
