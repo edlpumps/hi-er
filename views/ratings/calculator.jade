@@ -210,7 +210,7 @@ mixin calculator(er, mode)
             hr
             .row
               .col.col-xs-10
-                button.btn.btn-default(type="button", ng-disabled="!app.pump.motor_method", ng-click="app.go2Configuration(true)") Back
+                button.btn.btn-default(type="button", ng-click="app.go2Configuration(true)") Back
                 button.btn.btn-primary.btn-space(type="button", ng-disabled="!app.pump.motor_method", ng-click="app.go2Options()") Next
                 
               .col.col-xs-2
