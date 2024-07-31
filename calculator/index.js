@@ -684,7 +684,9 @@ exports.calculate = function (pump, labels) {
 
 var common_checks = function (pump, manual) {
     var missing = [];
-
+    if (!pump.brand) missing.push("Pump brand name must be specified");
+    if (!pump.basic_model) missing.push("Pump basic model number must be specified");
+    if (!pump.individual_model) missing.push("Pump individual model number must be specified");
     if (!pump.doe) missing.push("Pump DOE designation must be specified");
     if (!pump.speed) missing.push("Pump speed must be specified");
     if (!pump.flow) missing.push("Pump BEP flow must be specified at 75%, 100%, and 110% BEP");

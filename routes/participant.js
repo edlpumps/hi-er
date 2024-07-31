@@ -466,7 +466,7 @@ router.post("/pumps/upload", get_labels, aw(async (req, res) => {
     var first_cell = null;
     var done = false;
     while (!done) {
-        first_cell = worksheet.getCell(template.mappings.basic_model.column + r)
+        first_cell = worksheet.getCell(template.mappings.participant.column + r)
 
         if (first_cell.value) {
             var pump = {}
@@ -478,16 +478,17 @@ router.post("/pumps/upload", get_labels, aw(async (req, res) => {
                 var prop = template.mappings[mapping];
                 var cell = worksheet.getCell(prop.column + r);
                 var value = cell.value;
+                if (!value) value = "";
                 if (value && value.trim) value = value.trim();
                 var enabled = true;
                 if (mapping == "configuration") {
-                    value = common.map_config_input(cell.value);
+                    value = common.map_config_input(value);
                 }
                 if (mapping == "motor_type") {
-                    value = common.map_type_input(cell.value);
+                    value = common.map_type_input(value);
                 }
                 if (prop.boolean) {
-                    value = common.map_boolean_input(cell.value);
+                    value = common.map_boolean_input(value);
                 }
                 if (prop.bep120) {
                     if (prop.bep120 == "no" && load120) {
