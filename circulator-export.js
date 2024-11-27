@@ -243,10 +243,18 @@ const getLCCMGroups = (details) => {
     const groups = details.reduce((group, detail) => {
         const { least_control_method, most_input_power_100 } = detail;
         group[least_control_method] = group[least_control_method] || {};
-
+        
         const bin = summarySizeBins.find(b => most_input_power_100 >= b[0] && most_input_power_100 <= b[1]);
-        const label = `${bin[0].toLocaleString(undefined, { minimumIntegerDigits: 1, minimumFractionDigits: 3})}-${bin[1].toLocaleString(undefined, { minimumIntegerDigits: 1, minimumFractionDigits: 3})}`;
-
+        if (!bin) {
+            console.log("No bin found for most_input_power_100: ", most_input_power_100);
+        }
+        let label=null;
+        try {
+         label = `${bin[0].toLocaleString(undefined, { minimumIntegerDigits: 1, minimumFractionDigits: 3})}-${bin[1].toLocaleString(undefined, { minimumIntegerDigits: 1, minimumFractionDigits: 3})}`;
+        } catch (e) {
+            console.log("Error! ", e);
+            label = "5.501+";
+        }
         group[least_control_method][label] = group[least_control_method][label] || []
         group[least_control_method][label].push(detail);
 
