@@ -88,12 +88,11 @@ const perform_maintenance = async () => {
                 }
 
             }
-        }
-
-        mongoose.connection.close();
+        }    
     } catch (ex) {
         console.error(ex);
     }
+    mongoose.connection.close();
 }
 
 perform_maintenance();
