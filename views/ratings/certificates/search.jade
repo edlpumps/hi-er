@@ -54,13 +54,15 @@ block content
                                 b Serial #: 
                                 a(v-bind:href="'/ratings/certificates/certificate/'+certificate.certificate_number") {{certificate.certificate_number}}
                            h3 
-                            span {{certificate.pump.brand}} {{certificate.pump.brand ? ' / ' : ''}} {{certificate.pump.basic_model}}
+                            span(v-if='certificate.pump && certificate.pump.brand') {{certificate.pump.brand}} {{certificate.pump.brand ? ' / ' : ''}} {{certificate.pump.basic_model}}
                             br
                             span Issuer: {{certificate.packager.company}} 
-                           p
-                            span 
-                                b Rating ID:  
-                                a(v-bind:href="'/ratings/' + certificate.pump.rating_id", target="_blank") {{certificate.pump.rating_id}}
+                            
+                            p(v-if='certificate.pump && certificate.pump.rating_id')
+                                span 
+                                    b Rating ID:  
+                                    a(v-bind:href="'/ratings/' + certificate.pump.rating_id", target="_blank") {{certificate.pump.rating_id}}
+                        
                          .col.hidden-xs.col.hidden-sm.col-md-3(style="padding-top:20px")
                            p(v-if='certificate.motor && certificate.motor.model')
                             span 
@@ -79,13 +81,13 @@ block content
                                 b VFD Model #:  
                                 | {{certificate.vfd.model}}
                            
-                           
-                           
                         .col.col-sm-2.energy_badge(style='border-right: thin solid rgb(221, 221, 221)')
-                           .small(style="padding-top:20px; margin-bottom:0px") Energy Rating
-                           h2(style="margin-top:0px") {{certificate.pump.energy_rating}}
-                           .small(style="padding-top:20px; margin-bottom:0px") PEI
-                           h4(style='margin-top:0px') {{certificate.pump.pei.toFixed(2)}}
+                            .small(style="padding-top:20px; margin-bottom:0px") Energy Rating
+                            h2(style="margin-top:0px") {{certificate.pump ? certificate.pump.energy_rating : 'N/A'}}
+                            .small(style="padding-top:20px; margin-bottom:0px") PEI
+                            h4(style='margin-top:0px') {{certificate.pump ? certificate.pump.pei.toFixed(2) : 'N/A'}}
+                
+                        
                         .col.col-sm-2.energy_badge
                            .small(style="padding-top:20px; margin-bottom:0px") Extended Energy Rating
                            h2(style="margin-top:0px") {{certificate.energy_rating}}

@@ -23,10 +23,19 @@ block content
 
            .col.col-sm-6.text-center
                 h2 ER-Listed Basic Model
-                p #{certificate.pump.participant.name}
-                p #{certificate.pump.brand}
-                p #{certificate.pump.doe}
-                p Model #: #{certificate.pump.basic_model}
+                if certificate.pump
+                  if certificate.pump.participant
+                    p #{certificate.pump.participant.name}
+                  if certificate.pump.brand
+                    p #{certificate.pump.brand}
+                  if certificate.pump.doe
+                    p #{certificate.pump.doe}
+                  if certificate.pump.basic_model
+                    p Model #: #{certificate.pump.basic_model}
+                  else
+                    p Model #: UNKNOWN
+                else 
+                  p Model #: N/A
            .col.col-sm-6.text-center(style='border-left:thick rgb(221, 221, 221) solid')
                 h2 Extended Products Added
                 p(style='margin-bottom:2em')
@@ -64,18 +73,24 @@ block content
                   p: b ER-Listed Basic Model
                   h1 
                     | PEI
-                    sub #{certificate.pump.configuration == 'bare' || certificate.pump.configuration == 'pump_motor' ? "CL" : "VL"}
-                    span :  #{certificate.pump.pei.toFixed(2)}
+                    if certificate.pump
+                      sub #{certificate.pump.configuration == 'bare' || certificate.pump.configuration == 'pump_motor' ? "CL" : "VL"}
+                      span :  #{certificate.pump.pei.toFixed(2)}
+                    else 
+                      span :  N/A
                   p(style='margin-top:2em'): b ER-Listed Basic Model
                   h1 ENERGY RATING
-                  p.er_display #{certificate.pump.energy_rating}
+                  p.er_display #{certificate.pump ? certificate.pump.energy_rating : 'N/A'}
             .col.col-sm-6.text-center(style='border-left:thick rgb(221, 221, 221) solid')
                 div
                   p(style='visibility:hidden;'): b Calculated Extended Product
                   h1(style='visibility:hidden;')
                     | PEI
-                    sub #{certificate.pump.configuration == 'bare' || certificate.pump.configuration == 'pump_motor' ? "CL" : "VL"}
-                    span :  #{certificate.pei.toFixed(2)}
+                    if certificate.pump
+                      sub #{certificate.pump.configuration == 'bare' || certificate.pump.configuration == 'pump_motor' ? "CL" : "VL"}
+                      span :  #{certificate.pei.toFixed(2)}
+                    else 
+                      span :  N/A
                 
                   p(style='margin-top:2em'): b Extended Product
                   h1 ENERGY RATING
