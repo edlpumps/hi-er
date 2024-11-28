@@ -59,17 +59,17 @@ mixin vue_circulator_components()
 				span(v-if='!public')
 					br
 					a(:href='"/participant/circulators/"+pump._id+"/svg/label?download=true"').margin-right Download SVG
-					a(:href='"/participant/circulators/"+pump._id+"/png/label?download=true"') Download PNG
+					//-a(:href='"/participant/circulators/"+pump._id+"/png/label?download=true"') Download PNG
 			div.padded(v-if='!public')
 				img(:src='"/participant/circulators/"+pump._id+"/svg/sm-label"')
 				br
 				a(:href='"/participant/circulators/"+pump._id+"/svg/sm-label?download=true"').margin-right Download SVG
-				a(:href='"/participant/circulators/"+pump._id+"/png/sm-label?download=true"') Download PNG
+				//-a(:href='"/participant/circulators/"+pump._id+"/png/sm-label?download=true"') Download PNG
 			div.padded(v-if='!public')
 				img(:src='"/participant/circulators/"+pump._id+"/svg/qr"')
 				br
 				a(:href='"/participant/circulators/"+pump._id+"/svg/qr?download=true"').margin-right Download SVG
-				a(:href='"/participant/circulators/"+pump._id+"/png/qr?download=true"') Download PNG
+				//-a(:href='"/participant/circulators/"+pump._id+"/png/qr?download=true"') Download PNG
 		
 
 	script#v-circulator-data-details(type='text/x-template')
