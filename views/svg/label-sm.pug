@@ -2,6 +2,9 @@ include common.pug
 
 doctype xml
 svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.w3.org/1999/xlink", version="1.1", width="620", height="1033", preserveAspectRatio="xMinYMin meet", viewBox="0 0 620 620")
+
+    defs
+     include fonts.pug
     
     - var y_loc = 15;
     rect(x="0", y="0", rx="0", ry="0", width="620", height="1033", style="fill:#FFFFFF;;stroke: #222222;;stroke-width:1;")
