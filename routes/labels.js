@@ -3,7 +3,17 @@ const router = express.Router();
 const fs = require('fs')
 const path = require('path');
 const svg_builder = require('../utils/label_builder.js');
-const svg2png = require("svg2png");
+const { Resvg } = require('@resvg/resvg-js');
+
+
+const svg_opts = {
+    font: {
+        fontFiles: [path.join(__dirname, '../utils/fonts/Arimo-Regular.ttf'), 
+            path.join(__dirname, '../utils/fonts/Arimo-Bold.ttf'), 
+        ], // font files to use
+        defaultFontFamily: 'Arimo' // font name to use
+    }
+}
 
 
 const render_svg = async (req, res, svg_maker, callback) => {
@@ -64,46 +74,44 @@ router.get('/:participant_id/:id/svg-sm', function (req, res) {
 });
 
 
-
-
 router.get('/:participant_id/:id/png', function (req, res) {
-    render_svg(req, res, svg_builder.make_label, function (err, svg, pump) {
-        if (err) {
-            res.status(500).send(err);
-            return;
-        }
-
-        svg2png(svg, {})
-            .then(function (png_buffer) {
+    try {
+            render_svg(req, res, svg_builder.make_label, function (err, svg, pump) {
+                if (err) {
+                    res.status(500).send(err);
+                    return;
+                }
+                const resvg = new Resvg(svg,svg_opts);
+                const png_data = resvg.render();
+                const png_buffer = png_data.asPng();
                 if (req.query.download) {
                     res.setHeader('Content-disposition', 'attachment; filename=Energy Rating Label - ' + pump.rating_id + '.png');
                 }
                 res.setHeader('Content-Type', 'image/png');
                 res.setHeader('Content-Length', png_buffer.length);
                 res.status(200).send(png_buffer);
-            })
-            .catch(e => res.status(500).send(e));
-    });
+            });
+        } catch(e) { res.status(500).send(e);}
 });
 
 router.get('/:participant_id/:id/png-sm', function (req, res) {
-    render_svg(req, res, svg_builder.make_sm_label, function (err, svg, pump) {
-        if (err) {
-            res.status(500).send(err);
-            return;
-        }
-
-        svg2png(svg, {})
-            .then(function (png_buffer) {
+    try {
+            render_svg(req, res, svg_builder.make_sm_label, function (err, svg, pump) {
+                if (err) {
+                    res.status(500).send(err);
+                    return;
+                }
+                const resvg = new Resvg(svg,svg_opts);
+                const png_data = resvg.render();
+                const png_buffer = png_data.asPng();
                 if (req.query.download) {
                     res.setHeader('Content-disposition', 'attachment; filename=Energy Rating Label - ' + pump.rating_id + '.png');
                 }
                 res.setHeader('Content-Type', 'image/png');
                 res.setHeader('Content-Length', png_buffer.length);
                 res.status(200).send(png_buffer);
-            })
-            .catch(e => res.status(500).send(e));
-    });
+            });
+        } catch(e) { res.status(500).send(e);}
 });
 
 router.get('/:participant_id/:id/qr', function (req, res) {
@@ -121,23 +129,23 @@ router.get('/:participant_id/:id/qr', function (req, res) {
 });
 
 router.get('/:participant_id/:id/qr/png', function (req, res) {
-    render_svg(req, res, svg_builder.make_qr, function (err, svg, pump) {
-        if (err) {
-            res.status(500).send(err);
-            return;
-        }
-
-        svg2png(svg, {})
-            .then(function (png_buffer) {
+    try {
+            render_svg(req, res, svg_builder.make_qr, function (err, svg, pump) {
+                if (err) {
+                    res.status(500).send(err);
+                    return;
+                }
+                const resvg = new Resvg(svg,svg_opts);
+                const png_data = resvg.render();
+                const png_buffer = png_data.asPng();
                 if (req.query.download) {
-                    res.setHeader('Content-disposition', 'attachment; filename=Energy Rating QR - ' + pump.rating_id + '.png');
+                    res.setHeader('Content-disposition', 'attachment; filename=Energy Rating Label - ' + pump.rating_id + '.png');
                 }
                 res.setHeader('Content-Type', 'image/png');
                 res.setHeader('Content-Length', png_buffer.length);
                 res.status(200).send(png_buffer);
-            })
-            .catch(e => res.status(500).send(e));
-    });
+            });
+        } catch(e) { res.status(500).send(e);}
 });
 
 module.exports = router;
