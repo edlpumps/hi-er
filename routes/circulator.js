@@ -9,16 +9,6 @@ const units = require('../utils/uom');
 const Hashids = require('hashids');
 const hashids = new Hashids("hydraulic institute", 6, 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789');
 const svg_builder = require('../utils/label_builder.js');
-const { Resvg } = require('@resvg/resvg-js');
-
-const svg_opts = {
-    font: {
-        fontFiles: [path.join(__dirname, '../utils/fonts/Arimo-Regular.ttf'), 
-            path.join(__dirname, '../utils/fonts/Arimo-Bold.ttf'), 
-        ], // font files to use
-        defaultFontFamily: 'Arimo' // font name to use
-    }
-}
 
 const model_check = async (req, pump) => {
     return {
@@ -346,7 +336,7 @@ router.get('/:id/svg/label', aw(async (req, res) => {
 router.get('/:id/png/label', aw(async (req, res) => {
     const pump = await req.Circulators.findById(req.params.id).populate('participant').exec();
     const svg = svg_builder.make_circulator_label(req, pump.participant, pump);
-    const png_buffer = new Resvg(svg,svg_opts).render().asPng();
+    const png_buffer = svg_builder.svg_to_png(svg);
     res.setHeader('Content-disposition', 'attachment; filename=Energy Rating Label - ' + pump.rating_id + '.png');
     res.setHeader('Content-Type', 'image/png');
     res.setHeader('Content-Length', png_buffer.length);
@@ -363,7 +353,7 @@ router.get('/:id/svg/sm-label', aw(async (req, res) => {
 router.get('/:id/png/sm-label', aw(async (req, res) => {
     const pump = await req.Circulators.findById(req.params.id).populate('participant').exec();
     const svg = svg_builder.make_circulator_label_small(req, pump.participant, pump);
-    const png_buffer = new Resvg(svg,svg_opts).render().asPng();
+    const png_buffer = svg_builder.svg_to_png(svg);
     res.setHeader('Content-disposition', 'attachment; filename=Energy Rating Label (sm) - ' + pump.rating_id + '.png');
     res.setHeader('Content-Type', 'image/png');
     res.setHeader('Content-Length', png_buffer.length);
@@ -379,7 +369,7 @@ router.get('/:id/svg/qr', aw(async (req, res) => {
 router.get('/:id/png/qr', aw(async (req, res) => {
     const pump = await req.Circulators.findById(req.params.id).populate('participant').exec();
     const svg = svg_builder.make_circulator_qr(req, pump.participant, pump);
-    const png_buffer = new Resvg(svg,svg_opts).render().asPng();
+    const png_buffer = svg_builder.svg_to_png(svg);
     res.setHeader('Content-disposition', 'attachment; filename=Energy Rating QR - ' + pump.rating_id + '.png');
     res.setHeader('Content-Type', 'image/png');
     res.setHeader('Content-Length', png_buffer.length);
