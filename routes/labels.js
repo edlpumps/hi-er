@@ -76,7 +76,6 @@ router.get('/:participant_id/:id/png', function (req, res) {
                     return;
                 }
                 const png_buffer = new Resvg(svg,svg_opts).render().asPng();
-                new Resvg(svg,svg_opts).render()
                 res.setHeader('Content-disposition', 'attachment; filename=Energy Rating Label - ' + pump.rating_id + '.png');
                 res.setHeader('Content-Type', 'image/png');
                 res.setHeader('Content-Length', png_buffer.length);
