@@ -10,6 +10,16 @@ const qr = require('qr-image');
 const Datauri = require('datauri');
 const datauri = new Datauri();
 const circulator = require('../controllers/circulator');
+const { Resvg } = require('@resvg/resvg-js');
+
+const svg_opts = {
+    font: {
+        fontFiles: [path.join(__dirname, '../utils/fonts/Arimo-Regular.ttf'), 
+            path.join(__dirname, '../utils/fonts/Arimo-Bold.ttf'), 
+        ], // font files to use
+        defaultFontFamily: 'Arimo' // font to use for SVG to PNG conversion
+    }
+}
 
 const hi_logo_data_uri = fs.readFileSync(path.join(__dirname, "../views/svg/hi-title"), "utf-8");
 const hi_logo_data_uri_small = fs.readFileSync(path.join(__dirname, "../views/svg/hi-title-small"), "utf-8");
@@ -26,6 +36,9 @@ const circulator_label_template_file = path.join(__dirname, "../views/svg/circul
 const circulator_small_label_template_file = path.join(__dirname, "../views/svg/circulator-label-small.pug");
 
 
+exports.svg_to_png = function (svg) {
+    return new Resvg(svg,svg_opts).render().asPng();
+}
 
 var build_label_params = function (pump, label) {
     var pm = pump.configuration == "bare" ? "- Bare Pump" : "- Motor";
