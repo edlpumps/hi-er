@@ -29,7 +29,12 @@ const exporter = require('./exporter');
 let session_store = null;
 let mainlog = bunyan.createLogger({
     name: 'hi',
-    level: process.env.LOG_LEVEL
+    level: bunyan.INFO
+});
+
+let reqlog = bunyan.createLogger({
+    name: 'hi-request',
+    level: bunyan.WARN
 });
 
 
@@ -68,7 +73,7 @@ var configure = function () {
     // request object.
     ////////////////////////////////////////////////////
     app.use(function (req, res, next) {
-        req.log = mainlog;
+        req.log = reqlog;
         next();
     });
 
