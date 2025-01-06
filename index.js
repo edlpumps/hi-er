@@ -29,7 +29,7 @@ const exporter = require('./exporter');
 let session_store = null;
 let mainlog = bunyan.createLogger({
     name: 'hi',
-    level: bunyan.INFO
+    level: bunyan.WARN
 });
 
 let reqlog = bunyan.createLogger({
