@@ -154,7 +154,7 @@ exports.labs = function (req, res) {
 }
 
 function energy_savings_const(is_pump) {
-    let retval= (is_pump ? 7.457 : 7.46) * (is_pump ? parseFloat(process.env.LABELS_PUMP_ANNUAL_RUN_HRS) : parseFloat(process.env.LABELS_CIRC_ANNUAL_RUN_HRS)) / 1000;
+    let retval= 7.457 * (is_pump ? parseFloat(process.env.LABELS_PUMP_ANNUAL_RUN_HRS) : parseFloat(process.env.LABELS_CIRC_ANNUAL_RUN_HRS)) / 1000;
     return retval;
 }
 
