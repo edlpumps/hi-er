@@ -69,7 +69,7 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
         // this is the caret below the rating label
         polygon(fill="#000000", stroke="#000000", stroke-width="1", points=positions)
         // this is the rating label
-        text(x=label_pos, y=v_start+20, style="font-family: Arimo; font-weight:bold", font-size="50", text-anchor=label_align, fill="#000000") #{er_most_efficient}
+        text(x=label_pos, y=v_start+20, style="font-family: Arimo; font-weight:bold", font-size="50", text-anchor=label_align, fill="#000000") #{er}
 
     text(x="320", y=height+30, style="font-family: Arimo; font-weight:bold", font-size="30", text-anchor="middle", fill="black") ENERGY RATING
     //Bar
@@ -132,8 +132,25 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
     text(x=278+box_width, y=v_start+235, style="font-family: Arimo;", font-size="12", text-anchor="start", fill="black") &#x2021;
     
     - var er_mm = er_pos / mm_to_pixels;
+
     //Bottom part
-    -var footer_x = 720;
+    -var footer_x = v_start + 290;
+    text(x=36, y=footer_x, style="font-family: Arimo;", font-size="16", text-anchor="start",fill="black") The Energy Rating is dependent on the selected control method. Method(s)
+    text(x=36, y=footer_x+=25, style="font-family: Arimo;", font-size="16", text-anchor="start",fill="black") available for this model are: 
+    - footer_x+=20;
+    - var num_methods = methods.length;
+    - var x_offset = [90, 350];
+    - var use_x_offset = x_offset[0];
+    - for (var index = 0; index < num_methods; index++) {
+        - var remainder = index % 2;
+        if remainder === 0 
+            - use_x_offset = x_offset[0];
+            - footer_x+=20;
+        else
+            - use_x_offset = x_offset[1];
+        text(x=use_x_offset, y=footer_x, style="font-family: Arimo;", font-size="16", text-anchor="start",fill="black") &#x2022; #{methods[index]}
+    - }
+    - footer_x = 720;
     text(x=36, y=footer_x-5, style="font-family: Arimo;", font-size="12", text-anchor="start",fill="black") &#x2021;
     text(x=43, y=footer_x, style="font-family: Arimo;", font-size="12", text-anchor="start",fill="black") Estimated annual savings are based on the most efficient rating available, #{annual_run_hours} annual run hours,
     text(x=43, y=(footer_x+=20), style="font-family: Arimo;", font-size="12", text-anchor="start", fill="black") and #{cost_per_kwh}&#x00a2; per kWh, when compared to the least efficient pump available in the market.  Actual savings 
