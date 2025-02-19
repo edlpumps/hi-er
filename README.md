@@ -1,5 +1,7 @@
 # HI-ER Readme
 
+This code is used for the https://er.pumps.org/ website.
+
 ## Getting the Application
 The application consists of many folders and files.  In order to allow multiple people to work on the HI-ER content, and for continued application development, the HI-ER is managed through a `git` repository.  `git` is a platform that allows for very powerful version control - it tracks changes and allows you to "commit" them and "push" your changes to a central repository so others can always see the latest work.  
 
@@ -114,6 +116,12 @@ Make sure all branches are merged to `master` on GitHub.
 
 Follow the steps above to Deploy a GitHub branch to Heroku, but instead, select the `intelliquip-hi/hi-er` project and deploy the `master` branch.
 
+## PNG to URI
+- If you add an image to the Energy Ratings label, you need to convert the image to URI content.
+- Use an online coverter like https://site24x7.com/tools/image-to-datauri.html
+- Upload the image (PNG, JPEG, whatever) to the tool which generates the URI code.
+- Copy the content and paste into a file (no extension) in the views/svg folder
+- Pass that link into the SVG generator code for generating the label.
 
 ## Generate README.PDF
 - Make sure the `Markdown PDF` extension is installed on Visual Studio Code (Author yzane).
