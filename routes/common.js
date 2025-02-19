@@ -153,15 +153,35 @@ exports.labs = function (req, res) {
     )
 }
 
-exports.calculate_energy_savings = function (er, hp) {
-    var e_savings = Math.round(er * hp * 29.828);
+function energy_savings_const(is_pump) {
+    let retval= 7.457 * (is_pump ? 4000 : 2500) / 1000;
+    return retval;
+}
+
+exports.calculate_energy_savings = function (er, hp_waip, is_pump=true) {
+    let e_const = energy_savings_const(is_pump);
+    var e_savings = parseFloat(er * hp_waip * e_const);
+    e_savings = Math.round(e_savings);
     var e_string = exports.add_commas(e_savings);
     return {value: e_savings, string: e_string}
 }
 
-exports.calculate_cost_savings = function (er, hp) {
-    var c_savings = Math.round(er * hp * 4.4742);
-    var c_string = exports.add_commas(c_savings);
+exports.calculate_cost_savings = function (er, hp_waip,is_pump=true) {
+    let e_const = energy_savings_const(is_pump);
+    let c_savings = parseFloat((er * hp_waip * e_const * 0.15).toFixed(2));
+    let c_string = "";
+    if (is_pump) {
+        c_savings = Math.round(c_savings);
+        c_string = exports.add_commas(c_savings);
+    }
+    else {
+        // round to 2 decimal places
+        c_string = c_savings.toString();
+        // Get commas for the first part of the string
+        c_string = c_string.split(".");
+        c_string[0] = exports.add_commas(c_string[0]);
+        c_string = c_string.join(".");
+    }
     return {value: c_savings, string: c_string}
 }
 
