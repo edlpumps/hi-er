@@ -179,7 +179,8 @@ var build_circulator_params = function (pump, waip, max) {
         annual_energy_savings: annual_energy_savings,
         annual_run_hours: process.env.LABELS_PUMP_ANNUAL_RUN_HRS,
         cost_per_kwh: (process.env.LABELS_COST_PER_KWH * 100).toFixed(0),
-        reg_year: process.env.LABELS_CIRC_REGULATION_YEAR
+        reg_year: process.env.LABELS_CIRC_REGULATION_YEAR,
+        meets_approval: 1 //Place holder for now
     };
     
     //if (retval.er_most == retval.er) {
