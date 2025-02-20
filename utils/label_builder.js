@@ -158,7 +158,7 @@ var build_circulator_params = function (pump, waip, max) {
     }
     
     //Push the External Input Signal string to the end of the array
-    let index = methods.findIndex((element) => element.includes("External Input"));
+    let index = methods.findIndex((element) => element.includes("Rated"));
     methods.push(methods.splice(index,1)[0]);
 
     let retval= {
@@ -185,7 +185,7 @@ var build_circulator_params = function (pump, waip, max) {
         annual_run_hours: 2500,
         cost_per_kwh: (0.15 * 100).toFixed(0),
         reg_year: 2028,
-        meets_approval: 1 //Place holder for now
+        meets_approval: true //Place holder for now
     };
     
     //if (retval.er_most == retval.er) {
