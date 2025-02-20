@@ -116,6 +116,12 @@ Make sure all branches are merged to `master` on GitHub.
 
 Follow the steps above to Deploy a GitHub branch to Heroku, but instead, select the `intelliquip-hi/hi-er` project and deploy the `master` branch.
 
+## Notes
+- There are **hard coded** values for Pump Annual Run Hours (4000), Circulator Annual Run Hours (2500) and the Cost/KwH ($0.15). These are used in the Energy & Cost Savings calculations. (`routes/common.js`)
+- The year of the DOE Circulator Efficiency Regulation is hard coded to 2028. (`views/svg/circulator-label.pug`)
+- These values can easily become Environment Variables.
+- The *Meets the 2028 DOE circulator efficiency regulation* line on the large *Circulator Pump Label* is always visible. There is a variable hard coded to *true* in the label builder that can easily be updated to *false* if for some reason the pump does not meet the regulation. (`utils/label_builder.js`)
+  
 ## PNG to URI
 - If you add an image to the Energy Ratings label, you need to convert the image to URI content.
 - Use an online coverter like https://site24x7.com/tools/image-to-datauri.html
