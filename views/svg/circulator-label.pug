@@ -48,7 +48,7 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
     line(x1=start, y1=v_start+80, x2=(start + scale_width), y2=v_start+80, stroke-width='2', stroke='black')
     
     - var footer_x = 620;
-
+    //- For the Most and the Least values, generate the label and the carat below it
     each which in ["most", "least"]
         - var er = er_most_efficient
         - var er_pos = er_most_pos 
@@ -79,7 +79,7 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
     text(x="310", y=v_start+130, style="font-family: Arimo; font-weight:bold", font-size="16", text-anchor="middle", fill="grey") RANGE
     text(x="560", y=v_start+130, style="font-family: Arimo; font-weight:bold", font-size="16", text-anchor="end", fill="black") Most Efficient
     
-        // single box = 267 pixels (555/2)
+    // single box = 267 pixels (555/2)
     // char size = 7mm (or 5mm if number is greater than 6 digits)
     - var large_box = 620;
     - var large_box_mid = large_box / 2; //310 pixels
@@ -144,6 +144,7 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
     - var use_x_offset = 0;
     - var index_mod = 2;
     - var num_methods = methods.length;
+    //- Dynamically build the columns based on the number of methods
     if num_methods > 4
         - index_mod = 3;
         - offset_array = x_3_offset;
