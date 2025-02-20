@@ -156,6 +156,11 @@ var build_circulator_params = function (pump, waip, max) {
                 methods.push(c);
         }
     }
+    
+    //Push the External Input Signal string to the end of the array
+    let index = methods.findIndex((element) => element.includes("External Input"));
+    methods.push(methods.splice(index,1)[0]);
+
     let retval= {
         methods: methods,
         dual: pump.most && pump.most.control_method,

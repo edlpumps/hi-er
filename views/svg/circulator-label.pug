@@ -138,16 +138,24 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
     text(x=36, y=footer_x, style="font-family: Arimo;", font-size="16", text-anchor="start",fill="black") The Energy Rating is dependent on the selected control method. Method(s)
     text(x=36, y=footer_x+=25, style="font-family: Arimo;", font-size="16", text-anchor="start",fill="black") available for this model are: 
     - footer_x+=20;
+    - var x_3_offset = [50, 200, 350];
+    - var x_2_offset = [90, 350];
+    - var offset_array = x_2_offset;  
+    - var use_x_offset = 0;
+    - var index_mod = 2;
     - var num_methods = methods.length;
-    - var x_offset = [90, 350];
-    - var use_x_offset = x_offset[0];
+    if num_methods > 4
+        - index_mod = 3;
+        - offset_array = x_3_offset;
+    else
+        - index_mod = 2;
+        - offset_array = x_2_offset;
+    //-There can be up to 6 methods
     - for (var index = 0; index < num_methods; index++) {
-        - var remainder = index % 2;
-        if remainder === 0 
-            - use_x_offset = x_offset[0];
+        - var remainder = index % index_mod;
+        - use_x_offset = offset_array[remainder];
+        if remainder === 0
             - footer_x+=20;
-        else
-            - use_x_offset = x_offset[1];
         text(x=use_x_offset, y=footer_x, style="font-family: Arimo;", font-size="16", text-anchor="start",fill="black") &#x2022; #{methods[index]}
     - }
     - footer_x = 720;
