@@ -158,7 +158,7 @@ var build_circulator_params = function (pump, waip, max) {
     }
     
     //Push the External Input Signal string to the end of the array
-    let index = methods.findIndex((element) => element.includes("External Input"));
+    let index = methods.findIndex((element) => element.includes("Rated"));
     methods.push(methods.splice(index,1)[0]);
 
     let retval= {
