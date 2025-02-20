@@ -85,8 +85,8 @@ var build_label_params = function (pump, label) {
         load_abbr: load_abbr,
         annual_cost_savings: annual_cost_savings,
         annual_energy_savings: annual_energy_savings,
-        annual_run_hours: process.env.LABELS_PUMP_ANNUAL_RUN_HRS,
-        cost_per_kwh: (process.env.LABELS_COST_PER_KWH * 100).toFixed(2)
+        annual_run_hours: 4000,
+        cost_per_kwh: (0.15 * 100).toFixed(2)
     };
     //console.log(JSON.stringify(retval, null, 2));
     return retval;
@@ -182,9 +182,9 @@ var build_circulator_params = function (pump, waip, max) {
         waip: waip !== undefined ? waip.toFixed(3) : '',
         annual_cost_savings: annual_cost_savings,
         annual_energy_savings: annual_energy_savings,
-        annual_run_hours: process.env.LABELS_PUMP_ANNUAL_RUN_HRS,
-        cost_per_kwh: (process.env.LABELS_COST_PER_KWH * 100).toFixed(0),
-        reg_year: process.env.LABELS_CIRC_REGULATION_YEAR,
+        annual_run_hours: 2500,
+        cost_per_kwh: (0.15 * 100).toFixed(0),
+        reg_year: 2028,
         meets_approval: 1 //Place holder for now
     };
     
