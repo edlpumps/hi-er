@@ -170,7 +170,7 @@ exports.calculate_cost_savings = function (er, hp_waip,is_pump=true) {
     let e_const = energy_savings_const(is_pump);
     let c_savings = parseFloat((er * hp_waip * e_const * 0.15).toFixed(2));
     let c_string = "";
-    if (is_pump) {
+    if (is_pump || c_savings >= 1000) {
         c_savings = Math.round(c_savings);
         c_string = exports.add_commas(c_savings);
     }
