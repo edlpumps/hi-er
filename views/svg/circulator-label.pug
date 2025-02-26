@@ -154,9 +154,9 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
 
     - footer_x = 720;
     text(x=left_edge, y=footer_x-5, style="font-family: Arimo;", font-size="12", text-anchor="start",fill="black") &#x2021;
-    text(x=left_edge+8, y=footer_x, style="font-family: Arimo;", font-size="12", text-anchor="start",fill="black") Estimated annual savings are based on the most efficient rating available, #{annual_run_hours} annual run hours, and
-    text(x=left_edge, y=(footer_x+=20), style="font-family: Arimo;", font-size="12", text-anchor="start", fill="black") #{cost_per_kwh}&#x00a2; per kWh, when compared to the least efficient pump available in the market.  Actual savings may vary.
-    text(x=left_edge, y=(footer_x+=20), style="font-family: Arimo;", font-size="12", text-anchor="start", fill="black") Visit the Circulator Pump Savings Calculator at www.pumps.org/cpsc.
+    text(x=left_edge+8, y=footer_x, style="font-family: Arimo;", font-size="12", text-anchor="start",fill="black") Estimated annual savings are based on the most efficient rating available, #{annual_run_hours} annual run hours,
+    text(x=left_edge+8, y=(footer_x+=20), style="font-family: Arimo;", font-size="12", text-anchor="start", fill="black") and #{cost_per_kwh}&#x00a2; per kWh, when compared to the least efficient pump available in the market.  Actual savings
+    text(x=left_edge+8, y=(footer_x+=20), style="font-family: Arimo;", font-size="12", text-anchor="start", fill="black") may vary. Visit the Circulator Pump Savings Calculator at www.pumps.org/cpsc.
     if meets_approval
         image(x=left_edge, y=(footer_x+12), height="25px", width="25px", xlink:href=approval_check_logo) 
         text(x=left_edge+30, y=(footer_x+=30), style="font-family: Arimo;", font-size="12", text-anchor="start", fill="black") Meets the #{reg_year} DOE circulator efficiency regulation.
