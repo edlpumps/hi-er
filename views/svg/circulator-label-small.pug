@@ -18,10 +18,10 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
     -var er_line = 320;
     -var er_tick = 20;
     -var tick_scale = 2.25;
-    -var er_rated = min_er + er_most_efficient/max * (max_er-min_er);
+    -var er_rated = min_er + er/max * (max_er-min_er);
     -var er_rated_tick = Math.min(max_er, er_rated);
-    -var er_least_eff = min_er + er_least_efficient/max * (max_er-min_er);
-    -var m_anchor = Math.abs(er_most_efficient-er_least_efficient) < 30 ? "end" : "middle";
+    -var er_most_consumptive = min_er + er_most/max * (max_er-min_er);
+    -var m_anchor = Math.abs(er-er_most) < 30 ? "end" : "middle";
     -var l_anchor = "middle";//Math.abs(er-er_most) < 20 ? "start" : "middle";
     rect(x="0", y="0", rx="0", ry="0", width="620", height="390", style="fill:#FFFFFF;;stroke: #222222;;stroke-width:1;")
     image(x="310", y="15", height="100px", width="285", xlink:href=small_logo)
@@ -29,7 +29,7 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
     text(x=left_edge, y="95", style="font-family: 'Arimo', Helvetica;", font-size="24", text-anchor="start", fill="black") CEI
     //-text(x=left_edge+40, y="98", style="font-family: 'Arimo', Helvetica;", font-size="10", text-anchor="start", fill="black") CIRC
     text(x=left_edge+40, y="95", style="font-family: 'Arimo', Helvetica;", font-size="24", text-anchor="start", fill="black") :  #{pei}
-    text(x=left_edge+120, y="95", style="font-family: 'Arimo', Helvetica;", font-size="24", text-anchor="start", fill="black") (ER #{er_most_efficient})
+    text(x=left_edge+120, y="95", style="font-family: 'Arimo', Helvetica;", font-size="24", text-anchor="start", fill="black") (ER #{er})
     text(x=left_edge, y=130, style="font-family: 'Arimo'; ", font-size="24", text-anchor="start", fill="black") WAIP: #{waip}
     text(x=right_edge, y=130, style="font-family: 'Arimo'; ", font-size="24", text-anchor="end", fill="black") #{basic_model}
 
@@ -45,13 +45,13 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
     text(x=min_er, y=er_line+er_tick+lh, style="font-family: 'Arimo', Helvetica; ", font-size="16", text-anchor="start", fill="black") Least Efficient
     text(x=max_er, y=er_line+er_tick+lh, style="font-family: 'Arimo', Helvetica; ", font-size="16", text-anchor="end", fill="black") Most Efficient
     text(x=middle, y=er_line+er_tick+lh, style="font-family: 'Arimo', Helvetica; ", font-size="16", text-anchor="middle", fill="black") RANGE
-    text(x=er_rated_tick, y=er_line- tick_scale*1.2*lh,style="font-family: 'Arimo', Helvetica; font-weight:bold", font-size="34", text-anchor=l_anchor, fill="black") #{er_most_efficient}
+    text(x=er_rated_tick, y=er_line- tick_scale*1.2*lh,style="font-family: 'Arimo', Helvetica; font-weight:bold", font-size="34", text-anchor=l_anchor, fill="black") #{er}
     - var hw = 10;
     - var mps = `${er_rated_tick}, ${(er_line- er_tick)} ${er_rated_tick-hw}, ${er_line-tick_scale*lh} ${er_rated_tick+hw}, ${er_line-tick_scale*lh}`;    
     polygon(fill="#000000", stroke="#000000", stroke-width="1", points=mps)
     if dual
-        - var mps = `${er_least_eff}, ${(er_line- er_tick)} ${er_least_eff-hw}, ${er_line-tick_scale*lh} ${er_least_eff+hw}, ${er_line-tick_scale*lh}`;    
+        - var mps = `${er_most_consumptive}, ${(er_line- er_tick)} ${er_most_consumptive-hw}, ${er_line-tick_scale*lh} ${er_most_consumptive+hw}, ${er_line-tick_scale*lh}`;    
         polygon(fill="#000000", stroke="#000000", stroke-width="1", points=mps)
-        text(x=er_least_eff, y=er_line- tick_scale*1.2*lh,style="font-family: 'Arimo', Helvetica; font-weight:bold", font-size="34", text-anchor=m_anchor, fill="black") #{er_least_efficient}
-        rect(x=Math.min(er_rated_tick, er_least_eff), y=er_line-er_tick+3, rx="0", ry="0", width=Math.abs(er_rated_tick-er_least_eff), height=er_tick-3, style="fill:#000000;stroke: #000000;stroke-width:1;")
+        text(x=er_most_consumptive, y=er_line- tick_scale*1.2*lh,style="font-family: 'Arimo', Helvetica; font-weight:bold", font-size="34", text-anchor=m_anchor, fill="black") #{er_most}
+        rect(x=Math.min(er_rated_tick, er_most_consumptive), y=er_line-er_tick+3, rx="0", ry="0", width=Math.abs(er_rated_tick-er_most_consumptive), height=er_tick-3, style="fill:#000000;stroke: #000000;stroke-width:1;")
     

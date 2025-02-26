@@ -127,19 +127,17 @@ var build_circulator_params = function (pump, waip, max) {
     var datetime = pump.date
     var locale = "en-us";
 
-    var er_max = Math.min(pump.least.energy_rating, max);
-    var er_min = pump.most && pump.most.control_method ? pump.most.energy_rating.toFixed(0) : 0;
-    
+    var er = Math.min(pump.least.energy_rating, max);
     var date = datetime.toLocaleString(locale, {
         month: "short"
     });
-    var span = max;
-    var er_most_distance = er_max / span;
-    var most_pos = Math.round(er_most_distance * 500 + 60);
-    var er_least_distance = er_min/ span;
-    var least_pos = Math.round(er_least_distance * 500 + 60);
-    
+    var distance = (er) / max;
+    var pos = Math.round(distance * 500 + 60);
     date += " " + datetime.getFullYear()
+    // Find the maximum end of the energy rating scale
+    max = Math.max(max, pump.least.energy_rating.toFixed(0))
+
+    //calculate Cost & Energy savings
     var annual_cost_savings = common.calculate_cost_savings(pump.least.energy_rating, waip, false);
     console.log("Cost Savings " + JSON.stringify(annual_cost_savings, null, 2));
     var annual_energy_savings = common.calculate_energy_savings(pump.least.energy_rating, waip, false);
@@ -157,29 +155,24 @@ var build_circulator_params = function (pump, waip, max) {
         }
     }
     
-    //Push the External Input Signal string to the end of the array
-    let index = methods.findIndex((element) => element.includes("Rated"));
-    methods.push(methods.splice(index,1)[0]);
-
     let retval= {
         methods: methods,
         dual: pump.most && pump.most.control_method,
+        er_most: pump.most && pump.most.control_method ? pump.most.energy_rating.toFixed(0) : 0,
         max: max,
         pei: pump.least.pei.toFixed(2),
         basic_model: pump.basic_model,
         brand: pump.brand,
-        er_most_efficient: pump.least.energy_rating.toFixed(0),
-        er_least_efficient: er_min,
-        er_most_pos: most_pos,
-        er_least_pos: least_pos,
+        er: pump.least.energy_rating.toFixed(0),
         date: date,
         rating_id: pump.rating_id,
-        bar_width: (er_most_distance - er_least_distance) * 500 -1,
+        bar_width: distance * 500 - 1,
+        er_pos: pos,
         motor_power: 3,
         logo: hi_logo_data_uri,
         small_logo: hi_logo_data_uri_small,
-        approval_check_logo: hi_approval_check_uri,
         waip: waip !== undefined ? waip.toFixed(3) : '',
+        approval_check_logo: hi_approval_check_uri,
         annual_cost_savings: annual_cost_savings,
         annual_energy_savings: annual_energy_savings,
         annual_run_hours: 2500,
