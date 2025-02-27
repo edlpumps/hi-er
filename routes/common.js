@@ -153,27 +153,30 @@ exports.labs = function (req, res) {
     )
 }
 
-function energy_savings_const(is_pump) {
-    let retval= 7.457 * (is_pump ? 4000 : 2500) / 1000;
-    console.log("Energy Savings Constant: " + retval);
-    return retval;
+exports.calculate_energy_savings = function (er, hp) {
+    // 7.457 * 4000 / 1000 = 29.828
+    var e_savings = Math.round(er * hp * 29.828);
+    var e_string = exports.add_commas(e_savings);
+    return {value: e_savings, string: e_string}
+}
+
+exports.calculate_cost_savings = function (er, hp) {
+    // 7.457 * 4000 / 1000 = 29.828 * 0.15 = 4.4742
+    var c_savings = Math.round(er * hp * 4.4742);
+    var c_string = exports.add_commas(c_savings);
+    return {value: c_savings, string: c_string}
 }
 
 exports.calculate_circulator_energy_savings = function (er, waip) {
-    console.log("calculate Energy Savings: ER:" + er + " WAIP:" + waip);
-    let e_const = energy_savings_const(is_pump);
-    let e_savings = er * waip * e_const;
-    e_savings = Math.round(e_savings); // round to nearest whole number
+    // 7.457 * 2500 / 1000 = 18.6425
+    var e_savings = Math.round(er * waip * 18.6425);
     var e_string = exports.add_commas(e_savings);
-    console.log("Energy Savings " + e_string);
     return {value: e_savings, string: e_string}
 }
 
 exports.calculate_circulator_cost_savings = function (er, waip) {
-    console.log("calculate Cost Savings: ER:" + er + " WAIP:" + waip);
-    let energy_savings = exports.calculate_energy_savings(er, hp_waip, is_pump=false);
-    let c_savings = energy_savings['value'] * 0.15;
-    let c_string = c_savings.toString();
+    var c_savings = exports.calculate_circulator_energy_savings(er, waip)['value'] * 0.15;
+    var c_string = c_savings.toString();
     // If cost savings is >= $1000, round to the nearest dollar
     if (c_savings >= 1000) {
         c_savings = Math.round(c_savings); // round to nearest whole number
@@ -186,7 +189,6 @@ exports.calculate_circulator_cost_savings = function (er, waip) {
         c_string[0] = exports.add_commas(c_string[0]);
         c_string = c_string.join(".");
     }
-    console.log("Cost Savings " + c_string);
     return {value: c_savings, string: c_string}
 }
 
