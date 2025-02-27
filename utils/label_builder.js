@@ -136,12 +136,21 @@ var build_circulator_params = function (pump, waip, max) {
     date += " " + datetime.getFullYear()
     // Find the maximum end of the energy rating scale
     max = Math.max(max, pump.least.energy_rating.toFixed(0))
+    var is_dual = (pump.most && pump.most.control_method ? true: false);
 
     //calculate Cost & Energy savings
-    var annual_cost_savings = common.calculate_cost_savings(pump.least.energy_rating, waip, false);
-    console.log("Cost Savings " + JSON.stringify(annual_cost_savings, null, 2));
-    var annual_energy_savings = common.calculate_energy_savings(pump.least.energy_rating, waip, false);
-    console.log("Energy Savings " + JSON.stringify(annual_energy_savings, null, 2));
+    var annual_cost_savings = 0;
+    var annual_energy_savings = 0;
+    try {
+        annual_cost_savings = common.calculate_circulator_cost_savings(pump.least.energy_rating.toFixed(), waip.toFixed(3));
+        console.log("Cost Savings " + JSON.stringify(annual_cost_savings, null, 2));
+        annual_energy_savings = common.calculate_circulator_energy_savings(pump.least.energy_rating.toFixed(), waip.toFixed(3));
+        console.log("Energy Savings " + JSON.stringify(annual_energy_savings, null, 2));
+    }
+    catch (e) {
+        console.log("Error in calculating cost and energy savings " + e);
+        is_dual = false;
+    }
 
     const methods = [];
     for (const cm of circulator.control_methods) {
@@ -157,8 +166,8 @@ var build_circulator_params = function (pump, waip, max) {
     
     let retval= {
         methods: methods,
-        dual: pump.most && pump.most.control_method,
-        er_most: pump.most && pump.most.control_method ? pump.most.energy_rating.toFixed(0) : 0,
+        dual: is_dual,
+        er_most: is_dual ? pump.most.energy_rating.toFixed(0) : 0,
         max: max,
         pei: pump.least.pei.toFixed(2),
         basic_model: pump.basic_model,
