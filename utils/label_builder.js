@@ -187,7 +187,7 @@ var build_circulator_params = function (pump, waip, max) {
         annual_run_hours: 2500,
         cost_per_kwh: (0.15 * 100).toFixed(0),
         reg_year: 2028,
-        meets_approval: true //Place holder for now
+        meets_approval: parseFloat(pump.least.pei.toFixed(2) <= 1.0) ? true: false
     };
     
     //if (retval.er_most == retval.er) {
