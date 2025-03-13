@@ -118,9 +118,9 @@ Follow the steps above to Deploy a GitHub branch to Heroku, but instead, select 
 
 ## Notes
 - There are **hard coded** values for Pump Annual Run Hours (4000), Circulator Annual Run Hours (2500) and the Cost/KwH ($0.15). These are used in the Energy & Cost Savings calculations. (`routes/common.js`)
-- The year of the DOE Circulator Efficiency Regulation is hard coded to 2028. (`views/svg/circulator-label.pug`)
+- The year of the DOE Circulator Efficiency Regulation is a variable that is passed into the label pub (`utils/label_builder.js,  views/svg/circulator-label.pug`)
 - These values can easily become Environment Variables.
-- The *Meets the 2028 DOE circulator efficiency regulation* line on the large *Circulator Pump Label* is always visible. There is a variable hard coded to *true* in the label builder that can easily be updated to *false* if for some reason the pump does not meet the regulation. (`utils/label_builder.js`)
+- The *Meets the 2028 DOE circulator efficiency regulation* line on the large *Circulator Pump Label* should only display if the CEI value that is displayed in the black bar as shown below is less than or equal to 1.00. (`utils/label_builder.js`)
   
 ## PNG to URI
 - If you add an image to the Energy Ratings label, you need to convert the image to URI content.
