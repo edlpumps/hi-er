@@ -51,12 +51,12 @@ mixin unit_switch()
  li
    .navbar-text
     .btn-group.btn-group-xs
-      button(type="button", class=(unit_set == 'US' ? 'btn us_unit_switch btn-primary' : 'btn us_unit_switch btn-default') title="Show all values in standard US units") US
-      button(type="button", class=(unit_set == 'METRIC' ? 'btn metric_unit_switch btn-primary' : 'btn metric_unit_switch btn-default') title="Show all values in standard metric units") Metric
+      button(type="button", class=(unit_set == 'US' ? 'btn us_unit_switch btn-toggle-on' : 'btn us_unit_switch btn-dark') title="Show all values in standard US units") US
+      button(type="button", class=(unit_set == 'METRIC' ? 'btn metric_unit_switch btn-toggle-on' : 'btn metric_unit_switch btn-dark') title="Show all values in standard metric units") Metric
 
 mixin language_switch()
   li
     .navbar-text
       .btn-group.btn-group-xs 
-        button(type='button', data-lang='en', class=(lang_set == 'en' ? 'btn lang_switch btn-primary' : 'btn lang_switch btn-default') title='English labels') English
-        button(type='button', data-lang='fr', class=(lang_set == 'fr' ? 'btn lang_switch btn-primary' : 'btn lang_switch btn-default') title='French labels') French
+        button(type='button', data-lang='en', class=(lang_set == 'en' ? 'btn lang_switch btn-toggle-on' : 'btn lang_switch btn-dark') title='English labels') English
+        button(type='button', data-lang='fr', class=(lang_set == 'fr' ? 'btn lang_switch btn-toggle-on' : 'btn lang_switch btn-dark') title='French labels') French
