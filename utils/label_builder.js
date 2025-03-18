@@ -11,6 +11,8 @@ const Datauri = require('datauri');
 const datauri = new Datauri();
 const circulator = require('../controllers/circulator');
 const { Resvg } = require('@resvg/resvg-js');
+//Include i18next for translations
+const i18next = require('i18next');
 
 const svg_opts = {
     font: {
@@ -42,19 +44,19 @@ exports.svg_to_png = function (svg) {
 }
 
 var build_label_params = function (pump, label) {
-    var pm = pump.configuration == "bare" ? "- Bare Pump" : "- Motor";
+    var pm = pump.configuration == "bare" ? "- "+i18next.t('bare_pump') : "- "+i18next.t('motor');
     var config =
         pump.configuration == "bare" || pump.configuration == "pump_motor" ?
             "" :
             (pump.configuration == "pump_motor_cc" ?
-                "- Continuous Controls" :
+                "- "+i18next.t('continuous_controls') :
                 "- Non-Continuous Controls");
 
-    var load = pump.configuration == "bare" || pump.configuration == "pump_motor" ? "CONSTANT LOAD" : "VARIABLE LOAD";
-    var load_abbr = pump.configuration == "bare" || pump.configuration == "pump_motor" ? "CL" : "VL";
+    var load = pump.configuration == "bare" || pump.configuration == "pump_motor" ? i18next.t('constant_load') : i18next.t('variable_load');
+    load = load.toUpperCase();
+    var load_abbr = pump.configuration == "bare" || pump.configuration == "pump_motor" ? i18next.t('cl') : i18next.t('vl');
     var datetime = label.date.getTime() < pump.date.getTime() ? pump.date : label.date;
-    var locale = "en-us";
-
+    var locale = i18next.language;
     var er = Math.min(pump.energy_rating, label.max);
     var date = datetime.toLocaleString(locale, {
         month: "short"
@@ -125,7 +127,7 @@ exports.make_sm_label = function (req, participant, pump, label) {
 var build_circulator_params = function (pump, waip, max) {
     // pump.least is most efficient, pump.most is least efficient
     var datetime = pump.date
-    var locale = "en-us";
+    var locale = i18next.language;
 
     var er = Math.min(pump.least.energy_rating, max);
     var date = datetime.toLocaleString(locale, {

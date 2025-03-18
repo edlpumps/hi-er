@@ -26,6 +26,24 @@ const port = process.env.PORT || 3003;
 const data_connection_str = process.env.MONGO_CONNECTION_DATA;
 const exporter = require('./exporter');
 
+const i18next = require('i18next');
+const middleware = require('i18next-http-middleware');
+const Backend = require('i18next-fs-backend');
+
+i18next.use(Backend).use(middleware.LanguageDetector)
+.init({
+    backend: {
+        loadPath: path.join(__dirname, 'locales/{{lng}}/translation.json')
+    },
+    detection: {
+        order: ['querystring', 'cookie'],
+        caches: ['cookie']
+    },
+    fallbackLng: 'en',
+    preload: ['en', 'fr'],
+    saveMissing: true
+});
+
 let session_store = null;
 let mainlog = bunyan.createLogger({
     name: 'hi',
@@ -45,6 +63,7 @@ var configure = function () {
     app.use(favicon(__dirname + '/public/images/favicon.ico'));
     app.use(require('less-middleware')(__dirname + '/public'));
     app.use(express.static(__dirname + '/public'));
+    app.use(middleware.handle(i18next));
     app.use(cookieParser());
     app.use(session({
         secret: 'intelliquip',
