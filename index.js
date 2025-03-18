@@ -121,11 +121,16 @@ var configure = function () {
         if (!req.session.unit_set) {
             req.session.unit_set = units.US;
         }
+        if (!req.session.lang_set) {
+            req.session.lang_set = 'en';
+        }
         res.locals.certificate_cart_exists = req.session.certificate_cart ? req.session.certificate_cart.length > 0 : false;
         res.locals.unit_set = req.session.unit_set;
         res.locals.ESTORE_ADMIN_EMAIL = process.env.ESTORE_ADMIN_EMAIL;
         res.locals.units = units.make_units(res.locals.unit_set);
         res.locals.moment = require('moment');
+        res.locals.lang_set = req.session.lang_set;
+        i18next.changeLanguage(res.locals.lang_set);
         next();
     });
 
@@ -182,6 +187,15 @@ var configure = function () {
         res.status(200).send();
     });
 
+    root.post('/language', function (req, res) {
+        var lang_set = req.body.lang_set;
+        if (lang_set.includes('en') || lang_set.includes('fr')) {
+            i18next.changeLanguage(lang_set);
+            req.session.lang_set = lang_set;
+            console.log("Changing language to " + lang_set);
+        }
+        res.status(200).send();
+    });
 
     app.use("/error", function (req, res) {
         res.render("error", {});
