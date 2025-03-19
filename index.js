@@ -131,6 +131,7 @@ var configure = function () {
         res.locals.moment = require('moment');
         res.locals.lang_set = req.session.lang_set;
         i18next.changeLanguage(res.locals.lang_set);
+        res.locals.moment.locale(res.locals.lang_set);
         next();
     });
 
@@ -191,6 +192,7 @@ var configure = function () {
         var lang_set = req.body.lang_set;
         if (lang_set.includes('en') || lang_set.includes('fr')) {
             i18next.changeLanguage(lang_set);
+            res.locals.moment.locale(lang_set);
             req.session.lang_set = lang_set;
         }
         res.status(200).send();

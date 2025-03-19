@@ -50,7 +50,7 @@ var build_label_params = function (pump, label) {
             "" :
             (pump.configuration == "pump_motor_cc" ?
                 "- "+i18next.t('continuous_controls') :
-                "- Non-Continuous Controls");
+                "- "+i18next.t('non_continuous_controls'));
 
     var load = pump.configuration == "bare" || pump.configuration == "pump_motor" ? i18next.t('constant_load') : i18next.t('variable_load');
     load = load.toUpperCase();

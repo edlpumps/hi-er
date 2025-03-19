@@ -12,31 +12,31 @@ mixin pump_page_info(pump)
     .row 
         .form-group
             .col.col-xs-5
-                label HI Rating ID:
+                label #{i18n.t("hi_rating_id",{lng:lang_set})}:
             .col.col-xs-7
                 .form-control-static: a(href="/ratings/#{pump.rating_id}") #{pump.rating_id}
     .row 
         .form-group
             .col.col-xs-5
-                label Basic model designation:
+                label #{i18n.t("basic_model_designation",{lng:lang_set})}:
             .col.col-xs-7
                 .form-control-static #{pump.basic_model}
     .row 
         .form-group
             .col.col-xs-5
-                label Manufacturer's model designation:
+                label #{i18n.t("mfg_model_designation",{lng:lang_set})}:
             .col.col-xs-7
                 .form-control-static #{pump.individual_model}
     .row 
         .form-group
             .col.col-xs-5
-                label DOE product category:
+                label #{i18n.t("doe_product_category",{lng:lang_set})}:
             .col.col-xs-7
                 .form-control-static #{pump.doe}
     .row 
         .form-group
             .col.col-xs-5
-                label HI approved laboratory:
+                label #{i18n.t("hi_approved_laboratory",{lng:lang_set})}:
             .col.col-xs-7
                 .form-control-static #{pump.laboratory ? pump.laboratory.name + ' - ' + pump.laboratory.code : 'N/A'}
     if section_label
@@ -49,55 +49,59 @@ mixin pump_page_info(pump)
     .row 
         .form-group
             .col.col-xs-5
-                label Full impeller diameter:
+                label #{i18n.t("full_impeller_diameter",{lng:lang_set})}:
             .col.col-xs-7
-                .form-control-static #{(pump.diameter*units.diameter.factor).toFixed(3)} #{units.diameter.label}
+                - var diameterlabel = i18n.t(units.diameter.label,{lng:lang_set})
+                .form-control-static #{(pump.diameter*units.diameter.factor).toFixed(3)} #{diameterlabel}
     .row 
         .form-group
             .col.col-xs-5
-                label Nominal speed:
+                label #{i18n.t("nominal_speed",{lng:lang_set})}:
             .col.col-xs-7
-                .form-control-static #{pump.speed} rpm
+                .form-control-static #{pump.speed} #{i18n.t("rpm",{lng:lang_set})}
     .row 
         .form-group
             .col.col-xs-5
-                label BEP flow rate:
+                label #{i18n.t("bep_flowrate",{lng:lang_set})}:
             .col.col-xs-7
-                .form-control-static #{((pump.load120 ? pump.flow.bep100 : pump.flow.bep110) * units.flow.factor).toFixed(2)} #{units.flow.label}
+                - var flowlabel = i18n.t(units.flow.label,{lng:lang_set})
+                .form-control-static #{((pump.load120 ? pump.flow.bep100 : pump.flow.bep110) * units.flow.factor).toFixed(2)} #{flowlabel}
     .row 
         .form-group
             .col.col-xs-5
-                label BEP head:
+                label #{i18n.t("bep_head",{lng:lang_set})}:
             .col.col-xs-7
-                .form-control-static #{((pump.load120 ? pump.head.bep100 : pump.head.bep110)  * units.head.factor).toFixed(2)} #{units.head.label}
+                - var headlabel = i18n.t(units.head.label,{lng:lang_set})
+                .form-control-static #{((pump.load120 ? pump.head.bep100 : pump.head.bep110)  * units.head.factor).toFixed(2)} #{headlabel}
 
+    - var powerlabel = i18n.t(units.power.label,{lng:lang_set})
     if pump.section == '3' || pump.section == '4' || pump.section == '5'
         .row 
             .form-group
                 .col.col-xs-5
-                    label BEP Driver input power:
+                    label #{i18n.t("bep_driver_input_power",{lng:lang_set})}:
                 .col.col-xs-7
-                    .form-control-static #{((pump.load120? pump.driver_input_power.bep100 : pump.driver_input_power.bep110) * units.power.factor).toFixed(2)} #{units.power.label}
+                    .form-control-static #{((pump.load120? pump.driver_input_power.bep100 : pump.driver_input_power.bep110) * units.power.factor).toFixed(2)} #{powerlabel}
     else 
         .row 
             .form-group
                 .col.col-xs-5
-                    label BEP Control input power:
+                    label #{i18n.t("bep_control_input_power",{lng:lang_set})}:
                 .col.col-xs-7
-                    .form-control-static #{(pump.control_power_input.bep100 * units.power.factor).toFixed(2)} #{units.power.label}
+                    .form-control-static #{(pump.control_power_input.bep100 * units.power.factor).toFixed(2)} #{powerlabel}
     .row 
         .form-group
             .col.col-xs-5
-                label Rated motor power:
+                label #{i18n.t("rated_motor_power",{lng:lang_set})}:
             .col.col-xs-7
                 - var mpr = pump.motor_power_rated ? pump.motor_power_rated : pump.results.motor_power_rated
                 - var mpr_display = mpr ? (mpr * units.power.factor).toFixed(2) : ""
-                .form-control-static #{mpr_display} #{units.power.label}
+                .form-control-static #{mpr_display} #{powerlabel}
 
     if pump.date
       .row 
         .form-group
             .col.col-xs-5
-                label Date listed:
+                label #{i18n.t("date_listed",{lng:lang_set})}:
             .col.col-xs-7
                 .form-control-static #{moment(pump.date).format("ll")}

@@ -48,8 +48,8 @@ block content
         .panel-heading 
           .heading
            
-            img(src=i18n.t("hi_rating_logo", {lng: 'en'}), width="600").hidden-xs
-            img(src=i18n.t("hi_rating_logo", {lng: 'en'}), style="width:80%").hidden-md.hidden-lg.hidden-sm
+            img(src=i18n.t("hi_rating_logo", {lng: lang_set}), width="600").hidden-xs
+            img(src=i18n.t("hi_rating_logo", {lng: lang_set}), style="width:80%").hidden-md.hidden-lg.hidden-sm
             h2 #{pump.brand} #{pump.brand ? ' / ' : ''} #{pump.basic_model} #{pump.manufacturer_model}
         .panel-body(v-if='pump')
           .row
