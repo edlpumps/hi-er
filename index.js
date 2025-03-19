@@ -192,7 +192,6 @@ var configure = function () {
         if (lang_set.includes('en') || lang_set.includes('fr')) {
             i18next.changeLanguage(lang_set);
             req.session.lang_set = lang_set;
-            console.log("Changing language to " + lang_set);
         }
         res.status(200).send();
     });

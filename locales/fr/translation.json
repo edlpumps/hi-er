@@ -70,5 +70,8 @@
     "label_ci_annual_savings":"Économies annuelles estimées basées sur un moteur de 30 HP, 4000 h/an et $0.15 par kWh, comparé à une pompe  moins efficace disponible sur le marché . Les économies réelles peuvent varier. Visitez le site   www.pumps.org/pscalculator pour utiliser  le calculateur d’économies .",
     "label_circ_annual_savings":"Les économies annuelles estimées sont basées sur le niveau d’efficacité la plus élevée disponible, 2500 h/an et $0.15 par kWh, comparé à une pompe  moins efficace disponible sur le marché. Les économies réelles peuvent varier.  Visitez le site   www.pumps.org/pscalculator pour utiliser  le calculateur d’économies.",
     "label_er_methods":"La cote énergétique dépend de la méthode de contrôle sélectionnée. Les méthodes disponibles pour ce modèle sont :",
-    "label_meets_doe_reg":"Conforme à la réglementation sur l'efficacité des circulateurs du US DOE pour 2028"
+    "label_meets_doe_reg":"Conforme à la réglementation sur l'efficacité des circulateurs du US DOE pour 2028",
+    "hi_rating_logo":"/images/HI-Energy-Rating-ID_French_03.png",
+    "hi_label_logo": "hi-title-fr",
+    "hi_label_logo_small": "hi-title-small-fr"
 }

@@ -23,8 +23,8 @@ const svg_opts = {
     }
 }
 
-const hi_logo_data_uri = fs.readFileSync(path.join(__dirname, "../views/svg/hi-title"), "utf-8");
-const hi_logo_data_uri_small = fs.readFileSync(path.join(__dirname, "../views/svg/hi-title-small"), "utf-8");
+const hi_logo_data_uri = fs.readFileSync(path.join(__dirname, "../views/svg/"+i18next.t("hi_label_logo")), "utf-8");
+const hi_logo_data_uri_small = fs.readFileSync(path.join(__dirname, "../views/svg/"+i18next.t("hi_label_logo_small")), "utf-8");
 const hi_approval_check_uri = fs.readFileSync(path.join(__dirname, "../views/svg/hi-approval-check"), "utf-8");
 const qr_template_file = path.join(__dirname, "../views/svg/qr.pug");
 const qr_template = pug.compileFile(qr_template_file);
