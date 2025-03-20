@@ -23,8 +23,10 @@ const svg_opts = {
     }
 }
 
-const hi_logo_data_uri = fs.readFileSync(path.join(__dirname, "../views/svg/"+i18next.t("hi_label_logo")), "utf-8");
-const hi_logo_data_uri_small = fs.readFileSync(path.join(__dirname, "../views/svg/"+i18next.t("hi_label_logo_small")), "utf-8");
+const hi_logo_data_uri_en = fs.readFileSync(path.join(__dirname, "../views/svg/"+i18next.t("hi_label_logo", {lng:'en'})), "utf-8");
+const hi_logo_data_uri_small_en = fs.readFileSync(path.join(__dirname, "../views/svg/"+i18next.t("hi_label_logo_small", {lng:'en'})), "utf-8");
+const hi_logo_data_uri_fr = fs.readFileSync(path.join(__dirname, "../views/svg/"+i18next.t("hi_label_logo", {lng:'fr'})), "utf-8");
+const hi_logo_data_uri_small_fr = fs.readFileSync(path.join(__dirname, "../views/svg/"+i18next.t("hi_label_logo_small", {lng:'fr'})), "utf-8");
 const hi_approval_check_uri = fs.readFileSync(path.join(__dirname, "../views/svg/hi-approval-check"), "utf-8");
 const qr_template_file = path.join(__dirname, "../views/svg/qr.pug");
 const qr_template = pug.compileFile(qr_template_file);
@@ -67,7 +69,25 @@ var build_label_params = function (pump, label) {
     date += " " + datetime.getFullYear()
     var annual_cost_savings = common.calculate_cost_savings(pump.energy_rating, pump.motor_power_rated);
     var annual_energy_savings = common.calculate_energy_savings(pump.energy_rating, pump.motor_power_rated);
+    var loc_dict = {
+        lang: i18next.language,
+        pump_type: i18next.t('pump_type'), 
+        model: i18next.t('model'),
+        nominal_speed: i18next.t('nominal_speed'),
+        pei: i18next.t('pei'),
+        energy_rating: i18next.t('energy_rating').toUpperCase(),
+        least_efficient: i18next.t('least_efficient'),
+        most_efficient: i18next.t('most_efficient'),
+        range: i18next.t('range').toUpperCase(),
+        kwh: i18next.t('kwh'),
+        annual_energy_savings: i18next.t('annual_energy_savings'),
+        label_annual_savings_1: i18next.t('label_ci_annual_savings_1'),
+        label_annual_savings_2: i18next.t('label_ci_annual_savings_2'),
+        label_annual_savings_3: i18next.t('label_ci_annual_savings_3'),
+        annual_cost_savings: i18next.t('annual_cost_savings')
+        };
     let retval= {
+        loc: loc_dict,
         pei: pump.pei.toFixed(2),
         doe: pump.doe,
         pm: pm,
@@ -83,7 +103,7 @@ var build_label_params = function (pump, label) {
         bar_width: distance * 500 - 1,
         er_pos: pos,
         motor_power: pump.motor_power_rated,
-        logo: hi_logo_data_uri,
+        logo: i18next.language == 'en'? hi_logo_data_uri_en: hi_logo_data_uri_fr,
         load_abbr: load_abbr,
         annual_cost_savings: annual_cost_savings,
         annual_energy_savings: annual_energy_savings,
