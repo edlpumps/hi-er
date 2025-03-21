@@ -6,9 +6,10 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
     defs
      include fonts.pug  
 
-    - var lang_sp = loc.lang == 'en' ? 0 : 8;
+    - var lang_font_speed_offset = loc.lang == 'en' ? 0 : 10;
     - var lang_font_size = loc.lang == 'en' ? 20 : 16;
-    - var lang_font_cost_offset = loc.lang == 'en' ? 0 : 24;
+    - var lang_font_cost_offset = loc.lang == 'en' ? 0 : 20;
+    - var lang_font_cost_icon_offset = loc.lang == 'en' ? 0 : 4;
     - var lang_font_energy_offset = loc.lang == 'en' ? 0 : 16;
     rect(x="0", y="0", rx="0", ry="0", width="620", height="720", style="fill:#FFFFFF;;stroke: #222222;;stroke-width:1;")
     image(x="25", y="15", height="100px", width="565px", xlink:href=logo)
@@ -20,7 +21,7 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
     text(x="30", y="170", style="font-family: Arimo", font-size="16", text-anchor="start", fill="black") #{loc.nominal_speed}:
 
     text(x="110", y="150", style="font-family: Arimo;font-weight:bold", font-size="16", text-anchor="start", fill="black") #{basic_model}
-    text(x=155+lang_sp, y="170", style="font-family: Arimo;font-weight:bold", font-size="16", text-anchor="start", fill="black") #{speed}
+    text(x=155+lang_font_speed_offset, y="170", style="font-family: Arimo;font-weight:bold", font-size="16", text-anchor="start", fill="black") #{speed}
     
     text(x="330", y="150", style="font-family: Arimo; font-weight:bold", font-size="16", text-anchor="start", fill="black") #{pm}
     text(x="330", y="170", style="font-family: Arimo; font-weight:bold", font-size="16", text-anchor="start", fill="black") #{config}
@@ -130,15 +131,37 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
     //text(x=c_middle, y=v_start+210, style="font-family: Arimo; font-weight:bold", font-size=font_size, text-anchor="start", fill="red") !
     text(x=c_middle-c_string_mid, y=v_start+210, style="font-family: Arimo; font-weight:bold", font-size=font_size, text-anchor="start", fill="black") $#{c_string}
     text(x=30+box_width+63-lang_font_cost_offset, y=v_start+240, style="font-family: Arimo;", font-size=lang_font_size, text-anchor="start", fill="black") #{loc.annual_cost_savings}
-    text(x=278+box_width, y=v_start+235, style="font-family: Arimo;", font-size="12", text-anchor="start", fill="black") &#x2021;
+    text(x=280+box_width+lang_font_cost_icon_offset, y=v_start+235, style="font-family: Arimo;", font-size="12", text-anchor="start", fill="black") &#x2021;
     
-    - var er_mm = er_pos / mm_to_pixels;
     //Bottom part
-    -var footer_x = 620;
+  
+    - var words = loc.label_annual_savings.split(" ");
+    - var currentLine = '';
+    - var maxLength = 95;
+    - var lines = [];
+    each word in words 
+      - if (currentLine.length + word.length + (currentLine.length > 0 ? 1 : 0) > maxLength) {
+        - lines.push(currentLine);
+        - currentLine = word;
+      - } else {
+          //If not, just add the word to the current line
+          - if (currentLine.length > 0) {
+            - currentLine += ' ' + word;
+          - } else {
+            - currentLine = word;
+          - }
+      - }
+ 
+    - if (currentLine.length > 0) {
+      - lines.push(currentLine);
+    - }
+    - var footer_x = 620;
     text(x=36, y=footer_x-5, style="font-family: Arimo;", font-size="12", text-anchor="start",fill="black") &#x2021;
-    text(x=43, y=footer_x, style="font-family: Arimo;", font-size="12", text-anchor="start",fill="black") #{loc.label_annual_savings_1} 
-    text(x=43, y=(footer_x+=20), style="font-family: Arimo;", font-size="12", text-anchor="start", fill="black") #{loc.label_annual_savings_2}
-    text(x=43, y=(footer_x+=20), style="font-family: Arimo;", font-size="12", text-anchor="start", fill="black") #{loc.label_annual_savings_3}
+    text(x=43, y=footer_x, style="font-family: Arimo;", font-size="12", text-anchor="start",fill="black") #{lines[0]} 
+    - for (var i=1; i<lines.length; i++) {
+        text(x=43, y=(footer_x+=20), style="font-family: Arimo;", font-size="12", text-anchor="start",fill="black") #{lines[i]}
+    - }
+
     //Debug lines
     //text(x="28", y=(footer_x+=20), style="font-family: Arimo;", font-size="12", text-anchor="start", fill="black") Elen #{e_len} Epixels #{e_str_pixels} EMid: #{e_string_mid} middle #{e_middle} kwh #{kwh_mid_pixels} 
     //text(x="28", y=(footer_x+=20), style="font-family: Arimo;", font-size="12", text-anchor="start", fill="black") Distance #{distance} Er-Pos #{er_pos} er_mm #{er_mm}

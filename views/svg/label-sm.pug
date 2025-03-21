@@ -6,9 +6,10 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
     defs
      include fonts.pug
 
-    - var lang_sp = loc.lang == 'en' ? 0 : 8;
+    - var lang_font_speed_offset = loc.lang == 'en' ? 0 : 10;
     - var lang_font_size = loc.lang == 'en' ? 20 : 16;
-    - var lang_font_cost_offset = loc.lang == 'en' ? 0 : 24;
+    - var lang_font_cost_offset = loc.lang == 'en' ? 0 : 20;
+    - var lang_font_cost_icon_offset = loc.lang == 'en' ? 0 : 4;
     - var lang_font_energy_offset = loc.lang == 'en' ? 0 : 16;
     rect(x="0", y="0", rx="0", ry="0", width="620", height="1033", style="fill:#FFFFFF;;stroke: #222222;;stroke-width:1;")
     image(x="25", y="25", height="100px", width="565px", xlink:href=logo)
@@ -22,7 +23,7 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
     text(x="30", y="240", style="font-family: 'Arimo'; font-weight:bold", font-size="24", text-anchor="start", fill="black") #{loc.nominal_speed}:
     
     text(x="30", y="200", style="font-family: 'Arimo';font-weight:bold", font-size="24", text-anchor="start", fill="black") #{basic_model}
-    text(x="230", y="240", style="font-family: 'Arimo';font-weight:bold", font-size="24", text-anchor="start", fill="black") #{speed}
+    text(x=230+lang_font_speed_offset, y="240", style="font-family: 'Arimo';font-weight:bold", font-size="24", text-anchor="start", fill="black") #{speed}
     
     text(x="330", y="200", style="font-family: 'Arimo'; font-weight:bold", font-size="24", text-anchor="start", fill="black") #{pm} 
     text(x="330", y="240", style="font-family: 'Arimo'; font-weight:bold", font-size="24", text-anchor="start", fill="black") #{config}
@@ -117,7 +118,7 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
     rect(x=30, y=v_start+180, rx="0", ry="0", width=box_width, height="100", style="fill:none;stroke: #000000;stroke-width:2;" )
     text(x=e_middle-e_string_mid, y=v_start+230, style="font-family: 'Arimo'; font-weight:bold", font-size=font_size, text-anchor="start", fill="black") #{e_string}
     text(x=e_middle+(e_string_mid-kwh_pixels)+3, y=v_start+230, style="font-family: 'Arimo'; font-weight:bold", font-size="20", text-anchor="start", fill="black") #{loc.kwh}
-    text(x=63-lang_font_energy_offset, y=v_start+260, style="font-family: 'Arimo';", font-size="20", text-anchor="start", fill="black") #{loc.annual_energy_savings}
+    text(x=63-lang_font_energy_offset, y=v_start+260, style="font-family: 'Arimo';", font-size=lang_font_size, text-anchor="start", fill="black") #{loc.annual_energy_savings}
     text(x=270, y=v_start+255, style="font-family: 'Arimo';", font-size="12", text-anchor="start", fill="black") &#x2021;
     
     //Right - Annual Cost Savings
@@ -130,25 +131,37 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
 
     rect(x=30+box_width+20, y=v_start+180, rx="0", ry="0", width=box_width, height="100", style="fill:none;stroke: #000000;stroke-width:2;" )
     text(x=c_middle-c_string_mid, y=v_start+230, style="font-family: 'Arimo'; font-weight:bold", font-size=font_size, text-anchor="start", fill="black") $#{c_string}
-    text(x=30+box_width+63-lang_font_cost_offset, y=v_start+260, style="font-family: 'Arimo';", font-size="20", text-anchor="start", fill="black") #{loc.annual_cost_savings}
-    text(x=278+box_width, y=v_start+255, style="font-family: 'Arimo';", font-size="12", text-anchor="start", fill="black") &#x2021;
+    text(x=30+box_width+63-lang_font_cost_offset, y=v_start+260, style="font-family: 'Arimo';", font-size=lang_font_size, text-anchor="start", fill="black") #{loc.annual_cost_savings}
+    text(x=280+box_width+lang_font_cost_icon_offset, y=v_start+255, style="font-family: 'Arimo';", font-size="12", text-anchor="start", fill="black") &#x2021;
     
     //Bottom part
-    - var new_len = loc.label_annual_savings.length;
-    - var chars_per_line = 65;
+    - var words = loc.label_annual_savings.split(" ");
+    - var currentLine = '';
+    - var maxLength = 73;
     - var lines = [];
-    - for (var i=0; i < new_len; i+=chars_per_line) {
-      - lines.push(loc.label_annual_savings.substring(i, i+chars_per_line));
-    - } 
+    each word in words 
+      - if (currentLine.length + word.length + (currentLine.length > 0 ? 1 : 0) > maxLength) {
+        - lines.push(currentLine);
+        - currentLine = word;
+      - } else {
+          //If not, just add the word to the current line
+          - if (currentLine.length > 0) {
+            - currentLine += ' ' + word;
+          - } else {
+            - currentLine = word;
+          - }
+      - }
+ 
+    - if (currentLine.length > 0) {
+      - lines.push(currentLine);
+    - }
     - var footer_x=820;
     text(x=23, y=footer_x-5, style="font-family: Arimo;", font-size="12", text-anchor="start",fill="black") &#x2021;
-    text(x=30, y=footer_x, style="font-family: Arimo;", font-size="18", text-anchor="start",fill="black")   #{lines[0]}
+    text(x=30, y=footer_x, style="font-family: Arimo;", font-size="16", text-anchor="start",fill="black")   #{lines[0]}
     - for (var i=1; i < lines.length; i++) {
-      text(x=30, y=(footer_x+=25), style="font-family: Arimo;", font-size="18", text-anchor="start",fill="black") #{lines[i]}
+      text(x=30, y=(footer_x+=25), style="font-family: Arimo;", font-size="16", text-anchor="start",fill="black") #{lines[i]}
     - }
-    //Debug lines
-    //text(x="28", y=(footer_x+=20), style="font-family: Arimo;", font-size="12", text-anchor="start", fill="black")
-
+    +footer(30, 585, 950, 24)
 
     
         

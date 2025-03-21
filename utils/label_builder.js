@@ -81,9 +81,7 @@ var build_label_params = function (pump, label) {
         range: i18next.t('range').toUpperCase(),
         kwh: i18next.t('kwh'),
         annual_energy_savings: i18next.t('annual_energy_savings'),
-        label_annual_savings_1: i18next.t('label_ci_annual_savings_1'),
-        label_annual_savings_2: i18next.t('label_ci_annual_savings_2'),
-        label_annual_savings_3: i18next.t('label_ci_annual_savings_3'),
+        label_annual_savings: i18next.t('label_ci_annual_savings'),
         annual_cost_savings: i18next.t('annual_cost_savings')
         };
     let retval= {
@@ -112,7 +110,6 @@ var build_label_params = function (pump, label) {
     };
     //console.log(JSON.stringify(retval, null, 2));
     return retval;
-
 
 }
 

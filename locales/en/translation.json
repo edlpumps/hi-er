@@ -46,6 +46,7 @@
     "input_power":"Input Power",
     "kw":"kW",
     "kwh":"kWh",
+    "label_ci_annual_savings":"Estimated annual savings are based on the 30 hp motor, 4000 annual run hours, and 15¢ per kWh, when compared to the least efficient pump allowed on the market. Actual savings may vary. Visit the Pump Savings Calculator at www.pumps.org/pscalculator.",
     "label_ci_annual_savings_1":"Estimated annual savings are based on the 30 hp motor, 4000 annual run hours, and 15¢ per kWh, ",
     "label_ci_annual_savings_2":" when compared to the least efficient pump allowed on the market. Actual savings may vary. Visit the ",
     "label_ci_annual_savings_3":"Pump Savings Calculator at www.pumps.org/pscalculator.",
