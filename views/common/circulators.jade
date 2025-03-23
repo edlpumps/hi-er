@@ -205,11 +205,12 @@ mixin vue_circulator_components()
 					label #{i18n.t("hi_approved_laboratory",{lng:lang_set})}:
 				.col.col-xs-7
 					.form-control-static {{pump.laboratory ? pump.laboratory.name + ' - ' + pump.laboratory.code : 'N/A'}}
-			.row(v-if='pump.date')
-				.col.col-xs-5
-					label #{i18n.t("date_listed",{lng:lang_set})}:
-				.col.col-xs-7
-					.form-control-static #{moment(pump.date).format("ll")}
+			if pump && pump.date
+				.row
+					.col.col-xs-5
+						label #{i18n.t("date_listed",{lng:lang_set})}:
+					.col.col-xs-7
+						.form-control-static #{moment(pump.date).format("ll")}
 
 	script#v-control-method-loc(type='text/x-template')
 		section 

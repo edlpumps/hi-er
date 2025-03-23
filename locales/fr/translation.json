@@ -85,7 +85,7 @@
     "rsv_pump_type":"RSV Type de Pompe ",
     "st_pump_type":"ST Type de Pompe ",
     "temperature":"Température",
-    "testing_method":"",
+    "testing_method":"<Testing Method>",
     "type":"Type",
     "variable_load":"Charge Variable",
     "vl":"VL",
