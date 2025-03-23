@@ -11,7 +11,9 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
     - var lang_font_cost_offset = loc.lang == 'en' ? 0 : 20;
     - var lang_font_cost_icon_offset = loc.lang == 'en' ? 0 : 4;
     - var lang_font_energy_offset = loc.lang == 'en' ? 0 : 16;
-    rect(x="0", y="0", rx="0", ry="0", width="620", height="720", style="fill:#FFFFFF;;stroke: #222222;;stroke-width:1;")
+
+    - var use_height = 720;
+    rect(x="0", y="0", rx="0", ry="0", width="620", height=use_height, style="fill:#FFFFFF;;stroke: #222222;;stroke-width:1;")
     image(x="25", y="15", height="100px", width="565px", xlink:href=logo)
 
     text(x="30", y="130", style="font-family: Arimo; font-weight:bold", font-size="18", text-anchor="start", fill="black") #{brand}
@@ -134,41 +136,22 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
     text(x=280+box_width+lang_font_cost_icon_offset, y=v_start+235, style="font-family: Arimo;", font-size="12", text-anchor="start", fill="black") &#x2021;
     
     //Bottom part
-  
-    - var words = loc.label_annual_savings.split(" ");
-    - var currentLine = '';
-    - var maxLength = 95;
-    - var lines = [];
-    each word in words 
-      - if (currentLine.length + word.length + (currentLine.length > 0 ? 1 : 0) > maxLength) {
-        - lines.push(currentLine);
-        - currentLine = word;
-      - } else {
-          //If not, just add the word to the current line
-          - if (currentLine.length > 0) {
-            - currentLine += ' ' + word;
-          - } else {
-            - currentLine = word;
-          - }
-      - }
- 
-    - if (currentLine.length > 0) {
-      - lines.push(currentLine);
-    - }
     - var footer_x = 620;
-    text(x=36, y=footer_x-5, style="font-family: Arimo;", font-size="12", text-anchor="start",fill="black") &#x2021;
-    text(x=43, y=footer_x, style="font-family: Arimo;", font-size="12", text-anchor="start",fill="black") #{lines[0]} 
+    - var lines = [];
+    // - label, maxChars, x_offset, font_size
+    +label_notes(loc.label_annual_savings, 95)
+    text(x=27, y=footer_x-5, style="font-family: Arimo;", font-size="12", text-anchor="start",fill="black") &#x2021;
+    text(x=34, y=footer_x, style="font-family: Arimo;", font-size="12", text-anchor="start",fill="black") #{lines[0]} 
     - for (var i=1; i<lines.length; i++) {
-        text(x=43, y=(footer_x+=20), style="font-family: Arimo;", font-size="12", text-anchor="start",fill="black") #{lines[i]}
+        text(x=34, y=(footer_x+=20), style="font-family: Arimo;", font-size="12", text-anchor="start",fill="black") #{lines[i]}
     - }
-
     //Debug lines
     //text(x="28", y=(footer_x+=20), style="font-family: Arimo;", font-size="12", text-anchor="start", fill="black") Elen #{e_len} Epixels #{e_str_pixels} EMid: #{e_string_mid} middle #{e_middle} kwh #{kwh_mid_pixels} 
     //text(x="28", y=(footer_x+=20), style="font-family: Arimo;", font-size="12", text-anchor="start", fill="black") Distance #{distance} Er-Pos #{er_pos} er_mm #{er_mm}
     //text(x="28", y=(footer_x+=20), style="font-family: Arimo;", font-size="12", text-anchor="start", fill="black") EString #{e_string} len #{e_len} pixels #{e_str_pixels} EMid: #{e_string_mid} middle #{e_middle} char_size #{char_size} font_size #{font_size}
     //text(x="28", y=(footer_x+=20), style="font-family: Arimo;", font-size="12", text-anchor="start", fill="black") CString #{c_string} len #{c_len} mm #{c_mm} pixels #{c_str_pixels} CMid: #{c_string_mid} middle #{c_middle} char_size #{char_size} font_size #{font_size}
-    
-    +footer(30, 585, (footer_x+=40))
+
+    +footer(30, 585, (use_height-20), 16)
 
     
         

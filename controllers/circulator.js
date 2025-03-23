@@ -11,28 +11,32 @@ const NO_SPEED_CONTROL = {
     input: 'Full Speed',
     display: "Full Speed",
     column: 'H',
-    number: 1
+    number: 1,
+    loc_key: 'full_speed'
 };
 const PRESSURE_CONTROL = {
     label: 'pressure-control',
     input: 'Pressure Control',
     display: "Pressure",
     column: 'I',
-    number: 2
+    number: 2,
+    loc_key: 'pressure_control'
 };
 const TEMPERATURE_CONTROL = {
     label: 'temperature-control',
     input: 'Temperature Control',
     display: "Temperature",
     column: 'J',
-    number: 3
+    number: 3,
+    loc_key: 'temperature_control'
 };
 const EXTERNAL_CONTROL = {
     label: 'external-control',
     input: 'External Input Signal Control Only',
     display: "External Input Signal",
     column: 'K',
-    number: 4
+    number: 4,
+    loc_key: 'external_control'
 };
 const EXTERNAL_AND_OTHER_CONTROL = {
     label: 'external-other-control',

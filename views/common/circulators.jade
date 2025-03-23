@@ -78,11 +78,11 @@ mixin vue_circulator_components()
 					label #{i18n.t("available_control_methods",{lng:lang_set})}:
 					ul.control-method-list
 						li.control-method(v-for='method of pump.control_methods')
-							control-method(:method='method')
+							control-method-loc(:method='method')
 			section
 				.row
 					.col.col-sm-6
-						h2: control-method(:method='pump.least.control_method')
+						h2: control-method-loc(:method='pump.least.control_method')
 						p(v-if='dual_cm()') (#{i18n.t('most_efficient', {lng: lang_set})})
 						table.table
 							tbody
@@ -112,7 +112,7 @@ mixin vue_circulator_components()
 									td {{(pump.least.input_power[3]*units.power.factor).toFixed(3)}} {{units.power.label}}
 						
 					.col.col-sm-6(v-if='dual_cm()') 
-						h2: control-method(:method='pump.most.control_method')
+						h2: control-method-loc(:method='pump.most.control_method')
 						p (#{i18n.t("least_efficient",{lng:lang_set})})
 						table.table
 							tbody
@@ -186,7 +186,7 @@ mixin vue_circulator_components()
 				.col.col-xs-5
 					label #{i18n.t("rated_control_method",{lng:lang_set})}:
 				.col.col-xs-7
-					.form-control-static: control-method(:method='pump.least.control_method')
+					.form-control-static: control-method-loc(:method='pump.least.control_method')
 			.row
 				.col.col-xs-5
 					label #{i18n.t("bep_flow_rated",{lng:lang_set})}:
@@ -208,7 +208,7 @@ mixin vue_circulator_components()
 				.col.col-xs-7
 					.form-control-static #{moment(pump.date).format("ll")}
 
-	script#v-control-method(type='text/x-template')
+	script#v-control-method-loc(type='text/x-template')
 		section 
 			span(v-if='method == "no-speed-control"') #{i18n.t('full_speed', {lng: lang_set})}
 			span(v-if='method == "pressure-control"') #{i18n.t('pressure_control', {lng: lang_set})}
@@ -288,7 +288,7 @@ mixin vue_circulator_components()
 				},
 				dual_cm: function() {
 					return  this.pump.most && this.pump.most.control_method;
-				}
+				},
 			}
 		}),
 		Vue.component('circulator-data-details', {
@@ -320,7 +320,27 @@ mixin vue_circulator_components()
 		}),
 		Vue.component('control-method', {
 			props: ['method'],
-			template: '#v-control-method',
+			template: '<span>{{text}}</span>',
+			computed: {
+				text() {
+					if (this.method == 'no-speed-control')
+						return "Full Speed";
+					else if (this.method == 'pressure-control')
+						return "Pressure Control";
+					else if (this.method == 'temperature-control')
+						return "Temperature Control";
+					else if (this.method == 'manual-control')
+						return "Manual Control";
+					else if (this.method == 'external-control')
+						return "External Input Signal Only Control";
+					else if (this.method == 'external-other-control')
+						return "External Input Signal and Other Controls";
+				}
+			}
+		});
+		Vue.component('control-method-loc', {
+			props: ['method'],
+			template: '#v-control-method-loc',
 			methods: {
 				moment(...args) {
 					// eslint-disable-next-line no-undef

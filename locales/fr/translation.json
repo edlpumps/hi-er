@@ -89,5 +89,8 @@
     "type":"Type",
     "variable_load":"Charge Variable",
     "vl":"VL",
-    "waip":"WAIP"
+    "waip":"WAIP",
+    "temperature_control":"<Temperature Control>",
+    "manual_control":"<Manual Control>",
+    "pressure_control":"<Pressure Control>"
 }

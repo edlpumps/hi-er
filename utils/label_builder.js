@@ -175,15 +175,39 @@ var build_circulator_params = function (pump, waip, max) {
     for (const cm of circulator.control_methods) {
         if (pump.control_methods.indexOf(cm.label) >= 0) {
             let c = cm.display;
+            c = i18next.t(cm.loc_key);
             if (pump.least.control_method == cm.label) {
-                c += " (Rated)";
+                c += ' '+i18next.t('rated');
             }
             if (cm.display !== "External Input Signal and Other Controls")
                 methods.push(c);
         }
     }
-    
+
+    var loc_dict = {
+        lang: i18next.language, 
+        model: i18next.t('model'),
+        waip: i18next.t('waip'),
+        circulator_pump: i18next.t('circulator_pump'),
+        cei: i18next.t('cei'),
+        er: i18next.t('er'),
+        energy_rating: i18next.t('energy_rating').toUpperCase(),
+        least_efficient: i18next.t('least_efficient'),
+        most_efficient: i18next.t('most_efficient'),
+        nominal_speed: i18next.t('nominal_speed'),
+        pei: i18next.t('pei'),
+        range: i18next.t('range').toUpperCase(),
+        label_annual_savings: i18next.t('label_er_savings'),
+        annual_energy_savings: i18next.t('annual_energy_savings'),
+        annual_cost_savings: i18next.t('annual_cost_savings'),
+        kwh: i18next.t('kwh'),
+        label_er_methods: i18next.t('label_er_methods'),
+        label_circ_annual_savings: i18next.t('label_circ_annual_savings'),
+        label_meets_doe_reg: i18next.t('label_meets_doe_reg')
+    };
+
     let retval= {
+        loc: loc_dict,
         methods: methods,
         dual: is_dual,
         er_most: is_dual ? pump.most.energy_rating.toFixed(0) : 0,
