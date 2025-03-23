@@ -36,21 +36,23 @@ const EXTERNAL_CONTROL = {
     display: "External Input Signal",
     column: 'K',
     number: 4,
-    loc_key: 'external_control'
+    loc_key: 'external_input_signal_only_control'
 };
 const EXTERNAL_AND_OTHER_CONTROL = {
     label: 'external-other-control',
     input: 'External Input Signal and Other Controls',
     display: "External Input Signal",
     column: 'L',
-    number: 5
+    number: 5,
+    loc_key: 'ext_input_signal_and_other_controls'
 };
 const MANUAL_CONTROL = {
     label: 'manual-control',
     input: 'Manual Speed Control',
     display: "Manual Speed",
     column: 'M',
-    number: 6
+    number: 6,
+    loc_key: 'manual_control'
 };
 const control_methods = [
     NO_SPEED_CONTROL, MANUAL_CONTROL, EXTERNAL_CONTROL, PRESSURE_CONTROL,

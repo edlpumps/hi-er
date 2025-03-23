@@ -24,7 +24,7 @@ block content
             .row
               .col.col-sm-6.text-center
                 h4 
-                  | #{i18n.t("PEI",{lng:lang_set})}
+                  | #{i18n.t("pei",{lng:lang_set})}
                   sub #{pump.configuration == 'bare' || pump.configuration == 'pump_motor' ? i18n.t("cl",{lng:lang_set}) : i18n.t("vl",{lng:lang_set})}
                 p.pei_display #{pump.pei.toFixed(2)}
                 p.pei_baseline #{i18n.t("baseline",{lng:lang_set})}:  #{pump.pei_baseline.toFixed(2)}
