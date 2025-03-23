@@ -11,7 +11,7 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
     - var lang_font_cost_offset = loc.lang == 'en' ? 0 : 20;
     - var lang_font_cost_icon_offset = loc.lang == 'en' ? 0 : 4;
     - var lang_font_energy_offset = loc.lang == 'en' ? 0 : 16;
-    
+
     rect(x="0", y="0", rx="0", ry="0", width="620", height="1033", style="fill:#FFFFFF;;stroke: #222222;;stroke-width:1;")
     image(x="25", y="25", height="100px", width="565px", xlink:href=logo)
     //-line(x1="21", y1="25", x2="21", y2="310", stroke-width="2", stroke="#000000")
@@ -136,26 +136,9 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
     text(x=280+box_width+lang_font_cost_icon_offset, y=v_start+255, style="font-family: 'Arimo';", font-size="12", text-anchor="start", fill="black") &#x2021;
     
     //Bottom part
-    - var words = loc.label_annual_savings.split(" ");
-    - var currentLine = '';
-    - var maxLength = 73;
     - var lines = [];
-    each word in words 
-      - if (currentLine.length + word.length + (currentLine.length > 0 ? 1 : 0) > maxLength) {
-        - lines.push(currentLine);
-        - currentLine = word;
-      - } else {
-          //If not, just add the word to the current line
-          - if (currentLine.length > 0) {
-            - currentLine += ' ' + word;
-          - } else {
-            - currentLine = word;
-          - }
-      - }
- 
-    - if (currentLine.length > 0) {
-      - lines.push(currentLine);
-    - }
+    // label, maxchars
+    +label_notes(loc.label_annual_savings, 73)
     - var footer_x=820;
     text(x=23, y=footer_x-5, style="font-family: Arimo;", font-size="12", text-anchor="start",fill="black") &#x2021;
     text(x=30, y=footer_x, style="font-family: Arimo;", font-size="16", text-anchor="start",fill="black")   #{lines[0]}
