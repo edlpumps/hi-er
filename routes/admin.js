@@ -231,7 +231,7 @@ router.get('/participant/:id/circulators', aw(async (req, res) => {
     //Set the language to english
     let curr_lang = lang.get_language(req, res);
     lang.set_language(req, res, 'en');
-    lang.set_label_language(curr_lang);
+    lang.set_label_language(req, res, curr_lang);
     res.render("admin/a_circulators", {
         user: req.user,
         circulators: circulators,
@@ -257,7 +257,7 @@ router.get('/participant/:id/circulators/:circulator_id', aw(async (req, res) =>
     //Set language to english
     let curr_lang = lang.get_language(req, res);
     lang.set_language(req, res, 'en');
-    lang.set_label_language(curr_lang);
+    lang.set_label_language(req, res, curr_lang);
     res.render("admin/a_circulator", {
         user: req.user,
         participant: participant,
@@ -294,7 +294,7 @@ router.post('/participant/:id/:type/:pump_id', aw(async (req, res) => {
     //Set language to english
     let curr_lang = lang.get_language(req, res);
     lang.set_language(req, res, 'en');
-    lang.set_label_language(curr_lang);
+    lang.set_label_language(req, res, curr_lang);
     const pump = await collection.findById(req.params.pump_id).exec();
     pump.active_admin = req.body.active_admin ? true : false;
     pump.note_admin = req.body.note_admin;
