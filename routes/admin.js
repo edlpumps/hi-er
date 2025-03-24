@@ -263,7 +263,7 @@ router.get('/participant/:id/circulators/:circulator_id', aw(async (req, res) =>
 router.get('/participant/:id/circulators/:circulator_id/svg/label', aw(async (req, res) => {
     const pump = await req.Circulators.findById(req.params.circulator_id).populate('participant').exec();
     const svg = svg_builder.make_circulator_label(req, pump.participant, pump);
-    res.setHeader('Content-disposition', 'attachment; filename=Energy Rating Label - ' + pump.rating_id + '.svg');
+    res.setHeader('Content-disposition', 'attachment; filename=Energy Rating Label-' + pump.rating_id + '-('+lang.get_label_language()+').svg');
     res.setHeader('Content-Type', 'image/svg+xml');
     res.send(svg);
 }));

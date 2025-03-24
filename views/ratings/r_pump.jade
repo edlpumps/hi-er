@@ -11,8 +11,8 @@ block content
       .panel.panel-default.rating_panel
         .panel-heading 
           .heading
-           img(src="/images/"+i18n.t("hi_rating_logo", {lng: lang_set}), width="600").hidden-xs
-           img(src="/images/"+i18n.t("hi_rating_logo", {lng: lang_set}), style="width:80%").hidden-md.hidden-lg.hidden-sm
+           img(src="/images/"+i18n.t("hi_rating_logo", {lng: 'en'}), width="600").hidden-xs
+           img(src="/images/"+i18n.t("hi_rating_logo", {lng: 'en'}), style="width:80%").hidden-md.hidden-lg.hidden-sm
              
            h2 #{pump.brand} #{pump.brand ? ' / ' : ''} #{pump.basic_model}
            h4 #{pump.participant.name}
@@ -24,27 +24,27 @@ block content
             .row
               .col.col-sm-6.text-center
                 h4 
-                  | #{i18n.t("pei",{lng:lang_set})}
-                  sub #{pump.configuration == 'bare' || pump.configuration == 'pump_motor' ? i18n.t("cl",{lng:lang_set}) : i18n.t("vl",{lng:lang_set})}
+                  | PEI
+                  sub #{pump.configuration == 'bare' || pump.configuration == 'pump_motor' ? "CL" : "VL"}
                 p.pei_display #{pump.pei.toFixed(2)}
-                p.pei_baseline #{i18n.t("baseline",{lng:lang_set})}:  #{pump.pei_baseline.toFixed(2)}
+                p.pei_baseline Baseline:  #{pump.pei_baseline.toFixed(2)}
                 
               .col.col-sm-6.text-center
-                h4 #{i18n.t("energy_rating",{lng:lang_set})}
+                h4 Energy Rating
                 p.er_display #{pump.energy_rating}
             .row
               .col.col-sm-12.text-center
                img(src="/images/doe/#{pump_drawing}").hidden-xs
                img(src="/images/doe/#{pump_drawing}", style="width:90%").hidden-md.hidden-lg.hidden-sm
            .col.col-sm-7
-             +pump_page_info(pump,true)
+             +pump_page_info(pump)
 
                 
       
       .panel.panel-default
-        .panel-heading
-          h1 #{i18n.t("energy_rating_label",{lng:lang_set})}
-          +language_switch()
+        .panel-heading 
+            h1 Energy Rating Label
+            +language_switch()
         .panel-body
            .row.solo
             .col.col-lg-12.text-center

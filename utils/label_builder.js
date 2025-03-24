@@ -144,11 +144,10 @@ exports.make_sm_label = function (req, participant, pump, label) {
 var build_circulator_params = function (pump, waip, max) {
     // pump.least is most efficient, pump.most is least efficient
     var label_lang = lang.get_label_language();
-    var datetime = pump.date
-    var locale = i18next.language;
+    var datetime = pump.date;
 
     var er = Math.min(pump.least.energy_rating, max);
-    var date = datetime.toLocaleString(locale, {
+    var date = datetime.toLocaleString(label_lang, {
         month: "short"
     });
     var distance = (er) / max;
