@@ -66,11 +66,11 @@ block content
             .col.col-xs-12
               a(:href="'/participant/circulators/'+pump._id+'/export'").btn.btn-danger Download full data
       .panel.panel-default(v-if='pump')
-        .panel-heading 
-            h2 Downloadable Media
+        .panel-heading(style="text-align:center;")
+            h1 Downloadable Media
+            +language_switch()
         .panel-body
           section.text-center(v-if='pump')
-            
             img(:src='pump._id+"/svg/label"')
 
       .panel.panel-default

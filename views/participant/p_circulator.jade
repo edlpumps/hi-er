@@ -125,7 +125,8 @@ block content
               a(:href="'/participant/circulators/'+pump._id+'/export'").btn.btn-danger Download full data
       .panel.panel-default(v-if='pump')
         .panel-heading 
-            h2 Downloadable Media
+        .panel-heading(style="text-align=center;")
+            +language_switch()
         .panel-body
           circulator-label(:pump='pump', :public='false')
       .panel.panel-default(v-if='pump')

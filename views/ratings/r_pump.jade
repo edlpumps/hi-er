@@ -42,8 +42,9 @@ block content
                 
       
       .panel.panel-default
-        .panel-heading 
-            h1 #{i18n.t("energy_rating_label",{lng:lang_set})}
+        .panel-heading
+          h1 #{i18n.t("energy_rating_label",{lng:lang_set})}
+          +language_switch()
         .panel-body
            .row.solo
             .col.col-lg-12.text-center
