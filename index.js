@@ -19,6 +19,7 @@ const bunyan = require('bunyan');
 const mongoose = require("mongoose");
 const schemas = require("./schemas");
 const units = require('./utils/uom');
+const lang = require('./utils/language');
 const MongoStore = require('connect-mongo')(session);
 const passport = require('passport');
 const Strategy = require('passport-local').Strategy;
@@ -191,10 +192,7 @@ var configure = function () {
     root.post('/language', function (req, res) {
         var lang_set = req.body.lang_set;
         if (lang_set.includes('en') || lang_set.includes('fr')) {
-            i18next.changeLanguage(lang_set);
-            //res.locals.moment.locale(lang_set);
-            req.session.lang_set = lang_set;
-            res.locals.lang_set = lang_set;
+            lang.set_language(req, res, lang_set);
         }
         res.status(200).send();
     });
