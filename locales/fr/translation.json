@@ -92,5 +92,6 @@
     "waip":"WAIP",
     "temperature_control":"<Temperature Control>",
     "manual_control":"<Manual Control>",
-    "pressure_control":"<Pressure Control>"
+    "pressure_control":"<Pressure Control>",
+    "pump_energy_index":"<Pump Energy Index>"
 }
