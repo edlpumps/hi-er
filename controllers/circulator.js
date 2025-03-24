@@ -36,7 +36,7 @@ const EXTERNAL_CONTROL = {
     display: "External Input Signal",
     column: 'K',
     number: 4,
-    loc_key: 'external_input_signal_only_control'
+    loc_key: 'external_input_signal'
 };
 const EXTERNAL_AND_OTHER_CONTROL = {
     label: 'external-other-control',
@@ -44,7 +44,7 @@ const EXTERNAL_AND_OTHER_CONTROL = {
     display: "External Input Signal",
     column: 'L',
     number: 5,
-    loc_key: 'ext_input_signal_and_other_controls'
+    loc_key: 'external_input_signal'
 };
 const MANUAL_CONTROL = {
     label: 'manual-control',
