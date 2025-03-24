@@ -55,7 +55,7 @@ mixin unit_switch()
       button(type="button", class=(unit_set == 'METRIC' ? 'btn metric_unit_switch btn-toggle-on' : 'btn metric_unit_switch btn-dark') title="Show all values in standard metric units") Metric
 
 mixin language_switch(active)
-  if active == 'pump'
+  if active == 'pump' || active == 'participant_pump'
     li
       .navbar-text
         .btn-group.btn-group-xs 
