@@ -13,6 +13,7 @@ const circulator = require('../controllers/circulator');
 const { Resvg } = require('@resvg/resvg-js');
 //Include i18next for translations
 const i18next = require('i18next');
+const lang = require('../utils/language');
 
 const svg_opts = {
     font: {
@@ -40,27 +41,26 @@ const label_sm_template = pug.compileFile(label_sm_template_file);
 const circulator_label_template_file = path.join(__dirname, "../views/svg/circulator-label.pug");
 const circulator_small_label_template_file = path.join(__dirname, "../views/svg/circulator-label-small.pug");
 
-
 exports.svg_to_png = function (svg) {
     return new Resvg(svg,svg_opts).render().asPng();
 }
 
 var build_label_params = function (pump, label) {
-    var pm = pump.configuration == "bare" ? "- "+i18next.t('bare_pump') : "- "+i18next.t('motor');
+    var label_lang = lang.get_label_language();
+    var pm = pump.configuration == "bare" ? "- "+i18next.t('bare_pump',{lng:label_lang}) : "- "+i18next.t('motor',{lng:label_lang});
     var config =
         pump.configuration == "bare" || pump.configuration == "pump_motor" ?
             "" :
             (pump.configuration == "pump_motor_cc" ?
-                "- "+i18next.t('continuous_controls') :
-                "- "+i18next.t('non_continuous_controls'));
+                "- "+i18next.t('continuous_controls',{lng:label_lang}) :
+                "- "+i18next.t('non_continuous_controls',{lng:label_lang}));
 
-    var load = pump.configuration == "bare" || pump.configuration == "pump_motor" ? i18next.t('constant_load') : i18next.t('variable_load');
+    var load = pump.configuration == "bare" || pump.configuration == "pump_motor" ? i18next.t('constant_load',{lng:label_lang}) : i18next.t('variable_load',{lng:label_lang});
     load = load.toUpperCase();
-    var load_abbr = pump.configuration == "bare" || pump.configuration == "pump_motor" ? i18next.t('cl') : i18next.t('vl');
+    var load_abbr = pump.configuration == "bare" || pump.configuration == "pump_motor" ? i18next.t('cl',{lng:label_lang}) : i18next.t('vl',{lng:label_lang});
     var datetime = label.date.getTime() < pump.date.getTime() ? pump.date : label.date;
-    var locale = i18next.language;
     var er = Math.min(pump.energy_rating, label.max);
-    var date = datetime.toLocaleString(locale, {
+    var date = datetime.toLocaleString(label_lang, {
         month: "short"
     });
     var span = label.max - label.min;
@@ -70,19 +70,19 @@ var build_label_params = function (pump, label) {
     var annual_cost_savings = common.calculate_cost_savings(pump.energy_rating, pump.motor_power_rated);
     var annual_energy_savings = common.calculate_energy_savings(pump.energy_rating, pump.motor_power_rated);
     var loc_dict = {
-        lang: i18next.language,
-        pump_type: i18next.t('pump_type'), 
-        model: i18next.t('model'),
-        nominal_speed: i18next.t('nominal_speed'),
-        pei: i18next.t('pei'),
-        energy_rating: i18next.t('energy_rating').toUpperCase(),
-        least_efficient: i18next.t('least_efficient'),
-        most_efficient: i18next.t('most_efficient'),
-        range: i18next.t('range').toUpperCase(),
-        kwh: i18next.t('kwh'),
-        annual_energy_savings: i18next.t('annual_energy_savings'),
-        label_annual_savings: i18next.t('label_ci_annual_savings'),
-        annual_cost_savings: i18next.t('annual_cost_savings')
+        lang: label_lang,
+        pump_type: i18next.t('pump_type',{lng:label_lang}), 
+        model: i18next.t('model',{lng:label_lang}),
+        nominal_speed: i18next.t('nominal_speed',{lng:label_lang}),
+        pei: i18next.t('pei',{lng:label_lang}),
+        energy_rating: i18next.t('energy_rating',{lng:label_lang}).toUpperCase(),
+        least_efficient: i18next.t('least_efficient',{lng:label_lang}),
+        most_efficient: i18next.t('most_efficient',{lng:label_lang}),
+        range: i18next.t('range',{lng:label_lang}).toUpperCase(),
+        kwh: i18next.t('kwh',{lng:label_lang}),
+        annual_energy_savings: i18next.t('annual_energy_savings',{lng:label_lang}),
+        label_annual_savings: i18next.t('label_ci_annual_savings',{lng:label_lang}),
+        annual_cost_savings: i18next.t('annual_cost_savings',{lng:label_lang})
         };
     let retval= {
         loc: loc_dict,
@@ -101,7 +101,7 @@ var build_label_params = function (pump, label) {
         bar_width: distance * 500 - 1,
         er_pos: pos,
         motor_power: pump.motor_power_rated,
-        logo: i18next.language == 'en'? hi_logo_data_uri_en: hi_logo_data_uri_fr,
+        logo: label_lang == 'en'? hi_logo_data_uri_en: hi_logo_data_uri_fr,
         load_abbr: load_abbr,
         annual_cost_savings: annual_cost_savings,
         annual_energy_savings: annual_energy_savings,
@@ -143,6 +143,7 @@ exports.make_sm_label = function (req, participant, pump, label) {
 
 var build_circulator_params = function (pump, waip, max) {
     // pump.least is most efficient, pump.most is least efficient
+    var label_lang = lang.get_label_language();
     var datetime = pump.date
     var locale = i18next.language;
 
@@ -175,9 +176,9 @@ var build_circulator_params = function (pump, waip, max) {
     for (const cm of circulator.control_methods) {
         if (pump.control_methods.indexOf(cm.label) >= 0) {
             let c = cm.display;
-            c = i18next.t(cm.loc_key);
+            c = i18next.t(cm.loc_key,{lng:label_lang});
             if (pump.least.control_method == cm.label) {
-                c += ' '+i18next.t('rated');
+                c += ' '+i18next.t('rated',{lng:label_lang});
             }
             if (cm.display !== "External Input Signal and Other Controls")
                 methods.push(c);
@@ -185,25 +186,25 @@ var build_circulator_params = function (pump, waip, max) {
     }
 
     var loc_dict = {
-        lang: i18next.language, 
-        model: i18next.t('model'),
-        waip: i18next.t('waip'),
-        circulator_pump: i18next.t('circulator_pump'),
-        cei: i18next.t('cei'),
-        er: i18next.t('er'),
-        energy_rating: i18next.t('energy_rating').toUpperCase(),
-        least_efficient: i18next.t('least_efficient'),
-        most_efficient: i18next.t('most_efficient'),
-        nominal_speed: i18next.t('nominal_speed'),
-        pei: i18next.t('pei'),
-        range: i18next.t('range').toUpperCase(),
-        label_annual_savings: i18next.t('label_er_savings'),
-        annual_energy_savings: i18next.t('annual_energy_savings'),
-        annual_cost_savings: i18next.t('annual_cost_savings'),
-        kwh: i18next.t('kwh'),
-        label_er_methods: i18next.t('label_er_methods'),
-        label_circ_annual_savings: i18next.t('label_circ_annual_savings'),
-        label_meets_doe_reg: i18next.t('label_meets_doe_reg')
+        lang: label_lang, 
+        model: i18next.t('model',{lng:label_lang}),
+        waip: i18next.t('waip',{lng:label_lang}),
+        circulator_pump: i18next.t('circulator_pump',{lng:label_lang}),
+        cei: i18next.t('cei',{lng:label_lang}),
+        er: i18next.t('er',{lng:label_lang}),
+        energy_rating: i18next.t('energy_rating',{lng:label_lang}).toUpperCase(),
+        least_efficient: i18next.t('least_efficient',{lng:label_lang}),
+        most_efficient: i18next.t('most_efficient',{lng:label_lang}),
+        nominal_speed: i18next.t('nominal_speed',{lng:label_lang}),
+        pei: i18next.t('pei',{lng:label_lang}),
+        range: i18next.t('range',{lng:label_lang}).toUpperCase(),
+        label_annual_savings: i18next.t('label_er_savings',{lng:label_lang}),
+        annual_energy_savings: i18next.t('annual_energy_savings',{lng:label_lang}),
+        annual_cost_savings: i18next.t('annual_cost_savings',{lng:label_lang}),
+        kwh: i18next.t('kwh',{lng:label_lang}),
+        label_er_methods: i18next.t('label_er_methods',{lng:label_lang}),
+        label_circ_annual_savings: i18next.t('label_circ_annual_savings',{lng:label_lang}),
+        label_meets_doe_reg: i18next.t('label_meets_doe_reg',{lng:label_lang})
     };
 
     let retval= {
@@ -221,8 +222,8 @@ var build_circulator_params = function (pump, waip, max) {
         bar_width: distance * 500 - 1,
         er_pos: pos,
         motor_power: 3,
-        logo: i18next.language == 'en'? hi_logo_data_uri_en: hi_logo_data_uri_fr,
-        small_logo: i18next.language == 'en'? hi_logo_data_uri_small_en: hi_logo_data_uri_small_fr,
+        logo: label_lang == 'en'? hi_logo_data_uri_en: hi_logo_data_uri_fr,
+        small_logo: label_lang == 'en'? hi_logo_data_uri_small_en: hi_logo_data_uri_small_fr,
         waip: waip !== undefined ? waip.toFixed(3) : '',
         approval_check_logo: hi_approval_check_uri,
         annual_cost_savings: annual_cost_savings,

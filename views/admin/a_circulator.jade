@@ -3,7 +3,7 @@ include ../common/pump_page
 include ../common/circulators
 
 block nav
-     +navigation("participant_pumps")
+     +navigation("participant_pump")
 block script
     script.
         
@@ -51,9 +51,9 @@ block content
            .col.col-sm-5.text-center
             .row
               .col.col-sm-6.text-center
-                pei-label(:value='pump.least.pei')
+                span #{i18n.t("circulator_energy_index",{lng:lang_set})}<br/>
               .col.col-sm-6.text-center
-                er-label(:value='pump.least.energy_rating')
+                span #{i18n.t("energy_rating",{lng:lang_set})}<br/>
             .row
               .col.text-center(style='margin-bottom:2rem;')
                 img(class="img-fluid", style="width:100%;height:auto;max-width:min-content;", src="/images/"+pump.type.toLowerCase()+".png") 

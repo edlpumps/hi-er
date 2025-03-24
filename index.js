@@ -19,6 +19,7 @@ const bunyan = require('bunyan');
 const mongoose = require("mongoose");
 const schemas = require("./schemas");
 const units = require('./utils/uom');
+const lang = require('./utils/language');
 const MongoStore = require('connect-mongo')(session);
 const passport = require('passport');
 const Strategy = require('passport-local').Strategy;
@@ -123,6 +124,8 @@ var configure = function () {
         }
         if (!req.session.lang_set) {
             req.session.lang_set = 'en';
+            req.session.label_lang = 'en';
+            req.session.page_lang = 'en';
         }
         res.locals.certificate_cart_exists = req.session.certificate_cart ? req.session.certificate_cart.length > 0 : false;
         res.locals.unit_set = req.session.unit_set;
@@ -130,8 +133,10 @@ var configure = function () {
         res.locals.units = units.make_units(res.locals.unit_set);
         res.locals.moment = require('moment');
         res.locals.lang_set = req.session.lang_set;
+        res.locals.label_lang = req.session.label_lang;
+        res.locals.page_lang = req.session.page_lang;
         i18next.changeLanguage(res.locals.lang_set);
-        res.locals.moment.locale(res.locals.lang_set);
+        //res.locals.moment.locale(res.locals.lang_set);
         next();
     });
 
@@ -191,9 +196,7 @@ var configure = function () {
     root.post('/language', function (req, res) {
         var lang_set = req.body.lang_set;
         if (lang_set.includes('en') || lang_set.includes('fr')) {
-            i18next.changeLanguage(lang_set);
-            res.locals.moment.locale(lang_set);
-            req.session.lang_set = lang_set;
+            lang.set_language(req, res, lang_set);
         }
         res.status(200).send();
     });
