@@ -145,7 +145,7 @@ var build_circulator_params = function (pump, waip, max) {
     // pump.least is most efficient, pump.most is least efficient
     var label_lang = lang.get_label_language();
     var datetime = pump.date
-    var locale = i18next.language;
+    var locale = label_lang;
 
     var er = Math.min(pump.least.energy_rating, max);
     var date = datetime.toLocaleString(locale, {

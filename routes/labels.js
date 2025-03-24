@@ -45,7 +45,6 @@ router.get('/:participant_id/:id/svg', function (req, res) {
             res.status(500).send(err);
             return;
         }
-        let filename = generate_filename(pump.rating_id)
         res.setHeader('Content-disposition', 'attachment; filename='+get_filename(pump.rating_id)+'.svg');
         res.setHeader('Content-Type', 'image/svg+xml');
         res.send(svg);
