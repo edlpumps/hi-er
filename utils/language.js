@@ -3,22 +3,14 @@ var label_lang = i18next.language;
 var page_lang = i18next.language;
 
 exports.set_language = function(req, res, language) {
-    i18next.changeLanguage(language);
-    //res.locals.moment.locale(lang_set);
-    req.session.lang_set = language;
-    req.session.label_lang = language;
-    req.session.page_lang = language;
-    res.locals.lang_set = language;
-    res.locals.label_lang = language;
-    res.locals.page_lang = language;
-    label_lang = language;
-    page_lang = language;
+    exports.set_label_language(req, res, language);
+    exports.set_page_language(req, res, language);
     return;
 }
 exports.set_label_language = function(req, res, language) {
-    label_lang = language;
-    req.session.label_lang = language;
-    res.locals.label_lang = language;   
+    label_lang = language;    
+    res.locals.label_lang = language; 
+    req.session.label_lang = language; 
     return;
 }
 exports.get_label_language = function() {
