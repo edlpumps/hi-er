@@ -14,8 +14,8 @@ block content
           .heading
            div.pull-right(style='margin:2em')
             a.btn.btn-danger(href=`/ratings/certificates/create/${pump.rating_id}`) Create ER Certificate 
-           img(src="/images/"+i18n.t("hi_rating_logo", {lng: lang_set}), width="600").hidden-xs
-           img(src="/images/"+i18n.t("hi_rating_logo", {lng: lang_set}), style="width:80%").hidden-md.hidden-lg.hidden-sm
+           img(src="/images/"+i18n.t("hi_rating_logo", {lng: page_lang}), width="600").hidden-xs
+           img(src="/images/"+i18n.t("hi_rating_logo", {lng: page_lang}), style="width:80%").hidden-md.hidden-lg.hidden-sm
              
            h2 #{pump.brand} #{pump.brand ? ' / ' : ''} #{pump.basic_model}
            h4 #{pump.participant.name}

@@ -20,6 +20,3 @@ exports.set_page_language = function(req, res,language) {
 exports.get_page_language = function() {
     return page_lang;
 }
-exports.get_language = function(req, res) {
-    return res.locals.lang_set;
-}
