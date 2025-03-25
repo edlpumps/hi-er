@@ -48,8 +48,8 @@ block content
         .panel-heading 
           .heading
            
-            img(src="/images/"+i18n.t("hi_rating_logo", {lng: lang_set}), width="600").hidden-xs
-            img(src="/images/"+i18n.t("hi_rating_logo", {lng: lang_set}), style="width:80%").hidden-md.hidden-lg.hidden-sm
+            img(src="/images/"+i18n.t("hi_rating_logo", {lng: page_lang}), width="600").hidden-xs
+            img(src="/images/"+i18n.t("hi_rating_logo", {lng: page_lang}), style="width:80%").hidden-md.hidden-lg.hidden-sm
             h2 #{pump.brand} #{pump.brand ? ' / ' : ''} #{pump.basic_model} #{pump.manufacturer_model}
         .panel-body(v-if='pump')
           .row
@@ -57,12 +57,12 @@ block content
             .row
               .col.col-sm-6.text-center
                 p
-                  span #{i18n.t("circulator_energy_index",{lng:lang_set})}<br/>
+                  span #{i18n.t("circulator_energy_index",{lng:page_lang})}<br/>
                   span.pei_display: pei(:value='pump.least.pei')
             
               .col.col-sm-6.text-center
                 p
-                  span #{i18n.t("energy_rating",{lng:lang_set})}<br/>
+                  span #{i18n.t("energy_rating",{lng:page_lang})}<br/>
                   span.er_display: energy-rating(:value='pump.least.energy_rating')
             .row
               .col.text-center(style='margin-bottom:2rem;')
@@ -74,6 +74,6 @@ block content
               circulator-data-details(:pump='pump', :units='units')  
       .panel.panel-default
         .panel-heading 
-          h1 #{i18n.t("energy_rating_label",{lng:lang_set})}
+          h1 #{i18n.t("energy_rating_label",{lng:page_lang})}
         .panel-body
           circulator-label(:pump='pump', :public='true')

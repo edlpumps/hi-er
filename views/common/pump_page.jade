@@ -1,5 +1,5 @@
-mixin pump_page_info(pump, localize)
-    - var loc_lang = localize ? lang_set : 'en'
+mixin pump_page_info(pump, lang)
+    - var loc_lang = lang
     unless pump.listed || pump.pending
       .row
         .col.col-xs-12
@@ -44,7 +44,7 @@ mixin pump_page_info(pump, localize)
      .row 
         .form-group
             .col.col-xs-5
-                label Testing method:
+                label #{i18n.t("testing_method",{lng:loc_lang})}:
             .col.col-xs-7
                 .form-control-static #{section_label(pump.section)} 
     .row 

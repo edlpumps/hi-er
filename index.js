@@ -126,16 +126,18 @@ var configure = function () {
             req.session.lang_set = 'en';
             req.session.label_lang = 'en';
             req.session.page_lang = 'en';
+            lang.set_language(req, res, 'en');
         }
         res.locals.certificate_cart_exists = req.session.certificate_cart ? req.session.certificate_cart.length > 0 : false;
         res.locals.unit_set = req.session.unit_set;
         res.locals.ESTORE_ADMIN_EMAIL = process.env.ESTORE_ADMIN_EMAIL;
         res.locals.units = units.make_units(res.locals.unit_set);
+        req.session.label_lang = lang.get_label_language();
+        req.session.page_lang = lang.get_page_language();
         res.locals.moment = require('moment');
         res.locals.lang_set = req.session.lang_set;
         res.locals.label_lang = req.session.label_lang;
         res.locals.page_lang = req.session.page_lang;
-        i18next.changeLanguage(res.locals.lang_set);
         //res.locals.moment.locale(res.locals.lang_set);
         next();
     });

@@ -9,6 +9,7 @@ const units = require('../utils/uom');
 const Hashids = require('hashids');
 const hashids = new Hashids("hydraulic institute", 6, 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789');
 const svg_builder = require('../utils/label_builder.js');
+const lang = require('../utils/language.js');
 
 const model_check = async (req, pump) => {
     return {
@@ -329,16 +330,14 @@ router.delete('/:id', aw(async (req, res) => {
 router.get('/:id/svg/label', aw(async (req, res) => {
     const pump = await req.Circulators.findById(req.params.id).populate('participant').exec();
     const svg = svg_builder.make_circulator_label(req, pump.participant, pump);
-    res.setHeader('Content-disposition', 'attachment; filename=Energy Rating Label - ' + pump.rating_id + '.svg');
-    res.setHeader('Content-Type', 'image/svg+xml');
+    res.setHeader('Content-disposition', 'attachment; filename=Energy Rating Label-' + pump.rating_id + '-('+lang.get_label_language()+').svg');res.setHeader('Content-Type', 'image/svg+xml');
     res.send(svg);
 }));
 router.get('/:id/png/label', aw(async (req, res) => {
     const pump = await req.Circulators.findById(req.params.id).populate('participant').exec();
     const svg = svg_builder.make_circulator_label(req, pump.participant, pump);
     const png_buffer = svg_builder.svg_to_png(svg);
-    res.setHeader('Content-disposition', 'attachment; filename=Energy Rating Label - ' + pump.rating_id + '.png');
-    res.setHeader('Content-Type', 'image/png');
+    res.setHeader('Content-disposition', 'attachment; filename=Energy Rating Label-' + pump.rating_id + '-('+lang.get_label_language()+').png');res.setHeader('Content-Type', 'image/png');
     res.setHeader('Content-Length', png_buffer.length);
     res.status(200).send(png_buffer);
 }));
