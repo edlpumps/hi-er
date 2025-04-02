@@ -190,7 +190,7 @@ mixin vue_circulator_components()
 					.form-control-static: control-method-loc(:method='pump.least.control_method')
 			.row
 				.col.col-xs-5
-					label #{i18n.t("bep_flow_rated",{lng:page_lang})}:
+					label #{i18n.t("bep_flowrate",{lng:page_lang})}:
 				.col.col-xs-7
 					- var flowlabel = i18n.t(units.flow.label,{lng:page_lang})
 					.form-control-static {{(pump.flow * units.flow.factor).toFixed(2)}} #{flowlabel}

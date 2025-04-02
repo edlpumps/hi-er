@@ -20,7 +20,7 @@ const PRESSURE_CONTROL = {
     display: "Pressure",
     column: 'I',
     number: 2,
-    loc_key: 'pressure_control'
+    loc_key: 'pressure'
 };
 const TEMPERATURE_CONTROL = {
     label: 'temperature-control',
@@ -28,7 +28,7 @@ const TEMPERATURE_CONTROL = {
     display: "Temperature",
     column: 'J',
     number: 3,
-    loc_key: 'temperature_control'
+    loc_key: 'temperature'
 };
 const EXTERNAL_CONTROL = {
     label: 'external-control',
@@ -52,7 +52,7 @@ const MANUAL_CONTROL = {
     display: "Manual Speed",
     column: 'M',
     number: 6,
-    loc_key: 'manual_control'
+    loc_key: 'manual_speed'
 };
 const control_methods = [
     NO_SPEED_CONTROL, MANUAL_CONTROL, EXTERNAL_CONTROL, PRESSURE_CONTROL,

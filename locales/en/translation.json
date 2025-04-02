@@ -1,5 +1,5 @@
 {
-    "alternative_model":"Alternative Model #",
+    "alternative_model":"Alternative model #",
     "annual_cost_savings":"Annual Cost Savings",
     "annual_energy_savings":"Annual Energy Savings",
     "available_control_methods":"Available Control Methods",
@@ -10,7 +10,6 @@
     "bep":"BEP",
     "bep_control_input_power":"BEP Control input power",
     "bep_driver_input_power":"BEP driver input power",
-    "bep_flow_rated":"BEP Flow Rated",
     "bep_flowrate":"BEP flowrate",
     "bep_head":"BEP head",
     "brand":"Brand",
@@ -58,6 +57,7 @@
     "low_speed":"Low Speed",
     "m":"m",
     "m3/hr":"m3/hr",
+    "manual_control":"Manual Control",
     "manual_speed":"Manual Speed",
     "manufacturer_model":"Manufacturer model #",
     "max_speed":"Max Speed",
@@ -68,11 +68,10 @@
     "motor":"Motor",
     "nominal_speed":"Nominal Speed",
     "non_continuous_controls":"Non-Continuous Controls",
-    "not_applicable":"N/A",
-    "not_available_str":"Not Available",
     "note_input_power_not_shown_to_public":"Note that input power at alternative load points is not shown to the public.",
     "pei":"PEI",
     "pressure":"Pressure",
+    "pressure_control":"Pressure Control",
     "pump_data_updated":"Pump data updated",
     "pump_not_available":"This pump is no longer commercially available.",
     "pump_not_published":"This pump has not been published yet.  You must activate the pump before it will be visible to the public.",
@@ -85,19 +84,10 @@
     "rsv_pump_type":"RSV Pump Type",
     "st_pump_type":"ST Pump Type",
     "temperature":"Temperature",
+    "temperature_control":"Temperature Control",
     "testing_method":"Testing method",
     "type":"Type",
     "variable_load":"Variable Load",
     "vl":"VL",
-    "waip":"WAIP",
-
-    "temperature_control":"Temperature Control",
-    "manual_control":"Manual Control",
-    "pressure_control":"Pressure Control",
-    "pump_energy_index":"Pump Energy Index",
-    "create_er_certificate":"Create ER Certificate",
-    "download_full_data":"Download full data",
-    "downloadable_media":"Downloadable Media",
-    "administrative_controls":"Administrative controls"
-
+    "waip":"WAIP"
 }

@@ -10,7 +10,6 @@ exports.set_language = function(req, res, language) {
 exports.set_label_language = function(req, res, language) {
     label_lang = language;    
     res.locals.label_lang = language; 
-    req.session.label_lang = language; 
     return;
 }
 exports.get_label_language = function() {
@@ -18,7 +17,6 @@ exports.get_label_language = function() {
 }
 exports.set_page_language = function(req, res,language) {
     page_lang = language;
-    req.session.page_lang = language
     res.locals.page_lang = language;
     return;
 }

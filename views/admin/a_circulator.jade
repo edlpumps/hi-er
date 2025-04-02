@@ -51,9 +51,9 @@ block content
            .col.col-sm-5.text-center
             .row
               .col.col-sm-6.text-center
-                span #{i18n.t("circulator_energy_index",{lng:page_lang})}<br/>
+                pei-label(:value='pump.least.pei')
               .col.col-sm-6.text-center
-                span #{i18n.t("energy_rating",{lng:page_lang})}<br/>
+                er-label(:value='pump.least.energy_rating')
             .row
               .col.text-center(style='margin-bottom:2rem;')
                 img(class="img-fluid", style="width:100%;height:auto;max-width:min-content;", src="/images/"+pump.type.toLowerCase()+".png") 
@@ -67,7 +67,7 @@ block content
               a(:href="'/participant/circulators/'+pump._id+'/export'").btn.btn-danger Download full data
       .panel.panel-default(v-if='pump')
         .panel-heading 
-            h2 #{i18n.t("downloadable_media",{lng:page_lang})}
+            h2 Downloadable Media
         .panel-body
           section.text-center(v-if='pump')
             
@@ -75,7 +75,7 @@ block content
 
       .panel.panel-default
         .panel-heading
-          h2 #{i18n.t("administrative_controls",{lng:page_lang})}
+          h2 Administrative controls
         .panel-body
          form(action="/admin/participant/#{participant._id}/circulators/#{pump._id}", method="post")
           .row
