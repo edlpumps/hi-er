@@ -124,8 +124,6 @@ var configure = function () {
         }
         if (!req.session.lang_set) {
             req.session.lang_set = 'en';
-            req.session.label_lang = 'en';
-            req.session.page_lang = 'en';
             lang.set_label_language(req, res, 'en');
             lang.set_page_language(req, res, 'en');
         }
@@ -140,7 +138,6 @@ var configure = function () {
         req.session.page_lang = lang.get_page_language();
         res.locals.label_lang = req.session.label_lang;
         res.locals.page_lang = req.session.page_lang;
-        //res.locals.moment.locale(res.locals.lang_set);
         next();
     });
 
