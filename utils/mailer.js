@@ -50,7 +50,7 @@ var smtpConfig = {
 var transporter = nodemailer.createTransport(smtpConfig);
 
 function sendEmail(mailOptions) {
-    if (process.env.SMTP_USERNAME)
+    if (process.env.SMTP_USERNAME && process.env.SMTP_USERNAME.length > 0)
         transporter.sendMail(mailOptions, function (error, info) {
             if (error) {
                 console.log("Could not send email using the following user:")
