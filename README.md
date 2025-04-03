@@ -129,6 +129,15 @@ Follow the steps above to Deploy a GitHub branch to Heroku, but instead, select 
 - Copy the content and paste into a file (no extension) in the views/svg folder
 - Pass that link into the SVG generator code for generating the label.
 
+## TRANSLATIONS TO OTHER LANGUAGES
+- Pump LABELS can be translated using the English/French toggle at the top right of all Pump Detail pages.  
+- The pump details themselves are only translated for the PUBLIC pages (not the Admin or Participant pages per design).
+- The i18next (https://i18next.com) library is used.
+- Since the requirement was to provide translations for particular pages (Public Pump details) and for labels, there are 2 "types" of language settings.
+    - page_lang
+    - label_lang
+- These are handled independently in the code. 
+
 ## Generate README.PDF
 - Make sure the `Markdown PDF` extension is installed on Visual Studio Code (Author yzane).
 - Open the README.md file
