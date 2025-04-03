@@ -27,30 +27,32 @@ const port = process.env.PORT || 3003;
 const data_connection_str = process.env.MONGO_CONNECTION_DATA;
 const exporter = require('./exporter');
 
-const i18next = require('i18next');
-const middleware = require('i18next-http-middleware');
-const Backend = require('i18next-fs-backend');
-
-i18next.use(Backend).use(middleware.LanguageDetector)
-.init({
-    backend: {
-        loadPath: path.join(__dirname, 'locales/{{lng}}/translation.json')
-    },
-    detection: {
-        order: ['querystring', 'cookie'],
-        caches: ['cookie']
-    },
-    fallbackLng: 'en',
-    preload: ['en', 'fr'],
-    saveMissing: true
-});
-
 let session_store = null;
 let mainlog = bunyan.createLogger({
     name: 'hi',
     level: process.env.LOG_LEVEL
 });
 
+//////////////////////////////////////////////////
+////   Language Configuration using i18next library
+//////////////////////////////////////////////////
+const i18next = require('i18next');
+const i18nextMiddleware = require('i18next-http-middleware');
+const i18nextBackend = require('i18next-fs-backend');
+
+async function initializeI18next() {
+    await i18next.use(i18nextBackend).use(i18nextMiddleware.LanguageDetector)
+    .init({
+        lng: 'en',
+        fallbackLng: 'en',
+        preload: ['en', 'fr'],
+        ns: ['translation'],
+        defaultNS: 'translation',
+        backend: {
+            loadPath: path.join(__dirname, 'locales/{{lng}}/translation.json'),
+        }
+    });
+}
 
 ////////////////////////////////////////////////////
 // Basic express configuration
@@ -60,11 +62,11 @@ app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 
 var configure = function () {
+    app.use(i18nextMiddleware.handle(i18next));
     app.use(sslRedirect());
     app.use(favicon(__dirname + '/public/images/favicon.ico'));
     app.use(require('less-middleware')(__dirname + '/public'));
     app.use(express.static(__dirname + '/public'));
-    app.use(middleware.handle(i18next));
     app.use(cookieParser());
     app.use(session({
         secret: 'intelliquip',
@@ -238,8 +240,13 @@ var conn = mongoose.connect(data_connection_str, {
             PasswordResets: schemas.PasswordResets
         };
 
-        configure();
-        startup();
+        initializeI18next().then(() => {
+            configure();
+            startup();
+        }).catch((err) => {
+            mainlog.fatal("Error initializing i18next");
+            mainlog.fatal(err);
+        });
 
         //push_emails(1, "higladetech@gmail.com");
     }
