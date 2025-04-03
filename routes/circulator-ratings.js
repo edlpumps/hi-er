@@ -121,6 +121,8 @@ router.get("/:id", aw(async (req, res) => {
         res.redirect("/error");
         return;
     }
+    //Set page language to the label language
+    lang.set_page_language(req, res, lang.get_label_language());
     res.render("ratings/circulator", {
         pump: pump,
         participant: pump.participant
