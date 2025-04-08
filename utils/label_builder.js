@@ -177,7 +177,7 @@ var build_circulator_params = function (pump, waip, max) {
             let c = cm.display;
             c = i18next.t(cm.loc_key,{lng:label_lang});
             if (pump.least.control_method == cm.label) {
-                c += ' '+i18next.t('rated',{lng:label_lang});
+                c += ' ('+i18next.t('rated',{lng:label_lang})+')';
             }
             if (cm.display !== "External Input Signal and Other Controls")
                 methods.push(c);
