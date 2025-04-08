@@ -23,6 +23,7 @@ const svg_opts = {
 
 const hi_logo_data_uri = fs.readFileSync(path.join(__dirname, "../views/svg/hi-title"), "utf-8");
 const hi_logo_data_uri_small = fs.readFileSync(path.join(__dirname, "../views/svg/hi-title-small"), "utf-8");
+const hi_approval_check_uri = fs.readFileSync(path.join(__dirname, "../views/svg/hi-approval-check"), "utf-8");
 const qr_template_file = path.join(__dirname, "../views/svg/qr.pug");
 const qr_template = pug.compileFile(qr_template_file);
 const label_template_file = path.join(__dirname, "../views/svg/label.pug");
@@ -64,7 +65,7 @@ var build_label_params = function (pump, label) {
     date += " " + datetime.getFullYear()
     var annual_cost_savings = common.calculate_cost_savings(pump.energy_rating, pump.motor_power_rated);
     var annual_energy_savings = common.calculate_energy_savings(pump.energy_rating, pump.motor_power_rated);
-    return {
+    let retval= {
         pei: pump.pei.toFixed(2),
         doe: pump.doe,
         pm: pm,
@@ -83,8 +84,12 @@ var build_label_params = function (pump, label) {
         logo: hi_logo_data_uri,
         load_abbr: load_abbr,
         annual_cost_savings: annual_cost_savings,
-        annual_energy_savings: annual_energy_savings
+        annual_energy_savings: annual_energy_savings,
+        annual_run_hours: 4000,
+        cost_per_kwh: (0.15 * 100).toFixed(2)
     };
+    //console.log(JSON.stringify(retval, null, 2));
+    return retval;
 
 
 }
@@ -118,19 +123,34 @@ exports.make_sm_label = function (req, participant, pump, label) {
 
 
 var build_circulator_params = function (pump, waip, max) {
+    // pump.least is most efficient, pump.most is least efficient
     var datetime = pump.date
     var locale = "en-us";
 
-    var er = Math.min(pump.energy_rating, max);
+    var er = Math.min(pump.least.energy_rating, max);
     var date = datetime.toLocaleString(locale, {
         month: "short"
     });
     var distance = (er) / max;
     var pos = Math.round(distance * 500 + 60);
     date += " " + datetime.getFullYear()
-
     // Find the maximum end of the energy rating scale
     max = Math.max(max, pump.least.energy_rating.toFixed(0))
+    var is_dual = (pump.most && pump.most.control_method ? true: false);
+
+    //calculate Cost & Energy savings
+    var annual_cost_savings = 0;
+    var annual_energy_savings = 0;
+    try {
+        annual_cost_savings = common.calculate_circulator_cost_savings(pump.least.energy_rating.toFixed(), waip.toFixed(3));
+        console.log("Cost Savings " + JSON.stringify(annual_cost_savings, null, 2));
+        annual_energy_savings = common.calculate_circulator_energy_savings(pump.least.energy_rating.toFixed(), waip.toFixed(3));
+        console.log("Energy Savings " + JSON.stringify(annual_energy_savings, null, 2));
+    }
+    catch (e) {
+        console.log("Error in calculating cost and energy savings " + e);
+        is_dual = false;
+    }
 
     const methods = [];
     for (const cm of circulator.control_methods) {
@@ -143,10 +163,11 @@ var build_circulator_params = function (pump, waip, max) {
                 methods.push(c);
         }
     }
-    var retval= {
+    
+    let retval= {
         methods: methods,
-        dual: pump.most && pump.most.control_method,
-        er_most: pump.most && pump.most.control_method ? pump.most.energy_rating.toFixed(0) : 0,
+        dual: is_dual,
+        er_most: is_dual ? pump.most.energy_rating.toFixed(0) : 0,
         max: max,
         pei: pump.least.pei.toFixed(2),
         basic_model: pump.basic_model,
@@ -159,7 +180,14 @@ var build_circulator_params = function (pump, waip, max) {
         motor_power: 3,
         logo: hi_logo_data_uri,
         small_logo: hi_logo_data_uri_small,
-        waip: waip !== undefined ? waip.toFixed(3) : ''
+        waip: waip !== undefined ? waip.toFixed(3) : '',
+        approval_check_logo: hi_approval_check_uri,
+        annual_cost_savings: annual_cost_savings,
+        annual_energy_savings: annual_energy_savings,
+        annual_run_hours: 2500,
+        cost_per_kwh: (0.15 * 100).toFixed(0),
+        reg_year: 2028,
+        meets_approval: parseFloat(pump.least.pei.toFixed(2)) <= 1.0 ? true: false
     };
     
     //if (retval.er_most == retval.er) {

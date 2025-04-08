@@ -154,14 +154,41 @@ exports.labs = function (req, res) {
 }
 
 exports.calculate_energy_savings = function (er, hp) {
+    // 7.457 * 4000 / 1000 = 29.828
     var e_savings = Math.round(er * hp * 29.828);
     var e_string = exports.add_commas(e_savings);
     return {value: e_savings, string: e_string}
 }
 
 exports.calculate_cost_savings = function (er, hp) {
+    // 7.457 * 4000 / 1000 = 29.828 * 0.15 = 4.4742
     var c_savings = Math.round(er * hp * 4.4742);
     var c_string = exports.add_commas(c_savings);
+    return {value: c_savings, string: c_string}
+}
+
+exports.calculate_circulator_energy_savings = function (er, waip) {
+    // 7.457 * 2500 / 1000 = 18.6425
+    var e_savings = Math.round(er * waip * 18.6425);
+    var e_string = exports.add_commas(e_savings);
+    return {value: e_savings, string: e_string}
+}
+
+exports.calculate_circulator_cost_savings = function (er, waip) {
+    var c_savings = exports.calculate_circulator_energy_savings(er, waip)['value'] * 0.15;
+    var c_string = c_savings.toString();
+    // If cost savings is >= $1000, round to the nearest dollar
+    if (c_savings >= 1000) {
+        c_savings = Math.round(c_savings); // round to nearest whole number
+        c_string = exports.add_commas(c_savings);
+    }
+    else {
+        c_savings = parseFloat(c_savings).toFixed(2); // round to nearest cent
+        // Add commas to the dollar amount
+        c_string = c_savings.toString().split(".");
+        c_string[0] = exports.add_commas(c_string[0]);
+        c_string = c_string.join(".");
+    }
     return {value: c_savings, string: c_string}
 }
 
