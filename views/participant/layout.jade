@@ -53,6 +53,7 @@ html
                   li: a(href="/ratings/home") 
                     .glyphicon.glyphicon-eye-open.margin-right
                     | Public site
+                  +language_switch(active)
                   +unit_switch()
                   li(title="#{user.name.first} #{user.name.last} - Sign out")
                     a(href="/logout") 
