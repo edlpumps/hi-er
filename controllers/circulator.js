@@ -194,20 +194,20 @@ const extract_row = (sheet, rowNumber, labs) => {
         return row;
     }
     if (isNaN(row.least.pei)) {
-        row.failure = 'PEI for least consumptive method is required';
+        row.failure = 'PEI for most efficient method is required';
         return row;
     }
 
     if (lc.number <= 4) {
         row.least.input_power = readNumericArray(sheet, ["R", "S", "T", "U"], rowNumber);
         if (row.least.input_power.length !== 4) {
-            row.failure = 'Least consumptive method specified requires four power inputs';
+            row.failure = 'Most efficient method specified requires four power inputs';
             return row;
         }
     } else {
         row.least.input_power = readNumericArray(sheet, ["V", "W"], rowNumber);
         if (row.least.input_power.length !== 2) {
-            row.failure = 'Least consumptive method specified requires max/reduced power inputs';
+            row.failure = 'Most efficient method specified requires max/reduced power inputs';
             return row;
         }
     }
@@ -222,20 +222,20 @@ const extract_row = (sheet, rowNumber, labs) => {
         if (mc.number <= 4) {
             row.most.input_power = readNumericArray(sheet, ["X", "Y", "Z", "AA"], rowNumber);
             if (row.most.input_power.length !== 4) {
-                row.failure = 'Most consumptive method specified requires four power inputs';
+                row.failure = 'Least efficient method specified requires four power inputs';
                 return row;
             }
         } else {
             row.most.input_power = readNumericArray(sheet, ["AB", "AC"], rowNumber);
             if (row.most.input_power.length !== 2) {
-                row.failure = 'Most consumptive method specified requires max/reduced power inputs';
+                row.failure = 'Least efficient method specified requires max/reduced power inputs';
                 return row;
             }
         }
         row.most.pei = readNumeric(sheet, "AJ", rowNumber);
 
         if (isNaN(row.most.pei)) {
-            row.failure = 'PEI for most consumptive method is required';
+            row.failure = 'PEI for least efficient method is required';
             return row;
         }
     }
@@ -256,7 +256,7 @@ const extract_row = (sheet, rowNumber, labs) => {
     row.least.waip = results.waip;
     row.least.pei_validity = results.pei_validity;
     if (row.least.pei_validity == 'RE-TEST') {
-        const v = mc ? '(least consumptive)' : '';
+        const v = mc ? '(most efficient)' : '';
         row.failure = `PEI Input is too low ${v}.  Please re-test`;
         return row;
     }
@@ -275,7 +275,7 @@ const extract_row = (sheet, rowNumber, labs) => {
         row.most.waip = results.waip;
         row.most.pei_validity = results.pei_validity;
         if (row.most.pei_validity == 'RE-TEST') {
-            row.failure = 'PEI Input is too low (most consumptive).  Please re-test';
+            row.failure = 'PEI Input is too low (least efficient).  Please re-test';
             return row;
         }
     }
@@ -405,7 +405,7 @@ const export_pump = (worksheet, row, _pump, units) => {
     write_cell(worksheet, 'AG', row, pump.head[3].toFixed(2));
     write_cell(worksheet, 'AH', row, pump.flow.toFixed(2));
 
-    // Least Consumptive exports    
+    // Most Efficient exports    
     write_cell(worksheet, 'N', row, control_methods.filter(cm => cm.label == pump.least.control_method)[0].input);
     write_cell(worksheet, 'P', row, pump.least.pressure_curve);
     write_cell(worksheet, 'AI', row, pump.least.pei.toFixed(2));
@@ -420,7 +420,7 @@ const export_pump = (worksheet, row, _pump, units) => {
         write_cell(worksheet, 'W', row, pump.least.input_power[1].toFixed(2))
     }
 
-    // Most Consumptive exports
+    // Least Efficient exports
     if (pump.most && pump.most.control_method) {
         write_cell(worksheet, 'O', row, control_methods.filter(cm => cm.label == pump.most.control_method)[0].input);
         write_cell(worksheet, 'Q', row, pump.most.pressure_curve);
@@ -512,7 +512,7 @@ const conflict = (e, i) => {
 const check_method_conflict = (pump) => {
     if (pump.least && pump.most) {
         if (pump.least.energy_rating < pump.most.energy_rating) {
-            pump.failure = 'Least consumptive measure must have higher energy rating than most consumptive.';
+            pump.failure = 'Most efficient measure must have higher energy rating than least efficient.';
         }
     }
 }
