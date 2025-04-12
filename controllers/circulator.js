@@ -444,8 +444,9 @@ const export_pump = (worksheet, row, _pump, units) => {
 
 }
 exports.export = async (pumps, units) => {
+    const template = require('../routes/circulator_template_map.json')
     const workbook = new Excel.Workbook();
-    const template_path = path.join(__dirname, 'Attachment 1 - Circulator ER Template.xlsx');
+    const template_path = path.join(__dirname,"../routes/", template.config.filename);
     await workbook.xlsx.readFile(template_path);
     const worksheet = workbook.getWorksheet(1);
     let row = 5;

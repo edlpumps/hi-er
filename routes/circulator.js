@@ -143,7 +143,7 @@ router.get('/download', aw(async (req, res) => {
     }).exec();
 
     const file = await Circulator.export(pumps, req.session.unit_set);
-    res.download(file, 'Pump Listings.xlsx', function (err) {
+    res.download(file, 'Circulator Pump Listings.xlsx', function (err) {
         if (err) console.error(err);
         else fs.unlink(file, function () {
             console.log('Removed template');
@@ -303,7 +303,7 @@ router.get('/:id/export', aw(async (req, res) => {
         return res.sendStatus(404);
     }
     const file = await Circulator.export([pump], req.session.unit_set);
-    res.download(file, 'Pump Listings.xlsx', function (err) {
+    res.download(file, 'Circulator Pump Listings.xlsx', function (err) {
         if (err) console.error(err);
         else fs.unlink(file, function () {
             console.log('Removed template');
