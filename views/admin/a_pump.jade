@@ -2,7 +2,7 @@ extends layout
 include ../common/pump_page
 
 block nav
-    +navigation("participant_pumps")
+    +navigation("participant_pump")
     
 block content
  .container(ng-controller="ERAdminController as app",ng-init="app.user= #{JSON.stringify(user)}; app.participant= #{JSON.stringify(participant)}")
@@ -32,7 +32,7 @@ block content
                 img(src="/images/doe/#{pump_drawing}", style="width:90%").hidden-md.hidden-lg.hidden-sm
                 p.solo: a.btn.btn-danger(href="/admin/participant/#{participant._id}/pumps/#{pump._id}/download") Download full data
            .col.col-sm-7
-             +pump_page_info(pump)
+             +pump_page_info(pump, page_lang)
 
       
       .panel.panel-default

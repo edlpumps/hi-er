@@ -4,6 +4,7 @@ const express = require('express');
 const router = express.Router();
 const default_search_operators = require('../search').params;
 const aw = require('./async_wrap');
+const lang = require('../utils/language');
 
 router.use('/certificates', require('./certificates'));
 
@@ -120,6 +121,8 @@ router.get("/:id", aw(async (req, res) => {
         res.redirect("/error");
         return;
     }
+    //Set page language to the label language
+    lang.set_page_language(req, res, lang.get_label_language());
     res.render("ratings/r_pump", {
         pump: pump,
         participant: pump.participant,

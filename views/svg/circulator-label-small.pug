@@ -5,7 +5,9 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
 
     defs
      include fonts.pug
-    
+     
+    - var lang_img_offset = loc.lang == 'en' ? 0 : 20;
+
     -var tt = 135;
     -var lh = 18;
     -var left_edge = 30;
@@ -24,13 +26,13 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
     -var m_anchor = Math.abs(er-er_most) < 30 ? "end" : "middle";
     -var l_anchor = "middle";//Math.abs(er-er_most) < 20 ? "start" : "middle";
     rect(x="0", y="0", rx="0", ry="0", width="620", height="390", style="fill:#FFFFFF;;stroke: #222222;;stroke-width:1;")
-    image(x="310", y="15", height="100px", width="285", xlink:href=small_logo)
-    text(x=left_edge, y="60", style="font-family: 'Arimo', Helvetica; font-weight:bold", font-size="30", text-anchor="start", fill="black") Circulator Pump
-    text(x=left_edge, y="95", style="font-family: 'Arimo', Helvetica;", font-size="24", text-anchor="start", fill="black") CEI
+    image(x=310+lang_img_offset, y="15", height="100px", width="285", xlink:href=small_logo)
+    text(x=left_edge, y="60", style="font-family: 'Arimo', Helvetica; font-weight:bold", font-size="30", text-anchor="start", fill="black") #{loc.circulator_pump}
+    text(x=left_edge, y="95", style="font-family: 'Arimo', Helvetica;", font-size="24", text-anchor="start", fill="black") #{loc.cei}
     //-text(x=left_edge+40, y="98", style="font-family: 'Arimo', Helvetica;", font-size="10", text-anchor="start", fill="black") CIRC
     text(x=left_edge+40, y="95", style="font-family: 'Arimo', Helvetica;", font-size="24", text-anchor="start", fill="black") :  #{pei}
-    text(x=left_edge+120, y="95", style="font-family: 'Arimo', Helvetica;", font-size="24", text-anchor="start", fill="black") (ER #{er})
-    text(x=left_edge, y=130, style="font-family: 'Arimo'; ", font-size="24", text-anchor="start", fill="black") WAIP: #{waip}
+    text(x=left_edge+120, y="95", style="font-family: 'Arimo', Helvetica;", font-size="24", text-anchor="start", fill="black") (#{loc.er} #{er})
+    text(x=left_edge, y=130, style="font-family: 'Arimo'; ", font-size="24", text-anchor="start", fill="black") #{loc.waip}: #{waip}
     text(x=right_edge, y=130, style="font-family: 'Arimo'; ", font-size="24", text-anchor="end", fill="black") #{basic_model}
 
     
@@ -41,10 +43,10 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
     line(x1=q1_er, y1=er_line, x2=q1_er, y2=er_line+er_tick, stroke-width="3", stroke="#000000")
     line(x1=q3_er, y1=er_line, x2=q3_er, y2=er_line+er_tick, stroke-width="3", stroke="#000000")
     line(x1=min_er, y1=er_line, x2=max_er, y2=er_line, stroke-width="3", stroke="#000000")
-    text(x=middle, y=160+2*lh, style="font-family: 'Arimo', Helvetica; font-weight:bold", font-size="25", text-anchor="middle", fill="black") ENERGY RATING
-    text(x=min_er, y=er_line+er_tick+lh, style="font-family: 'Arimo', Helvetica; ", font-size="16", text-anchor="start", fill="black") Least Efficient
-    text(x=max_er, y=er_line+er_tick+lh, style="font-family: 'Arimo', Helvetica; ", font-size="16", text-anchor="end", fill="black") Most Efficient
-    text(x=middle, y=er_line+er_tick+lh, style="font-family: 'Arimo', Helvetica; ", font-size="16", text-anchor="middle", fill="black") RANGE
+    text(x=middle, y=160+2*lh, style="font-family: 'Arimo', Helvetica; font-weight:bold", font-size="25", text-anchor="middle", fill="black") #{loc.energy_rating}
+    text(x=min_er, y=er_line+er_tick+lh, style="font-family: 'Arimo', Helvetica; ", font-size="16", text-anchor="start", fill="black") #{loc.least_efficient}
+    text(x=max_er, y=er_line+er_tick+lh, style="font-family: 'Arimo', Helvetica; ", font-size="16", text-anchor="end", fill="black") #{loc.most_efficient}
+    text(x=middle, y=er_line+er_tick+lh, style="font-family: 'Arimo', Helvetica; ", font-size="16", text-anchor="middle", fill="black") #{loc.range}
     text(x=er_rated_tick, y=er_line- tick_scale*1.2*lh,style="font-family: 'Arimo', Helvetica; font-weight:bold", font-size="34", text-anchor=l_anchor, fill="black") #{er}
     - var hw = 10;
     - var mps = `${er_rated_tick}, ${(er_line- er_tick)} ${er_rated_tick-hw}, ${er_line-tick_scale*lh} ${er_rated_tick+hw}, ${er_line-tick_scale*lh}`;    

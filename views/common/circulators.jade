@@ -73,78 +73,79 @@ mixin vue_circulator_components()
 		
 
 	script#v-circulator-data-details(type='text/x-template')
+		- var powerlabel = i18n.t(units.power.label,{lng:page_lang})
 		section.padded
 			section
-					label Available Control Methods:
+					label #{i18n.t("available_control_methods",{lng:page_lang})}:
 					ul.control-method-list
 						li.control-method(v-for='method of pump.control_methods')
-							control-method(:method='method')
+							control-method-loc(:method='method')
 			section
 				.row
 					.col.col-sm-6
-						h2: control-method(:method='pump.least.control_method')
-						p(v-if='dual_cm()') (Most Efficient)
+						h2: control-method-loc(:method='pump.least.control_method')
+						p(v-if='dual_cm()') (#{i18n.t('most_efficient', {lng: page_lang})})
 						table.table
 							tbody
 								tr
-									td: label CEI
+									td: label #{i18n.t("cei",{lng:page_lang})}
 									td: pei(:value='pump.least.pei')
 								tr
-									td: label ER
+									td: label #{i18n.t("er",{lng:page_lang})}
 									td: energy-rating(:value='pump.least.energy_rating')
 								tr(v-if='num_input_powers(pump.least.control_method) == 2')
-									td: label WAIP @ Max Speed
-									td {{(pump.least.input_power[0]*units.power.factor).toFixed(3)}} {{units.power.label}}
+									td: label #{i18n.t("waip",{lng:page_lang})} @ #{i18n.t("max_speed",{lng:page_lang})}
+									td {{(pump.least.input_power[0]*units.power.factor).toFixed(3)}} #{powerlabel}
 								tr(v-if='num_input_powers(pump.least.control_method) == 2')
-									td: label WAIP @ Low Speed
-									td {{(pump.least.input_power[1]*units.power.factor).toFixed(3)}} {{units.power.label}}
+									td: label #{i18n.t("waip",{lng:page_lang})} @ #{i18n.t("low_speed",{lng:page_lang})}
+									td {{(pump.least.input_power[1]*units.power.factor).toFixed(3)}} #{powerlabel}
 								tr(v-if='num_input_powers(pump.least.control_method) == 4')
-									td: label Input Power @25% BEP
-									td {{(pump.least.input_power[0]*units.power.factor).toFixed(3)}} {{units.power.label}}
+									td: label #{i18n.t("input_power",{lng:page_lang})} @25% #{i18n.t("bep",{lng:page_lang})}
+									td {{(pump.least.input_power[0]*units.power.factor).toFixed(3)}} #{powerlabel}
 								tr(v-if='num_input_powers(pump.least.control_method) == 4')
-									td: label Input Power @50% BEP
-									td {{(pump.least.input_power[1]*units.power.factor).toFixed(3)}} {{units.power.label}}
+									td: label #{i18n.t("input_power",{lng:page_lang})} @50% #{i18n.t("bep",{lng:page_lang})}
+									td {{(pump.least.input_power[1]*units.power.factor).toFixed(3)}} #{powerlabel}
 								tr(v-if='num_input_powers(pump.least.control_method) == 4')
-									td: label Input Power @75% BEP
-									td {{(pump.least.input_power[2]*units.power.factor).toFixed(3)}} {{units.power.label}}
+									td: label #{i18n.t("input_power",{lng:page_lang})} @75% #{i18n.t("bep",{lng:page_lang})}
+									td {{(pump.least.input_power[2]*units.power.factor).toFixed(3)}} #{powerlabel}
 								tr(v-if='num_input_powers(pump.least.control_method) == 4')
-									td: label Input Power @100% BEP
-									td {{(pump.least.input_power[3]*units.power.factor).toFixed(3)}} {{units.power.label}}
+									td: label #{i18n.t("input_power",{lng:page_lang})} @100% #{i18n.t("bep",{lng:page_lang})}
+									td {{(pump.least.input_power[3]*units.power.factor).toFixed(3)}} #{powerlabel}
 						
 					.col.col-sm-6(v-if='dual_cm()') 
-						h2: control-method(:method='pump.most.control_method')
-						p (Least Efficient)
+						h2: control-method-loc(:method='pump.most.control_method')
+						p (#{i18n.t("least_efficient",{lng:page_lang})})
 						table.table
 							tbody
 								tr
-									td: label CEI
+									td: label #{i18n.t("cei",{lng:page_lang})}
 									td: pei(:value='pump.most.pei')
 								tr
-									td: label ER
+									td: label #{i18n.t("er",{lng:page_lang})}
 									td: energy-rating(:value='pump.most.energy_rating')
 								tr(v-if='num_input_powers(pump.most.control_method) == 2')
-									td: label WAIP @ Max Speed
-									td {{(pump.most.input_power[0]*units.power.factor).toFixed(3)}} {{units.power.label}}
+									td: label #{i18n.t("waip",{lng:page_lang})} @ #{i18n.t("max_speed",{lng:page_lang})}
+									td {{(pump.most.input_power[0]*units.power.factor).toFixed(3)}} #{powerlabel}
 								tr(v-if='num_input_powers(pump.most.control_method) == 2')
-									td: label WAIP @ Low Speed
-									td {{(pump.most.input_power[1]*units.power.factor).toFixed(3)}} {{units.power.label}}
+									td: label #{i18n.t("waip",{lng:page_lang})} @ #{i18n.t("low_speed",{lng:page_lang})}
+									td {{(pump.most.input_power[1]*units.power.factor).toFixed(3)}} #{powerlabel}
 								tr(v-if='num_input_powers(pump.most.control_method) == 4')
-									td: label Input Power @25% BEP
-									td {{(pump.most.input_power[0]*units.power.factor).toFixed(3)}} {{units.power.label}}
+									td: label #{i18n.t("input_power",{lng:page_lang})} @25% #{i18n.t("bep",{lng:page_lang})}
+									td {{(pump.most.input_power[0]*units.power.factor).toFixed(3)}} #{powerlabel}
 								tr(v-if='num_input_powers(pump.most.control_method) == 4')
-									td: label Input Power @50% BEP
-									td {{(pump.most.input_power[1]*units.power.factor).toFixed(3)}} {{units.power.label}}
+									td: label #{i18n.t("input_power",{lng:page_lang})} @50% #{i18n.t("bep",{lng:page_lang})}
+									td {{(pump.most.input_power[1]*units.power.factor).toFixed(3)}} #{powerlabel}
 								tr(v-if='num_input_powers(pump.most.control_method) == 4')
-									td: label Input Power @75% BEP
-									td {{(pump.most.input_power[2]*units.power.factor).toFixed(3)}} {{units.power.label}}
+									td: label #{i18n.t("input_power",{lng:page_lang})} @75% #{i18n.t("bep",{lng:page_lang})}
+									td {{(pump.most.input_power[2]*units.power.factor).toFixed(3)}} #{powerlabel}
 								tr(v-if='num_input_powers(pump.most.control_method) == 4')
-									td: label Input Power @100% BEP
-									td {{(pump.most.input_power[3]*units.power.factor).toFixed(3)}} {{units.power.label}}
+									td: label #{i18n.t("input_power",{lng:page_lang})} @100% #{i18n.t("bep",{lng:page_lang})}
+									td {{(pump.most.input_power[3]*units.power.factor).toFixed(3)}} #{powerlabel}
 						
 				
 				
 				
-				.help-block(v-if='!public') Note that input power at alternative load points is not shown to the public.
+				.help-block(v-if='!public') #{i18n.t("note_input_power_not_shown_to_public",{lng:page_lang})}
 		
 	script#v-circulator-details(type='text/x-template')
 		section
@@ -154,60 +155,73 @@ mixin vue_circulator_components()
 				p This pump is no longer commercially available.
 			.row
 				.col.col-xs-5
-					label HI Rating ID:
+					label #{i18n.t("hi_rating_id",{lng:page_lang})}:
 				.col.col-xs-7
 					.form-control-static: a(:href="'/circulator/ratings/'+pump.rating_id") {{pump.rating_id}}
 			.row
 				.col.col-xs-5
-					label Basic model #:
+					label #{i18n.t("basic_model",{lng:page_lang})}:
 				.col.col-xs-7
 					.form-control-static {{pump.basic_model}}
 			.row
 				.col.col-xs-5
-					label Manufacturer model #:
+					label #{i18n.t("manufacturer_model",{lng:page_lang})}:
 				.col.col-xs-7
 					.form-control-static {{pump.manufacturer_model}}
 			.row(v-if='pump.alternative_part_number')
 				.col.col-xs-5
-					label Alternative model #:
+					label #{i18n.t("alternative_model",{lng:page_lang})}:
 				.col.col-xs-7
 					.form-control-static {{pump.alternative_part_number}}
 			.row
 				.col.col-xs-5
-					label Brand:
+					label #{i18n.t("brand",{lng:page_lang})}:
 				.col.col-xs-7
 					.form-control-static {{pump.brand}}
 			.row
 				.col.col-xs-5
-					label Type:
+					label #{i18n.t("type",{lng:page_lang})}:
 				.col.col-xs-7
 					.form-control-static {{pump.type}}
 			.row
 				.col.col-xs-5
-					label Rated Control Method:
+					label #{i18n.t("rated_control_method",{lng:page_lang})}:
 				.col.col-xs-7
-					.form-control-static: control-method(:method='pump.least.control_method')
+					.form-control-static: control-method-loc(:method='pump.least.control_method')
 			.row
 				.col.col-xs-5
-					label BEP Flow Rated:
+					label #{i18n.t("bep_flowrate",{lng:page_lang})}:
 				.col.col-xs-7
-					.form-control-static {{(pump.flow * units.flow.factor).toFixed(2)}} {{units.flow.label}}
+					- var flowlabel = i18n.t(units.flow.label,{lng:page_lang})
+					.form-control-static {{(pump.flow * units.flow.factor).toFixed(2)}} #{flowlabel}
 			.row
 				.col.col-xs-5
-					label BEP Head:
+					label #{i18n.t("bep_head",{lng:page_lang})}:
 				.col.col-xs-7
-					.form-control-static {{(pump.head[3] * units.head.factor).toFixed(2)}} {{units.head.label}}
+					- var headlabel = i18n.t(units.head.label,{lng:page_lang})
+					.form-control-static {{(pump.head[3] * units.head.factor).toFixed(2)}} #{headlabel}
 			.row
 				.col.col-xs-5
-					label HI approved laboratory:
+					label #{i18n.t("hi_approved_laboratory",{lng:page_lang})}:
 				.col.col-xs-7
 					.form-control-static {{pump.laboratory ? pump.laboratory.name + ' - ' + pump.laboratory.code : 'N/A'}}
-			.row(v-if='pump.date')
-				.col.col-xs-5
-					label Date listed:
-				.col.col-xs-7
-					.form-control-static {{moment(pump.date).format("MMM DD, YYYY")}}
-				
+			if pump && pump.date
+				.row
+					.col.col-xs-5
+						label #{i18n.t("date_listed",{lng:page_lang})}:
+					.col.col-xs-7
+						- var temp_moment = moment(pump.date);
+						.form-control-static #{temp_moment.locale(page_lang).format("ll")}
+
+	script#v-control-method-loc(type='text/x-template')
+		section 
+			span(v-if='method == "no-speed-control"') #{i18n.t('full_speed', {lng: page_lang})}
+			span(v-if='method == "pressure-control"') #{i18n.t('pressure_control', {lng: page_lang})}
+			span(v-if='method == "temperature-control"') #{i18n.t('temperature_control', {lng: page_lang})}
+			span(v-if='method == "manual-control"') #{i18n.t('manual_control', {lng: page_lang})}
+			span(v-if='method == "external-control"') #{i18n.t('external_input_signal_only_control', {lng: page_lang})}
+			span(v-if='method == "external-other-control"') #{i18n.t('ext_input_signal_and_other_controls', {lng: page_lang})}
+
 	script.
 		Vue.component('pei-label', {
 		  props: ['value'],
@@ -279,7 +293,7 @@ mixin vue_circulator_components()
 				},
 				dual_cm: function() {
 					return  this.pump.most && this.pump.most.control_method;
-				}
+				},
 			}
 		}),
 		Vue.component('circulator-data-details', {
@@ -328,6 +342,16 @@ mixin vue_circulator_components()
 						return "External Input Signal and Other Controls";
 				}
 			}
+		});
+		Vue.component('control-method-loc', {
+			props: ['method'],
+			template: '#v-control-method-loc',
+			methods: {
+				moment(...args) {
+					// eslint-disable-next-line no-undef
+					return moment(...args);
+				}
+			},
 		});
 
 		Vue.component('pei', {

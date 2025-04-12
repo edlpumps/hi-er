@@ -13,8 +13,8 @@ block content
          .panel.panel-default.hi-panel-search.rating_panel
           .panel-heading
               .heading
-                img(src="/images/hydraulic-institute-logo.png", width="600").hidden-xs
-                img(src="/images/hydraulic-institute-logo.png", style="width:80%").hidden-md.hidden-lg.hidden-sm
+                img(src="/images/"+i18n.t("hi_rating_logo", {lng: 'en'}), width="600").hidden-xs
+                img(src="/images/"+i18n.t("hi_rating_logo", {lng: 'en'}), style="width:80%").hidden-md.hidden-lg.hidden-sm
                 
           .panel-body
             form(action=`/ratings/certificates/purchased/${transaction._id}`, method='post')

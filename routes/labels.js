@@ -3,6 +3,12 @@ const router = express.Router();
 const fs = require('fs')
 const path = require('path');
 const svg_builder = require('../utils/label_builder.js');
+const lang = require('../utils/language.js');
+
+function get_filename(rating_id,type="Label") {
+    let label_lang = lang.get_label_language();
+    return "Energy Rating " +type+"-" + rating_id+"-("+label_lang+")";
+}
 
 const render_svg = async (req, res, svg_maker, callback) => {
     try {
@@ -39,8 +45,7 @@ router.get('/:participant_id/:id/svg', function (req, res) {
             res.status(500).send(err);
             return;
         }
-        res.setHeader('Content-disposition', 'attachment; filename=Energy Rating Label - ' + pump.rating_id + '.svg');
-        res.setHeader('Content-Type', 'image/svg+xml');
+        res.setHeader('Content-disposition', 'attachment; filename='+get_filename(pump.rating_id)+'.svg');res.setHeader('Content-Type', 'image/svg+xml');
         res.send(svg);
     });
 });
@@ -51,8 +56,7 @@ router.get('/:participant_id/:id/svg-sm', function (req, res) {
             res.status(500).send(err);
             return;
         }
-        res.setHeader('Content-disposition', 'attachment; filename=Energy Rating Label (sm) - ' + pump.rating_id + '.svg');
-        res.setHeader('Content-Type', 'image/svg+xml');
+        res.setHeader('Content-disposition', 'attachment; filename='+get_filename(pump.rating_id)+'-sm.svg');res.setHeader('Content-Type', 'image/svg+xml');
         res.send(svg);
     });
 });
@@ -66,8 +70,7 @@ router.get('/:participant_id/:id/png', function (req, res) {
                     return;
                 }
                 const png_buffer = svg_builder.svg_to_png(svg);
-                res.setHeader('Content-disposition', 'attachment; filename=Energy Rating Label - ' + pump.rating_id + '.png');
-                res.setHeader('Content-Type', 'image/png');
+                res.setHeader('Content-disposition', 'attachment; filename='+get_filename(pump.rating_id)+'.png');res.setHeader('Content-Type', 'image/png');
                 res.setHeader('Content-Length', png_buffer.length);
                 res.status(200).send(png_buffer);
             });
@@ -82,8 +85,7 @@ router.get('/:participant_id/:id/png-sm', function (req, res) {
                     return;
                 }
                 const png_buffer = svg_builder.svg_to_png(svg);
-                res.setHeader('Content-disposition', 'attachment; filename=Energy Rating Label (sm) - ' + pump.rating_id + '.png');
-                res.setHeader('Content-Type', 'image/png');
+                res.setHeader('Content-disposition', 'attachment; filename='+get_filename(pump.rating_id)+'-sm.png');res.setHeader('Content-Type', 'image/png');
                 res.setHeader('Content-Length', png_buffer.length);
                 res.status(200).send(png_buffer);
             });
@@ -96,8 +98,7 @@ router.get('/:participant_id/:id/qr', function (req, res) {
             res.status(500).send(err);
             return;
         }
-        res.setHeader('Content-disposition', 'attachment; filename=Energy Rating QR -' + pump.rating_id + '.svg');
-        res.setHeader('Content-Type', 'image/svg+xml');
+        res.setHeader('Content-disposition', 'attachment; filename='+get_filename(pump.rating_id,'QR')+'.svg');res.setHeader('Content-Type', 'image/svg+xml');
         res.send(svg);
     });
 });
@@ -110,8 +111,7 @@ router.get('/:participant_id/:id/qr/png', function (req, res) {
                     return;
                 }
                 const png_buffer = svg_builder.svg_to_png(svg);
-                res.setHeader('Content-disposition', 'attachment; filename=Energy Rating QR - ' + pump.rating_id + '.png');
-                res.setHeader('Content-Type', 'image/png');
+                res.setHeader('Content-disposition', 'attachment; filename='+get_filename(pump.rating_id,'QR')+'.png');res.setHeader('Content-Type', 'image/png');
                 res.setHeader('Content-Length', png_buffer.length);
                 res.status(200).send(png_buffer);
             });

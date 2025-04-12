@@ -6,6 +6,7 @@ const mailer = require('../utils/mailer');
 const aw = require('./async_wrap');
 const svg_builder = require('../utils/label_builder.js');
 const exporter = require('../exporter');
+const lang = require('../utils/language');
 module.exports = router;
 
 // All resources served from here are restricted to administrators.
@@ -185,6 +186,8 @@ router.get('/participant/:id/pumps', aw(async (req, res) => {
     const limit = parseInt(req.query.limit && req.query.limit < 100 ? req.query.limit : 10);
     const response = await req.Pumps.search(participant, req.query.search, parseInt(skip), parseInt(limit));
 
+    //Set page language to english
+    lang.set_page_language(req, res, 'en');
     req.log.debug("Rendering participant pumps page for administrative portal");
     res.render("admin/a_pumps", {
         user: req.user,
@@ -227,6 +230,8 @@ router.get('/participant/:id/circulators', aw(async (req, res) => {
         manufacturer_model: 1
     }).lean().exec();
 
+    //Set the page lang to english
+    lang.set_page_language(req, res, 'en');
     res.render("admin/a_circulators", {
         user: req.user,
         circulators: circulators,
@@ -238,6 +243,8 @@ router.get('/participant/:id/circulators', aw(async (req, res) => {
 router.get('/participant/:id/pumps/:pump_id', aw(async (req, res) => {
     const participant = await req.Participants.findById(req.params.id).exec();
     const pump = await req.Pumps.findById(req.params.pump_id).lean().exec();
+    //Set page language to english
+    lang.set_page_language(req, res, 'en');
     res.render("admin/a_pump", {
         user: req.user,
         participant: participant,
@@ -249,6 +256,9 @@ router.get('/participant/:id/pumps/:pump_id', aw(async (req, res) => {
 router.get('/participant/:id/circulators/:circulator_id', aw(async (req, res) => {
     const participant = await req.Participants.findById(req.params.id).exec();
     const circulator = await req.Circulators.findById(req.params.circulator_id).lean().exec();
+    //Set page language to english
+    lang.set_page_language(req, res, 'en');
+
     res.render("admin/a_circulator", {
         user: req.user,
         participant: participant,
@@ -262,7 +272,7 @@ router.get('/participant/:id/circulators/:circulator_id', aw(async (req, res) =>
 router.get('/participant/:id/circulators/:circulator_id/svg/label', aw(async (req, res) => {
     const pump = await req.Circulators.findById(req.params.circulator_id).populate('participant').exec();
     const svg = svg_builder.make_circulator_label(req, pump.participant, pump);
-    res.setHeader('Content-disposition', 'attachment; filename=Energy Rating Label - ' + pump.rating_id + '.svg');
+    res.setHeader('Content-disposition', 'attachment; filename=Energy Rating Label-' + pump.rating_id + '-('+lang.get_label_language()+').svg');
     res.setHeader('Content-Type', 'image/svg+xml');
     res.send(svg);
 }));
@@ -282,6 +292,8 @@ router.post('/participant/:id/:type/:pump_id', aw(async (req, res) => {
     const participant = await req.Participants.findById(req.params.id).exec();
     const collection = req.params.type == 'pumps' ? req.Pumps : req.Circulators;
     const view = req.params.type == 'pumps' ? "admin/a_pump" : "admin/a_circulator";
+    //Set page language to english
+    lang.set_page_language(req, res, 'en');
     const pump = await collection.findById(req.params.pump_id).exec();
     pump.active_admin = req.body.active_admin ? true : false;
     pump.note_admin = req.body.note_admin;

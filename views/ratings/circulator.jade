@@ -48,17 +48,22 @@ block content
         .panel-heading 
           .heading
            
-            img(src="/images/hydraulic-institute-logo.png", width="600").hidden-xs
-            img(src="/images/hydraulic-institute-logo.png", style="width:80%").hidden-md.hidden-lg.hidden-sm
+            img(src="/images/"+i18n.t("hi_rating_logo", {lng: page_lang}), width="600").hidden-xs
+            img(src="/images/"+i18n.t("hi_rating_logo", {lng: page_lang}), style="width:80%").hidden-md.hidden-lg.hidden-sm
             h2 #{pump.brand} #{pump.brand ? ' / ' : ''} #{pump.basic_model} #{pump.manufacturer_model}
         .panel-body(v-if='pump')
           .row
            .col.col-sm-5.text-center
             .row
               .col.col-sm-6.text-center
-                pei-label(:value='pump.least.pei')
+                p
+                  span #{i18n.t("circulator_energy_index",{lng:page_lang})}<br/>
+                  span.pei_display: pei(:value='pump.least.pei')
+            
               .col.col-sm-6.text-center
-                er-label(:value='pump.least.energy_rating')
+                p
+                  span #{i18n.t("energy_rating",{lng:page_lang})}<br/>
+                  span.er_display: energy-rating(:value='pump.least.energy_rating')
             .row
               .col.text-center(style='margin-bottom:2rem;')
                 img(class="img-fluid", style="width:100%;height:auto;max-width:min-content;", src="/images/"+pump.type.toLowerCase()+".png") 
@@ -69,6 +74,6 @@ block content
               circulator-data-details(:pump='pump', :units='units')  
       .panel.panel-default
         .panel-heading 
-          h1 Energy Rating Label
+          h1 #{i18n.t("energy_rating_label",{lng:page_lang})}
         .panel-body
           circulator-label(:pump='pump', :public='true')

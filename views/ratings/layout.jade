@@ -26,6 +26,7 @@ html
               
            .collapse.navbar-collapse#navcollapse
                 ul.nav.navbar-nav.navbar-right
+                  +language_switch(active)
                   +unit_switch()
 
      mixin navigation(active)
@@ -65,6 +66,7 @@ html
                         .glyphicon.glyphicon-unchecked.margin-right
                         | ER Certificates
                 ul.nav.navbar-nav.navbar-right
+                  +language_switch(active)
                   +unit_switch()
                   li
                     a(href="/ratings/glossary", title="Help documentation", target="_blank") 
