@@ -127,7 +127,7 @@ describe('Excel import tests', function () {
             expect(pump.participant.name).to.equal(participant.name);
             expect(pump.brand).to.equal('IQ')
             expect(pump.basic_model).to.equal('FAIL 8');
-            expect(pump.failure).to.equal('PEI for least consumptive method is required');
+            expect(pump.failure).to.equal('PEI for most efficient method is required');
         });
         it(`Fails rows with missing pei (mc)`, () => {
             const pump = result.failed[8];
@@ -136,7 +136,7 @@ describe('Excel import tests', function () {
             expect(pump.participant.name).to.equal(participant.name);
             expect(pump.brand).to.equal('IQ')
             expect(pump.basic_model).to.equal('FAIL 9');
-            expect(pump.failure).to.equal('PEI for most consumptive method is required');
+            expect(pump.failure).to.equal('PEI for least efficient method is required');
         });
         it(`Fails rows with method / input power mismatch`, () => {
             const pump = result.failed[9];
@@ -145,7 +145,7 @@ describe('Excel import tests', function () {
             expect(pump.participant.name).to.equal(participant.name);
             expect(pump.brand).to.equal('IQ')
             expect(pump.basic_model).to.equal('FAIL 10');
-            expect(pump.failure).to.equal('Least consumptive method specified requires four power inputs');
+            expect(pump.failure).to.equal('Most efficient method specified requires four power inputs');
         });
         it(`Fails rows with method / input power mismatch`, () => {
             const pump = result.failed[10];
@@ -154,7 +154,7 @@ describe('Excel import tests', function () {
             expect(pump.participant.name).to.equal(participant.name);
             expect(pump.brand).to.equal('IQ')
             expect(pump.basic_model).to.equal('FAIL 11');
-            expect(pump.failure).to.equal('Least consumptive method specified requires max/reduced power inputs');
+            expect(pump.failure).to.equal('Most efficient method specified requires max/reduced power inputs');
         });
         it(`Fails rows with method / input power mismatch`, () => {
             const pump = result.failed[11];
@@ -163,7 +163,7 @@ describe('Excel import tests', function () {
             expect(pump.participant.name).to.equal(participant.name);
             expect(pump.brand).to.equal('IQ')
             expect(pump.basic_model).to.equal('FAIL 12');
-            expect(pump.failure).to.equal('Most consumptive method specified requires four power inputs');
+            expect(pump.failure).to.equal('Least efficient method specified requires four power inputs');
         });
         it(`Fails rows with method / input power mismatch`, () => {
             const pump = result.failed[12];
@@ -172,7 +172,7 @@ describe('Excel import tests', function () {
             expect(pump.participant.name).to.equal(participant.name);
             expect(pump.brand).to.equal('IQ')
             expect(pump.basic_model).to.equal('FAIL 13');
-            expect(pump.failure).to.equal('Most consumptive method specified requires max/reduced power inputs');
+            expect(pump.failure).to.equal('Least efficient method specified requires max/reduced power inputs');
         });
 
         it(`Import CP3 No Control`, () => {

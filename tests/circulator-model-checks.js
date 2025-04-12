@@ -54,7 +54,7 @@ describe('Circulator model conflicts', function () {
                 energy_rating: 50
             },
         }, // Should fail because it is part of an import with a conflict.
-        { // Should fail, the least consumptive should always have a higher energy rating.
+        { // Should fail, the most efficient should always have a higher energy rating.
             basic_model: "X",
             manufacturer_model: "1",
             least: {
@@ -86,8 +86,8 @@ describe('Circulator model conflicts', function () {
     it('Conflicts when importing pumps contain conflict', async () => {
         expect(results[4].failure).to.equal("Manufactuer number or energy rating conflicts with a pump already being imported");
     });
-    it('Least consumptive must have higher energy rating', async () => {
-        expect(results[5].failure).to.equal("Least consumptive measure must have higher energy rating than most consumptive.");
+    it('Most efficient must have higher energy rating', async () => {
+        expect(results[5].failure).to.equal("Most efficient measure must have higher energy rating than least efficient.");
     });
 
 });

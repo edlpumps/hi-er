@@ -165,18 +165,18 @@ block content
 									.col-xs-6
 										input.form-control(type='number', v-model='pump.head[3]', :readonly='revision_submitted')
 					section
-						h3 Rated Control Method (Least Consumptive)
+						h3 Rated Control Method (Most Efficient)
 						hr
 						circulator-control-method-editor(:method='pump.least', :readonly='revision_submitted')
 						
 					section
-						h3 Most Consumptive Control Method
+						h3 Least Efficient Control Method
 						section(@click='toggle_most', style='cursor:pointer')
 								span(style='margin-right:1em')
 									img(src='/images/active.png', style='width:25px', v-if='pump.most && pump.most.control_method')
 									img(src='/images/inactive.png', style='width:25px', v-else)
 								span
-									span Specify a most-consumptive control method
+									span Specify a least-efficient control method
 						hr
 						circulator-control-method-editor(:method='pump.most', :readonly='revision_submitted', v-if='pump.most && pump.most.control_method')
 					//-p
@@ -195,7 +195,7 @@ block content
 										er-label(:value='revised.least.energy_rating')
 						.row
 							.col.col-sm-12.text-center(v-if='pump.most && pump.most.control_method ||  revised.most && revised.most.control_method')
-								h4 Most Consumptive
+								h4 Least Efficient
 								.row
 									.col.col-sm-6.text-center
 										p Original
@@ -219,7 +219,7 @@ block content
 									.col.col-sm-12.text-center
 										er-label(:value='pump.least.energy_rating')
 							.col.col-sm-6.text-center(v-if='pump.most && pump.most.control_method')
-								h4 Most Consumptive
+								h4 Least Efficient
 								.row
 									.col.col-sm-12.text-center
 										er-label(:value='pump.most.energy_rating')

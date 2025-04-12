@@ -179,7 +179,7 @@ const toXLXS = (rows) => {
         'control_methods_external-other-control': "External Input Speed and Other Controls",
 
 
-        'least_control_method': "Least Consumptive Control Method",
+        'least_control_method': "Most Efficient Control Method",
         /*'least_pressure_curve': "Rated Pressure Curve",*/
 
         /*'least_input_power_25': "Rated load point driver or control input power at 25% of BEP",
@@ -189,14 +189,14 @@ const toXLXS = (rows) => {
         'least_input_power_max': "Rated load point weighted average input power at maximum rotating speed",
         'least_input_power_reduced': "Rated load point weighted average input power at maximum rotating speed",
 
-        'most_control_method': "Most Consumptive Control Method",
-        /*'most_pressure_curve': "Most Consumptive Pressure Curve",*/
-        /*'most_input_power_25': "Most Consumptive load point driver or control input power at 25% of BEP",
-        'most_input_power_50': "Most Consumptive load point driver or control input power at 50% of BEP",
-        'most_input_power_75': "Most Consumptive load point driver or control input power at 75% of BEP",*/
-        'most_input_power_100': "Most Consumptive BEP input power",
-        'most_input_power_max': "Most Consumptive load point weighted average input power at maximum rotating speed",
-        'most_input_power_reduced': "Most Consumptive load point weighted average input power at maximum rotating speed",
+        'most_control_method': "Least Efficient Control Method",
+        /*'most_pressure_curve': "Least Efficient Pressure Curve",*/
+        /*'most_input_power_25': "Least Efficient load point driver or control input power at 25% of BEP",
+        'most_input_power_50': "Least Efficient load point driver or control input power at 50% of BEP",
+        'most_input_power_75': "Least Efficient load point driver or control input power at 75% of BEP",*/
+        'most_input_power_100': "Least Efficient BEP input power",
+        'most_input_power_max': "Least Efficient load point weighted average input power at maximum rotating speed",
+        'most_input_power_reduced': "Least Efficient load point weighted average input power at maximum rotating speed",
 
         /*'head_25': "Load point head at 25% of BEP at max speed ",
         'head_50': "Load point head at 50% of BEP at max speed",
@@ -204,11 +204,11 @@ const toXLXS = (rows) => {
         'head_100': "BEP head at max speed",
         'flow': "BEP flow rate",
 
-        'least_pei': "Least Consumptive CEI",
-        'most_pei': "Most Consumptive Circulator CEI",
-        'least_energy_rating': "Least Consumptive ER",
+        'least_pei': "Most Efficient CEI",
+        'most_pei': "Least Efficient CEI",
+        'least_energy_rating': "Most Efficient ER",
 
-        'most_energy_rating': "Most Consumptive ER",
+        'most_energy_rating': "Least Efficient ER",
 
         date: 'Date listed',
         revision: 'Date updated'
@@ -311,13 +311,13 @@ const calcCirculatorDatabaseSummary = (groups) => {
 
 const generateCirculatorRatingsSummaryCsv = (summaries) => {
     const heading = [
-        "Least Consumptive Control Method",
+        "Most Efficient Control Method",
         "Size Bin",
-        "Most Consumptive load point driver or control input power at 100% of BEP",
-        "Most Consumptive Circulator Energy Index on nameplate",
-        "Least Consumptive Circulator Energy Index on nameplate",
-        "Least Consumptive Energy Rating",
-        "Most Consumptive Energy Rating"
+        "Least Efficient load point driver or control input power at 100% of BEP",
+        "Least Efficient Circulator Energy Index on nameplate",
+        "Most Efficient Circulator Energy Index on nameplate",
+        "Most Efficient Energy Rating",
+        "Least Efficient Energy Rating"
     ];
 
     const csv = [];
@@ -333,7 +333,7 @@ const generateCirculatorRatingsSummaryCsv = (summaries) => {
 
 const generateCirculatorRatingsSummaryDetailsCsv = (summaries) => {
     const heading = [
-        "Least Consumptive Control Method",
+        "Most Efficient Control Method",
         "Size Bin",
         "rating_id",
         "most_input_power_100",

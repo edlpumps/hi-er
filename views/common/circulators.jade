@@ -83,7 +83,7 @@ mixin vue_circulator_components()
 				.row
 					.col.col-sm-6
 						h2: control-method(:method='pump.least.control_method')
-						p(v-if='dual_cm()') (Least Consumptive)
+						p(v-if='dual_cm()') (Most Efficient)
 						table.table
 							tbody
 								tr
@@ -113,7 +113,7 @@ mixin vue_circulator_components()
 						
 					.col.col-sm-6(v-if='dual_cm()') 
 						h2: control-method(:method='pump.most.control_method')
-						p (Most Consumptive)
+						p (Least Efficient)
 						table.table
 							tbody
 								tr

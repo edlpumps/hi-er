@@ -44,10 +44,10 @@ block content
                   
                   if success.most
                     td 
-                      b Least Consumptive: 
+                      b Most Efficient: 
                       +control_method(success.least.control_method)
                       br
-                      b Most Consumptive:
+                      b Least Efficient:
                       +control_method(success.most.control_method)
                     td 
                       span #{success.least.pei.toFixed(2)}
@@ -107,11 +107,11 @@ block content
                    td #{fail.type}
                    if fail.most
                     td 
-                      b Least Consumptive: 
+                      b Most Efficient: 
                       if fail.least
                        +control_method(fail.least.control_method)
                       br
-                      b Most Consumptive:
+                      b Least Efficient:
                       +control_method(fail.most.control_method)
                    else
                     td 

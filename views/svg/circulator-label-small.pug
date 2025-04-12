@@ -20,7 +20,7 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
     -var tick_scale = 2.25;
     -var er_rated = min_er + er/max * (max_er-min_er);
     -var er_rated_tick = Math.min(max_er, er_rated);
-    -var er_most_consumptive = min_er + er_most/max * (max_er-min_er);
+    -var er_least_efficient = min_er + er_most/max * (max_er-min_er);
     -var m_anchor = Math.abs(er-er_most) < 30 ? "end" : "middle";
     -var l_anchor = "middle";//Math.abs(er-er_most) < 20 ? "start" : "middle";
     rect(x="0", y="0", rx="0", ry="0", width="620", height="390", style="fill:#FFFFFF;;stroke: #222222;;stroke-width:1;")
@@ -50,8 +50,8 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
     - var mps = `${er_rated_tick}, ${(er_line- er_tick)} ${er_rated_tick-hw}, ${er_line-tick_scale*lh} ${er_rated_tick+hw}, ${er_line-tick_scale*lh}`;    
     polygon(fill="#000000", stroke="#000000", stroke-width="1", points=mps)
     if dual
-        - var mps = `${er_most_consumptive}, ${(er_line- er_tick)} ${er_most_consumptive-hw}, ${er_line-tick_scale*lh} ${er_most_consumptive+hw}, ${er_line-tick_scale*lh}`;    
+        - var mps = `${er_least_efficient}, ${(er_line- er_tick)} ${er_least_efficient-hw}, ${er_line-tick_scale*lh} ${er_least_efficient+hw}, ${er_line-tick_scale*lh}`;    
         polygon(fill="#000000", stroke="#000000", stroke-width="1", points=mps)
-        text(x=er_most_consumptive, y=er_line- tick_scale*1.2*lh,style="font-family: 'Arimo', Helvetica; font-weight:bold", font-size="34", text-anchor=m_anchor, fill="black") #{er_most}
-        rect(x=Math.min(er_rated_tick, er_most_consumptive), y=er_line-er_tick+3, rx="0", ry="0", width=Math.abs(er_rated_tick-er_most_consumptive), height=er_tick-3, style="fill:#000000;stroke: #000000;stroke-width:1;")
+        text(x=er_least_efficient, y=er_line- tick_scale*1.2*lh,style="font-family: 'Arimo', Helvetica; font-weight:bold", font-size="34", text-anchor=m_anchor, fill="black") #{er_most}
+        rect(x=Math.min(er_rated_tick, er_least_efficient), y=er_line-er_tick+3, rx="0", ry="0", width=Math.abs(er_rated_tick-er_least_efficient), height=er_tick-3, style="fill:#000000;stroke: #000000;stroke-width:1;")
     
