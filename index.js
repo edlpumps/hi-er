@@ -19,6 +19,7 @@ const bunyan = require('bunyan');
 const mongoose = require("mongoose");
 const schemas = require("./schemas");
 const units = require('./utils/uom');
+const lang = require('./utils/language');
 const MongoStore = require('connect-mongo')(session);
 const passport = require('passport');
 const Strategy = require('passport-local').Strategy;
@@ -32,6 +33,26 @@ let mainlog = bunyan.createLogger({
     level: process.env.LOG_LEVEL
 });
 
+//////////////////////////////////////////////////
+////   Language Configuration using i18next library
+//////////////////////////////////////////////////
+const i18next = require('i18next');
+const i18nextMiddleware = require('i18next-http-middleware');
+const i18nextBackend = require('i18next-fs-backend');
+
+async function initializeI18next() {
+    await i18next.use(i18nextBackend).use(i18nextMiddleware.LanguageDetector)
+    .init({
+        lng: 'en',
+        fallbackLng: 'en',
+        preload: ['en', 'fr'],
+        ns: ['translation'],
+        defaultNS: 'translation',
+        backend: {
+            loadPath: path.join(__dirname, 'locales/{{lng}}/translation.json'),
+        }
+    });
+}
 
 ////////////////////////////////////////////////////
 // Basic express configuration
@@ -41,6 +62,7 @@ app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 
 var configure = function () {
+    app.use(i18nextMiddleware.handle(i18next));
     app.use(sslRedirect());
     app.use(favicon(__dirname + '/public/images/favicon.ico'));
     app.use(require('less-middleware')(__dirname + '/public'));
@@ -102,10 +124,18 @@ var configure = function () {
         if (!req.session.unit_set) {
             req.session.unit_set = units.US;
         }
+        if (!req.session.lang_set) {
+            req.session.lang_set = 'en';
+            lang.set_language(req, res, 'en');
+        }
         res.locals.certificate_cart_exists = req.session.certificate_cart ? req.session.certificate_cart.length > 0 : false;
         res.locals.unit_set = req.session.unit_set;
         res.locals.ESTORE_ADMIN_EMAIL = process.env.ESTORE_ADMIN_EMAIL;
         res.locals.units = units.make_units(res.locals.unit_set);
+        res.locals.lang_set = req.session.lang_set;
+        res.locals.label_lang = lang.get_label_language();
+        res.locals.page_lang = lang.get_page_language();
+
         res.locals.moment = require('moment');
         next();
     });
@@ -163,6 +193,13 @@ var configure = function () {
         res.status(200).send();
     });
 
+    root.post('/language', function (req, res) {
+        var lang_set = req.body.lang_set;
+        if (lang_set.includes('en') || lang_set.includes('fr')) {
+            lang.set_language(req, res, lang_set);
+        }
+        res.status(200).send();
+    });
 
     app.use("/error", function (req, res) {
         res.render("error", {});
@@ -203,8 +240,13 @@ var conn = mongoose.connect(data_connection_str, {
             PasswordResets: schemas.PasswordResets
         };
 
-        configure();
-        startup();
+        initializeI18next().then(() => {
+            configure();
+            startup();
+        }).catch((err) => {
+            mainlog.fatal("Error initializing i18next");
+            mainlog.fatal(err);
+        });
 
         //push_emails(1, "higladetech@gmail.com");
     }

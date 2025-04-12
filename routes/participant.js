@@ -13,6 +13,7 @@ const _ = require('lodash');
 const async = require('async');
 const request = require('request');
 const aw = require('./async_wrap');
+const lang = require('../utils/language');
 
 // All resources served from here are restricted to participants.
 router.use(function (req, res, next) {
@@ -627,6 +628,9 @@ router.get('/pumps/:id', aw(async (req, res) => {
     ]).exec();
     var qr_svg = svg_builder.make_qr(req, req.participant, pump, label);
     var label_svg = svg_builder.make_label(req, req.participant, pump, label);
+    
+    // Set the page lang to en
+    lang.set_page_language(req, res, 'en');
     res.render("participant/p_pump", {
         user: req.user,
         subscription_limit: published >= req.participant.subscription.pumps,

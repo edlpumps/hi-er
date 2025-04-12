@@ -5,6 +5,7 @@ const router = express.Router();
 const default_search_operators = require('../search').params;
 const aw = require('./async_wrap');
 const svg_builder = require('../utils/label_builder.js');
+const lang = require('../utils/language.js');
 
 // Route to search (public search)
 router.post('/', aw(async function (req, res) {
@@ -120,6 +121,8 @@ router.get("/:id", aw(async (req, res) => {
         res.redirect("/error");
         return;
     }
+    //Set page language to the label language
+    lang.set_page_language(req, res, lang.get_label_language());
     res.render("ratings/circulator", {
         pump: pump,
         participant: pump.participant
@@ -129,8 +132,7 @@ router.get("/:id", aw(async (req, res) => {
 router.get('/:id/svg/label', aw(async (req, res) => {
     const pump = await req.Circulators.findById(req.params.id).populate('participant').exec();
     const svg = svg_builder.make_circulator_label(req, pump.participant, pump);
-    res.setHeader('Content-disposition', 'attachment; filename=Energy Rating Label - ' + pump.rating_id + '.svg');
-    res.setHeader('Content-Type', 'image/svg+xml');
+    res.setHeader('Content-disposition', 'attachment; filename=Energy Rating Label-' + pump.rating_id + '-('+lang.get_label_language()+').svg');res.setHeader('Content-Type', 'image/svg+xml');
     res.send(svg);
 }));
 

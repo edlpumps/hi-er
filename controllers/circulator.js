@@ -11,42 +11,48 @@ const NO_SPEED_CONTROL = {
     input: 'Full Speed',
     display: "Full Speed",
     column: 'H',
-    number: 1
+    number: 1,
+    loc_key: 'full_speed'
 };
 const PRESSURE_CONTROL = {
     label: 'pressure-control',
     input: 'Pressure Control',
     display: "Pressure",
     column: 'I',
-    number: 2
+    number: 2,
+    loc_key: 'pressure'
 };
 const TEMPERATURE_CONTROL = {
     label: 'temperature-control',
     input: 'Temperature Control',
     display: "Temperature",
     column: 'J',
-    number: 3
+    number: 3,
+    loc_key: 'temperature'
 };
 const EXTERNAL_CONTROL = {
     label: 'external-control',
     input: 'External Input Signal Control Only',
     display: "External Input Signal",
     column: 'K',
-    number: 4
+    number: 4,
+    loc_key: 'external_input_signal'
 };
 const EXTERNAL_AND_OTHER_CONTROL = {
     label: 'external-other-control',
     input: 'External Input Signal and Other Controls',
     display: "External Input Signal",
     column: 'L',
-    number: 5
+    number: 5,
+    loc_key: 'external_input_signal'
 };
 const MANUAL_CONTROL = {
     label: 'manual-control',
     input: 'Manual Speed Control',
     display: "Manual Speed",
     column: 'M',
-    number: 6
+    number: 6,
+    loc_key: 'manual_speed'
 };
 const control_methods = [
     NO_SPEED_CONTROL, MANUAL_CONTROL, EXTERNAL_CONTROL, PRESSURE_CONTROL,

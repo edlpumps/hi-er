@@ -10,8 +10,8 @@ mixin calculator(er, mode)
      .panel.panel-default.rating_panel
         .panel-heading(ng-show="app.standalone")
             .heading
-                img(src="/images/hydraulic-institute-logo.png", width="600").hidden-xs
-                img(src="/images/hydraulic-institute-logo.png", style="width:80%").hidden-md.hidden-lg.hidden-sm
+                img(src="/images/"+i18n.t("hi_rating_logo", {lng: 'en'}), width="600").hidden-xs
+                img(src="/images/"+i18n.t("hi_rating_logo", {lng: 'en'}), style="width:80%").hidden-md.hidden-lg.hidden-sm
                 h2 Pump Energy Index (PEI) Calculator
         .panel-heading(ng-hide="app.standalone")
             if revision

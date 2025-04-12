@@ -4,3 +4,23 @@ mixin footer (left, right, y, size)
     text(x=left, y=y, style="font-family: 'Arimo';", font-size=fsize, text-anchor="start", fill="black")  #{rating_id}
     text(x="308", y=y, style="font-family: 'Arimo';", font-size=fsize, text-anchor="middle", fill="black") er.pumps.org
     text(x=right, y=y, style="font-family: 'Arimo';", font-size=fsize, text-anchor="end", fill="black") #{date}
+
+mixin label_notes(notes, maxChars)
+    - var words = notes.split(" ");
+    - var currentLine = '';
+    each word in words 
+      - if (currentLine.length + word.length > maxChars) {
+        - lines.push(currentLine);
+        - currentLine = word;
+      - } else {
+          //If not, just add the word to the current line
+          - if (currentLine.length > 0) {
+            - currentLine += ' ' + word;
+          - } else {
+            - currentLine = word;
+          - }
+      - }
+ 
+    - if (currentLine.length > 0) {
+      - lines.push(currentLine);
+    - }
