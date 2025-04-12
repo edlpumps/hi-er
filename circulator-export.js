@@ -205,7 +205,7 @@ const toXLXS = (rows) => {
         'flow': "BEP flow rate",
 
         'least_pei': "Most Efficient CEI",
-        'most_pei': "Least Efficient Circulator CEI",
+        'most_pei': "Least Efficient CEI",
         'least_energy_rating': "Most Efficient ER",
 
         'most_energy_rating': "Least Efficient ER",
