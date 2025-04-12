@@ -176,7 +176,7 @@ block content
 									img(src='/images/active.png', style='width:25px', v-if='pump.most && pump.most.control_method')
 									img(src='/images/inactive.png', style='width:25px', v-else)
 								span
-									span Specify a most-consumptive control method
+									span Specify a least-efficient control method
 						hr
 						circulator-control-method-editor(:method='pump.most', :readonly='revision_submitted', v-if='pump.most && pump.most.control_method')
 					//-p
