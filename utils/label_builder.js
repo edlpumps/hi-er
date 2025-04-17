@@ -53,11 +53,11 @@ var build_label_params = function (pump, label) {
             "" :
             (pump.configuration == "pump_motor_cc" ?
                 "- "+i18next.t('continuous_controls',{lng:label_lang}) :
-                "- "+i18next.t('non_continuous_controls',{lng:label_lang}));
+                "- "+i18next.t('non-continuous_controls',{lng:label_lang}));
 
     var load = pump.configuration == "bare" || pump.configuration == "pump_motor" ? i18next.t('constant_load',{lng:label_lang}) : i18next.t('variable_load',{lng:label_lang});
     load = load.toUpperCase();
-    var load_abbr = pump.configuration == "bare" || pump.configuration == "pump_motor" ? i18next.t('cl',{lng:label_lang}) : i18next.t('vl',{lng:label_lang});
+    var load_abbr = pump.configuration == "bare" || pump.configuration == "pump_motor" ? "CL" : "VL";
     var datetime = label.date.getTime() < pump.date.getTime() ? pump.date : label.date;
     var er = Math.min(pump.energy_rating, label.max);
     var date = datetime.toLocaleString(label_lang, {
@@ -74,7 +74,6 @@ var build_label_params = function (pump, label) {
         pump_type: i18next.t('pump_type',{lng:label_lang}), 
         model: i18next.t('model',{lng:label_lang}),
         nominal_speed: i18next.t('nominal_speed',{lng:label_lang}),
-        pei: i18next.t('pei',{lng:label_lang}),
         energy_rating: i18next.t('energy_rating',{lng:label_lang}).toUpperCase(),
         least_efficient: i18next.t('least_efficient',{lng:label_lang}),
         most_efficient: i18next.t('most_efficient',{lng:label_lang}),
@@ -195,7 +194,6 @@ var build_circulator_params = function (pump, waip, max) {
         least_efficient: i18next.t('least_efficient',{lng:label_lang}),
         most_efficient: i18next.t('most_efficient',{lng:label_lang}),
         nominal_speed: i18next.t('nominal_speed',{lng:label_lang}),
-        pei: i18next.t('pei',{lng:label_lang}),
         range: i18next.t('range',{lng:label_lang}).toUpperCase(),
         label_annual_savings: i18next.t('label_er_savings',{lng:label_lang}),
         annual_energy_savings: i18next.t('annual_energy_savings',{lng:label_lang}),

@@ -152,7 +152,7 @@ mixin vue_circulator_components()
 			.alert.alert-warning(v-if='pump.pending')
 				p This pump has not been published yet.  You must activate the pump before it will be visible to the public.
 			.alert.alert-danger(v-if='!pump.listed && !pump.pending')
-				p This pump is no longer commercially available.
+				p #{i18n.t("pump_not_available",{lng:page_lang})}
 			.row
 				.col.col-xs-5
 					label #{i18n.t("hi_rating_id",{lng:page_lang})}:
@@ -190,7 +190,7 @@ mixin vue_circulator_components()
 					.form-control-static: control-method-loc(:method='pump.least.control_method')
 			.row
 				.col.col-xs-5
-					label #{i18n.t("bep_flowrate",{lng:page_lang})}:
+					label #{i18n.t("bep_flow_rate",{lng:page_lang})}:
 				.col.col-xs-7
 					- var flowlabel = i18n.t(units.flow.label,{lng:page_lang})
 					.form-control-static {{(pump.flow * units.flow.factor).toFixed(2)}} #{flowlabel}
@@ -218,9 +218,9 @@ mixin vue_circulator_components()
 			span(v-if='method == "no-speed-control"') #{i18n.t('full_speed', {lng: page_lang})}
 			span(v-if='method == "pressure-control"') #{i18n.t('pressure_control', {lng: page_lang})}
 			span(v-if='method == "temperature-control"') #{i18n.t('temperature_control', {lng: page_lang})}
-			span(v-if='method == "manual-control"') #{i18n.t('manual_control', {lng: page_lang})}
+			span(v-if='method == "manual-control"') #{i18n.t('manual_speed_control', {lng: page_lang})}
 			span(v-if='method == "external-control"') #{i18n.t('external_input_signal_only_control', {lng: page_lang})}
-			span(v-if='method == "external-other-control"') #{i18n.t('ext_input_signal_and_other_controls', {lng: page_lang})}
+			span(v-if='method == "external-other-control"') #{i18n.t('external_input_signal_and_other_controls', {lng: page_lang})}
 
 	script.
 		Vue.component('pei-label', {

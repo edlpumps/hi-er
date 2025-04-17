@@ -4,7 +4,7 @@ mixin pump_page_info(pump, lang)
       .row
         .col.col-xs-12
          .alert.alert-danger
-          p This pump is no longer commercially available.
+          p #{i18n.t("pump_not_available",{lng:loc_lang})}
     if pump.pending
       .row
         .col.col-xs-12
@@ -25,7 +25,7 @@ mixin pump_page_info(pump, lang)
     .row 
         .form-group
             .col.col-xs-5
-                label #{i18n.t("mfg_model_designation",{lng:loc_lang})}:
+                label #{i18n.t("manufacturer_model_designation",{lng:loc_lang})}:
             .col.col-xs-7
                 .form-control-static #{pump.individual_model}
     .row 
@@ -63,7 +63,7 @@ mixin pump_page_info(pump, lang)
     .row 
         .form-group
             .col.col-xs-5
-                label #{i18n.t("bep_flowrate",{lng:loc_lang})}:
+                label #{i18n.t("bep_flow_rate",{lng:loc_lang})}:
             .col.col-xs-7
                 - var flowlabel = i18n.t(units.flow.label,{lng:loc_lang})
                 .form-control-static #{((pump.load120 ? pump.flow.bep100 : pump.flow.bep110) * units.flow.factor).toFixed(2)} #{flowlabel}
