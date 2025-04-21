@@ -116,23 +116,23 @@ Make sure all branches are merged to `master` on GitHub.
 
 Follow the steps above to Deploy a GitHub branch to Heroku, but instead, select the `intelliquip-hi/hi-er` project and deploy the `master` branch.
 
-## Notes
+## ER LABELS
 - There are **hard coded** values for Pump Annual Run Hours (4000), Circulator Annual Run Hours (2500) and the Cost/KwH ($0.15). These are used in the Energy & Cost Savings calculations. (`routes/common.js`)
 - The year of the DOE Circulator Efficiency Regulation is a variable that is passed into the label pub (`utils/label_builder.js,  views/svg/circulator-label.pug`)
 - These values can easily become Environment Variables.
-- The *Meets the 2028 DOE circulator efficiency regulation* line on the large *Circulator Pump Label* should only display if the CEI value that is displayed in the black bar as shown below is less than or equal to 1.00. (`utils/label_builder.js`)
+- The *Meets the 2028 DOE circulator efficiency regulation* line on the large *Circulator Pump Label* should only display if the CEI value that is displayed in the black bar on the label is less than or equal to 1.00. (`utils/label_builder.js`)
   
-## PNG to URI
-- If you add an image to the Energy Ratings label, you need to convert the image to URI content.
-- Use an online coverter like https://site24x7.com/tools/image-to-datauri.html
-- Upload the image (PNG, JPEG, whatever) to the tool which generates the URI code.
-- Copy the content and paste into a file (no extension) in the views/svg folder
-- Pass that link into the SVG generator code for generating the label.
+### PNG to URI
+- If you add an image to the Energy Ratings label (such as a logo or icon), you need to convert the image to URI content and save that as a file.
+  - Use an online coverter like `https://site24x7.com/tools/image-to-datauri.html`
+  - Upload the image (PNG, JPEG, whatever) to the tool which generates the URI code.
+  - Copy the content and paste into a file (no extension) in the views/svg folder
+  - Pass that link into the SVG generator code for generating the label.
 
 ## TRANSLATIONS TO OTHER LANGUAGES
 - Pump LABELS can be translated using the English/French toggle at the top right of all Pump Detail pages.  
 - The pump details themselves are only translated for the PUBLIC pages (not the Admin or Participant pages per design).
-- The i18next (https://i18next.com) library is used.
+- The i18next (`https://i18next.com`) library is used.
 - Since the requirement was to provide translations for particular pages (Public Pump details) and for labels, there are 2 "types" of language settings.
     - page_lang
     - label_lang
