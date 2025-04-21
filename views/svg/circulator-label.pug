@@ -11,6 +11,7 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
     - var lang_font_cost_offset = loc.lang == 'en' ? 0 : 10;
     - var lang_font_cost_icon_offset = loc.lang == 'en' ? 0 :14;
     - var lang_font_energy_offset = loc.lang == 'en' ? 0 : 16;
+    - var lang_cei_offset = loc.lang == 'en' ? 0 : 15;
 
     -var use_height = "850"
     if !(annual_energy_savings && annual_cost_savings)
@@ -53,9 +54,9 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
 
     rect(x=left_edge, y="180", rx="0", ry="0", width="555", height="40", style="fill:#000000;stroke: #000000;stroke-width:1;")
     text(x=left_edge+5, y="207", style="font-family: 'Arimo', Helvetica; font-weight:bold", font-size="24", text-anchor="start", fill="white") #{loc.circulator_pump.toUpperCase()}
-    text(x="340", y="207", style="font-family: 'Arimo', Helvetica; font-weight:bold", font-size="24", text-anchor="start", fill="white") #{loc.cei}
+    text(x=340+lang_cei_offset, y="207", style="font-family: 'Arimo', Helvetica; font-weight:bold", font-size="24", text-anchor="start", fill="white") #{loc.cei}
     //text(x="378", y="210", style="font-family: 'Arimo', Helvetica; font-weight:bold", font-size="10", text-anchor="start", fill="white") CIRC
-    text(x="380", y="207", style="font-family: 'Arimo', Helvetica; font-weight:bold", font-size="24", text-anchor="start", fill="white") :  #{pei}
+    text(x=380+lang_cei_offset, y="207", style="font-family: 'Arimo', Helvetica; font-weight:bold", font-size="24", text-anchor="start", fill="white") :  #{pei}
     text(x=right_edge-15, y="207", style="font-family: 'Arimo', Helvetica; font-weight:bold", font-size="24", text-anchor="end", fill="white") (#{loc.er} #{er})
 
     rect(x=left_edge, y="230", rx="0", ry="0", width="555", height="210", style="fill:none;stroke: #000000;stroke-width:1;")
