@@ -128,6 +128,14 @@ Follow the steps above to Deploy a GitHub branch to Heroku, but instead, select 
   - Upload the image (PNG, JPEG, whatever) to the tool which generates the URI code.
   - Copy the content and paste into a file (no extension) in the views/svg folder
   - Pass that link into the SVG generator code for generating the label.
+- The URI that is generated for the HI logos on the large label are generated from:
+  - English (`views/svg/hi-title`): hydraulic-institute-logo.png 
+  - French (`views/svg/hi-title-fr`): HI-Energy-Rating-ID_French_03_Transparent.png
+- The URI that is generated for the HI logos on the small label are generated from:
+  - English (`views/svg/hi-title-small`): hydraulic-institute-logo-sm.png
+  - French (`views/svg/hi-title-small-fr`): <nobr>HI-Energy-Rating-ID_French_03_small_Transparent.png</nobr>
+- The URI that is generated for the Circulator Labels with the approval check on the bottom of the large label are generated from:
+  - All languages (`views/svg/hi-approval-check`): HI-Approval-Check-s.png
 
 ## TRANSLATIONS TO OTHER LANGUAGES
 - Pump LABELS can be translated using the English/French toggle at the top right of all Pump Detail pages.  
