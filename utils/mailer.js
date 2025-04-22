@@ -49,6 +49,22 @@ var smtpConfig = {
 
 var transporter = nodemailer.createTransport(smtpConfig);
 
+function sendEmail(mailOptions) {
+    if (process.env.SMTP_USERNAME && process.env.SMTP_USERNAME.length > 0)
+        transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
+                console.log("Could not send email using the following user:")
+                console.log(process.env.SMTP_USERNAME)
+                return console.log(error);
+            } else {
+                console.log("Email sent successfully");
+            }
+        });
+    else 
+        console.log("Could not send email. No SMTP Username Set");
+}
+
+
 var make_mail_options = function (recipient, subject, template_params, html, text) {
     var sender = process.env.SMTP_SENDING_ADDRESS;
     var recipient = process.env.LIVE_EMAIL ? recipient : process.env.SMTP_RECIPIENT_OVERRIDE;
@@ -91,15 +107,7 @@ exports.sendAuthenticationEmail = function (base_url, user, creator) {
 
     var mailOptions = make_mail_options(user.email, "HI Energy Rating Portal - Account Activation", template_params, activation_template, activation_template_pt);
 
-    transporter.sendMail(mailOptions, function (error, info) {
-        if (error) {
-            console.log("Could not send email using the following user:")
-            console.log(process.env.SMTP_USERNAME)
-            return console.log(error);
-        } else {
-            console.log("Email sent successfully");
-        }
-    });
+    sendEmail(mailOptions);
 }
 exports.sendPasswordReset = function (base_url, reset, user) {
     var template_params = {
@@ -110,15 +118,7 @@ exports.sendPasswordReset = function (base_url, reset, user) {
 
     var mailOptions = make_mail_options(reset.email, "HI Energy Rating Portal - Password Reset", template_params, reset_template, reset_template_pt);
 
-    transporter.sendMail(mailOptions, function (error, info) {
-        if (error) {
-            console.log("Could not send email using the following user:")
-            console.log(process.env.SMTP_USERNAME)
-            return console.log(error);
-        } else {
-            console.log("Email sent to successfully");
-        }
-    });
+    sendEmail(mailOptions);
 }
 
 exports.sendDeletionNotification = function (deleted, actor) {
@@ -129,15 +129,7 @@ exports.sendDeletionNotification = function (deleted, actor) {
 
     var mailOptions = make_mail_options(deleted.email, "HI Energy Rating Portal - Account Deletion", template_params, delete_template, delete_template_pt);
 
-    transporter.sendMail(mailOptions, function (error, info) {
-        if (error) {
-            console.log("Could not send email using the following user:")
-            console.log(process.env.SMTP_USERNAME)
-            return console.log(error);
-        } else {
-            console.log("Email sent to successfully");
-        }
-    });
+    sendMail(mailOptions);
 }
 
 exports.sendListings = function (recipients, pump_excel, circulator_excel, certificate_excel) {
@@ -155,15 +147,7 @@ exports.sendListings = function (recipients, pump_excel, circulator_excel, certi
         filename: 'extended_product_certificates.xlsx',
         content: certificate_excel
     }]
-    transporter.sendMail(mailOptions, function (error, info) {
-        if (error) {
-            console.log("Could not send email using the following user:")
-            console.log(process.env.SMTP_USERNAME)
-            return console.log(error);
-        } else {
-            console.log("Email sent to successfully");
-        }
-    });
+    sendEmail(mailOptions);
 }
 
 exports.sendEStoreSetup = function (recipient, participant) {
@@ -173,13 +157,5 @@ exports.sendEStoreSetup = function (recipient, participant) {
 
     var mailOptions = make_mail_options(recipient, "HI Energy Rating Portal - New Account", template_params, estore_template, estore_template_pt);
 
-    transporter.sendMail(mailOptions, function (error, info) {
-        if (error) {
-            console.log("Could not send email using the following user:")
-            console.log(process.env.SMTP_USERNAME)
-            return console.log(error);
-        } else {
-            console.log("Email sent to successfully");
-        }
-    });
+    sendMail(mailOptions);
 }

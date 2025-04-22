@@ -11,9 +11,8 @@ block content
       .panel.panel-default.rating_panel
         .panel-heading 
           .heading
-           
-           img(src="/images/hydraulic-institute-logo.png", width="600").hidden-xs
-           img(src="/images/hydraulic-institute-logo.png", style="width:80%").hidden-md.hidden-lg.hidden-sm
+           img(src="/images/"+i18n.t("hi_rating_logo", {lng: page_lang}), width="600").hidden-xs
+           img(src="/images/"+i18n.t("hi_rating_logo", {lng: page_lang}), style="width:80%").hidden-md.hidden-lg.hidden-sm
              
            h2 #{pump.brand} #{pump.brand ? ' / ' : ''} #{pump.basic_model}
            h4 #{pump.participant.name}
@@ -25,26 +24,26 @@ block content
             .row
               .col.col-sm-6.text-center
                 h4 
-                  | PEI
+                  | #{i18n.t("pei",{lng:page_lang})}
                   sub #{pump.configuration == 'bare' || pump.configuration == 'pump_motor' ? "CL" : "VL"}
                 p.pei_display #{pump.pei.toFixed(2)}
-                p.pei_baseline Baseline:  #{pump.pei_baseline.toFixed(2)}
+                p.pei_baseline #{i18n.t("baseline",{lng:page_lang})}:  #{pump.pei_baseline.toFixed(2)}
                 
               .col.col-sm-6.text-center
-                h4 Energy Rating
+                h4 #{i18n.t("energy_rating",{lng:page_lang})}
                 p.er_display #{pump.energy_rating}
             .row
               .col.col-sm-12.text-center
                img(src="/images/doe/#{pump_drawing}").hidden-xs
                img(src="/images/doe/#{pump_drawing}", style="width:90%").hidden-md.hidden-lg.hidden-sm
            .col.col-sm-7
-             +pump_page_info(pump)
+             +pump_page_info(pump,page_lang)
 
                 
       
       .panel.panel-default
         .panel-heading 
-            h1 Energy Rating Label
+            h1 #{i18n.t("energy_rating_label",{lng:page_lang})}
         .panel-body
            .row.solo
             .col.col-lg-12.text-center
@@ -53,12 +52,13 @@ block content
       if pump.revisions && pump.revisions.length > 1
         .panel.panel-default
           .panel-heading
-            h2 Data Corrections / Revisions
+            h2 #{i18n.t("data_corrections_revisions",{lng:page_lang})}
           .panel-body
             ol 
               each revision in pump.revisions
                if revision.correction
                 li
-                  span Pump data updated - #{moment(revision.date).format("ll")}.
+                  - var temp_moment = moment(revision.date);
+                  span #{i18n.t("pump_data_updated",{lng:page_lang})} - #{temp_moment.locale(page_lang).format("ll")}.
             
    

@@ -5,7 +5,14 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
 
     defs
      include fonts.pug
-    
+        
+    - var lang_font_speed_offset = loc.lang == 'en' ? 0 : 10;
+    - var lang_font_size = loc.lang == 'en' ? 20 : 16;
+    - var lang_font_cost_offset = loc.lang == 'en' ? 0 : 10;
+    - var lang_font_cost_icon_offset = loc.lang == 'en' ? 0 :14;
+    - var lang_font_energy_offset = loc.lang == 'en' ? 0 : 16;
+    - var lang_cei_offset = loc.lang == 'en' ? 0 : 15;
+
     -var use_height = "850"
     if !(annual_energy_savings && annual_cost_savings)
         - use_height = "720"
@@ -23,7 +30,7 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
     -var tick_scale = 2.25;
     -var er_rated = min_er + er/max * (max_er-min_er);
     -var er_rated_tick = Math.min(max_er, er_rated);
-    -var er_most_consumptive = min_er + er_most/max * (max_er-min_er);
+    -var er_least_efficient = min_er + er_most/max * (max_er-min_er);
     -var m_anchor = Math.abs(Math.min(max_er, er)-er_most) < 30 ? "end" : "middle";
     -var pull_offset = Math.abs(Math.min(max_er, er)-er_most) < 30 ? 7 : 0;
     -var l_anchor = "middle";//Math.abs(er-er_most) < 20 ? "start" : "middle";
@@ -35,22 +42,22 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
     text(x="30", y=tt, style="font-family: 'Arimo'; font-weight:bold", font-size="16", text-anchor="start", fill="black") #{brand}
     //-text(x="330", y="150", style="font-family: 'Arimo'; font-weight:bold", font-size="16", text-anchor="start", fill="black") #{doe} Pump Type
 
-    text(x="30", y=tt+lh*1.5 style="font-family: 'Arimo'; font-weight:bold", font-size="16", text-anchor="start", fill="black") Model #:
+    text(x="30", y=tt+lh*1.5 style="font-family: 'Arimo'; font-weight:bold", font-size="16", text-anchor="start", fill="black") #{loc.model} #:
     //-text(x="30", y="210", style="font-family: 'Arimo'", font-size="16", text-anchor="start", fill="black") Nominal Speed:
     
     text(x="110", y=tt+lh*1.5, style="font-family: 'Arimo';font-weight:bold", font-size="16", text-anchor="start", fill="black") #{basic_model}
     //-text(x="155", y="210", style="font-family: 'Arimo';font-weight:bold", font-size="16", text-anchor="start", fill="black") #{speed}
     
     if waip
-        text(x="585", y=tt, style="font-family: 'Arimo'; font-weight:bold", font-size="16", text-anchor="end", fill="black") WAIP: #{waip}
+        text(x="585", y=tt, style="font-family: 'Arimo'; font-weight:bold", font-size="16", text-anchor="end", fill="black") #{loc.waip}: #{waip}
     //-text(x="330", y="210", style="font-family: 'Arimo'; font-weight:bold", font-size="16", text-anchor="start", fill="black") #{config}
 
     rect(x=left_edge, y="180", rx="0", ry="0", width="555", height="40", style="fill:#000000;stroke: #000000;stroke-width:1;")
-    text(x=left_edge+5, y="207", style="font-family: 'Arimo', Helvetica; font-weight:bold", font-size="24", text-anchor="start", fill="white") CIRCULATOR PUMP
-    text(x="340", y="207", style="font-family: 'Arimo', Helvetica; font-weight:bold", font-size="24", text-anchor="start", fill="white") CEI
+    text(x=left_edge+5, y="207", style="font-family: 'Arimo', Helvetica; font-weight:bold", font-size="24", text-anchor="start", fill="white") #{loc.circulator_pump.toUpperCase()}
+    text(x=340+lang_cei_offset, y="207", style="font-family: 'Arimo', Helvetica; font-weight:bold", font-size="24", text-anchor="start", fill="white") #{loc.cei}
     //text(x="378", y="210", style="font-family: 'Arimo', Helvetica; font-weight:bold", font-size="10", text-anchor="start", fill="white") CIRC
-    text(x="380", y="207", style="font-family: 'Arimo', Helvetica; font-weight:bold", font-size="24", text-anchor="start", fill="white") :  #{pei}
-    text(x=right_edge-15, y="207", style="font-family: 'Arimo', Helvetica; font-weight:bold", font-size="24", text-anchor="end", fill="white") (ER #{er})
+    text(x=380+lang_cei_offset, y="207", style="font-family: 'Arimo', Helvetica; font-weight:bold", font-size="24", text-anchor="start", fill="white") :  #{pei}
+    text(x=right_edge-15, y="207", style="font-family: 'Arimo', Helvetica; font-weight:bold", font-size="24", text-anchor="end", fill="white") (#{loc.er} #{er})
 
     rect(x=left_edge, y="230", rx="0", ry="0", width="555", height="210", style="fill:none;stroke: #000000;stroke-width:1;")
     line(x1=min_er, y1=er_line-er_tick, x2=min_er, y2=er_line+er_tick, stroke-width="3", stroke="#000000")
@@ -59,20 +66,20 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
     line(x1=q1_er, y1=er_line, x2=q1_er, y2=er_line+er_tick, stroke-width="3", stroke="#000000")
     line(x1=q3_er, y1=er_line, x2=q3_er, y2=er_line+er_tick, stroke-width="3", stroke="#000000")
     line(x1=min_er, y1=er_line, x2=max_er, y2=er_line, stroke-width="3", stroke="#000000")
-    text(x=middle, y=230+2*lh, style="font-family: 'Arimo', Helvetica; font-weight:bold", font-size="25", text-anchor="middle", fill="black") ENERGY RATING
-    text(x=min_er, y=er_line+er_tick+lh, style="font-family: 'Arimo', Helvetica; ", font-size="16", text-anchor="start", fill="black") Least Efficient
-    text(x=max_er, y=er_line+er_tick+lh, style="font-family: 'Arimo', Helvetica; ", font-size="16", text-anchor="end", fill="black") Most Efficient
-    text(x=middle, y=er_line+er_tick+lh, style="font-family: 'Arimo', Helvetica; ", font-size="16", text-anchor="middle", fill="black") RANGE
+    text(x=middle, y=230+2*lh, style="font-family: 'Arimo', Helvetica; font-weight:bold", font-size="25", text-anchor="middle", fill="black") #{loc.energy_rating}
+    text(x=min_er, y=er_line+er_tick+lh, style="font-family: 'Arimo', Helvetica; ", font-size="16", text-anchor="start", fill="black") #{loc.least_efficient}
+    text(x=max_er, y=er_line+er_tick+lh, style="font-family: 'Arimo', Helvetica; ", font-size="16", text-anchor="end", fill="black") #{loc.most_efficient}
+    text(x=middle, y=er_line+er_tick+lh, style="font-family: 'Arimo', Helvetica; ", font-size="16", text-anchor="middle", fill="black") #{loc.range}
     
     text(x=er_rated_tick, y=er_line- tick_scale*1.2*lh,style="font-family: 'Arimo', Helvetica; font-weight:bold", font-size="34", text-anchor=l_anchor, fill="black") #{er}
     - var hw = 10;
     - var mps = `${er_rated_tick}, ${(er_line- er_tick)} ${er_rated_tick-hw}, ${er_line-tick_scale*lh} ${er_rated_tick+hw}, ${er_line-tick_scale*lh}`;    
     polygon(fill="#000000", stroke="#000000", stroke-width="1", points=mps)
     if dual
-        - var mps = `${er_most_consumptive}, ${(er_line- er_tick)} ${er_most_consumptive-hw}, ${er_line-tick_scale*lh} ${er_most_consumptive+hw}, ${er_line-tick_scale*lh}`;    
+        - var mps = `${er_least_efficient}, ${(er_line- er_tick)} ${er_least_efficient-hw}, ${er_line-tick_scale*lh} ${er_least_efficient+hw}, ${er_line-tick_scale*lh}`;    
         polygon(fill="#000000", stroke="#000000", stroke-width="1", points=mps)
-        text(x=er_most_consumptive-pull_offset, y=er_line- tick_scale*1.2*lh,style="font-family: 'Arimo', Helvetica; font-weight:bold", font-size="34", text-anchor=m_anchor, fill="black") #{er_most}
-        rect(x=Math.min(er_rated_tick, er_most_consumptive), y=er_line-er_tick+3, rx="0", ry="0", width=Math.abs(er_rated_tick-er_most_consumptive), height=er_tick-3, style="fill:#000000;stroke: #000000;stroke-width:1;")
+        text(x=er_least_efficient-pull_offset, y=er_line- tick_scale*1.2*lh,style="font-family: 'Arimo', Helvetica; font-weight:bold", font-size="34", text-anchor=m_anchor, fill="black") #{er_most}
+        rect(x=Math.min(er_rated_tick, er_least_efficient), y=er_line-er_tick+3, rx="0", ry="0", width=Math.abs(er_rated_tick-er_least_efficient), height=er_tick-3, style="fill:#000000;stroke: #000000;stroke-width:1;")
  
    
     - var footer_x = 620;
@@ -111,8 +118,8 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
 
         rect(x=left_edge, y=v_start+160, rx="0", ry="0", width=box_width, height="100", style="fill:none;stroke: #000000;stroke-width:2;" )
         text(x=e_middle-e_string_mid, y=v_start+210, style="font-family: Arimo; font-weight:bold", font-size=font_size, text-anchor="start", fill="black") #{e_string}
-        text(x=e_middle+(e_string_mid-kwh_pixels)+3, y=v_start+210, style="font-family: Arimo; font-weight:bold", font-size="20", text-anchor="start", fill="black") kWh
-        text(x=left_edge+33, y=v_start+240, style="font-family: Arimo;", font-size="20", text-anchor="start", fill="black") Annual Energy Savings
+        text(x=e_middle+(e_string_mid-kwh_pixels)+3, y=v_start+210, style="font-family: Arimo; font-weight:bold", font-size="20", text-anchor="start", fill="black") #{loc.kwh}
+        text(x=left_edge+33-lang_font_energy_offset, y=v_start+240, style="font-family: Arimo;", font-size=lang_font_size, text-anchor="start", fill="black") #{loc.annual_energy_savings}
         text(x=left_edge+33+210, y=v_start+235, style="font-family: Arimo;", font-size="12", text-anchor="start", fill="black") &#x2021;
         
         //Right - Annual Cost Savings
@@ -132,40 +139,52 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
         rect(x=r_box_edge y=v_start+160, rx="0", ry="0", width=box_width, height="100", style="fill:none;stroke: #000000;stroke-width:2;" )
         //text(x=c_middle, y=v_start+210, style="font-family: Arimo; font-weight:bold", font-size=font_size, text-anchor="start", fill="red") !
         text(x=c_middle-c_string_mid, y=v_start+210, style="font-family: Arimo; font-weight:bold", font-size=font_size, text-anchor="start", fill="black") $#{c_string}
-        text(x=r_box_edge+33, y=v_start+240, style="font-family: Arimo;", font-size="20", text-anchor="start", fill="black") Annual Cost Savings
-        text(x=r_box_edge+33+188, y=v_start+235, style="font-family: Arimo;", font-size="12", text-anchor="start", fill="black") &#x2021;
+        text(x=r_box_edge+33-lang_font_cost_offset, y=v_start+240, style="font-family: Arimo;", font-size=lang_font_size, text-anchor="start", fill="black") #{loc.annual_cost_savings}
+        text(x=r_box_edge+33+188+lang_font_cost_icon_offset, y=v_start+235, style="font-family: Arimo;", font-size="12", text-anchor="start", fill="black") &#x2021;
         - er_comment_offset = 290;
 
     //Bottom part
-    -var footer_x = v_start + er_comment_offset;
-    text(x=left_edge, y=footer_x, style="font-family: Arimo;", font-size="16", text-anchor="start",fill="black") The Energy Rating is dependent on the selected control method. Method(s)
-    text(x=left_edge, y=footer_x+25, style="font-family: Arimo;", font-size="16", text-anchor="start",fill="black") available for this model are: 
-
-    -var bt = footer_x;
+    - var footer_x = v_start + er_comment_offset;
+    - var lines = [];
+    //label, maxChars, x_offset, font_size
+    +label_notes(loc.label_er_methods, 75)
+    text(x=left_edge, y=footer_x, style="font-family: Arimo;", font-size="16", text-anchor="start",fill="black") #{lines[0]}
+    - for (var i=1; i<lines.length; i++) {
+        text(x=left_edge, y=(footer_x+=25), style="font-family: Arimo;", font-size="16", text-anchor="start",fill="black") #{lines[i]}
+    - }
+    -var bt = footer_x+8;
     if ( methods.length > 0 ) 
-        text(x=left_edge, y=bt+lh*3, style="font-family: 'Arimo', Helvetica; ", font-size="16", text-anchor="start", fill="black") &#183; #{methods[0]}
+        text(x=left_edge, y=bt+lh*1, style="font-family: 'Arimo', Helvetica; ", font-size="16", text-anchor="start", fill="black") &#183; #{methods[0]}
     if ( methods.length > 1 ) 
-        text(x=left_edge, y=bt+lh*4, style="font-family: 'Arimo', Helvetica; ", font-size="16", text-anchor="start", fill="black") &#183; #{methods[1]}
+        text(x=left_edge, y=bt+lh*2, style="font-family: 'Arimo', Helvetica; ", font-size="16", text-anchor="start", fill="black") &#183; #{methods[1]}
     if ( methods.length > 2 ) 
-        text(x=left_edge, y=bt+lh*5, style="font-family: 'Arimo', Helvetica; ", font-size="16", text-anchor="start", fill="black") &#183; #{methods[2]}
+        text(x=left_edge, y=bt+lh*3, style="font-family: 'Arimo', Helvetica; ", font-size="16", text-anchor="start", fill="black") &#183; #{methods[2]}
 
     if ( methods.length > 3 )   
-        text(x=middle,  y=bt+lh*3, style="font-family: 'Arimo', Helvetica; ", font-size="16", text-anchor="start", fill="black") &#183; #{methods[3]}
+        text(x=middle,  y=bt+lh*1, style="font-family: 'Arimo', Helvetica; ", font-size="16", text-anchor="start", fill="black") &#183; #{methods[3]}
     if ( methods.length > 4 ) 
-        text(x=middle,  y=bt+lh*4, style="font-family: 'Arimo', Helvetica; ", font-size="16", text-anchor="start", fill="black") &#183; #{methods[4]}
+        text(x=middle,  y=bt+lh*2, style="font-family: 'Arimo', Helvetica; ", font-size="16", text-anchor="start", fill="black") &#183; #{methods[4]}
     if ( methods.length > 5 ) 
-        text(x=middle, y=bt+lh*5,style="font-family: 'Arimo', Helvetica; ", font-size="16", text-anchor="start", fill="black") &#183; #{methods[5]}
+        text(x=middle, y=bt+lh*3,style="font-family: 'Arimo', Helvetica; ", font-size="16", text-anchor="start", fill="black") &#183; #{methods[5]}
 
-    - footer_x = use_height-130;
+    - footer_x = use_height-135;
     if annual_cost_savings && annual_energy_savings
+        - var lines = [];
+        +label_notes(loc.label_circ_annual_savings, 100)
         text(x=left_edge, y=footer_x-5, style="font-family: Arimo;", font-size="12", text-anchor="start",fill="black") &#x2021;
-        text(x=left_edge+8, y=footer_x, style="font-family: Arimo;", font-size="12", text-anchor="start",fill="black") Estimated annual savings are based on the most efficient rating available, #{annual_run_hours} annual run hours,
-        text(x=left_edge+8, y=(footer_x+=20), style="font-family: Arimo;", font-size="12", text-anchor="start", fill="black") and #{cost_per_kwh}&#x00a2; per kWh, when compared to the least efficient pump available in the market.  Actual savings
-        text(x=left_edge+8, y=(footer_x+=20), style="font-family: Arimo;", font-size="12", text-anchor="start", fill="black") may vary. Visit the Circulator Pump Savings Calculator at www.pumps.org/cpsc.
-    
+        text(x=left_edge+8, y=footer_x, style="font-family: Arimo;", font-size="12", text-anchor="start",fill="black") #{lines[0]}
+        - for (var i=1; i<lines.length; i++) {
+            text(x=left_edge+8, y=(footer_x+=20), style="font-family: Arimo;", font-size="12", text-anchor="start",fill="black") #{lines[i]}
+        - }
+
     if meets_approval
-        image(x=left_edge, y=(footer_x+12), height="25px", width="25px", xlink:href=approval_check_logo) 
-        text(x=left_edge+30, y=(footer_x+=30), style="font-family: Arimo;", font-size="12", text-anchor="start", fill="black") Meets the #{reg_year} DOE circulator efficiency regulation
+        image(x=left_edge, y=(footer_x+12), height="25px", width="25px", xlink:href=approval_check_logo)  
+        - var lines = [];
+        +label_notes(loc.label_meets_doe_reg, 100)
+        text(x=left_edge+30, y=(footer_x+=30), style="font-family: Arimo;", font-size="12", text-anchor="start",fill="black") #{lines[0]}
+        - for (var i=1; i<lines.length; i++) {
+            text(x=left_edge+30, y=(footer_x+=20), style="font-family: Arimo;", font-size="12", text-anchor="start",fill="black") #{lines[i]}
+        - }
    
     //Debug lines
     //text(x="28", y=(footer_x+=20), style="font-family: Arimo;", font-size="12", text-anchor="start", fill="black") Elen #{e_len} Epixels #{e_str_pixels} EMid: #{e_string_mid} middle #{e_middle} kwh #{kwh_mid_pixels} 
@@ -173,4 +192,4 @@ svg(id="label_svg", xmlns="http://www.w3.org/2000/svg", xmlns:xlink="http://www.
     //text(x="28", y=(footer_x+=20), style="font-family: Arimo;", font-size="12", text-anchor="start", fill="black") EString #{e_string} len #{e_len} pixels #{e_str_pixels} EMid: #{e_string_mid} middle #{e_middle} char_size #{char_size} font_size #{font_size}
     //text(x="28", y=(footer_x+=20), style="font-family: Arimo;", font-size="12", text-anchor="start", fill="black") CString #{c_string} len #{c_len} mm #{c_mm} pixels #{c_str_pixels} CMid: #{c_string_mid} middle #{c_middle} char_size #{char_size} font_size #{font_size}
     
-    +footer(30, 585, (footer_x+=40))
+    +footer(30, 585, (use_height-15), 16)
