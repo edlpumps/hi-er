@@ -129,7 +129,7 @@ exports.sendDeletionNotification = function (deleted, actor) {
 
     var mailOptions = make_mail_options(deleted.email, "HI Energy Rating Portal - Account Deletion", template_params, delete_template, delete_template_pt);
 
-    sendMail(mailOptions);
+    sendEmail(mailOptions);
 }
 
 exports.sendListings = function (recipients, pump_excel, circulator_excel, certificate_excel) {
@@ -157,5 +157,5 @@ exports.sendEStoreSetup = function (recipient, participant) {
 
     var mailOptions = make_mail_options(recipient, "HI Energy Rating Portal - New Account", template_params, estore_template, estore_template_pt);
 
-    sendMail(mailOptions);
+    sendEmail(mailOptions);
 }
