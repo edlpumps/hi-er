@@ -65,7 +65,14 @@ const get_pump_export_excel = async (is_full) => {
         'revision'
     ]
     const qpl_headers = [
-        'rating_id'
+        'rating_id',
+        'basic_model',
+        'individual_model',
+        'brand',
+        'pei',
+        'energy_rating',
+        'date',
+        'revision'
     ]
 
     if (is_full) {
@@ -83,7 +90,8 @@ const get_pump_export_excel = async (is_full) => {
         let j = headers.indexOf(b.value);
         return i - j;
     }
-    let full_headings = {
+
+    let all_headings = {
         rating_id: "Rating ID",
         participant: "Participant",
         configuration: "Configuration",
@@ -107,15 +115,17 @@ const get_pump_export_excel = async (is_full) => {
         date: 'Date listed',
         revision: 'Date updated'
     }
-    let qpl_headings = {
-        rating_id: "Rating ID"
+
+    const get_headings = (headers) => {
+        const new_headings = {};
+        for (const key of headers) {
+            if (all_headings.hasOwnProperty(key)) {
+                new_headings[key] = all_headings[key];
+            }
+        }
+        return new_headings;
     }
-    if (is_full) {
-        headings = full_headings;
-    }
-    else {
-        headings = qpl_headings;
-    }
+    const headings = get_headings(headers);
 
     const docs = await schemas.Pumps.aggregate(operators).exec();
     console.log("Aggregation (subscribers)");

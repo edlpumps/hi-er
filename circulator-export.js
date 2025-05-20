@@ -156,6 +156,16 @@ const toXLXS = (rows,is_full) => {
     ];
     const qpl_headers = [
         'rating_id',
+        'brand',
+        'basic_model',
+        'manufacturer_model',
+        'alternative_part_number',
+        'least_pei',
+        'least_energy_rating',
+        'most_pei',
+        'most_energy_rating',
+        'date',
+        'revision'
     ];
 
     if (is_full) {
@@ -171,7 +181,7 @@ const toXLXS = (rows,is_full) => {
         return i - j;
     }
 
-    const full_headings = {
+    const all_headings = {
         'rating_id': 'Rating ID',
         'participant': "Participant",
         'brand': "Brand",
@@ -220,19 +230,20 @@ const toXLXS = (rows,is_full) => {
 
         'most_energy_rating': "Least Efficient ER",
 
-        date: 'Date listed',
-        revision: 'Date updated'
+        'date': 'Date listed',
+        'revision': 'Date updated'
     };
 
-    const qpl_headings = {
-        'rating_id': 'Rating ID',
-    };
-    if (is_full) {
-        headings = full_headings;
+    const get_headings = (headers) => {
+        const new_headings = {};
+        for (const key of headers) {
+            if (all_headings.hasOwnProperty(key)) {
+                new_headings[key] = all_headings[key];
+            }
+        }
+        return new_headings;
     }
-    else {
-        headings = qpl_headings;
-    }
+    const headings = get_headings(headers);
 
     console.log("MAKING CIRCULATOR EXCEL");
     console.log(JSON.stringify(rows, null, 2));
