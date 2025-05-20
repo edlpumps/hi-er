@@ -25,6 +25,7 @@ block content
                                 th.hidden-xs Frequency
                                 //-th.hidden-xs Last Sent
                                 th Recipients
+                                th Type of Data
                                 th
                         tbody
                             tr(ng-repeat="subscriber in app.subscribers")
@@ -33,14 +34,14 @@ block content
                                   span(ng-show='subscriber.interval_days == 1') Daily
                                   span(ng-show='subscriber.interval_days == 7') Weekly
                                   span(ng-show='subscriber.interval_days == 15') Twice a month
-                                  span(ng-show='subscriber.interval_days == 30') Monthly 
-                                td.hidden-xs
-                                  span(ng-show='subscriber.type_of_data == "full"') Full data
-                                  span(ng-show='subscriber.type_of_data == "qpl"') QPL data
+                                  span(ng-show='subscriber.interval_days == 30') Monthly
                                 //- td.hidden-xs 
                                   span(ng-show='subscriber.last_email_date') {{subscriber.last_email_date}}
                                   span(ng-show='!subscriber.last_email_date') Never
                                 td {{subscriber.recipients.length}}
+                                td
+                                  span(ng-show='subscriber.type_of_data == "full" || !subscriber.type_of_data' ) Full data
+                                  span(ng-show='subscriber.type_of_data == "qpl"') QPL data
                                 td 
                                   .btn-group
                                     button(type="button", ng-click="app.showEditSubscriber(subscriber)").btn.btn-default View/Edit
@@ -106,4 +107,4 @@ block content
                               button.btn.btn-primary(type='button' ng-click='app.addSubscriber()') 
                                 span(ng-show='app.active_subscriber._id') Save Subscriber
                                 span(ng-show='!app.active_subscriber._id') Add Subscriber
-                              button.btn.btn-default(type='button' data-dismiss='modal') Cancel
+                              button.btn.btn-default(type='button' ng-click='app.reload()') Cancel
