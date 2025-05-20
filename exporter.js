@@ -10,27 +10,36 @@ exports.create = async () => {
     const circulators = await circulatorExport.getCirculators();
     console.log(circulators)
     const circulator_rows = circulatorExport.getExportable(circulators);
-    const circulator_excel = circulatorExport.toXLXS(circulator_rows);
-    console.log(JSON.stringify(circulator_rows, null, 2));
+    const circulator_excel_full = circulatorExport.toXLXS(circulator_rows,true);
+    const circulator_excel_qpl = circulatorExport.toXLXS(circulator_rows,false);
 
     console.log("Building c&i excel file");
-    const pumps_excel = await get_pump_export_excel();
+    //This returns a buffer xlsx file
+    const pumps_excel_full = await get_pump_export_excel(true);
+    const pumps_excel_qpl = await get_pump_export_excel(false);
 
     console.log("Building certificate excel file");
+    //HERE
     const certificates = await certificateExport.getCertificates();
     const certificates_rows = certificateExport.getExportable(certificates);
     const certificates_excel = certificateExport.toXLXS(certificates_rows);
 
     return {
-        pumps: pumps_excel,
-        circulators: circulator_excel,
+        pumps: {
+            qpl: pumps_excel_qpl,
+            full: pumps_excel_full
+        },
+        circulators: {
+            qpl: circulator_excel_qpl,
+            full: circulator_excel_full
+        },
         certificates: certificates_excel
     }
 };
 
-const get_pump_export_excel = async () => {
+const get_pump_export_excel = async (is_full) => {
     const operators = params();
-    const headers = [
+    const full_headers = [
         'rating_id',
         'participant',
         'basic_model',
@@ -55,6 +64,17 @@ const get_pump_export_excel = async () => {
         'date',
         'revision'
     ]
+    const qpl_headers = [
+        'rating_id'
+    ]
+
+    if (is_full) {
+        headers = full_headers;
+    }
+    else {
+        headers = qpl_headers;
+    }
+
     let filter = function (key) {
         return headers.indexOf(key) >= 0;
     }
@@ -63,7 +83,7 @@ const get_pump_export_excel = async () => {
         let j = headers.indexOf(b.value);
         return i - j;
     }
-    let headings = {
+    let full_headings = {
         rating_id: "Rating ID",
         participant: "Participant",
         configuration: "Configuration",
@@ -87,6 +107,16 @@ const get_pump_export_excel = async () => {
         date: 'Date listed',
         revision: 'Date updated'
     }
+    let qpl_headings = {
+        rating_id: "Rating ID"
+    }
+    if (is_full) {
+        headings = full_headings;
+    }
+    else {
+        headings = qpl_headings;
+    }
+
     const docs = await schemas.Pumps.aggregate(operators).exec();
     console.log("Aggregation (subscribers)");
     console.log(docs.length + ' pumps to export and email');

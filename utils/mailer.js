@@ -132,16 +132,16 @@ exports.sendDeletionNotification = function (deleted, actor) {
     sendEmail(mailOptions);
 }
 
-exports.sendListings = function (recipients, pump_excel, circulator_excel, certificate_excel) {
+exports.sendListings = function (recipients, pump_excel, circulator_excel, certificate_excel, type_of_data) {
     var template_params = {};
     
     console.log(recipients);
     var mailOptions = make_bcc_mail_options(recipients, "HI Energy Rating Portal - Energy Rating Listings", template_params, listings_template, listings_template_pt);
     mailOptions.attachments = [{
-        filename: 'ci_energy_ratings.xlsx',
+        filename: 'ci_energy_ratings-'+type_of_data+'.xlsx',
         content: pump_excel
     }, {
-        filename: 'circulator_energy_ratings.xlsx',
+        filename: 'circulator_energy_ratings-'+type_of_data+'.xlsx',
         content: circulator_excel
     }, {
         filename: 'extended_product_certificates.xlsx',

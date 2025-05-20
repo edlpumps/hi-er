@@ -102,8 +102,8 @@ const prep_for_export = (listings) => {
     return rows;
 }
 
-const toXLXS = (rows) => {
-    const headers = [
+const toXLXS = (rows,is_full) => {
+    const full_headers = [
         'rating_id',
         'participant',
         'brand',
@@ -154,6 +154,16 @@ const toXLXS = (rows) => {
         'date',
         'revision'
     ];
+    const qpl_headers = [
+        'rating_id',
+    ];
+
+    if (is_full) {
+        headers = full_headers;
+    }
+    else {
+        headers = qpl_headers;
+    }
 
     let sorter = function (a, b) {
         let i = headers.indexOf(a.value);
@@ -161,7 +171,7 @@ const toXLXS = (rows) => {
         return i - j;
     }
 
-    const headings = {
+    const full_headings = {
         'rating_id': 'Rating ID',
         'participant': "Participant",
         'brand': "Brand",
@@ -213,13 +223,24 @@ const toXLXS = (rows) => {
         date: 'Date listed',
         revision: 'Date updated'
     };
+
+    const qpl_headings = {
+        'rating_id': 'Rating ID',
+    };
+    if (is_full) {
+        headings = full_headings;
+    }
+    else {
+        headings = qpl_headings;
+    }
+
     console.log("MAKING CIRCULATOR EXCEL");
     console.log(JSON.stringify(rows, null, 2));
     const buffer = toxl(rows, {
         sort: sorter,
         headings: headings
     });
-    console.log("RETURNING CIRCULATOR EXCEL");
+    console.log("RETURNING CIRCULATOR EXCEL FULL("+is_full+")");
     return buffer;
 }
 

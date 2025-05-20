@@ -318,7 +318,9 @@ var push_weekly = async function () {
 var push_twice_a_month = async function () {
     await push_emails(15);
 }
-
+var push_once_a_month = async function () {
+    await push_emails(30);
+}
 
 
 
@@ -328,21 +330,30 @@ const push_emails = async function (interval, override) {
     try {
         const { pumps, circulators, certificates } = await exporter.create();
 
-        const subs = await app.locals.db.Subscribers.find({
-            interval_days: interval
+        const subs_full = await app.locals.db.Subscribers.find({
+            interval_days: interval,
+            type_of_data: "full"
         }).exec()
 
 
-        let recips = [];
+        const subs_qpl = await app.locals.db.Subscribers.find({
+            interval_days: interval,
+            type_of_data: "qpl"
+        }).exec()
+
+        let recips = {qpl: [], full: []};
         if (override !== undefined) {
-            recips = [override]
+            recips.full = [override]
         } else {
-            for (const subscriber of subs) {
-                recips = recips.concat(subscriber.recipients);
+            for (const subscriber of subs_full) {
+                recips.full = recips.full.concat(subscriber.recipients);
+            }
+            for (const subscriber of subs_qpl) {
+                recips.qpl = recips.qpl.concat(subscriber.recipients);
             }
         }
-
-        mailer.sendListings(recips, pumps, circulators, certificates);
+        mailer.sendListings(recips.qpl, pumps.qpl, circulators.qpl, certificates, 'qpl');
+        mailer.sendListings(recips.full, pumps.full, circulators.full, certificates, 'full');
     } catch (ex) {
         console.error(ex);
     }
@@ -360,7 +371,9 @@ weekly.hour = 13;
 weekly.minute = 10;
 
 const twiceAMonth = "0 11 1,15 * *"
+const onceAMonth = "0 11 1 * *"
 
 sched.scheduleJob(daily, push_daily);
 sched.scheduleJob(weekly, push_weekly);
 sched.scheduleJob(twiceAMonth, push_twice_a_month);
+sched.scheduleJob(onceAMonth, push_once_a_month);
