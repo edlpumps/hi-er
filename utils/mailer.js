@@ -83,7 +83,10 @@ var make_mail_options = function (recipient, subject, template_params, html, tex
 var make_bcc_mail_options = function (recipients, subject, template_params, html, text) {
     var sender = process.env.SMTP_SENDING_ADDRESS;
     recipients = process.env.LIVE_EMAIL ? recipients : [process.env.SMTP_RECIPIENT_OVERRIDE];
-    console.log(recipients);
+    if (typeof(recipients) == "string") {
+        recipients = recipients.replaceAll(" ","").split(",");
+    }
+
     var mailOptions = {
         from: sender,
         bcc: recipients.join(","),
@@ -132,21 +135,27 @@ exports.sendDeletionNotification = function (deleted, actor) {
     sendEmail(mailOptions);
 }
 
-exports.sendListings = function (recipients, pump_excel, circulator_excel, certificate_excel) {
+exports.sendListings = function (recipients, pump_excel, circulator_excel, certificate_excel, type_of_data) {
     var template_params = {};
-    
-    console.log(recipients);
-    var mailOptions = make_bcc_mail_options(recipients, "HI Energy Rating Portal - Energy Rating Listings", template_params, listings_template, listings_template_pt);
-    mailOptions.attachments = [{
-        filename: 'ci_energy_ratings.xlsx',
-        content: pump_excel
-    }, {
-        filename: 'circulator_energy_ratings.xlsx',
-        content: circulator_excel
-    }, {
-        filename: 'extended_product_certificates.xlsx',
-        content: certificate_excel
-    }]
+    // The attachments are buffers.
+    var mailOptions = make_bcc_mail_options(recipients, "HI Energy Rating Portal - Energy Rating Listings - "+type_of_data.toUpperCase(), template_params, listings_template, listings_template_pt);
+    mailOptions.attachments = [];
+    let use_content_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+    if (pump_excel) mailOptions.attachments.push({
+        filename: 'ci_energy_ratings-'+type_of_data+'.xlsx',
+        content: pump_excel,
+        contentType: use_content_type
+    });
+    if (circulator_excel) mailOptions.attachments.push({
+        filename: 'circulator_energy_ratings-'+type_of_data+'.xlsx',
+        content: circulator_excel,
+        contentType: use_content_type
+    });
+    if (certificate_excel) mailOptions.attachments.push({
+        filename: 'extended_product_certificates-'+type_of_data+'.xlsx',
+        content: certificate_excel,
+        contentType: use_content_type
+    });
     sendEmail(mailOptions);
 }
 
