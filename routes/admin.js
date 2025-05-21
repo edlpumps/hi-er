@@ -585,17 +585,17 @@ router.get("/export/pumps", async (req, res) => {
     const { pumps, circulators, certificates } = await exporter.create();
     res.setHeader('Content-disposition', 'attachment; filename=pumps.xlsx');
     res.header('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    console.log(pumps)
-    return res.send(pumps);
+    console.log(pumps.full)
+    return res.send(pumps.full);
 })
 router.get("/export/circulators", async (req, res) => {
     const { pumps, circulators, certificates } = await exporter.create();
     res.setHeader('Content-disposition', 'attachment; filename=pumps.xlsx');
     res.header('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    return res.send(circulators);
+    return res.send(circulators.full);
 })
 router.get("/export/certificates", async (req, res) => {
     const { pumps_excel, circulator_excel, certificates_excel } = await exporter.create();
     res.header('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    return res.send(certificates_excel);
+    return res.send(certificates_excel.full);
 })
