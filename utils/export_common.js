@@ -1,9 +1,8 @@
-"use strict";
-
-const common = require('mocha/lib/interfaces/common');
+const { wrap } = require('lodash');
 
 flat = require('flatjson');
-xlsx = require('node-xlsx');
+ExcelJS = require('exceljs');
+
 
 //Exporter helpers
 const common_xlsx_headings = {
@@ -208,7 +207,20 @@ exports.certificate_headers = [
     'extended_er'
 ]
 
-exports.toXLSX = (rows, opts) => {
+var qpl_disclaimer_bold = "Responsibility for proper pump selection:";
+var qpl_disclaimer = " Proper sizing and selection of pumps is vital to achieving the most efficient pumping system, but this QPL does not contain requirements,";
+qpl_disclaimer += " analyses, and procedures necesary to ensure safe, appropriate or efficient selection of a pump or associated products.";
+qpl_disclaimer += " The use of the HI Energy Rating and related metrics in this QPL should be used by the pump system owner or their designee secondarily to compare";
+qpl_disclaimer += " the energy performance of similar and properly selected pumps.";
+qpl_disclaimer += " Refer to ANSI/HI 14.3 Rotodynamic Pumps for Design and Application and HI's Pump System Optimization guidebook,";
+qpl_disclaimer += " for considerations to efficient system design, pump selection and operation.";
+
+const disclaimer = {
+    qpl: qpl_disclaimer,
+    full: ""
+};
+
+exports.toXLSX = async (rows, opts) => {
 
     const select_headings = (in_list, in_json) => {
         const new_json = {};
@@ -228,6 +240,7 @@ exports.toXLSX = (rows, opts) => {
     var pivot = opts.pivot;
     var in_headers = opts.headers;
     var type = opts.type ? opts.type : 'pumps';
+    var type_of_data = opts.type_of_data ? opts.type_of_data : 'full';
     var all_headings = gAllHeadings[type];
 
     const headings = select_headings(in_headers, all_headings);
@@ -273,6 +286,10 @@ exports.toXLSX = (rows, opts) => {
     var col_count = headers.length;
     var row_count = 1;
     var data = [];
+    if (type_of_data == 'qpl') {
+        data.push([disclaimer[type_of_data]]);
+        data.push([""]);
+    }
     data.push(headers.map(function(h) { return h.label }));
 
     let errors = [];
@@ -292,6 +309,9 @@ exports.toXLSX = (rows, opts) => {
     // if (errors.length > 0) {
     //     console.log(errors);
     // }
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet(sheet);
+    worksheet.properties.defaultColWidth = 20;
     if (pivot) {
         // we have "row_count" arrays, each of "col_count" items.
         // we need to pivot this into "col_count" rows, each with "row_count" columns...
@@ -303,9 +323,28 @@ exports.toXLSX = (rows, opts) => {
             }
             pivoted.push(row);
         }
-        return xlsx.build([{ name: sheet, data: pivoted }]);
+        worksheet.addRows(pivoted);
+        //return xlsx.build([{ name: sheet, data: pivoted }]);
     } else {
-        return xlsx.build([{ name: sheet, data: data }]);
+        worksheet.addRows(data);
+        if (type_of_data == 'qpl') {
+            worksheet.mergeCells(1, 1, 1, col_count);
+            worksheet.getRow(1).height=100;
+            worksheet.getCell('A1').value = {
+                richText: [
+                    { 
+                        text: qpl_disclaimer_bold,
+                        font: { bold: true },
+                    },
+                    {
+                        text: qpl_disclaimer,
+                    }
+                ]
+            };
+            worksheet.getCell('A1').alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
+        }
+        //return xlsx.build([{ name: sheet, data: data}], {sheetOptions});
     }
-
+    const buffer = await workbook.xlsx.writeBuffer();
+    return buffer;
 }
