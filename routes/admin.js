@@ -580,7 +580,7 @@ router.post("/api/users/delete/:id", common.deleteUser);
 router.post("/api/users/add", common.addUser)
 
 
-
+//TODO - Send Full or QPL?
 router.get("/export/pumps", async (req, res) => {
     const { pumps, circulators, certificates } = await exporter.create();
     res.setHeader('Content-disposition', 'attachment; filename=pumps.xlsx');

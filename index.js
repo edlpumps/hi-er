@@ -352,8 +352,8 @@ const push_emails = async function (interval, override) {
                 recips.qpl = recips.qpl.concat(subscriber.recipients);
             }
         }
-        mailer.sendListings(recips.qpl, pumps.qpl, circulators.qpl, certificates, 'qpl');
-        mailer.sendListings(recips.full, pumps.full, circulators.full, certificates, 'full');
+        mailer.sendListings(recips.qpl, pumps.qpl, circulators.qpl, certificates.qpl, 'qpl');
+        mailer.sendListings(recips.full, pumps.full, circulators.full, certificates.full, 'full');
     } catch (ex) {
         console.error(ex);
     }

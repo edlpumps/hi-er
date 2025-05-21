@@ -43,9 +43,12 @@ const fill_data = (listing, row) => {
         row.vfd_model = listing.vfd.model;
         row.vfd_power = listing.vfd.power;
     }
+    if (listing.date) {
+        //Convert date to string
+        row.date = listing.date.toISOString().split('T')[0];
+    }
     row.extended_pei = listing.pei.toFixed(2);
     row.extended_er = listing.energy_rating.toFixed(0);
-    row.date = listing.date;
     row.certificate_number = listing.certificate_number;
 }
 

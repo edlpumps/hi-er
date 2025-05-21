@@ -132,21 +132,25 @@ exports.sendDeletionNotification = function (deleted, actor) {
     sendEmail(mailOptions);
 }
 
+//TODO Test Email Listings
 exports.sendListings = function (recipients, pump_excel, circulator_excel, certificate_excel, type_of_data) {
     var template_params = {};
     
     console.log(recipients);
     var mailOptions = make_bcc_mail_options(recipients, "HI Energy Rating Portal - Energy Rating Listings", template_params, listings_template, listings_template_pt);
-    mailOptions.attachments = [{
+    mailOptions.attachments = [];
+    if (pump_excel) mailOptions.attachments.push({
         filename: 'ci_energy_ratings-'+type_of_data+'.xlsx',
         content: pump_excel
-    }, {
+    });
+    if (circulator_excel) mailOptions.attachments.push({
         filename: 'circulator_energy_ratings-'+type_of_data+'.xlsx',
         content: circulator_excel
-    }, {
-        filename: 'extended_product_certificates.xlsx',
+    });
+    if (certificate_excel) mailOptions.attachments.push({
+        filename: 'extended_product_certificates-'+type_of_data+'.xlsx',
         content: certificate_excel
-    }]
+    });
     sendEmail(mailOptions);
 }
 

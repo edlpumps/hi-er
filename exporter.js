@@ -9,19 +9,25 @@ exports.create = async () => {
     console.log("Building circulator excel file");
     const circulators = await circulatorExport.getCirculators();
     const circulator_rows = circulatorExport.getExportable(circulators);
-    const circulator_excel_full = common.toXLSX(circulator_rows, {'headers': common.circulator_full_headers});
-    const circulator_excel_qpl = common.toXLSX(circulator_rows, {'headers': common.circulator_qpl_headers});
-
+    const circulator_excel_full = common.toXLSX(circulator_rows,
+        {'headers': common.circulator_full_headers,'type': 'circulators'});
+    const circulator_excel_qpl = common.toXLSX(circulator_rows, 
+        {'headers': common.circulator_qpl_headers,'type': 'circulators'});
+    
     console.log("Building c&i excel file");
     const pumps = await getPumps();
     const pump_rows = getExportable(pumps);
-    const pumps_excel_full = common.toXLSX(pump_rows, {'headers': common.pump_full_headers});
-    const pumps_excel_qpl = common.toXLSX(pump_rows, {'headers': common.pump_qpl_headers});
+    const pumps_excel_full = common.toXLSX(pump_rows, 
+        {'headers': common.pump_full_headers,'type': 'pumps'});
+    const pumps_excel_qpl = common.toXLSX(pump_rows, 
+        {'headers': common.pump_qpl_headers,'type': 'pumps'});
 
     console.log("Building certificate excel file");
     const certificates = await certificateExport.getCertificates();
     const certificates_rows = certificateExport.getExportable(certificates);
-    const certificates_excel = common.toXLSX(certificates_rows, {'headers': common.certificate_headers});
+    const certificates_excel_full = common.toXLSX(certificates_rows, 
+        {'headers': common.certificate_headers,'type': 'certificates'});
+    const certificates_excel_qpl = null;
 
     return {
         pumps: {
@@ -33,7 +39,8 @@ exports.create = async () => {
             full: circulator_excel_full
         },
         certificates: {
-            full: certificates_excel
+            qpl: certificates_excel_qpl,
+            full: certificates_excel_full
         }
     }
 };
@@ -82,15 +89,4 @@ const getExportable = (pumps) => {
         pump.motor_type = pump.motor_type ? pump.motor_type:null;
     }
     return pumps;
-}
-
-const toXLSX = async (pumps, headers) => {
-
-    console.log("Aggregation (subscribers)");
-    console.log(pumps.length + ' pumps to export and email');
-
-    console.log("Create excel export sheet");
-
-    const buffer = common.toXLSX(pumps, headers);
-    return buffer
 }

@@ -1,15 +1,15 @@
 "use strict";
 
+const common = require('mocha/lib/interfaces/common');
+
 flat = require('flatjson');
 xlsx = require('node-xlsx');
 
 //Exporter helpers
-exports.all_xlsx_headings = {
+const common_xlsx_headings = {
 	"alternative_part_number": "Alternative Part Number",
-	"approved_laboratory": "HI Approved laboratory",
-	"basic_model_designation": "Basic model designation",
-	"basic_model_number": "Basic Model Number",
 	"brand": "Brand",
+	"certificate_number": "Certificate Number",
 	"configuration": "Configuration",
 	"control_methods_external-control": "External Input Speed Control",
 	"control_methods_external-other-control": "External Input Speed and Other Controls",
@@ -23,6 +23,8 @@ exports.all_xlsx_headings = {
 	"doe": "DOE product category",
 	"driver_input_power_bep": "BEP Driver input power",
 	"energy_rating": "Pump Energy Rating",
+	"extended_er": "Extended Product Energy Rating",
+	"extended_pei": "Extended Product PEI",
 	"flow": "BEP flow rate",
 	"flow_bep": "BEP Flow rate",
 	"head_100": "BEP head at max speed",
@@ -30,7 +32,8 @@ exports.all_xlsx_headings = {
 	"head_50": "Load point head at 50% of BEP at max speed",
 	"head_75": "Load point head at 75% of BEP at max speed",
 	"head_bep": "BEP Head",
-	"laboratory": "HI Laboratory Number",
+	"installation_site_address": "Installation Site Address",
+	"installation_site_name": "Installation Site",
 	"least_control_method": "Most Efficient Control Method",
 	"least_energy_rating": "Most Efficient ER",
 	"least_input_power_100": "Rated BEP input power",
@@ -41,8 +44,6 @@ exports.all_xlsx_headings = {
 	"least_input_power_reduced": "Rated load point weighted average input power at maximum rotating speed",
 	"least_pei": "Most Efficient CEI",
 	"least_pressure_curve": "Rated Pressure Curve",
-	"manufacturer_model_designation": "Manufacturer's model designation",
-	"manufacturer_model_number": "Manufacturer Model Number",
 	"most_control_method": "Least Efficient Control Method",
 	"most_energy_rating": "Least Efficient ER",
 	"most_input_power_100": "Least Efficient BEP input power",
@@ -53,26 +54,60 @@ exports.all_xlsx_headings = {
 	"most_input_power_reduced": "Least Efficient load point weighted average input power at maximum rotating speed",
 	"most_pei": "Least Efficient CEI",
 	"most_pressure_curve": "Least Efficient Pressure Curve",
+	"motor_efficiency": "Motor Efficiency",
+	"motor_manufacturer": "Motor Manufacturer",
+	"motor_model": "Motor Model",
+	"motor_power": "Motor Power",
 	"motor_power_rated": "Rated motor power",
 	"motor_type": "Motor Type",
+	"packager_company": "Packaging Company",
+	"packager_email": "Packager Email",
+	"packager_name": "Packager Name",
 	"participant": "Participant",
 	"pei": "Pump Energy Index",
+	"pump_basic_model": "Basic Model Number",
+	"pump_brand": "Brand",
+	"pump_doe": "DOE Designation",
+	"pump_er": "Basic Model Energy Rating",
+	"pump_pei": "Basic Model PEI",
+	"pump_rating_id": "Basic Model Rating ID",
 	"rating_id": "Rating ID",
 	"revision": "Date updated",
 	"section": "Section",
 	"speed": "Nominal Speed",
 	"stages": "Stages",
-	"type": "Pump Type"
+	"type": "Pump Type",
+	"vfd_manufacturer": "VFD Manufactuer",
+	"vfd_model": "VFD Model",
+	"vfd_power": "VFD Power"
+};
+
+exports.all_headings = Object.assign( {}, common_xlsx_headings );
+
+const gAllHeadings={
+    'circulators': Object.assign( {}, 
+        {
+            "basic_model": "Basic Model Number",
+            "manufacturer_model": "Manufacturer Model Number",
+            "laboratory": "HI Laboratory Number"
+        }, common_xlsx_headings ),
+    'pumps': Object.assign( {}, 
+        {
+            "basic_model": "Basic model designation",
+            "individual_model": "Manufacturer's model designation",
+            "lab": "HI Approved laboratory"
+        }, common_xlsx_headings ),
+    'certificates': common_xlsx_headings
 };
 
 exports.pump_full_headers = [
         'rating_id',
         'participant',
-        'basic_model_designation',
-        'manufacturer_model_designation',
+        'basic_model',
+        'individual_model',
         'motor_type',
         'brand',
-        'approved_laboratory',
+        'lab',
         'section',
         'configuration',
         'doe',
@@ -92,8 +127,8 @@ exports.pump_full_headers = [
     ]
 exports.pump_qpl_headers = [
         'rating_id',
-        'basic_model_designation',
-        'manufacturer_model_designation',
+        'basic_model',
+        'individual_model',
         'brand',
         'pei',
         'energy_rating',
@@ -175,21 +210,11 @@ exports.certificate_headers = [
 
 exports.toXLSX = (rows, opts) => {
 
-    const header_sorter = function (a, b) {
-        let i = headers.indexOf(a.value);
-        let j = headers.indexOf(b.value);
-        return i - j;
-    }
-    
-    const header_filter = function (key) {
-        return headers.indexOf(key) >= 0;
-    }
-    
-    const select_headings = (in_list) => {
+    const select_headings = (in_list, in_json) => {
         const new_json = {};
         for (const key of in_list) {
-            if (all_xlsx_headers.hasOwnProperty(key)) {
-                new_json[key] = all_xlsx_headers[key];
+            if (in_json.hasOwnProperty(key)) {
+                new_json[key] = in_json[key];
             }
             else {
                 console.log("Could not find value for " + key);
@@ -198,14 +223,25 @@ exports.toXLSX = (rows, opts) => {
         return new_json;
     }
 
-    const headings = select_headings(headers);
-    const filter = header_filter;
-    const sort = header_sorter;
-
     var sheet = opts.sheetname || "Sheet 1";
     var delimiter = opts.delimiter || ".";
     var pivot = opts.pivot;
+    var in_headers = opts.headers;
+    var type = opts.type ? opts.type : 'pumps';
+    var all_headings = gAllHeadings[type];
 
+    const headings = select_headings(in_headers, all_headings);
+
+    const header_sorter = function (a, b) {
+        let i = in_headers.indexOf(a.value);
+        let j = in_headers.indexOf(b.value);
+        return i - j;
+    }
+    
+    const header_filter = function (key) {
+        return in_headers.indexOf(key) >= 0;
+    }
+    
     var input = [];
     if (rows instanceof Array) {
         input = rows;
@@ -216,10 +252,8 @@ exports.toXLSX = (rows, opts) => {
     //build headers
     var headers = []
     var keys = Object.keys(headings);
-    //Headers should be based on headings, not on the data
     for (var i = 0; i < input.length; i++) {
 
-        var fo = flat(input[i], delimiter, filter);
         for (var j = 0; j < keys.length; j++) {
             if (headers.map(function(h) { return h.value }).indexOf(keys[j]) < 0) {
                 var heading = {
@@ -239,18 +273,25 @@ exports.toXLSX = (rows, opts) => {
     var col_count = headers.length;
     var row_count = 1;
     var data = [];
-    headers.sort(sort);
     data.push(headers.map(function(h) { return h.label }));
 
+    let errors = [];
     for (var i = 0; i < input.length; i++) {
         var actual_data = []
-        var fo = flat(input[i], delimiter, filter);
+        var fo = flat(input[i], delimiter, header_filter);
         for (const key in headers) {
+            if (!fo.hasOwnProperty(headers[key].value)) {
+                //console.log("Could not find value for " + headers[key].value);
+                errors.push(type + " ERR - " + input[i]['rating_id']+" "+headers[key].value);
+            }
             actual_data.push(fo[headers[key].value]);
         }
         data.push(actual_data);
         row_count++;
     }
+    // if (errors.length > 0) {
+    //     console.log(errors);
+    // }
     if (pivot) {
         // we have "row_count" arrays, each of "col_count" items.
         // we need to pivot this into "col_count" rows, each with "row_count" columns...
