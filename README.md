@@ -100,6 +100,12 @@ Connect to the localhost on port:
 http://127.0.0.1:3003
 ```
 
+## Testing Subscriber XLSX Attachments
+To test the subscriber Full and QPL spreadsheets, run `export-file.js`:
+```
+$> node export-file.js
+```
+
 ## Deploying a GitHub branch to Heroku
 First, push the branch to GitHub and create a Pull Request.
 

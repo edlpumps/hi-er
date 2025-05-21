@@ -373,6 +373,7 @@ weekly.minute = 10;
 const twiceAMonth = "0 11 1,15 * *"
 const onceAMonth = "0 11 1 * *"
 
+//sched.scheduleJob("5,10,15,20,25,30,35,40,45,50,55 * * * *", push_once_a_month);
 sched.scheduleJob(daily, push_daily);
 sched.scheduleJob(weekly, push_weekly);
 sched.scheduleJob(twiceAMonth, push_twice_a_month);

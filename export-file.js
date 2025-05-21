@@ -40,13 +40,11 @@ const go = async function (interval, override) {
 
             try {
                 const { pumps, circulators, certificates } = await exporter.create();
-                fs.writeFileSync("./export-full.xlsx", pumps.full);
-                fs.writeFileSync("./export-qpl.xlsx", pumps.qpl);
-                fs.writeFileSync("./export-circulator-full.xlsx", circulators.full);
-                fs.writeFileSync("./export-circulator-qpl.xlsx", circulators.qpl);
-                //console.log(pumps);
-                //console.log(circulators);
-                ///console.log(certificates);
+                for (var list of [pumps, circulators]) {
+                    for (var key of Object.keys(list)) {
+                        fs.writeFileSync("./export-"+list+"-"+key+".xlsx", list[key]);
+                    }
+                }
             } catch (ex) {
                 console.error(ex);
             }

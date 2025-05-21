@@ -2,27 +2,26 @@ const circulatorExport = require('./circulator-export');
 const certificateExport = require('./certificate-export');
 const params = require('./search').params;
 const schemas = require('./schemas');
-const toxl = require('jsonexcel');
 const moment = require('moment');
+const common = require('./utils/export_common')
 
 exports.create = async () => {
     console.log("Building circulator excel file");
     const circulators = await circulatorExport.getCirculators();
-    console.log(circulators)
     const circulator_rows = circulatorExport.getExportable(circulators);
-    const circulator_excel_full = circulatorExport.toXLXS(circulator_rows,true);
-    const circulator_excel_qpl = circulatorExport.toXLXS(circulator_rows,false);
+    const circulator_excel_full = common.toXLSX(circulator_rows, {'headers': common.circulator_full_headers});
+    const circulator_excel_qpl = common.toXLSX(circulator_rows, {'headers': common.circulator_qpl_headers});
 
     console.log("Building c&i excel file");
-    //This returns a buffer xlsx file
-    const pumps_excel_full = await get_pump_export_excel(true);
-    const pumps_excel_qpl = await get_pump_export_excel(false);
+    const pumps = await getPumps();
+    const pump_rows = getExportable(pumps);
+    const pumps_excel_full = common.toXLSX(pump_rows, {'headers': common.pump_full_headers});
+    const pumps_excel_qpl = common.toXLSX(pump_rows, {'headers': common.pump_qpl_headers});
 
     console.log("Building certificate excel file");
-    //HERE
     const certificates = await certificateExport.getCertificates();
     const certificates_rows = certificateExport.getExportable(certificates);
-    const certificates_excel = certificateExport.toXLXS(certificates_rows);
+    const certificates_excel = common.toXLSX(certificates_rows, {'headers': common.certificate_headers});
 
     return {
         pumps: {
@@ -33,105 +32,20 @@ exports.create = async () => {
             qpl: circulator_excel_qpl,
             full: circulator_excel_full
         },
-        certificates: certificates_excel
+        certificates: {
+            full: certificates_excel
+        }
     }
 };
 
-const get_pump_export_excel = async (is_full) => {
+const getPumps = async () => {
     const operators = params();
-    const full_headers = [
-        'rating_id',
-        'participant',
-        'basic_model',
-        'individual_model',
-        'motor_type',
-        'brand',
-        'lab',
-        'section',
-        'configuration',
-        'doe',
-        'diameter',
-        'speed',
-        'stages',
-        'flow_bep',
-        'head_bep',
-        'driver_input_power_bep',
-        'control_power_input_bep',
-        'control_power_input_bep',
-        'motor_power_rated',
-        'pei',
-        'energy_rating',
-        'date',
-        'revision'
-    ]
-    const qpl_headers = [
-        'rating_id',
-        'basic_model',
-        'individual_model',
-        'brand',
-        'pei',
-        'energy_rating',
-        'date',
-        'revision'
-    ]
+    const pumps = await schemas.Pumps.aggregate(operators).exec();
+    return pumps;
+}
 
-    if (is_full) {
-        headers = full_headers;
-    }
-    else {
-        headers = qpl_headers;
-    }
-
-    let filter = function (key) {
-        return headers.indexOf(key) >= 0;
-    }
-    let sorter = function (a, b) {
-        let i = headers.indexOf(a.value);
-        let j = headers.indexOf(b.value);
-        return i - j;
-    }
-
-    let all_headings = {
-        rating_id: "Rating ID",
-        participant: "Participant",
-        configuration: "Configuration",
-        basic_model: "Basic model designation",
-        individual_model: "Manufacturer's model designation",
-        motor_type: "Motor Type",
-        brand: 'Brand',
-        diameter: 'Full impeller diameter',
-        speed: 'Nominal Speed',
-        lab: 'HI Approved laboratory',
-        section: 'Section',
-        stages: 'Stages',
-        doe: 'DOE product category',
-        energy_rating: 'Pump Energy Rating',
-        flow_bep: 'BEP Flow rate',
-        head_bep: 'BEP Head',
-        driver_input_power_bep: 'BEP Driver input power',
-        control_power_input_bep: 'BEP Control input power',
-        motor_power_rated: 'Rated motor power',
-        pei: 'Pump Energy Index',
-        date: 'Date listed',
-        revision: 'Date updated'
-    }
-
-    const get_headings = (headers) => {
-        const new_headings = {};
-        for (const key of headers) {
-            if (all_headings.hasOwnProperty(key)) {
-                new_headings[key] = all_headings[key];
-            }
-        }
-        return new_headings;
-    }
-    const headings = get_headings(headers);
-
-    const docs = await schemas.Pumps.aggregate(operators).exec();
-    console.log("Aggregation (subscribers)");
-    console.log(docs.length + ' pumps to export and email');
-
-    for (const pump of docs) {
+const getExportable = (pumps) => {
+    for (const pump of pumps) {
         pump.flow_bep = pump.load120 ? pump.flow.bep100 : pump.flow.bep110;
         pump.head_bep = pump.load120 ? pump.head.bep100 : pump.head.bep110;
         if (pump.driver_input_power) {
@@ -166,14 +80,17 @@ const get_pump_export_excel = async (is_full) => {
         pump.motor_power_rated = pump.motor_power_rated.toFixed(2);
 
         pump.motor_type = pump.motor_type ? pump.motor_type:null;
+    }
+    return pumps;
+}
 
-    };
+const toXLSX = async (pumps, headers) => {
+
+    console.log("Aggregation (subscribers)");
+    console.log(pumps.length + ' pumps to export and email');
+
     console.log("Create excel export sheet");
 
-    const buffer = toxl(docs, {
-        sort: sorter,
-        headings: headings,
-        filter: filter
-    });
+    const buffer = common.toXLSX(pumps, headers);
     return buffer
 }
