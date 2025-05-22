@@ -582,20 +582,21 @@ router.post("/api/users/add", common.addUser)
 
 //TODO - Send Full or QPL?
 router.get("/export/pumps", async (req, res) => {
-    const { pumps, circulators, certificates } = await exporter.create();
+    const exports = await exporter.create('pumps');
     res.setHeader('Content-disposition', 'attachment; filename=pumps.xlsx');
     res.header('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    console.log(pumps.full)
-    return res.send(pumps.full);
+    //console.log(exports.pumps.full)
+    return res.send(exports.pumps.full);
 })
 router.get("/export/circulators", async (req, res) => {
-    const { pumps, circulators, certificates } = await exporter.create();
-    res.setHeader('Content-disposition', 'attachment; filename=pumps.xlsx');
+    const exports = await exporter.create('circulators');
+    res.setHeader('Content-disposition', 'attachment; filename=circulators.xlsx');
     res.header('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    return res.send(circulators.full);
+    return res.send(exports.circulators.full);
 })
 router.get("/export/certificates", async (req, res) => {
-    const { pumps_excel, circulator_excel, certificates_excel } = await exporter.create();
+    const exports = await exporter.create('certificates');
+    res.setHeader('Content-disposition', 'attachment; filename=certificates.xlsx');
     res.header('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    return res.send(certificates_excel.full);
+    return res.send(exports.certificates.full);
 })

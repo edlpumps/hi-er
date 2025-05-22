@@ -5,44 +5,52 @@ const schemas = require('./schemas');
 const moment = require('moment');
 const common = require('./utils/export_common')
 
-exports.create = async () => {
-    console.log("Building circulator excel file");
-    const circulators = await circulatorExport.getCirculators();
-    const circulator_rows = circulatorExport.getExportable(circulators);
-    const circulator_excel_full = await common.toXLSX(circulator_rows,
-        {'headers': common.circulator_full_headers,'type': 'circulators', 'type_of_data': 'full'});
-    const circulator_excel_qpl = await common.toXLSX(circulator_rows, 
-        {'headers': common.circulator_qpl_headers,'type': 'circulators', 'type_of_data': 'qpl'});
-    
-    console.log("Building c&i excel file");
-    const pumps = await getPumps();
-    const pump_rows = getExportable(pumps);
-    const pumps_excel_full = await common.toXLSX(pump_rows, 
-        {'headers': common.pump_full_headers,'type': 'pumps', 'type_of_data': 'full'});
-    const pumps_excel_qpl = await common.toXLSX(pump_rows, 
-        {'headers': common.pump_qpl_headers,'type': 'pumps', 'type_of_data': 'qpl'});
+var gParticipants = null;
 
-    console.log("Building certificate excel file");
-    const certificates = await certificateExport.getCertificates();
-    const certificates_rows = certificateExport.getExportable(certificates);
-    const certificates_excel_full = await common.toXLSX(certificates_rows, 
-        {'headers': common.certificate_headers,'type': 'certificates', 'type_of_data': 'full'});
-    const certificates_excel_qpl = null;
-
-    return {
+exports.create = async (which="all") => {
+    let retval = {
         pumps: {
-            qpl: pumps_excel_qpl,
-            full: pumps_excel_full
+            qpl: null,
+            full: null
         },
         circulators: {
-            qpl: circulator_excel_qpl,
-            full: circulator_excel_full
+            qpl: null,
+            full: null
         },
         certificates: {
-            qpl: certificates_excel_qpl,
-            full: certificates_excel_full
+            qpl: null,
+            full: null
         }
     }
+    gParticipants = await schemas.Participants.find({active: true}, '_id name').lean().exec();
+    
+    if (which == "circulators" || which == "all") {
+        console.log("Building circulator excel file");
+        const circulators = await circulatorExport.getCirculators();
+        const circulator_rows = circulatorExport.getExportable(circulators,gParticipants);
+        retval['circulators']['full'] = await common.toXLSX(circulator_rows,
+            {'headers': common.circulator_full_headers,'type': 'circulators', 'type_of_data': 'full'});
+        retval['circulators']['qpl'] = await common.toXLSX(circulator_rows, 
+            {'headers': common.circulator_qpl_headers,'type': 'circulators', 'type_of_data': 'qpl'});
+    }
+    if (which == "pumps" || which == "all") {
+        console.log("Building c&i excel file");
+        const pumps = await getPumps();
+        const pump_rows = getExportable(pumps);
+        retval['pumps']['full'] = await common.toXLSX(pump_rows, 
+            {'headers': common.pump_full_headers,'type': 'pumps', 'type_of_data': 'full'});
+        retval['pumps']['qpl'] = await common.toXLSX(pump_rows, 
+            {'headers': common.pump_qpl_headers,'type': 'pumps', 'type_of_data': 'qpl'});
+    }
+    if (which == "certificates" || which == "all") {
+        console.log("Building certificate excel file");
+        const certificates = await certificateExport.getCertificates();
+        const certificates_rows = certificateExport.getExportable(certificates);
+        retval['certificates']['full'] = await common.toXLSX(certificates_rows, 
+            {'headers': common.certificate_headers,'type': 'certificates', 'type_of_data': 'full'});
+    }
+
+    return retval;
 };
 
 const getPumps = async () => {
@@ -53,6 +61,11 @@ const getPumps = async () => {
 
 const getExportable = (pumps) => {
     for (const pump of pumps) {
+        if (pump.participant) {
+            //Find the pump id in the gParticipants array
+            pump.participant = gParticipants.find(p => p._id.toString() === pump.participant._id.toString());
+            pump.participant = pump.participant ? pump.participant.name : "ID";
+        }
         pump.flow_bep = pump.load120 ? pump.flow.bep100 : pump.flow.bep110;
         pump.head_bep = pump.load120 ? pump.head.bep100 : pump.head.bep110;
         if (pump.driver_input_power) {
@@ -79,7 +92,7 @@ const getExportable = (pumps) => {
         } else {
             pump.revision = "-";
         }
-        pump.lab = pump.laboratory.name + " - " + pump.laboratory.code;
+        pump.laboratory = pump.laboratory ? pump.laboratory.name + " - " + pump.laboratory.code : "N/A";
 
         pump.diameter = pump.diameter.toFixed(3);
         pump.flow_bep = pump.flow_bep.toFixed(2);

@@ -94,7 +94,7 @@ const gAllHeadings={
         {
             "basic_model": "Basic model designation",
             "individual_model": "Manufacturer's model designation",
-            "lab": "HI Approved laboratory"
+            "laboratory": "HI Approved laboratory"
         }, common_xlsx_headings ),
     'certificates': common_xlsx_headings
 };
@@ -106,7 +106,7 @@ exports.pump_full_headers = [
         'individual_model',
         'motor_type',
         'brand',
-        'lab',
+        'laboratory',
         'section',
         'configuration',
         'doe',

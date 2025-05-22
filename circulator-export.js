@@ -21,7 +21,7 @@ const get_listed = async () => {
     const circulators = await schemas.Circulators.find({
         listed: true,
         active_admin: true,
-    }).populate('participant').exec();
+    }).lean().exec();
 
     return circulators;
 }
@@ -47,7 +47,7 @@ const fill_data = (listing, row, prefix) => {
     }
     //row[`${prefix}_pressure_curve`] = listing[prefix].pressure_curve;
     row[`${prefix}_pei`] = listing[prefix].pei ? listing[prefix].pei.toFixed(2) : "";
-    row[`${prefix}_energy_rating`] = listing[prefix].energy_rating ? listing[prefix].energy_rating.toFixed(0) : "";
+    row[`${prefix}_energy_rating`] = listing[prefix].energy_rating ? parseFloat(listing[prefix].energy_rating).toFixed(0) : "";
     if (has4(listing[prefix].control_method)) {
         /*row[`${prefix}_input_power_25`] = listing[prefix].input_power[0] ? listing[prefix].input_power[0].toFixed(1) : "";
         row[`${prefix}_input_power_50`] = listing[prefix].input_power[1] ? listing[prefix].input_power[1].toFixed(1) : "";
@@ -60,13 +60,16 @@ const fill_data = (listing, row, prefix) => {
     }
 }
 
-const prep_for_export = (listings) => {
+const prep_for_export = (listings, participants) => {
     const rows = [];
 
     for (const listing of listings) {
+        if (listing.participant) {
+            listing.participant = participants.find(p => p._id.toString() === listing.participant._id.toString());
+        }
         const row = {
             rating_id: listing.rating_id,
-            participant: listing.participant._id ? listing.participant.name : "ID",
+            participant: listing.participant ? listing.participant.name : "ID",
             brand: listing.brand,
             basic_model: listing.basic_model,
             manufacturer_model: listing.manufacturer_model,
