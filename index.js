@@ -328,7 +328,7 @@ var push_once_a_month = async function () {
 
 const push_emails = async function (interval, override) {
     try {
-        const exports = await exporter.create();
+        const {pumps, circulators, certificates} = await exporter.create();
 
         const subs_full = await app.locals.db.Subscribers.find({
             interval_days: interval,
@@ -352,8 +352,8 @@ const push_emails = async function (interval, override) {
                 recips.qpl = recips.qpl.concat(subscriber.recipients);
             }
         }
-        mailer.sendListings(recips.qpl, exports.pumps.qpl, exports.circulators.qpl, exports.certificates.qpl, 'qpl');
-        mailer.sendListings(recips.full, exports.pumps.full, exports.circulators.full, exports.certificates.full, 'full');
+        mailer.sendListings(recips.qpl, pumps.qpl, circulators.qpl, certificates.qpl, 'qpl');
+        mailer.sendListings(recips.full, pumps.full, circulators.full, certificates.full, 'full');
     } catch (ex) {
         console.error(ex);
     }
