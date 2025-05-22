@@ -101,10 +101,22 @@ http://127.0.0.1:3003
 ```
 
 ## Testing Subscriber XLSX Attachments
-To test the subscriber Full and QPL spreadsheets, run `export-file.js`:
+- In your development environment, to test the generation of the subscriber Full and QPL spreadsheets, run `export-file.js`:
 ```
 $> node export-file.js
 ```
+- To test the email process, you can also log onto the portal as `admin` and type in the following URL:
+`https://<base_url>/admin/export/email/<email_address>` where `<email_address>` is the email address to which you want to receive the spreadsheets.
+- You will receive two emails:
+  - One with the Qualified Product List listings (Pumps & Circulators)
+  - One with the Full listings (Pumps, Circulators & Certificates)
+- Admin endpoints for exporting the Full Listing spreadsheets to your computer are:
+  - `https://<base_url>/admin/export/pumps`
+  - `https://<base_url>/admin/export/circulators`
+  - `https://<base_url>/admin/export/certificates`
+- Admin endpoints for exporting the QPL Listing spreadsheets to your computer are:
+  - `https://<base_url>/admin/export/pumps/qpl`
+  - `https://<base_url>/admin/export/circulators/qpl`
 
 ## Deploying a GitHub branch to Heroku
 First, push the branch to GitHub and create a Pull Request.

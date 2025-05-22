@@ -84,6 +84,10 @@ var make_bcc_mail_options = function (recipients, subject, template_params, html
     var sender = process.env.SMTP_SENDING_ADDRESS;
     recipients = process.env.LIVE_EMAIL ? recipients : [process.env.SMTP_RECIPIENT_OVERRIDE];
     console.log(recipients);
+    if (typeof(recipients) == "string") {
+        recipients = recipients.replaceAll(" ","").split(",");
+    }
+
     var mailOptions = {
         from: sender,
         bcc: recipients.join(","),
@@ -136,7 +140,7 @@ exports.sendListings = function (recipients, pump_excel, circulator_excel, certi
     var template_params = {};
     // The attachments are buffers.
     console.log(recipients);
-    var mailOptions = make_bcc_mail_options(recipients, "HI Energy Rating Portal - Energy Rating Listings", template_params, listings_template, listings_template_pt);
+    var mailOptions = make_bcc_mail_options(recipients, "HI Energy Rating Portal - Energy Rating Listings - "+type_of_data.toUpperCase(), template_params, listings_template, listings_template_pt);
     mailOptions.attachments = [];
     let use_content_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
     if (pump_excel) mailOptions.attachments.push({
