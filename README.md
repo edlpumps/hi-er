@@ -107,6 +107,7 @@ $> node export-file.js
 ```
 - To test the email process, you can also log onto the portal as `admin` and type in the following URL:
 `https://<base_url>/admin/export/email/<email_address>` where `<email_address>` is the email address to which you want to receive the spreadsheets.
+  - If `<email_address>` is omitted, email will be sent to the logged-in admin's email address.
 - You will receive two emails:
   - One with the Qualified Product List listings (Pumps & Circulators)
   - One with the Full listings (Pumps, Circulators & Certificates)

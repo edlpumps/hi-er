@@ -581,10 +581,9 @@ router.post("/api/users/add", common.addUser)
 
 // EXPORTS
 async function exportAsyncEmailHandler(req, res) {
-    const recipient = req.params.recipient;
+    var recipient = req.params.recipient;
     if (!recipient) {
-        res.status(400).send("No recipient specified");
-        return;
+        recipient = req.user.email;
     }
     const exports = await exporter.create('all');
     mailer.sendListings(recipient, exports.pumps.qpl, exports.circulators.qpl, exports.certificates.qpl, "qpl");
