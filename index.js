@@ -327,6 +327,10 @@ var push_once_a_month = async function () {
 
 
 const push_emails = async function (interval, override) {
+    if (process.env.NODE_ENV && ['development', 'beta'].includes(process.env.NODE_ENV)) {
+        console.log("Skipping email push interval["+interval+"] in development/beta mode");
+        return;
+    }
     try {
         const {pumps, circulators, certificates} = await exporter.create();
 

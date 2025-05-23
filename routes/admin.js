@@ -579,13 +579,14 @@ router.post("/api/labs/delete/:id", function (req, res) {
 router.post("/api/users/delete/:id", common.deleteUser);
 router.post("/api/users/add", common.addUser)
 
+// EXPORTS
 async function exportAsyncEmailHandler(req, res) {
-    const exports = await exporter.create('all');
     const recipient = req.params.recipient;
     if (!recipient) {
         res.status(400).send("No recipient specified");
         return;
     }
+    const exports = await exporter.create('all');
     mailer.sendListings(recipient, exports.pumps.qpl, exports.circulators.qpl, exports.certificates.qpl, "qpl");
     mailer.sendListings(recipient, exports.pumps.full, exports.circulators.full, exports.certificates.full, "full");
     res.status(200).send("Email sent");
@@ -611,17 +612,5 @@ router.get("/export/circulators/:type", exportAsyncHandler);
 router.get("/export/circulators", exportAsyncHandler);
 router.get("/export/certificates/:type", exportAsyncHandler);
 router.get("/export/certificates", exportAsyncHandler);
+router.get("/export/email", exportAsyncEmailHandler);
 router.get("/export/email/:recipient", exportAsyncEmailHandler);
-
-// router.get("/export/circulators/:type", async (req, res) => {
-//     const exports = await exporter.create('circulators');
-//     res.setHeader('Content-disposition', 'attachment; filename=circulators.xlsx');
-//     res.header('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-//     return res.send(exports.circulators.full);
-// })
-// router.get("/export/certificates", async (req, res) => {
-//     const exports = await exporter.create('certificates');
-//     res.setHeader('Content-disposition', 'attachment; filename=certificates.xlsx');
-//     res.header('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-//     return res.send(exports.certificates.full);
-// })
