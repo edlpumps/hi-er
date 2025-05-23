@@ -83,7 +83,6 @@ var make_mail_options = function (recipient, subject, template_params, html, tex
 var make_bcc_mail_options = function (recipients, subject, template_params, html, text) {
     var sender = process.env.SMTP_SENDING_ADDRESS;
     recipients = process.env.LIVE_EMAIL ? recipients : [process.env.SMTP_RECIPIENT_OVERRIDE];
-    console.log(recipients);
     if (typeof(recipients) == "string") {
         recipients = recipients.replaceAll(" ","").split(",");
     }
@@ -139,7 +138,6 @@ exports.sendDeletionNotification = function (deleted, actor) {
 exports.sendListings = function (recipients, pump_excel, circulator_excel, certificate_excel, type_of_data) {
     var template_params = {};
     // The attachments are buffers.
-    console.log(recipients);
     var mailOptions = make_bcc_mail_options(recipients, "HI Energy Rating Portal - Energy Rating Listings - "+type_of_data.toUpperCase(), template_params, listings_template, listings_template_pt);
     mailOptions.attachments = [];
     let use_content_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
