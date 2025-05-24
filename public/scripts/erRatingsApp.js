@@ -190,7 +190,11 @@ var ERRatingsController = function ($scope, $location, service, $http) {
     }
   };
 
-
+  vm.showQPLInfo = function () {
+    // Show the QPL info modal
+    // Use jQuery to show the modal
+    $('#qpl-info').modal('show');
+  }
 
 
 }

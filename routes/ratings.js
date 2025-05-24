@@ -121,14 +121,8 @@ router.get('/utilities', function (req, res) {
         search_params.fresh = true;
     }
 
-    let qplInfo = "<b><u>Qualified Product List (QPL)</u></b><br>";
-    qplInfo += "&nbsp;&nbsp;The pump models listed in the HI Energy Rating database can be utilized by utilities and incentive program implembmters to create qualified product lists for pump incentive programs. ";
-    qplInfo += "All listed models have been tested at approved test labs in accordance with HI 40.7.<br>";
-    qplInfo += "&nbsp;&nbsp;Click the button above to submit a request to periodically receive a spreadsheet of pump models in the HI Energy Rating database that includes the models, the energy rating, PEI and CEE Tier.";
-
     res.render("ratings/utilities", {
-        search: search_params,
-        qplInfo: qplInfo
+        search: search_params
     });
 });
 
