@@ -52,6 +52,14 @@ block content
                     label
                         input(type="checkbox", ng-model="app.search.st", ng-change="app.countPumps()") 
                         | Submersible Turbine
+               .col.col-sm-3
+                 a(href="#")
+                  button.btn-warning.btn-sm(style="color:black;font-weight:bold;margin-top:10px; margin-left:5px;", type="button") 
+                    | Request a QPL
+                 .glyphicon.glyphicon-question-sign(id="qpliconinfo", style="margin-left:5px;")
+                 .span#onhoverqpl(style="color:red;")
+                    | !{qplInfo}
+   
              .form-group
                label.col-sm-3.control-label Load
                .col.col-sm-6
