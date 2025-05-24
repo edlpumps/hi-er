@@ -446,3 +446,15 @@ td .most {
     background-color: #ffe6e6;
     padding: 8px;
 }
+
+#onhoverqpl{
+    visibility: hidden;
+}
+#qpliconinfo:hover ~ #onhoverqpl{
+    visibility: visible;
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 5px;
+    position:absolute;
+    z-index:1000;
+}

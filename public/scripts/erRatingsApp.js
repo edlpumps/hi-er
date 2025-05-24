@@ -189,10 +189,6 @@ var ERRatingsController = function ($scope, $location, service, $http) {
       }
     }
   };
-
-
-
-
 }
 
 

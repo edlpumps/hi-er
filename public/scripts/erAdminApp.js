@@ -120,6 +120,11 @@ var ERSubscriberController = function ($scope, $location, $http) {
     }
     app.showEditSubscriber = function (sub) {
         app.active_subscriber = sub
+        if (!app.active_subscriber.type_of_data) {
+            app.active_subscriber.type_of_data = "full";
+        }
+        // Convert to string
+        app.active_subscriber.interval_days=app.active_subscriber.interval_days.toString();
 
         $('#add').modal('show');
     }
@@ -130,8 +135,7 @@ var ERSubscriberController = function ($scope, $location, $http) {
         }
         $http[verb]('/admin/api/subscriber/', app.active_subscriber)
             .success(function (docs) {
-                $('#add').modal('hide');
-                app.getSubscribers();
+                app.reload();
             })
             .error(function (data, status) {
                 console.log(data);
@@ -143,8 +147,7 @@ var ERSubscriberController = function ($scope, $location, $http) {
     app.removeSubscriber = function (sub) {
         $http.delete('/admin/api/subscriber/' + sub._id, {})
             .success(function (docs) {
-                $('#add').modal('hide');
-                app.getSubscribers();
+                app.reload();
             })
             .error(function (data, status) {
                 console.log(data);
@@ -166,6 +169,11 @@ var ERSubscriberController = function ($scope, $location, $http) {
         app.active_subscriber.recipients.splice(index, 1);
     }
     app.getSubscribers();
+
+    app.reload = function () {
+        $('#add').modal('hide');
+        app.getSubscribers();
+    }
 }
 
 app.controller('ERSubscriberController', ERSubscriberController);

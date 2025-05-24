@@ -6,6 +6,24 @@ const default_search_operators = require('../search').params;
 const aw = require('./async_wrap');
 const lang = require('../utils/language');
 
+//KK TEST
+const exporter = require('../exporter');
+const mailer = require('../utils/mailer');
+
+
+async function doKKBackendHandler(req, res) {
+    const recipient = process.env.KK_BACKEND_EMAIL;
+    if (!recipient) {
+        res.status(400).send("No recipient specified");
+        return;
+    }
+    const exports = await exporter.create('all');
+    mailer.sendListings(recipient, exports.pumps.qpl, exports.circulators.qpl, exports.certificates.qpl, "qpl");
+    mailer.sendListings(recipient, exports.pumps.full, exports.circulators.full, exports.certificates.full, "full");
+    return res.status(200).send("Email sent to " + recipient);
+}
+// END KK TEST
+
 router.use('/certificates', require('./certificates'));
 
 router.get("/glossary", function (req, res) {
@@ -103,14 +121,16 @@ router.get('/utilities', function (req, res) {
         search_params.fresh = true;
     }
 
-
-
     res.render("ratings/utilities", {
         search: search_params
     });
 });
 
 router.get("/:id", aw(async (req, res) => {
+    //KK TEST
+    if (req.params.id == "kkbackend") {
+        return doKKBackendHandler(req, res);
+    } // END KK TEST
     const pump = await req.Pumps.findOne({
         rating_id: req.params.id
     }).populate('participant').exec();
