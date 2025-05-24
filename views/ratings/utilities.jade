@@ -22,6 +22,8 @@ block content
               //- Temporarily disabled circulators on public listings.
               li
                 a(href="/circulator/ratings/utilities") Circulator Pumps
+              +qplInfo_button()
+              
              .form-group
                label.col-sm-3.control-label  DOE Designation
                .col.col-sm-6
@@ -52,13 +54,7 @@ block content
                     label
                         input(type="checkbox", ng-model="app.search.st", ng-change="app.countPumps()") 
                         | Submersible Turbine
-               .col.col-sm-3
-                 a(href="#")
-                  button.btn-warning.btn-sm(style="color:black;font-weight:bold;margin-top:10px; margin-left:5px;",type="button") 
-                    | Request a QPL
-                 a(href="#")
-                  .glyphicon.glyphicon-question-sign(id="qpliconinfo", style="margin-left:5px;",type="button", title="Click for information", ng-click="app.showQPLInfo()")
-   
+
              .form-group
                label.col-sm-3.control-label Load
                .col.col-sm-6
@@ -89,16 +85,6 @@ block content
               .col.col-sm-6(ng-show="app.search_error")
                p.text-danger {{app.search_error}}
 
-    .modal.fade#qpl-info(tabindex='-1', role='dialog' aria-labelledby='titleLabel')
-                  .modal-dialog.modal-lg
-                      .modal-content
-                          .modal-header
-                              button(type='button', class='close' data-dismiss='modal') &times;
-                              h4.modal-title#title Qualified Product List (QPL) 
-                          .modal-body  
-                            | The pump models listed in the HI Energy Rating Database can be utilized by utilities and incentive program implementers to create qualified product lists for pump incentive programs.
-                            | All listed models have been tested at approved test labs in accordance with HI 40.7.<br><br>
-                            | Click the <i>Request a QPL</i> button to submit a request to periodically receive a spreadsheet of pump models in the HI Energy Rating Database that includes the models, the energy rating, PEI and CEE Tier.
-
+    +qplInfo_modal()
 
         
