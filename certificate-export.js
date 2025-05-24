@@ -53,11 +53,16 @@ const fill_data = (listing, row) => {
 }
 
 const prep_for_export = (listings) => {
+    const calculator = require('./calculator');
     const rows = [];
 
     for (const listing of listings) {
         const row = {}
         fill_data(listing, row);
+        let calc_map = {rating_id: row.pump_rating_id, pei: row.extended_pei, energy_rating: row.extended_er, motor_power_rated: row.vfd_power}
+        let retval = calculator.calculate_pump_hp_group_and_tier(calc_map);
+        row.hp_group = retval.hp_group;
+        row.cee_tier = retval.cee_tier;
         rows.push(row);
     }
     return rows;

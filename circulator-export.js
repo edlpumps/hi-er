@@ -61,6 +61,7 @@ const fill_data = (listing, row, prefix) => {
 }
 
 const prep_for_export = (listings, participants) => {
+    const calculator = require('./calculator');
     const rows = [];
 
     for (const listing of listings) {
@@ -100,6 +101,10 @@ const prep_for_export = (listings, participants) => {
         } else {
             row.revision = "-";
         }
+        let retval = calculator.calculate_circ_watts_calc_group_and_tier(row);
+        row.watts_group = retval.watts_group;
+        row.watts_calc = retval.watts_calc;
+        row.cee_tier = retval.cee_tier;
 
         rows.push(row);
     }

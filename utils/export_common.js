@@ -8,6 +8,7 @@ ExcelJS = require('exceljs');
 const common_xlsx_headings = {
 	"alternative_part_number": "Alternative Part Number",
 	"brand": "Brand",
+    "cee_tier": "CEE Tier",
 	"certificate_number": "Certificate Number",
 	"configuration": "Configuration",
 	"control_methods_external-control": "External Input Speed Control",
@@ -31,6 +32,7 @@ const common_xlsx_headings = {
 	"head_50": "Load point head at 50% of BEP at max speed",
 	"head_75": "Load point head at 75% of BEP at max speed",
 	"head_bep": "BEP Head",
+    "hp_group": "HP Group",
 	"installation_site_address": "Installation Site Address",
 	"installation_site_name": "Installation Site",
 	"least_control_method": "Most Efficient Control Method",
@@ -78,7 +80,9 @@ const common_xlsx_headings = {
 	"type": "Pump Type",
 	"vfd_manufacturer": "VFD Manufactuer",
 	"vfd_model": "VFD Model",
-	"vfd_power": "VFD Power"
+	"vfd_power": "VFD Power",
+    "watts_calc": "Watts (Calc)",
+    "watts_group": "Watts Group"
 };
 
 exports.all_headings = Object.assign( {}, common_xlsx_headings );
@@ -122,7 +126,9 @@ exports.pump_full_headers = [
         'pei',
         'energy_rating',
         'date',
-        'revision'
+        'revision',
+        'hp_group',
+        'cee_tier'
     ]
 exports.pump_qpl_headers = [
         'rating_id',
@@ -132,7 +138,8 @@ exports.pump_qpl_headers = [
         'pei',
         'energy_rating',
         'date',
-        'revision'
+        'revision',
+        'cee_tier'
     ]
 
 exports.circulator_full_headers = [
@@ -165,7 +172,10 @@ exports.circulator_full_headers = [
         'most_pei',
         'most_energy_rating',
         'date',
-        'revision'
+        'revision',
+        'watts_calc',
+        'watts_group',
+        'cee_tier'
     ];
 exports.circulator_qpl_headers = [
         'rating_id',
@@ -178,7 +188,8 @@ exports.circulator_qpl_headers = [
         'most_pei',
         'most_energy_rating',
         'date',
-        'revision'
+        'revision',
+        'cee_tier'
     ];
 
 exports.certificate_headers = [
@@ -204,7 +215,9 @@ exports.certificate_headers = [
     'vfd_model',
     'vfd_power',
     'extended_pei',
-    'extended_er'
+    'extended_er',
+    'hp_group',
+    'cee_tier'
 ]
 
 var qpl_disclaimer_bold = "Responsibility for proper pump selection:";

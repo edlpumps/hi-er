@@ -48,6 +48,8 @@ exports.create = async (which="all") => {
         const certificates_rows = certificateExport.getExportable(certificates);
         retval['certificates']['full'] = await common.toXLSX(certificates_rows, 
             {'headers': common.certificate_headers,'type': 'certificates', 'type_of_data': 'full'});
+        retval['certificates']['qpl'] = await common.toXLSX(certificates_rows, 
+            {'headers': common.certificate_headers,'type': 'certificates', 'type_of_data': 'full'});
     }
 
     return retval;
@@ -60,6 +62,7 @@ const getPumps = async () => {
 }
 
 const getExportable = (pumps) => {
+    const calculator = require('./calculator');
     for (const pump of pumps) {
         if (pump.participant) {
             //Find the pump id in the gParticipants array
@@ -81,7 +84,6 @@ const getExportable = (pumps) => {
                 pump.control_power_input_bep = pump.control_power_input_bep.toFixed(2);
             }
         }
-        pump.pei = pump.pei.toFixed(2);
         pump.motor_power_rated = pump.motor_power_rated ? pump.motor_power_rated : pump.motor_power_rated_results
         pump.date = moment(pump.date).format("DD MMM YYYY")
         if (pump.revisions.length > 0) {
@@ -94,12 +96,20 @@ const getExportable = (pumps) => {
         }
         pump.laboratory = pump.laboratory ? pump.laboratory.name + " - " + pump.laboratory.code : "N/A";
 
+        //Get HP and Tier
+        retval = calculator.calculate_pump_hp_group_and_tier(pump);
+        pump.hp_group = retval.hp_group;
+        pump.cee_tier = retval.cee_tier;
+
+        pump.pei = pump.pei.toFixed(2);
         pump.diameter = pump.diameter.toFixed(3);
         pump.flow_bep = pump.flow_bep.toFixed(2);
         pump.head_bep = pump.head_bep.toFixed(2);
         pump.motor_power_rated = pump.motor_power_rated.toFixed(2);
 
         pump.motor_type = pump.motor_type ? pump.motor_type:null;
+
+        
     }
     return pumps;
 }
