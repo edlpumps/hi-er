@@ -1014,20 +1014,26 @@ var auto_calculators = {
 }
 
 var calculate_pump_hp_group_and_tier = function(pump) {
-    let pei = parseFloat(pump.pei.toString());
-    let motor_power_rated = parseInt(pump.motor_power_rated.toString());
-    let energy_rating = parseFloat(pump.energy_rating.toString());
-    let tier = "None";
-    //console.log(`Pump: ${pump.rating_id}, PEI: ${pei}, Motor Power Rated: ${motor_power_rated}, Energy Rating: ${energy_rating}`);
-    // if (pump.rating_id == "4JNP6Q") {
-    //     console.log("Here");
-    // }
-    let hp_group = motor_power_rated < 10 ? "2" : "1";
-    if (pei <= 0.48 && energy_rating >= 52) tier = "CEE Tier 3";
-    else if (pei <= 0.69 && energy_rating >= 31) tier = "CEE Tier 2";
-    else if ((pei <= 0.88 && energy_rating >= 12 && hp_group == "2") ||
-        (pei <= 0.91 && energy_rating >= 9 && hp_group == "1")) {
-        tier = "CEE Tier 1";
+    let hp_group = "Unknown";
+    let tier = "Unknown";
+    try {
+        let pei = parseFloat(pump.pei.toString());
+        let motor_power_rated = parseInt(pump.motor_power_rated.toString());
+        let energy_rating = parseFloat(pump.energy_rating.toString());
+        //console.log(`Pump: ${pump.rating_id}, PEI: ${pei}, Motor Power Rated: ${motor_power_rated}, Energy Rating: ${energy_rating}`);
+        // if (pump.rating_id == "4JNP6Q") {
+        //     console.log("Here");
+        // }
+        let hp_group = motor_power_rated < 10 ? "2" : "1";
+        if (pei <= 0.48 && energy_rating >= 52) tier = "CEE Tier 3";
+        else if (pei <= 0.69 && energy_rating >= 31) tier = "CEE Tier 2";
+        else if ((pei <= 0.88 && energy_rating >= 12 && hp_group == "2") ||
+            (pei <= 0.91 && energy_rating >= 9 && hp_group == "1")) {
+            tier = "CEE Tier 1";
+        }
+        else tier = "None";
+    } catch (e) {
+        console.error("Error calculating pump HP group and tier: ", e);
     }
     return {'hp_group': hp_group, 'cee_tier': tier};
 }
@@ -1035,24 +1041,57 @@ var calculate_pump_hp_group_and_tier = function(pump) {
 exports.calculate_pump_hp_group_and_tier = calculate_pump_hp_group_and_tier;
 
 var calculate_circ_watts_calc_group_and_tier = function(pump) {
-    let watts_calc = parseFloat(pump.most_input_power_100.toString()) * 745.7;
-    let watts_group = watts_calc < 350 ? "1" : watts_calc < 500 ? "2" : "3";
-    let tier = "None"; 
-    // Most efficient CEI is least_pei
-    let least_pei = parseFloat(pump.least_pei.toString());
-    if ( watts_group == "1") {
-        tier = least_pei < 0.701 ? "CEE Tier 2" : least_pei < 1.01 ? "CEE Tier 1" : "None";
+    let watts_calc = "Unknown";
+    let watts_group = "Unknown";
+    let tier = "Unknown";
+    try {
+        watts_calc = parseFloat(pump.most_input_power_100.toString()) * 745.7;
+        watts_group = watts_calc < 350 ? "1" : watts_calc < 500 ? "2" : "3";
+        // Most efficient CEI is least_pei
+        let least_pei = parseFloat(pump.least_pei.toString());
+        if ( watts_group == "1") {
+            tier = least_pei < 0.701 ? "CEE Tier 2" : least_pei < 1.01 ? "CEE Tier 1" : "None";
+        }
+        else if ( watts_group == "2") {
+            tier = least_pei < 0.701 ? "CEE Tier 2" : least_pei < 1.101 ? "CEE Tier 1" : "None";
+        }
+        else if ( watts_group == "3") {
+            tier = least_pei < 0.751 ? "CEE Tier 2" : least_pei < 1.101 ? "CEE Tier 1" : "None";
+        }
+        else tier="None";
+        //No trailing zeros for watts_calc
+        watts_calc = watts_calc.toFixed(4);
+        watts_calc = parseFloat(watts_calc).toString();
+    } catch (e) {
+        console.error("Error calculating Circ Watts group and tier: ", e);
     }
-    if ( watts_group == "2") {
-        tier = least_pei < 0.701 ? "CEE Tier 2" : least_pei < 1.101 ? "CEE Tier 1" : "None";
-    }
-    if ( watts_group == "3") {
-        tier = least_pei < 0.751 ? "CEE Tier 2" : least_pei < 1.101 ? "CEE Tier 1" : "None";
-    }
-    //No trailing zeros for watts_calc
-    watts_calc = watts_calc.toFixed(4);
-    watts_calc = parseFloat(watts_calc).toString();
     return {'watts_group': watts_group, 'cee_tier': tier, 'watts_calc': watts_calc};
 }
 
 exports.calculate_circ_watts_calc_group_and_tier = calculate_circ_watts_calc_group_and_tier;
+
+var filter_pumps_by_cee_tiers = function(pumps, tiers_list) {
+    //console.log('CEE Tiers Match: ' + tiers_list);
+    let new_pumps = [];
+    try {
+        for (const idx in pumps) {
+            pumps[idx].cee_tier = exports.calculate_pump_hp_group_and_tier(pumps[idx]).cee_tier;
+            if (pumps[idx].cee_tier.length && tiers_list.includes(pumps[idx].cee_tier)) {
+                //console.log('pump ['+pumps[idx].rating_id+'] Pump Tier: ' + pumps[idx].cee_tier);
+                if (pumps[idx].cee_tier === "None") {
+                    pumps[idx].cee_tier = ""; // no tier means empty string
+                }
+                new_pumps.push(pumps[idx]);
+            }
+            // else {
+            //     console.log('pump ['+docs[idx].rating_id+'] Pump Tier: ' + docs[idx].cee_tier + ' REMOVED');
+            // }
+        }
+    } catch (e) {
+        console.error("Error filtering pumps by CEE tiers: ", e);
+        new_pumps = pumps;
+    }
+    return new_pumps;
+}
+
+exports.filter_pumps_by_cee_tiers = filter_pumps_by_cee_tiers;

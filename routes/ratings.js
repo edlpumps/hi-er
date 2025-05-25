@@ -5,6 +5,7 @@ const router = express.Router();
 const default_search_operators = require('../search').params;
 const aw = require('./async_wrap');
 const lang = require('../utils/language');
+const calculator = require('../calculator');
 
 //KK TEST
 const exporter = require('../exporter');
@@ -51,7 +52,10 @@ router.get('/search', function (req, res) {
             escc: true,
             il: true,
             rsv: true,
-            st: true
+            st: true,
+            tier1: true,
+            tier2: true,
+            tier3: true
         };
         search_params.fresh = true;
     }
@@ -143,6 +147,7 @@ router.get("/:id", aw(async (req, res) => {
     }
     //Set page language to the label language
     lang.set_page_language(req, res, lang.get_label_language());
+    pump.cee_tier = calculator.calculate_pump_hp_group_and_tier(pump).cee_tier;
     res.render("ratings/r_pump", {
         pump: pump,
         participant: pump.participant,
@@ -175,13 +180,28 @@ router.post("/count", function (req, res) {
     operators.push({
         $count: 'count'
     });
+    operators.push({
+        $project: {
+            energy_rating: 1,
+            pei: 1,
+            motor_power_rated: 1
+        }
+    })
     req.Pumps.aggregate(operators).exec(function (err, docs) {
         if (err) {
             console.log(err);
         }
+        let new_docs = docs;
+        if (tier1 in req.session.search) {
+            let tier_values = [req.session.search.tier1?"CEE Tier 1":"",
+                req.session.search.tier2?"CEE Tier 2":"", 
+                req.session.search.tier3?"CEE Tier 3":"",
+                (req.session.search.tier1 || req.session.search.tier2 || req.session.search.tier3)?"":"None"];
+            new_docs = calculator.filter_pumps_by_cee_tiers(docs, tier_values);
+        } 
         let count = 0;
-        if (docs.length) {
-            count = docs[0].count;
+        if (new_docs.length) {
+            count = new_docs[0].count;
         }
         res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify({
@@ -234,13 +254,23 @@ router.post("/search", function (req, res) {
             speed: 1,
             stages: 1,
             energy_rating: 1,
-            pei: 1
+            pei: 1,
+            motor_power_rated: 1
         }
     })
     //console.log(operators);
     req.Pumps.aggregate(operators).exec(function (err, docs) {
+        let new_docs = docs;
+        //Now if cee_tier need to filter the results
+        let tier_values = [req.session.search.tier1?"CEE Tier 1":"",
+            req.session.search.tier2?"CEE Tier 2":"", 
+            req.session.search.tier3?"CEE Tier 3":"",
+            (req.session.search.tier1 || req.session.search.tier2 || req.session.search.tier3)?"":"None"];
+        //console.log('CEE Tiers Match: ' + tier_values);
+        // Now filter the results based on the tiers
+        new_docs = calculator.filter_pumps_by_cee_tiers(docs, tier_values);
         res.json({
-            pumps: docs
+            pumps: new_docs
         });
     });
 });
