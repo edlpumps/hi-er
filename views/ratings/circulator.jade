@@ -12,7 +12,11 @@ block script
         });
         Vue.component('er-label', {
           props: ['value'],
-          template: '<p><span>Energy Rating</span><br/><span class="er_display"><energy-rating :value="value"/></span></p>'
+          template: '<p><span>xEnergy Rating</span><br/><span class="er_display"><energy-rating :value="value"/></span></p>'
+        });
+        Vue.component('cee_tier', {
+          props: ['value'],
+          template: '<p><span class="cee_tier">{{ value }}</span></p>'
         });
         new Vue({
           el: '#vue',
@@ -56,14 +60,16 @@ block content
            .col.col-sm-5.text-center
             .row
               .col.col-sm-6.text-center
-                p
+                p(style="line-height:normal;")
                   span #{i18n.t("circulator_energy_index",{lng:page_lang})}<br/>
                   span.pei_display: pei(:value='pump.least.pei')
             
               .col.col-sm-6.text-center
-                p
+                p(style="line-height:normal;")
                   span #{i18n.t("energy_rating",{lng:page_lang})}<br/>
                   span.er_display: energy-rating(:value='pump.least.energy_rating')
+                  <br>
+                  span.cee_tier #{pump.cee_tier}
             .row
               .col.text-center(style='margin-bottom:2rem;')
                 img(class="img-fluid", style="width:100%;height:auto;max-width:min-content;", src="/images/"+pump.type.toLowerCase()+".png") 

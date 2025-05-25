@@ -1033,7 +1033,7 @@ var calculate_pump_hp_group_and_tier = function(pump) {
         }
         else tier = "None";
     } catch (e) {
-        console.error("Error calculating pump HP group and tier: ", e);
+        console.error("Error calculating pump HP group and tier. Pump ["+pump.rating_id+"]", e);
     }
     return {'hp_group': hp_group, 'cee_tier': tier};
 }
@@ -1045,10 +1045,20 @@ var calculate_circ_watts_calc_group_and_tier = function(pump) {
     let watts_group = "Unknown";
     let tier = "Unknown";
     try {
+        if (!pump.most_input_power_100) {
+            if (pump.control_methods) {
+                pump.most_input_power_100 = pump.most.input_power[3].toFixed(3);
+            }
+            else {
+                console.log("Pump ["+pump.rating.id+"] does not have most_input_power_100 or control_method");
+                return {'watts_group': watts_group, 'cee_tier': tier, 'watts_calc': watts_calc};
+            }
+        }
         watts_calc = parseFloat(pump.most_input_power_100.toString()) * 745.7;
         watts_group = watts_calc < 350 ? "1" : watts_calc < 500 ? "2" : "3";
         // Most efficient CEI is least_pei
-        let least_pei = parseFloat(pump.least_pei.toString());
+
+        let least_pei = pump.least_pei ? parseFloat(pump.least_pei.toString()) : parseFloat(pump.least.pei.toString());
         if ( watts_group == "1") {
             tier = least_pei < 0.701 ? "CEE Tier 2" : least_pei < 1.01 ? "CEE Tier 1" : "None";
         }
@@ -1070,22 +1080,26 @@ var calculate_circ_watts_calc_group_and_tier = function(pump) {
 
 exports.calculate_circ_watts_calc_group_and_tier = calculate_circ_watts_calc_group_and_tier;
 
-var filter_pumps_by_cee_tiers = function(pumps, tiers_list) {
+var filter_pumps_by_cee_tiers = function(pumps, tiers_list, type) {
     //console.log('CEE Tiers Match: ' + tiers_list);
     let new_pumps = [];
     try {
         for (const idx in pumps) {
-            pumps[idx].cee_tier = exports.calculate_pump_hp_group_and_tier(pumps[idx]).cee_tier;
-            if (pumps[idx].cee_tier.length && tiers_list.includes(pumps[idx].cee_tier)) {
-                //console.log('pump ['+pumps[idx].rating_id+'] Pump Tier: ' + pumps[idx].cee_tier);
-                if (pumps[idx].cee_tier === "None") {
-                    pumps[idx].cee_tier = ""; // no tier means empty string
+            let pump = pumps[idx];
+            if (type == 'pumps') {
+                pump.cee_tier = exports.calculate_pump_hp_group_and_tier(pump).cee_tier;
+            }
+            else if (type == 'circulators') {
+                pump = pump._doc;
+                pump.cee_tier = exports.calculate_circ_watts_calc_group_and_tier(pump).cee_tier;
+            }
+            if (pump.cee_tier.length && tiers_list.includes(pump.cee_tier)) {
+                //console.log('pump ['+pump.rating_id+'] Pump Tier: ' + pump.cee_tier);
+                if (pump.cee_tier === "None") {
+                    pump.cee_tier = ""; // no tier means empty string
                 }
                 new_pumps.push(pumps[idx]);
             }
-            // else {
-            //     console.log('pump ['+docs[idx].rating_id+'] Pump Tier: ' + docs[idx].cee_tier + ' REMOVED');
-            // }
         }
     } catch (e) {
         console.error("Error filtering pumps by CEE tiers: ", e);

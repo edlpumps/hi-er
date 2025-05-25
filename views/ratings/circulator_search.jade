@@ -16,10 +16,12 @@ block script
 							rating_id: null,
 							basic_model: null,
 							participant: null,
-							brand: undefined
+							brand: undefined,
+							tier1: true,
+							tier2: true
 						},
 						participants: [],
-						searching: false,
+						searching: false, 
 						restoring: false
 					},
 
@@ -80,7 +82,9 @@ block script
 								rating_id: this.search.rating_id,
 								basic_model: this.search.basic_model,
 								participant: this.search.participant ? this.search.participant._id : undefined,
-								brand: this.search.brand
+								brand: this.search.brand,
+								tier1: this.search.tier1,
+								tier2: this.search.tier2
 							}							
 							console.log("Circ Search Parameters: "+JSON.stringify(search,null,2));
 							localStorage.setItem('circulator_search', JSON.stringify(search));
@@ -141,6 +145,20 @@ block content
 											option(value="")
 											option(v-for='brand in search.participant.brands', :value='brand') {{brand}}
 							.form-group
+								label.col-sm-3.control-label CEE
+								.col.col-sm-6
+									ul.list-group
+										li.list-group-item
+											.checkbox
+												label
+													input(type="checkbox", v-model="search.tier1") 
+													| Tier 1
+										li.list-group-item
+											.checkbox
+												label
+													input(type="checkbox", v-model="search.tier2") 
+													| Tier 2
+							.form-group
 									label.col-sm-3.control-label 
 									.col.col-sm-5
 										button.btn.btn-primary(v-if='search_ready', type="button", @click='findPumps') Search for Rated Pumps
@@ -170,6 +188,7 @@ block content
 														control-method(:method='method')
 										.col.col-xs-4.col-sm-2.energy_badge
 											.small(style="padding-top:20px; margin-bottom:0px") Energy Rating
-											h2(style="margin-top:0px") {{pump.least.energy_rating.toFixed(0)}}
-											.small(style="padding-top:20px; margin-bottom:0px") CEI
+											h2(style="margin:unset;") {{pump.least.energy_rating.toFixed(0)}}
+											span(style="font-size:12pt;color:red;") {{pump.cee_tier}}
+											.small(style="padding:unset; margin-bottom:0px") CEI
 											h4(style='margin-top:0px') {{pump.least.pei.toFixed(2)}}

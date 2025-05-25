@@ -197,7 +197,7 @@ router.post("/count", function (req, res) {
                 req.session.search.tier2?"CEE Tier 2":"", 
                 req.session.search.tier3?"CEE Tier 3":"",
                 (req.session.search.tier1 || req.session.search.tier2 || req.session.search.tier3)?"":"None"];
-            new_docs = calculator.filter_pumps_by_cee_tiers(docs, tier_values);
+            new_docs = calculator.filter_pumps_by_cee_tiers(docs, tier_values,'pumps');
         } 
         let count = 0;
         if (new_docs.length) {
@@ -268,7 +268,7 @@ router.post("/search", function (req, res) {
             (req.session.search.tier1 || req.session.search.tier2 || req.session.search.tier3)?"":"None"];
         //console.log('CEE Tiers Match: ' + tier_values);
         // Now filter the results based on the tiers
-        new_docs = calculator.filter_pumps_by_cee_tiers(docs, tier_values);
+        new_docs = calculator.filter_pumps_by_cee_tiers(docs, tier_values, 'pumps');
         res.json({
             pumps: new_docs
         });
