@@ -1024,7 +1024,7 @@ var calculate_pump_hp_group_and_tier = function(pump) {
         // if (pump.rating_id == "4JNP6Q") {
         //     console.log("Here");
         // }
-        let hp_group = motor_power_rated < 10 ? "2" : "1";
+        hp_group = motor_power_rated < 10 ? "2" : "1";
         if (pei <= 0.48 && energy_rating >= 52) tier = "CEE Tier 3";
         else if (pei <= 0.69 && energy_rating >= 31) tier = "CEE Tier 2";
         else if ((pei <= 0.88 && energy_rating >= 12 && hp_group == "2") ||
