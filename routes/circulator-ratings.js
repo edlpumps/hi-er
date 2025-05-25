@@ -49,7 +49,7 @@ router.post('/', aw(async function (req, res) {
     let tier_values = [req.body.tier1?"CEE Tier 1":"",
         req.body.tier2?"CEE Tier 2":"", 
         (req.body.tier1 || req.body.tier2 )?"":"None"];
-    new_results = calculator.filter_pumps_by_cee_tiers(results, tier_values, 'circulators');
+    new_results = calculator.filter_pumps_by_cee_tiers(results, req.body, 'circulators');
  
     res.json(new_results)
 }));
@@ -131,6 +131,7 @@ router.get("/:id", aw(async (req, res) => {
     //Set page language to the label language
     lang.set_page_language(req, res, lang.get_label_language());
     pump.cee_tier = calculator.calculate_circ_watts_calc_group_and_tier(pump).cee_tier;
+    pump.cee_tier = pump.cee_tier == "None" ? "": pump.cee_tier;
     res.render("ratings/circulator", {
         pump: pump,
         participant: pump.participant

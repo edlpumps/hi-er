@@ -1080,8 +1080,17 @@ var calculate_circ_watts_calc_group_and_tier = function(pump) {
 
 exports.calculate_circ_watts_calc_group_and_tier = calculate_circ_watts_calc_group_and_tier;
 
-var filter_pumps_by_cee_tiers = function(pumps, tiers_list, type) {
+var filter_pumps_by_cee_tiers = function(pumps, tiers_obj, type) {
     //console.log('CEE Tiers Match: ' + tiers_list);
+    //Create a list of strings from the tiers_obj to match against the pumps tiers
+    let tiers_list = [tiers_obj.tier1?"CEE Tier 1":"",
+        tiers_obj.tier2?"CEE Tier 2":"", 
+        tiers_obj.tier3?"CEE Tier 3":""];
+    //Remove empty strings from the tiers_list
+    tiers_list = tiers_list.filter(str => str !== "");
+    if (!tiers_list.length) {
+        tiers_list.push("None");
+    }
     let new_pumps = [];
     try {
         for (const idx in pumps) {
@@ -1093,11 +1102,9 @@ var filter_pumps_by_cee_tiers = function(pumps, tiers_list, type) {
                 pump = pump._doc;
                 pump.cee_tier = exports.calculate_circ_watts_calc_group_and_tier(pump).cee_tier;
             }
-            if (pump.cee_tier.length && tiers_list.includes(pump.cee_tier)) {
+            if (pump.cee_tier && tiers_list.includes(pump.cee_tier)) {
                 //console.log('pump ['+pump.rating_id+'] Pump Tier: ' + pump.cee_tier);
-                if (pump.cee_tier === "None") {
-                    pump.cee_tier = ""; // no tier means empty string
-                }
+                pump.cee_tier = pump.cee_tier == "None" ? "" : pump.cee_tier; 
                 new_pumps.push(pumps[idx]);
             }
         }
