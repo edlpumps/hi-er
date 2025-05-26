@@ -121,7 +121,12 @@ $> node export-file.js
   - `https://<base_url>/admin/export/pumps/qpl`
   - `https://<base_url>/admin/export/circulators/qpl`
 
-
+- Development & Beta testing endpoints:
+  - Beta - `https://<base_url>/ratings/cee_test/<email_address>` - This will send the QPL and Full spreadsheets to the email address entered.
+  - Development - same as Beta plus:
+    - `https://<base_url>/ratings/cee_test/x` - This will download the spreadsheets to the project root folder (ex: `c:/projects/hi-er`)
+  
+  
 ## Deploying a GitHub branch to Heroku
 First, push the branch to GitHub and create a Pull Request.
 
