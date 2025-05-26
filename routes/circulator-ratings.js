@@ -46,9 +46,6 @@ router.post('/', aw(async function (req, res) {
     const results = await req.Circulators.find(q).sort(sort_order).populate('participant').exec();
     let new_results = results;
     
-    let tier_values = [req.body.tier1?"CEE Tier 1":"",
-        req.body.tier2?"CEE Tier 2":"", 
-        (req.body.tier1 || req.body.tier2 )?"":"None"];
     new_results = calculator.filter_pumps_by_cee_tiers(results, req.body, 'circulators');
  
     res.json(new_results)
