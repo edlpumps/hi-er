@@ -22,6 +22,8 @@ block content
               //- Temporarily disabled circulators on public listings.
               li
                 a(href="/circulator/ratings/utilities") Circulator Pumps
+              +qplInfo_button()
+
              .form-group
                label.col-sm-3.control-label  DOE Designation
                .col.col-sm-6
@@ -52,6 +54,7 @@ block content
                     label
                         input(type="checkbox", ng-model="app.search.st", ng-change="app.countPumps()") 
                         | Submersible Turbine
+
              .form-group
                label.col-sm-3.control-label Load
                .col.col-sm-6
@@ -81,5 +84,7 @@ block content
                p: img(src="/images/loading-bar.gif")
               .col.col-sm-6(ng-show="app.search_error")
                p.text-danger {{app.search_error}}
+
+    +qplInfo_modal()
 
         

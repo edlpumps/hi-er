@@ -23,15 +23,16 @@ block content
            .col.col-sm-5.text-center
             .row
               .col.col-sm-6.text-center
-                h4 
+                h4(style="margin-bottom:0px;") 
                   | #{i18n.t("pei",{lng:page_lang})}
                   sub #{pump.configuration == 'bare' || pump.configuration == 'pump_motor' ? "CL" : "VL"}
-                p.pei_display #{pump.pei.toFixed(2)}
+                p.pei_display(style="margin-bottom:0px;line-height:normal;") #{pump.pei.toFixed(2)}
                 p.pei_baseline #{i18n.t("baseline",{lng:page_lang})}:  #{pump.pei_baseline.toFixed(2)}
                 
               .col.col-sm-6.text-center
-                h4 #{i18n.t("energy_rating",{lng:page_lang})}
-                p.er_display #{pump.energy_rating}
+                h4(style="margin-bottom:0px;") #{i18n.t("energy_rating",{lng:page_lang})}
+                p.er_display(style="margin-bottom:0px;line-height:normal;") #{pump.energy_rating}
+                span.cee_tier #{pump.cee_tier}
             .row
               .col.col-sm-12.text-center
                img(src="/images/doe/#{pump_drawing}").hidden-xs

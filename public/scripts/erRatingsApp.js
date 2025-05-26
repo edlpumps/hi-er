@@ -128,7 +128,10 @@ var ERRatingsController = function ($scope, $location, service, $http) {
         escc: true,
         il: true,
         rsv: true,
-        st: true
+        st: true,
+        tier1: true,
+        tier2: true,
+        tier3: true
       }
     }
 
@@ -189,10 +192,6 @@ var ERRatingsController = function ($scope, $location, service, $http) {
       }
     }
   };
-
-
-
-
 }
 
 

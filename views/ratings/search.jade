@@ -46,13 +46,35 @@ block content
                     li.list-group-item
                       .checkbox
                         label
-                            input(type="checkbox", ng-model="app.search.cl", ng-change="app.countPumps()") 
+                            input(type="checkbox", ng-model="app.search.cl") 
                             | Constant Load
                     li.list-group-item
                       .checkbox
                         label
-                            input(type="checkbox", ng-model="app.search.vl", ng-change="app.countPumps()") 
+                            input(type="checkbox", ng-model="app.search.vl") 
                             | Variable Load
+             .form-group
+              label.col-sm-3.control-label 
+
+             .form-group
+              label.col-sm-3.control-label CEE
+              .col.col-sm-6
+                ul.list-group
+                  li.list-group-item
+                    .checkbox
+                      label
+                          input(type="checkbox", ng-model="app.search.tier1") 
+                          | Tier 1
+                  li.list-group-item
+                    .checkbox
+                      label
+                          input(type="checkbox", ng-model="app.search.tier2") 
+                          | Tier 2
+                  li.list-group-item
+                    .checkbox
+                      label
+                          input(type="checkbox", ng-model="app.search.tier3") 
+                          | Tier 3
              .form-group
               label.col-sm-3.control-label 
                
@@ -88,7 +110,8 @@ block content
                         .col.col-xs-4.col-sm-2.energy_badge
                            .small(style="padding-top:20px; margin-bottom:0px") Energy Rating
                            h2(style="margin-top:0px") {{pump.energy_rating}}
-                           .small(style="padding-top:20px; margin-bottom:0px") PEI
+                           .cee_tier {{pump.cee_tier}}
+                           .small(style="padding: unset;") PEI
                            h4(style='margin-top:0px') {{pump.pei.toFixed(2)}}
 
 

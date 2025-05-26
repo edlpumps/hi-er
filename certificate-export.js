@@ -43,101 +43,30 @@ const fill_data = (listing, row) => {
         row.vfd_model = listing.vfd.model;
         row.vfd_power = listing.vfd.power;
     }
+    if (listing.date) {
+        //Convert date to string
+        row.date = listing.date.toISOString().split('T')[0];
+    }
     row.extended_pei = listing.pei.toFixed(2);
     row.extended_er = listing.energy_rating.toFixed(0);
-    row.date = listing.date;
     row.certificate_number = listing.certificate_number;
 }
 
 const prep_for_export = (listings) => {
+    const calculator = require('./calculator');
     const rows = [];
 
     for (const listing of listings) {
         const row = {}
         fill_data(listing, row);
+        let calc_map = {rating_id: row.pump_rating_id, pei: row.extended_pei, energy_rating: row.extended_er, motor_power_rated: row.vfd_power}
+        let retval = calculator.calculate_pump_hp_group_and_tier(calc_map);
+        row.hp_group = retval.hp_group;
+        row.cee_tier = retval.cee_tier;
         rows.push(row);
     }
     return rows;
 }
 
-const toXLXS = (rows) => {
-    const headers = [
-        'certificate_number',
-        'date',
-        'pump_rating_id',
-        'pump_basic_model',
-        'pump_brand',
-        'pump_doe',
-        'pump_pei',
-        'pump_er',
-
-        'packager_name',
-        'packager_company',
-        'packager_email',
-        'installation_site_name',
-        'installation_site_address',
-        'motor_manufacturer',
-
-        'motor_model',
-        'motor_efficiency',
-
-        'motor_power',
-        'motor_type',
-        'vfd_manufacturer',
-        'vfd_model',
-        'vfd_power',
-        'extended_pei',
-
-        'extended_er'
-    ];
-
-    let sorter = function (a, b) {
-        let i = headers.indexOf(a.value);
-        let j = headers.indexOf(b.value);
-        return i - j;
-    }
-
-    const headings = {
-        'certificate_number': 'Certificate Number',
-        'date': "Date",
-        'pump_rating_id': "Basic Model Rating ID",
-        'pump_basic_model': "Basic Model Number",
-        'pump_brand': "Brand",
-        'pump_doe': "DOE Designation",
-        'pump_pei': "Basic Model PEI",
-        'pump_er': "Basic Model Energy Rating",
-
-        'packager_name': "Packager Name",
-        'packager_company': "Packaging Company",
-        'packager_email': "Packager Email",
-        'installation_site_name': "Installation Site",
-        'installation_site_address': "Installation Site Address",
-        'motor_manufacturer': "Motor Manufacturer",
-
-
-        'motor_model': "Motor Model",
-        'motor_efficiency': "Motor Efficiency",
-
-        'motor_power': "Motor Power",
-        'motor_type': "Motor Type",
-        'vfd_manufacturer': "VFD Manufactuer",
-        'vfd_model': "VFD Model",
-        'vfd_power': "VFD Power",
-        'extended_pei': "Extended Product PEI",
-
-        'extended_er': "Extended Product Energy Rating",
-
-    };
-    console.log("MAKING Certificate EXCEL");
-    console.log(JSON.stringify(rows, null, 2));
-    const buffer = toxl(rows, {
-        sort: sorter,
-        headings: headings
-    });
-    console.log("RETURNING Certificate EXCEL");
-    return buffer;
-}
-
 exports.getCertificates = get_listed;
 exports.getExportable = prep_for_export;
-exports.toXLXS = toXLXS;

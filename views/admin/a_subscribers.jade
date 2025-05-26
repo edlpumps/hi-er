@@ -25,6 +25,7 @@ block content
                                 th.hidden-xs Frequency
                                 //-th.hidden-xs Last Sent
                                 th Recipients
+                                th Type of Data
                                 th
                         tbody
                             tr(ng-repeat="subscriber in app.subscribers")
@@ -33,10 +34,14 @@ block content
                                   span(ng-show='subscriber.interval_days == 1') Daily
                                   span(ng-show='subscriber.interval_days == 7') Weekly
                                   span(ng-show='subscriber.interval_days == 15') Twice a month
+                                  span(ng-show='subscriber.interval_days == 30') Monthly
                                 //- td.hidden-xs 
                                   span(ng-show='subscriber.last_email_date') {{subscriber.last_email_date}}
                                   span(ng-show='!subscriber.last_email_date') Never
                                 td {{subscriber.recipients.length}}
+                                td
+                                  span(ng-show='subscriber.type_of_data == "full" || !subscriber.type_of_data' ) Full data
+                                  span(ng-show='subscriber.type_of_data == "qpl"') QPL data
                                 td 
                                   .btn-group
                                     button(type="button", ng-click="app.showEditSubscriber(subscriber)").btn.btn-default View/Edit
@@ -66,8 +71,19 @@ block content
                                             option(value='1') Daily
                                             option(value='7') Once a week
                                             option(value='15') Twice a month
+                                            option(value='30') Monthly
                                           .help-block
-                                            p Weekly emails are sent on Mondays. Subscribers receiving two emails per month will receive emails on the 1st and 15th day of each month.
+                                            p Weekly emails are sent on Mondays. Monthly emails will be sent on the 1st of each month. Subscribers receiving two emails per month will receive emails on the 1st and 15th day of each month.
+                              .row
+                                  .col-sm-12
+                                      .form-group
+                                          label Type of Data:
+                                          select.form-control.input-sm(ng-model='app.active_subscriber.type_of_data', required)
+                                            option(value='full') Full data
+                                            option(value='qpl') QPL data
+                                          .help-block
+                                            p QPL data is the abbreviated data sheet that includes Rating ID, Basic model designation, manufacturer's model designation, Brand, PEI or CEI (both most and least efficient), Energy Rating (both most and least for circulators), CEE Tier Level, Date Listed, and Date Updated.
+                              
                               .row
                                   .col-sm-9
                                       .form-group
@@ -91,4 +107,4 @@ block content
                               button.btn.btn-primary(type='button' ng-click='app.addSubscriber()') 
                                 span(ng-show='app.active_subscriber._id') Save Subscriber
                                 span(ng-show='!app.active_subscriber._id') Add Subscriber
-                              button.btn.btn-default(type='button' data-dismiss='modal') Cancel
+                              button.btn.btn-default(type='button' ng-click='app.reload()') Cancel

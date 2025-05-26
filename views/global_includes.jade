@@ -61,3 +61,26 @@ mixin language_switch(active)
         .btn-group.btn-group-xs 
           button(type='button', data-lang='en', class=(label_lang == 'en' ? 'btn lang_switch btn-toggle-on' : 'btn lang_switch btn-dark') title='English labels') English
           button(type='button', data-lang='fr', class=(label_lang == 'fr' ? 'btn lang_switch btn-toggle-on' : 'btn lang_switch btn-dark') title='French labels') French
+
+mixin qplInfo_modal()
+  .modal.fade#qpl-info(tabindex='-1', role='dialog' aria-labelledby='titleLabel')
+    .modal-dialog.modal-lg
+        .modal-content
+            .modal-header
+                button(type='button', class='close' data-dismiss='modal') &times;
+                h4.modal-title#title Qualified Product List (QPL) 
+            .modal-body  
+              | The pump models listed in the HI Energy Rating Database can be utilized by utilities and incentive program implementers to create qualified product lists for pump incentive programs.
+              | All listed models have been tested at approved test labs in accordance with HI 40.7.<br><br>
+              | Click the <i>Request a QPL</i> button to submit a request to periodically receive a spreadsheet of pump models in the HI Energy Rating Database that includes the models, the energy rating, PEI and CEE Tier.
+
+mixin qplInfo_button()
+  ul.nav.navbar-right 
+   li(style="margin-right:10px;")
+    .btn-group.btn-group-xs
+      a(href="#")
+        button.btn-warning.btn-sm(style="color:black;font-weight:bold;margin-left:5px;",type="button") 
+          | Request a QPL
+      a(href="#")
+        .glyphicon.glyphicon-question-sign(id="qpliconinfo", style="margin-left:5px;",type="button", title="Click for information", data-toggle="modal", data-target="#qpl-info")
+        

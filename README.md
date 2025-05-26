@@ -100,6 +100,33 @@ Connect to the localhost on port:
 http://127.0.0.1:3003
 ```
 
+## Testing Subscriber XLSX Attachments
+- In your development environment, to test the generation of the subscriber Full and QPL spreadsheets, run `export-file.js`:
+```
+$> node export-file.js
+```
+- To test the **EMAIL** process, you can also log onto the portal as `admin` and type in the following URL:
+`https://<base_url>/admin/export/email/<email_address>` where `<email_address>` is the email address to which you want to receive the spreadsheets.
+  - If `<email_address>` is omitted, email will be sent to the logged-in admin's email address.
+- You will receive two emails:
+  - One with the Qualified Product List listings (Pumps & Circulators)
+  - One with the Full listings (Pumps, Circulators & Certificates)
+  
+- Admin endpoints for downloading the Full Listing spreadsheets to your computer are:
+  - `https://<base_url>/admin/export/pumps`
+  - `https://<base_url>/admin/export/circulators`
+  - `https://<base_url>/admin/export/certificates`
+  
+- Admin endpoints for downloading the QPL Listing spreadsheets to your computer are:
+  - `https://<base_url>/admin/export/pumps/qpl`
+  - `https://<base_url>/admin/export/circulators/qpl`
+
+- Development & Beta testing endpoints:
+  - Beta - `https://<base_url>/ratings/cee_test/<email_address>` - This will send the QPL and Full spreadsheets to the email address entered.
+  - Development - same as Beta plus:
+    - `https://<base_url>/ratings/cee_test/x` - This will download the spreadsheets to the project root folder (ex: `c:/projects/hi-er`)
+  
+  
 ## Deploying a GitHub branch to Heroku
 First, push the branch to GitHub and create a Pull Request.
 

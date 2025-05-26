@@ -2,6 +2,7 @@ const schemas = require("./schemas");
 const toxl = require('jsonexcel');
 const moment = require('moment');
 const _ = require('lodash');
+const common = require('./utils/export_common')
 
 
 const has4 = (control) => {
@@ -20,7 +21,7 @@ const get_listed = async () => {
     const circulators = await schemas.Circulators.find({
         listed: true,
         active_admin: true,
-    }).populate('participant').exec();
+    }).lean().exec();
 
     return circulators;
 }
@@ -46,7 +47,7 @@ const fill_data = (listing, row, prefix) => {
     }
     //row[`${prefix}_pressure_curve`] = listing[prefix].pressure_curve;
     row[`${prefix}_pei`] = listing[prefix].pei ? listing[prefix].pei.toFixed(2) : "";
-    row[`${prefix}_energy_rating`] = listing[prefix].energy_rating ? listing[prefix].energy_rating.toFixed(0) : "";
+    row[`${prefix}_energy_rating`] = listing[prefix].energy_rating ? parseFloat(listing[prefix].energy_rating).toFixed(0) : "";
     if (has4(listing[prefix].control_method)) {
         /*row[`${prefix}_input_power_25`] = listing[prefix].input_power[0] ? listing[prefix].input_power[0].toFixed(1) : "";
         row[`${prefix}_input_power_50`] = listing[prefix].input_power[1] ? listing[prefix].input_power[1].toFixed(1) : "";
@@ -59,13 +60,17 @@ const fill_data = (listing, row, prefix) => {
     }
 }
 
-const prep_for_export = (listings) => {
+const prep_for_export = (listings, participants) => {
+    const calculator = require('./calculator');
     const rows = [];
 
     for (const listing of listings) {
+        if (listing.participant) {
+            listing.participant = participants.find(p => p._id.toString() === listing.participant._id.toString());
+        }
         const row = {
             rating_id: listing.rating_id,
-            participant: listing.participant._id ? listing.participant.name : "ID",
+            participant: listing.participant ? listing.participant.name : "ID",
             brand: listing.brand,
             basic_model: listing.basic_model,
             manufacturer_model: listing.manufacturer_model,
@@ -96,131 +101,14 @@ const prep_for_export = (listings) => {
         } else {
             row.revision = "-";
         }
+        let retval = calculator.calculate_circ_watts_calc_group_and_tier(row);
+        row.watts_group = retval.watts_group;
+        row.watts_calc = retval.watts_calc;
+        row.cee_tier = retval.cee_tier;
 
         rows.push(row);
     }
     return rows;
-}
-
-const toXLXS = (rows) => {
-    const headers = [
-        'rating_id',
-        'participant',
-        'brand',
-        'basic_model',
-        'manufacturer_model',
-        'alternative_part_number',
-        'type',
-        'laboratory',
-
-        'control_methods_no-speed-control',
-        'control_methods_pressure-control',
-        'control_methods_temperature-control',
-        'control_methods_external-control',
-        'control_methods_external-other-control',
-        'control_methods_manual-control',
-
-        'least_control_method',
-        /*'least_pressure_curve',*/
-
-        /*'least_input_power_25',
-        'least_input_power_50',
-        'least_input_power_75',*/
-        'least_input_power_100',
-        'least_input_power_max',
-        'least_input_power_reduced',
-
-        'most_control_method',
-        /*'most_pressure_curve',*/
-        /*'most_input_power_25',
-        'most_input_power_50',
-        'most_input_power_75',*/
-        'most_input_power_100',
-        'most_input_power_max',
-        'most_input_power_reduced',
-
-        /*'head_25',
-        'head_50',
-        'head_75',*/
-        'head_100',
-        'flow',
-
-        'least_pei',
-        'least_energy_rating',
-
-        'most_pei',
-        'most_energy_rating',
-
-        'date',
-        'revision'
-    ];
-
-    let sorter = function (a, b) {
-        let i = headers.indexOf(a.value);
-        let j = headers.indexOf(b.value);
-        return i - j;
-    }
-
-    const headings = {
-        'rating_id': 'Rating ID',
-        'participant': "Participant",
-        'brand': "Brand",
-        'basic_model': "Basic Model Number",
-        'manufacturer_model': "Manufacturer Model Number",
-        'alternative_part_number': "Alternative Part Number",
-        'type': "Pump Type",
-        'laboratory': "HI Laboratory Number",
-
-        'control_methods_no-speed-control': "Full Speed",
-        'control_methods_pressure-control': "Pressure Control",
-        'control_methods_temperature-control': "Temperature Control ",
-        'control_methods_manual-control': "Manual Speed Control",
-        'control_methods_external-control': "External Input Speed Control",
-        'control_methods_external-other-control': "External Input Speed and Other Controls",
-
-
-        'least_control_method': "Most Efficient Control Method",
-        /*'least_pressure_curve': "Rated Pressure Curve",*/
-
-        /*'least_input_power_25': "Rated load point driver or control input power at 25% of BEP",
-        'least_input_power_50': "Rated load point driver or control input power at 50% of BEP",
-        'least_input_power_75': "Rated load point driver or control input power at 75% of BEP",*/
-        'least_input_power_100': "Rated BEP input power",
-        'least_input_power_max': "Rated load point weighted average input power at maximum rotating speed",
-        'least_input_power_reduced': "Rated load point weighted average input power at maximum rotating speed",
-
-        'most_control_method': "Least Efficient Control Method",
-        /*'most_pressure_curve': "Least Efficient Pressure Curve",*/
-        /*'most_input_power_25': "Least Efficient load point driver or control input power at 25% of BEP",
-        'most_input_power_50': "Least Efficient load point driver or control input power at 50% of BEP",
-        'most_input_power_75': "Least Efficient load point driver or control input power at 75% of BEP",*/
-        'most_input_power_100': "Least Efficient BEP input power",
-        'most_input_power_max': "Least Efficient load point weighted average input power at maximum rotating speed",
-        'most_input_power_reduced': "Least Efficient load point weighted average input power at maximum rotating speed",
-
-        /*'head_25': "Load point head at 25% of BEP at max speed ",
-        'head_50': "Load point head at 50% of BEP at max speed",
-        'head_75': "Load point head at 75% of BEP at max speed",*/
-        'head_100': "BEP head at max speed",
-        'flow': "BEP flow rate",
-
-        'least_pei': "Most Efficient CEI",
-        'most_pei': "Least Efficient CEI",
-        'least_energy_rating': "Most Efficient ER",
-
-        'most_energy_rating': "Least Efficient ER",
-
-        date: 'Date listed',
-        revision: 'Date updated'
-    };
-    console.log("MAKING CIRCULATOR EXCEL");
-    console.log(JSON.stringify(rows, null, 2));
-    const buffer = toxl(rows, {
-        sort: sorter,
-        headings: headings
-    });
-    console.log("RETURNING CIRCULATOR EXCEL");
-    return buffer;
 }
 
 const summarySizeBins = [
@@ -378,5 +266,4 @@ const getCirculatorDatabaseSummaryCsv = async (showDetails) => {
 
 exports.getCirculators = get_listed;
 exports.getExportable = prep_for_export;
-exports.toXLXS = toXLXS;
 exports.getCirculatorDatabaseSummaryCsv = getCirculatorDatabaseSummaryCsv;
