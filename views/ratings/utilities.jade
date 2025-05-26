@@ -3,7 +3,7 @@ block nav
      +navigation("utility")
 block content
   div.ng-cloak(ng-app='ERRatingsApp')
-    .container(ng-controller="ERRatingsController as app",ng-init="app.search= #{JSON.stringify(search)}; app.load_count()")
+    .container(ng-controller="ERRatingsController as app",ng-init="; app.search=app.load_search_variables('utility'); app.load_count()")
         form.form-horizontal
         
          

@@ -18,6 +18,23 @@ var configurations = [{
   }
 ];
 
+var defaults = {
+  brand: null,
+  participant: null,
+  min_er: 0,
+  max_er: 100,
+  cl: true,
+  vl: true,
+  esfm: true,
+  escc: true,
+  il: true,
+  rsv: true,
+  st: true,
+  tier1: true,
+  tier2: true,
+  tier3: true
+};
+
 var app = angular.module('ERRatingsApp', ['rzModule']);
 app.config(['$httpProvider', function ($httpProvider) {
   $httpProvider.defaults.cache = false;
@@ -73,6 +90,28 @@ var ERRatingsController = function ($scope, $location, service, $http) {
     vm.participants = results.data.participants;
   })
 
+  //This is called when the page loads.  the page is shared by utilities and search
+  vm.load_search_variables = function (id) {
+    vm.id = id;
+    const saved = localStorage.getItem(vm.id+'_ratings_search');
+    if (saved) {
+      vm.search = JSON.parse(saved);
+      console.log("Loading Saved Search");
+      }
+    else {
+      vm.search = JSON.parse(JSON.stringify(defaults));
+    }
+    vm.search.fresh = false;
+    console.log("Search Initialized: ", vm.search);
+    return vm.search;
+  }
+
+  vm.save_search_variables = function () {
+    if (vm.id) {
+      localStorage.setItem(vm.id+'_ratings_search', JSON.stringify(vm.search));
+    }
+  }
+
   vm.getPumps = function () {
     if (!vm.search.rating_id && !vm.search.participant && !vm.search.basic_model) {
       vm.pumps = [];
@@ -94,6 +133,7 @@ var ERRatingsController = function ($scope, $location, service, $http) {
       vm.searching = false;
       vm.pumps = results.data.pumps;
       vm.pumps_error = false;
+      vm.save_search_variables();
     }).catch(function (error) {
       vm.pumps_error = true;
       vm.searching = false;
@@ -102,6 +142,9 @@ var ERRatingsController = function ($scope, $location, service, $http) {
   }
 
   vm.getBrands = function () {
+    if (!vm.search) {
+      vm.load_search_variables();
+    }
     var p = {};
     if (vm.search.participant) {
       p.name = vm.search.participant;
@@ -112,6 +155,7 @@ var ERRatingsController = function ($scope, $location, service, $http) {
       .success(function (docs) {
         console.log(docs);
         vm.brands = docs.brands;
+        vm.save_search_variables();
       });
   }
 
@@ -119,20 +163,7 @@ var ERRatingsController = function ($scope, $location, service, $http) {
     vm.search_error = "";
     console.log(vm.search);
     if (!vm.search) {
-      vm.search = {
-        min_er: 0,
-        max_er: 100,
-        cl: true,
-        vl: true,
-        esfm: true,
-        escc: true,
-        il: true,
-        rsv: true,
-        st: true,
-        tier1: true,
-        tier2: true,
-        tier3: true
-      }
+      vm.load_search_variables();
     }
 
     if (!vm.search.min_er) {
@@ -154,6 +185,7 @@ var ERRatingsController = function ($scope, $location, service, $http) {
     service.count(vm.search).then(function (results) {
       vm.counting = false;
       vm.num_pumps = results.data.pumps;
+      vm.save_search_variables();
     }).catch(function (error) {
       vm.pumps_error = true;
       vm.counting = false;
@@ -162,12 +194,15 @@ var ERRatingsController = function ($scope, $location, service, $http) {
   }
 
   vm.load_search = function () {
-
-    if (vm.search && !vm.search.fresh) {
+    if (!vm.search) {
+      vm.load_search_variables();
+    }
+    if (vm.search && !vm.search.fresh && vm.search.participant) {
       vm.getPumps();
       vm.getBrands();
     }
   }
+
   vm.load_count = function () {
     vm.countPumps();
   }

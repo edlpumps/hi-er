@@ -51,7 +51,12 @@ block script
 							if (this.search.participant && _saved.brand) {
 								this.search.brand = _saved.brand;
 							}
-
+							if ( _saved.tier1 != null) {
+								this.search.tier1 = _saved.tier1;
+							}
+							if (_saved.tier2 != null) {
+								this.search.tier2 = _saved.tier2;
+							}
 							console.log(this.search);
 							if (this.search_ready) {
 								this.findPumps();

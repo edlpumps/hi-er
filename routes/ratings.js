@@ -21,34 +21,9 @@ router.get("/glossary", function (req, res) {
 
 
 router.get('/search', function (req, res) {
-    var operators = default_search_operators(undefined, true);
-    var search_params = req.session.search;
-    const invalid = search_params && !search_params.cl && !search_params.vl && !search_params.esfm && !search_params.il && !search_params.rsv && !search_params.st;
-    if (!search_params || invalid) {
-        search_params = {
-            min_er: 0,
-            max_er: 100,
-            cl: true,
-            vl: true,
-            esfm: true,
-            escc: true,
-            il: true,
-            rsv: true,
-            st: true,
-            tier1: true,
-            tier2: true,
-            tier3: true
-        };
-        search_params.fresh = true;
-    }
-
-
-
-
-    res.render("ratings/search", {
-        search: search_params
-    });
+     res.render("ratings/search");
 });
+
 router.get('/api/participants', function (req, res) {
     req.Participants.find({
         $and: [{
@@ -87,29 +62,7 @@ router.get('/home', function (req, res) {
 });
 
 router.get('/utilities', function (req, res) {
-    var operators = default_search_operators(undefined, false);
-    var search_params = req.session.search;
-    if (!search_params) {
-        search_params = {};
-        search_params.cl = true;
-        search_params.vl = true;
-        search_params.min_er = 0;
-        search_params.max_er = 100;
-
-        search_params.esfm = true;
-        search_params.escc = true;
-        search_params.il = true;
-        search_params.rsv = true;
-        search_params.st = true;
-
-        search_params.min_er = 10;
-        search_params.max_er = 100;
-        search_params.fresh = true;
-    }
-
-    res.render("ratings/utilities", {
-        search: search_params
-    });
+    res.render("ratings/utilities");
 });
 
 router.get("/:id", aw(async (req, res) => {
