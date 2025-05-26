@@ -159,28 +159,13 @@ router.post("/count", function (req, res) {
     operators.push({
         $count: 'count'
     });
-    operators.push({
-        $project: {
-            energy_rating: 1,
-            pei: 1,
-            motor_power_rated: 1
-        }
-    })
     req.Pumps.aggregate(operators).exec(function (err, docs) {
         if (err) {
             console.log(err);
         }
-        let new_docs = docs;
-        if (tier1 in req.session.search) {
-            let tier_values = [req.session.search.tier1?"CEE Tier 1":"",
-                req.session.search.tier2?"CEE Tier 2":"", 
-                req.session.search.tier3?"CEE Tier 3":"",
-                (req.session.search.tier1 || req.session.search.tier2 || req.session.search.tier3)?"":"None"];
-            new_docs = calculator.filter_pumps_by_cee_tiers(docs, req.session.search,'pumps');
-        } 
         let count = 0;
-        if (new_docs.length) {
-            count = new_docs[0].count;
+        if (docs.length) {
+            count = docs[0].count;
         }
         res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify({
@@ -240,12 +225,6 @@ router.post("/search", function (req, res) {
     //console.log(operators);
     req.Pumps.aggregate(operators).exec(function (err, docs) {
         let new_docs = docs;
-        //Now if cee_tier need to filter the results
-        let tier_values = [req.session.search.tier1?"CEE Tier 1":"",
-            req.session.search.tier2?"CEE Tier 2":"", 
-            req.session.search.tier3?"CEE Tier 3":"",
-            (req.session.search.tier1 || req.session.search.tier2 || req.session.search.tier3)?"":"None"];
-        //console.log('CEE Tiers Match: ' + tier_values);
         // Now filter the results based on the tiers
         new_docs = calculator.filter_pumps_by_cee_tiers(docs, req.session.search, 'pumps');
         res.json({
