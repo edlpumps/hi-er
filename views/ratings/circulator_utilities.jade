@@ -31,12 +31,8 @@ block script
 										'max': [335]
 								}
 						});
-						ranger.noUiSlider.on('update', function () {
-								const vals = ranger.noUiSlider.get();
-								v.search.min = parseInt(vals[0]);
-								v.search.max = parseInt(vals[1]);
-						});
-						ranger.noUiSlider.on('end', function () {
+						//Set is called when the user stop sliding, or taps on the bar or uses arrow keys
+						ranger.noUiSlider.on('set', function () {
 								const vals = ranger.noUiSlider.get();
 								v.search.min = parseInt(vals[0]);
 								v.search.max = parseInt(vals[1]);
