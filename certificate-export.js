@@ -83,9 +83,9 @@ const filter_certificates = (certificates, user) => {
     filtered = filtered.filter(p => {
         if ("packager" in p && p.packager) {
             let name = p.packager.name.toLowerCase();
-            if (name != "xx" && name != "test" && name != "n/a" && name != "none") {
+            if (name != "xx" && name != "test" && name != "n/a" && name != "none" && name != "") {
                 let company  = p.packager.company.toLowerCase();
-                return (company != "xx" && company != "test" && company != "n/a" && company != "none");
+                return (company != "xx" && company != "test" && company != "n/a" && company != "none" && company != "");
             } 
             else return false;
         }
@@ -95,7 +95,7 @@ const filter_certificates = (certificates, user) => {
     filtered = filtered.filter(p => {
         if ("vfd" in p && p.vfd) {
             let model  = p.vfd.model.toLowerCase();
-            return (model != "xx" && model != "test" && model != "n/a" && model != "none");
+            return (model != "xx" && model != "test" && model != "n/a" && model != "none" && model != "");
         }
         else return true;
     });
