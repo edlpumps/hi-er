@@ -231,6 +231,10 @@ mixin vue_circulator_components()
 		  props: ['value'],
 		  template: '<p><span>Energy Rating</span><br/><span class="er_display"><energy-rating :value="value"/></span></p>'
 		});
+		Vue.component('cee-tier', {
+		  props: ['value'],
+		  template: '<p><span class="cee_tier">CEE: Tier {{ value }}</span></p>'
+		});
 		Vue.component('circulator-control-method-editor', {
 			props: ['method', 'readonly'],
 			template: '#v-circulator-control-method-editor',
@@ -354,12 +358,20 @@ mixin vue_circulator_components()
 			},
 		});
 
+
 		Vue.component('pei', {
 			props: ['value'],
 			template: '<span>{{text}}</span>',
 			computed: {
 				text() {
-					return this.value.toFixed(2)
+					let val = this.value;
+					try {
+						val = parseFloat(this.value);
+					}
+					catch (e) {
+						pass;
+					}
+					return val.toFixed(2)
 				}
 			}
 		});
@@ -369,7 +381,14 @@ mixin vue_circulator_components()
 			template: '<span>{{text}}</span>',
 			computed: {
 				text() {
-					return this.value.toFixed(0)
+					let val = this.value;
+					try {
+						val = parseFloat(this.value);
+					}
+					catch (e) {
+						pass;
+					}
+					return val.toFixed(0)
 				}
 			}
 		});

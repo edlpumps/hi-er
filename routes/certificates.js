@@ -11,6 +11,7 @@ const pug = require('pug');
 const archiver = require('archiver');
 const certcalc = require('../certificate_calculator');
 const moment = require('moment');
+const calculator = require('../calculator');
 
 
 router.get('/', aw(async (req, res) => {
@@ -480,6 +481,9 @@ router.get("/er-pump/:id", aw(async (req, res) => {
         res.redirect("/error");
         return;
     }
+    
+    pump.cee_tier = calculator.calculate_pump_hp_group_and_tier(pump).cee_tier;
+    pump.cee_tier = pump.cee_tier == "None"? "": pump.cee_tier;
     res.render("ratings/certificates/c_pump", {
         pump: pump,
         participant: pump.participant,
@@ -533,8 +537,20 @@ router.post("/search/:skip/:limit", aw(async (req, res) => {
     }
     const certificates = await req.Certificates.find(q).skip(skip).limit(limit).populate('pump').populate('pump.participant').exec();
     const count = await req.Certificates.count(q);
+    let rows = [];
+    for (var row of certificates) { 
+        if (!("pump" in row) || ("pump" in row && !row.pump) || (("pump" in row) && (!("brand" in row.pump) || !("rating_id" in row.pump)))) {
+            console.log("SKIP Certificate "+ row.certificate_number);
+            continue;
+        }
+        let calc_map = {rating_id: row.certificate_number, pei: row.pei, energy_rating: row.energy_rating, motor_power_rated: row.vfd.power}
+        let retval = calculator.calculate_pump_hp_group_and_tier(calc_map);
+        row._doc.hp_group = retval.hp_group;
+        row._doc.cee_tier = retval.cee_tier == "None"? "": retval.cee_tier;
+        rows.push(row);
+    }
     res.json({
-        certificates: certificates,
+        certificates: rows,
         total: count
     });
 }));

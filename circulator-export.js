@@ -104,8 +104,12 @@ const prep_for_export = (listings, participants) => {
         let retval = calculator.calculate_circ_watts_calc_group_and_tier(row);
         row.watts_group = retval.watts_group;
         row.watts_calc = retval.watts_calc;
-        row.cee_tier = retval.cee_tier;
-
+        if (retval.cee_tier != "None") {
+            row.cee_tier = "Tier " + retval.cee_tier;
+        }
+        else {
+            row.cee_tier = retval.cee_tier;
+        }
         rows.push(row);
     }
     return rows;

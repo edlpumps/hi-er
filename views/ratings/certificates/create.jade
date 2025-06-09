@@ -67,6 +67,8 @@ block content
                         .col.hidden-xs.col-sm-2.energy_badge
                            .small(style="padding-top:20px; margin-bottom:0px") Energy Rating
                            h2(style="margin-top:0px") {{pump.energy_rating}}
+                           .small(v-if="pump.cee_tier", style="padding-top:20px; margin-bottom:0px") CEE
+                           h2(v-if="pump.cee_tier", style="margin-top:0px") Tier {{pump.cee_tier}}
                            .small(style="padding-top:20px; margin-bottom:0px") PEI
                            h4(style='margin-top:0px') {{pump.pei.toFixed(2)}}
                         .col.hidden-xs.col.col-sm-2(style='padding-top:2em')

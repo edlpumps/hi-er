@@ -64,6 +64,11 @@ block content
                   li.list-group-item
                     .checkbox
                       label
+                          input(type="checkbox", ng-model="app.search.tiernone") 
+                          | None
+                  li.list-group-item
+                    .checkbox
+                      label
                           input(type="checkbox", ng-model="app.search.tier1") 
                           | Tier 1
                   li.list-group-item
@@ -106,12 +111,13 @@ block content
                         .col.hidden-xs.col-sm-4(style="padding-top:20px")
                            p Diameter:  {{pump.diameter * app.units.diameter.factor | number:3}} {{app.units.diameter.label}}
                            p Speed:  {{pump.speed}} rpm
-                           p {{pump.stages}} stages
+                           p {{pump.stages}} {{pump.stages > 1 ? 'stages' : 'stage'}}
                            p {{pump.configuration == 'bare' || pump.configuration == 'pump_motor' ? "Constant Load (CL)" : "Variable Load (VL)"}}
                         .col.col-xs-4.col-sm-2.energy_badge
                            .small(style="padding-top:20px; margin-bottom:0px") Energy Rating
                            h2(style="margin-top:0px") {{pump.energy_rating}}
-                           .cee_tier {{pump.cee_tier}}
+                           .small(ng-show="(pump.cee_tier.length)", style="padding: unset;") CEE
+                           h4(ng-show="(pump.cee_tier.length)", style='margin-top:0px') Tier {{pump.cee_tier}}
                            .small(style="padding: unset;") PEI
                            h4(style='margin-top:0px') {{pump.pei.toFixed(2)}}
 

@@ -241,8 +241,11 @@ router.get('/participant/:id/circulators', aw(async (req, res) => {
 
 
 router.get('/participant/:id/pumps/:pump_id', aw(async (req, res) => {
+    const calculator = require('../calculator');
     const participant = await req.Participants.findById(req.params.id).exec();
     const pump = await req.Pumps.findById(req.params.pump_id).lean().exec();
+    pump.cee_tier = calculator.calculate_pump_hp_group_and_tier(pump).cee_tier;
+    pump.cee_tier = pump.cee_tier == "None" ? "" : pump.cee_tier;
     //Set page language to english
     lang.set_page_language(req, res, 'en');
     res.render("admin/a_pump", {
@@ -258,7 +261,9 @@ router.get('/participant/:id/circulators/:circulator_id', aw(async (req, res) =>
     const circulator = await req.Circulators.findById(req.params.circulator_id).lean().exec();
     //Set page language to english
     lang.set_page_language(req, res, 'en');
-
+    const calculator = require('../calculator');
+    circulator.cee_tier = calculator.calculate_circ_watts_calc_group_and_tier(circulator).cee_tier;
+    circulator.cee_tier = circulator.cee_tier == "None" ? "" : circulator.cee_tier;
     res.render("admin/a_circulator", {
         user: req.user,
         participant: participant,

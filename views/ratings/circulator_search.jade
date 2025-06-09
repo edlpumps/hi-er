@@ -18,7 +18,8 @@ block script
 							participant: null,
 							brand: undefined,
 							tier1: true,
-							tier2: true
+							tier2: true,
+							tiernone: true
 						},
 						participants: [],
 						searching: false, 
@@ -57,6 +58,9 @@ block script
 							if (_saved.tier2 != null) {
 								this.search.tier2 = _saved.tier2;
 							}
+							if (_saved.tiernone != null) {
+								this.search.tiernone = _saved.tiernone;
+							}
 							console.log(this.search);
 							if (this.search_ready) {
 								this.findPumps();
@@ -89,7 +93,8 @@ block script
 								participant: this.search.participant ? this.search.participant._id : undefined,
 								brand: this.search.brand,
 								tier1: this.search.tier1,
-								tier2: this.search.tier2
+								tier2: this.search.tier2,
+								tiernone: this.search.tiernone
 							}							
 							console.log("Circ Search Parameters: "+JSON.stringify(search,null,2));
 							localStorage.setItem('circulator_search', JSON.stringify(search));
@@ -156,6 +161,11 @@ block content
 										li.list-group-item
 											.checkbox
 												label
+													input(type="checkbox", v-model="search.tiernone") 
+													| None
+										li.list-group-item
+											.checkbox
+												label
 													input(type="checkbox", v-model="search.tier1") 
 													| Tier 1
 										li.list-group-item
@@ -193,7 +203,8 @@ block content
 														control-method(:method='method')
 										.col.col-xs-4.col-sm-2.energy_badge
 											.small(style="padding-top:20px; margin-bottom:0px") Energy Rating
-											h2(style="margin:unset;") {{pump.least.energy_rating.toFixed(0)}}
-											span(style="font-size:12pt;color:red;") {{pump.cee_tier}}
+											h2(style="margin-top:0px;") {{pump.least.energy_rating.toFixed(0)}}
+											.small(v-if="pump.cee_tier", style="padding:unset;") CEE
+											h4(v-if="pump.cee_tier", style='margin-top:0px;') Tier {{pump.cee_tier}}
 											.small(style="padding:unset; margin-bottom:0px") CEI
 											h4(style='margin-top:0px') {{pump.least.pei.toFixed(2)}}

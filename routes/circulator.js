@@ -261,6 +261,10 @@ router.get('/:id', aw(async (req, res) => {
         return res.sendStatus(404);
     }
 
+    //HERE Do Circulator cee_tier here
+    const calculator = require('../calculator');
+    pump._doc.cee_tier = calculator.calculate_circ_watts_calc_group_and_tier(pump._doc).cee_tier;
+    pump._doc.cee_tier = pump._doc.cee_tier == "None" ? "" : pump._doc.cee_tier;
     const check = await model_check(req, pump);
     res.render("participant/p_circulator", {
         user: req.user,

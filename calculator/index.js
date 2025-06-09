@@ -1024,12 +1024,12 @@ var calculate_pump_hp_group_and_tier = function(pump) {
         // if (pump.rating_id == "4JNP6Q") {
         //     console.log("Here");
         // }
-        hp_group = motor_power_rated < 10 ? "2" : "1";
-        if (pei <= 0.48 && energy_rating >= 52) tier = "CEE Tier 3";
-        else if (pei <= 0.69 && energy_rating >= 31) tier = "CEE Tier 2";
+        hp_group = motor_power_rated < 10 ? "1" : "2";
+        if (pei <= 0.48 && energy_rating >= 52) tier = "3";
+        else if (pei <= 0.69 && energy_rating >= 31) tier = "2";
         else if ((pei <= 0.88 && energy_rating >= 12 && hp_group == "2") ||
             (pei <= 0.91 && energy_rating >= 9 && hp_group == "1")) {
-            tier = "CEE Tier 1";
+            tier = "1";
         }
         else tier = "None";
     } catch (e) {
@@ -1060,13 +1060,13 @@ var calculate_circ_watts_calc_group_and_tier = function(pump) {
 
         let least_pei = pump.least_pei ? parseFloat(pump.least_pei.toString()) : parseFloat(pump.least.pei.toString());
         if ( watts_group == "1") {
-            tier = least_pei < 0.701 ? "CEE Tier 2" : least_pei < 1.01 ? "CEE Tier 1" : "None";
+            tier = least_pei < 0.701 ? "2" : least_pei < 1.01 ? "1" : "None";
         }
         else if ( watts_group == "2") {
-            tier = least_pei < 0.701 ? "CEE Tier 2" : least_pei < 1.101 ? "CEE Tier 1" : "None";
+            tier = least_pei < 0.701 ? "2" : least_pei < 1.101 ? "1" : "None";
         }
         else if ( watts_group == "3") {
-            tier = least_pei < 0.751 ? "CEE Tier 2" : least_pei < 1.101 ? "CEE Tier 1" : "None";
+            tier = least_pei < 0.751 ? "2" : least_pei < 1.101 ? "1" : "None";
         }
         else tier="None";
         //No trailing zeros for watts_calc
@@ -1083,9 +1083,15 @@ exports.calculate_circ_watts_calc_group_and_tier = calculate_circ_watts_calc_gro
 var filter_pumps_by_cee_tiers = function(pumps, tiers_obj, type) {
     //console.log('CEE Tiers Match: ' + tiers_list);
     //Create a list of strings from the tiers_obj to match against the pumps tiers
-    let tiers_list = [tiers_obj.tier1?"CEE Tier 1":"",
-        tiers_obj.tier2?"CEE Tier 2":"", 
-        tiers_obj.tier3?"CEE Tier 3":""];
+    let do_filter = false;
+    let tiers_list = ["1","2","3","None"];
+    if ("tier1" in tiers_obj || "tier2" in tiers_obj || "tier3" in tiers_obj || "tiernone" in tiers_obj) {
+        do_filter=true;
+        tiers_list = [tiers_obj.tier1?"1":"",
+            tiers_obj.tier2?"2":"", 
+            tiers_obj.tier3?"3":"",
+            tiers_obj.tiernone?"None":"",];
+    }
     //Remove empty strings from the tiers_list
     tiers_list = tiers_list.filter(str => str !== "");
     if (!tiers_list.length) {

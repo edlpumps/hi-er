@@ -47,9 +47,9 @@ exports.create = async (which="all") => {
         const certificates = await certificateExport.getCertificates();
         const certificates_rows = certificateExport.getExportable(certificates);
         retval['certificates']['full'] = await common.toXLSX(certificates_rows, 
-            {'headers': common.certificate_headers,'type': 'certificates', 'type_of_data': 'full'});
+            {'headers': common.certificate_full_headers,'type': 'certificates', 'type_of_data': 'full'});
         retval['certificates']['qpl'] = await common.toXLSX(certificates_rows, 
-            {'headers': common.certificate_headers,'type': 'certificates', 'type_of_data': 'full'});
+            {'headers': common.certificate_qpl_headers,'type': 'certificates', 'type_of_data': 'qpl'});
     }
 
     return retval;
@@ -99,7 +99,12 @@ const getExportable = (pumps) => {
         //Get HP and Tier
         retval = calculator.calculate_pump_hp_group_and_tier(pump);
         pump.hp_group = retval.hp_group;
-        pump.cee_tier = retval.cee_tier;
+        if (retval.cee_tier != "None") {
+            pump.cee_tier = "Tier " + retval.cee_tier;
+        }
+        else {
+            pump.cee_tier = retval.cee_tier;
+        }
 
         pump.pei = pump.pei.toFixed(2);
         pump.diameter = pump.diameter.toFixed(3);

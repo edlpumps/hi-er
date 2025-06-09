@@ -32,7 +32,8 @@ block content
               .col.col-sm-6.text-center
                 h4(style="margin-bottom:0px;") #{i18n.t("energy_rating",{lng:page_lang})}
                 p.er_display(style="margin-bottom:0px;line-height:normal;") #{pump.energy_rating}
-                span.cee_tier #{pump.cee_tier}
+                if pump.cee_tier
+                  p.cee_tier CEE: #{i18n.t("cee_tier",{lng:page_lang})} #{pump.cee_tier}
             .row
               .col.col-sm-12.text-center
                img(src="/images/doe/#{pump_drawing}").hidden-xs

@@ -32,7 +32,8 @@ var defaults = {
   st: true,
   tier1: true,
   tier2: true,
-  tier3: true
+  tier3: true,
+  tiernone: true
 };
 
 var app = angular.module('ERRatingsApp', ['rzModule']);

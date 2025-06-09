@@ -608,6 +608,11 @@ router.get('/pumps/:id', aw(async (req, res) => {
     const pump = await req.Pumps.findOne({
         _id: req.params.id
     }).exec();
+    
+    const calculator = require('../calculator');
+    pump.cee_tier = calculator.calculate_pump_hp_group_and_tier(pump).cee_tier;
+    pump.cee_tier = pump.cee_tier == "None" ? "" : pump.cee_tier;
+
     const published = await req.Pumps.count({
         participant: req.participant._id,
         listed: true

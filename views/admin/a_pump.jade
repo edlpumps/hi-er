@@ -26,6 +26,8 @@ block content
               .col.col-sm-6.text-center
                 h4 Energy Rating
                 p.er_display #{pump.energy_rating}
+                if pump.cee_tier
+                  p.cee_tier CEE: Tier #{pump.cee_tier}
              .row
               .col.col-sm-12.text-center
                 img(src="/images/doe/#{pump_drawing}").hidden-xs

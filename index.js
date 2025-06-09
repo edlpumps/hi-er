@@ -217,6 +217,9 @@ var configure = function () {
 ////////////////////////////////////////////////////
 // Database configuration
 ////////////////////////////////////////////////////
+// Per deprecation warning
+mongoose.set('strictQuery', false);
+
 var conn = mongoose.connect(data_connection_str, {
 }, function (err, res) {
     if (err) {

@@ -134,7 +134,6 @@ exports.pump_qpl_headers = [
         'rating_id',
         'basic_model',
         'individual_model',
-        'brand',
         'pei',
         'energy_rating',
         'date',
@@ -179,7 +178,6 @@ exports.circulator_full_headers = [
     ];
 exports.circulator_qpl_headers = [
         'rating_id',
-        'brand',
         'basic_model',
         'manufacturer_model',
         'alternative_part_number',
@@ -192,7 +190,7 @@ exports.circulator_qpl_headers = [
         'cee_tier'
     ];
 
-exports.certificate_headers = [
+exports.certificate_full_headers = [
     'certificate_number',
     'date',
     'pump_rating_id',
@@ -220,6 +218,33 @@ exports.certificate_headers = [
     'cee_tier'
 ]
 
+exports.certificate_qpl_headers = [
+    'certificate_number',
+    'date',
+    'pump_rating_id',
+    'pump_basic_model',
+    'pump_brand',
+    'pump_doe',
+    'pump_pei',
+    'pump_er',
+    'packager_name',
+    'packager_company',
+    'packager_email',
+    'installation_site_name',
+    'installation_site_address',
+    'motor_manufacturer',
+    'motor_model',
+    'motor_efficiency',
+    'motor_power',
+    'motor_type',
+    'vfd_manufacturer',
+    'vfd_model',
+    'vfd_power',
+    'extended_pei',
+    'extended_er',
+    'hp_group',
+    'cee_tier'
+]
 var qpl_disclaimer_bold = "Responsibility for proper pump selection:";
 var qpl_disclaimer = " Proper sizing and selection of pumps is vital to achieving the most efficient pumping system, but this QPL does not contain requirements,";
 qpl_disclaimer += " analyses, and procedures necesary to ensure safe, appropriate or efficient selection of a pump or associated products.";

@@ -54,6 +54,7 @@ block content
                 pei-label(:value='pump.least.pei')
               .col.col-sm-6.text-center
                 er-label(:value='pump.least.energy_rating')
+                cee-tier(v-if='pump.cee_tier', :value='pump.cee_tier')
             .row
               .col.text-center(style='margin-bottom:2rem;')
                 img(class="img-fluid", style="width:100%;height:auto;max-width:min-content;", src="/images/"+pump.type.toLowerCase()+".png") 
