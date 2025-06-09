@@ -79,7 +79,7 @@ const filter_certificates = (certificates, user) => {
     if (user && user.admin) {
         return filtered;
     }
-    // Check "packager" fields
+    // Check "packager" fields Make sure packager name and company
     filtered = filtered.filter(p => {
         if ("packager" in p && p.packager) {
             let name = p.packager.name.toLowerCase();
@@ -91,19 +91,15 @@ const filter_certificates = (certificates, user) => {
         }
         else return true;
     });
-    // Check "vfd" fields
+    // Check "vfd" fields.  Make sure there is a basic model
     filtered = filtered.filter(p => {
         if ("vfd" in p && p.vfd) {
-            let name = p.vfd.manufacturer.toLowerCase();
-            if (name != "xx" && name != "test" && name != "n/a" && name != "none") {
-                let model  = p.vfd.model.toLowerCase();
-                return (model != "xx" && model != "test" && model != "n/a" && model != "none");
-            }
-            else return false;
+            let model  = p.vfd.model.toLowerCase();
+            return (model != "xx" && model != "test" && model != "n/a" && model != "none");
         }
         else return true;
     });
-    // Check the _id only if it is a string 
+    // Check the _id only if it is a string (this is used on the cert search page to retrieve the participants)
     filtered = filtered.filter(p => {
         if ("_id" in p && typeof(p._id) === 'string') {
             let id = p._id.toLowerCase();
