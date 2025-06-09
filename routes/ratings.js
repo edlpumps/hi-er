@@ -21,7 +21,8 @@ router.get("/glossary", function (req, res) {
 
 
 router.get('/search', function (req, res) {
-     res.render("ratings/search");
+    //Search params are stored in local storage or are initialized in the page or view.
+    res.render("ratings/search");
 });
 
 router.get('/api/participants', function (req, res) {
@@ -61,7 +62,8 @@ router.get('/home', function (req, res) {
     res.render("ratings/home", {});
 });
 
-router.get('/utilities', function (req, res) {
+router.get('/utilities', function (req, res) { 
+    //Search params are stored in local storage or are initialized in the page or view.
     res.render("ratings/utilities");
 });
 

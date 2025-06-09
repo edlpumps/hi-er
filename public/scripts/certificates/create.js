@@ -37,7 +37,6 @@ new Vue({
 
     mounted: function () {
         const v = this;
-        this.search = $('#vue').data('search');
         this.participants = $('#vue').data('participants');
         this.units = $('#vue').data('units');
         this.search.min_er = 0;
@@ -49,6 +48,23 @@ new Vue({
         this.search.il = true;
         this.search.rsv = true;
         this.search.st = true;
+        const saved = localStorage.getItem('certificates_create_search');
+        console.log(saved);
+        console.log(JSON.stringify(this.participants, null, 2))
+        if (saved) {
+            this.restoring = true;
+            const _saved = JSON.parse(saved);
+            if (_saved.rating_id) this.search.rating_id = _saved.rating_id;
+            if (_saved.basic_model) this.search.basic_model = _saved.basic_model;
+            if (_saved.participant) this.search.participant = _saved.participant;
+            if (this.search.participant && _saved.brand)
+                this.search.brand = _saved.brand;
+            console.log(this.search);
+            if (this.search_valid) {
+                this.load_brands();
+                this.search_pumps();
+            }
+        }
     },
     computed: {
         search_valid: function () {
@@ -57,6 +73,9 @@ new Vue({
     },
     methods: {
         search_pumps: function () {
+            console.log("Circ Search Parameters: "+JSON.stringify(this.search,null,2));
+            localStorage.setItem('certificates_create_search', JSON.stringify(this.search));
+							
             let v = this;
             this.searching = true;
             $.ajax({
