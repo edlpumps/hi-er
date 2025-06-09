@@ -57,6 +57,18 @@ const prep_for_export = (listings) => {
     const rows = [];
 
     for (var listing of listings) {
+        //console.log(`Processing Cert No: ${listing.certificate_number}`);
+        //console.log(`Listing details: ${JSON.stringify(listing, null, 2)}`);
+        if (listing._doc.test || listing.packager.name == "xx" || !listing.pump || !listing.pump.rating_id || !listing.pump.participant || !listing.pump.basic_model) {
+            console.log("Skipping listing "+ listing.certificate_number + " due to test flag, pkg name [xx] or missing required pump data.");
+            console.log('    Test Flag: ' + listing._doc.test);
+            console.log('    Packager Name: ' + listing.packager.name);
+            if (listing.pump)
+                console.log('    Rqd info: ' + listing.pump.rating_id + ', ' + listing.pump.participant + ', ' + listing.pump.basic_model);
+            else 
+                console.log('    Pump is null or undefined');
+            continue;
+        }
         const row = {}
         fill_data(listing, row);
         let calc_map = {rating_id: row.pump_rating_id, pei: row.extended_pei, energy_rating: row.extended_er, motor_power_rated: row.vfd_power}
