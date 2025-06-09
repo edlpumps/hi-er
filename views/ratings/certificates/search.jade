@@ -85,10 +85,10 @@ block content
                         .col.col-sm-2.energy_badge(style='border-right: thin solid rgb(221, 221, 221)')
                            .small(style="padding-top:20px; margin-bottom:0px") Energy Rating
                            h2(style="margin-top:0px") {{certificate.pump.energy_rating}}
-                           .small(v-if="certificate.cee_tier", style="padding:unset;") CEE
-                           h4(v-if="certificate.cee_tier", style='margin-top:0px') Tier {{certificate.cee_tier}}
-                           .small(style="padding:unset; margin-bottom:0px") PEI
+                           .small(style="padding:unset;") PEI
                            h4(style='margin-top:0px') {{certificate.pump.pei.toFixed(2)}}
+                           .small(v-if="certificate.cee_tier", style="padding:unset; margin-bottom:0px") CEE
+                           h4(v-if="certificate.cee_tier", style='margin-top:0px') Tier {{certificate.cee_tier}}
                         .col.col-sm-2.energy_badge
                            .small(style="padding-top:20px; margin-bottom:0px") Extended Energy Rating
                            h2(style="margin-top:0px") {{certificate.energy_rating}}

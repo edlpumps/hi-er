@@ -204,7 +204,7 @@ block content
 										.col.col-xs-4.col-sm-2.energy_badge
 											.small(style="padding-top:20px; margin-bottom:0px") Energy Rating
 											h2(style="margin-top:0px;") {{pump.least.energy_rating.toFixed(0)}}
-											.small(v-if="pump.cee_tier", style="padding:unset;") CEE
-											h4(v-if="pump.cee_tier", style='margin-top:0px;') Tier {{pump.cee_tier}}
-											.small(style="padding:unset; margin-bottom:0px") CEI
+											.small(style="padding:unset;") CEI
 											h4(style='margin-top:0px') {{pump.least.pei.toFixed(2)}}
+											.small(v-if="pump.cee_tier", style="padding:unset; margin-bottom:0px") CEE
+											h4(v-if="pump.cee_tier", style='margin-top:0px;') Tier {{pump.cee_tier}}
