@@ -196,7 +196,7 @@ const common = require('./common');
 
 
 async function qplbackendhandler(which, req, res) {
-    const exports = await exporter.create('all');
+    const exports = await exporter.create('all',req.user);
     if (common.validateEmail(which)) {
         const recipient = which;
         console.log("Sending QPL email to " + recipient);

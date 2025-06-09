@@ -587,10 +587,12 @@ router.post("/api/users/add", common.addUser)
 // EXPORTS
 async function exportAsyncEmailHandler(req, res) {
     var recipient = req.params.recipient;
+    let user = {admin: true};// Force admin for email export
     if (!recipient) {
         recipient = req.user.email;
+        user = { admin: false }; 
     }
-    const exports = await exporter.create('all');
+    const exports = await exporter.create('all',user);
     mailer.sendListings(recipient, exports.pumps.qpl, exports.circulators.qpl, exports.certificates.qpl, "qpl");
     mailer.sendListings(recipient, exports.pumps.full, exports.circulators.full, exports.certificates.full, "full");
     res.status(200).send("Email sent");
@@ -603,7 +605,7 @@ async function exportAsyncHandler(req, res) {
     if (req.params.type) {
         type = req.params.type.toString();
     }
-    const exports = await exporter.create(which);
+    const exports = await exporter.create(which,req.user);
     res.setHeader('Content-disposition', 'attachment; filename='+which+'-'+type+'.xlsx');
     res.header('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     console.log('done');

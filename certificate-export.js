@@ -52,23 +52,13 @@ const fill_data = (listing, row) => {
     row.certificate_number = listing.certificate_number;
 }
 
-const prep_for_export = (listings) => {
+const prep_for_export = (listings, user) => {
     const calculator = require('./calculator');
     const rows = [];
-
-    for (var listing of listings) {
+    let filtered = filter_certificates(listings, user);
+    for (var listing of filtered) {
         //console.log(`Processing Cert No: ${listing.certificate_number}`);
         //console.log(`Listing details: ${JSON.stringify(listing, null, 2)}`);
-        if (listing._doc.test || listing.packager.name == "xx" || !listing.pump || !listing.pump.rating_id || !listing.pump.participant || !listing.pump.basic_model) {
-            console.log("Skipping listing "+ listing.certificate_number + " due to test flag, pkg name [xx] or missing required pump data.");
-            console.log('    Test Flag: ' + listing._doc.test);
-            console.log('    Packager Name: ' + listing.packager.name);
-            if (listing.pump)
-                console.log('    Rqd info: ' + listing.pump.rating_id + ', ' + listing.pump.participant + ', ' + listing.pump.basic_model);
-            else 
-                console.log('    Pump is null or undefined');
-            continue;
-        }
         const row = {}
         fill_data(listing, row);
         let calc_map = {rating_id: row.pump_rating_id, pei: row.extended_pei, energy_rating: row.extended_er, motor_power_rated: row.vfd_power}
@@ -83,5 +73,53 @@ const prep_for_export = (listings) => {
     return rows;
 }
 
+const filter_certificates = (certificates, user) => {
+    let filtered = certificates;
+    if (!certificates || !certificates.length) return filtered;
+    if (user && user.admin) {
+        return filtered;
+    }
+    // Check "packager" fields
+    filtered = filtered.filter(p => {
+        if ("packager" in p && p.packager) {
+            let name = p.packager.name.toLowerCase();
+            if (name != "xx" && name != "test" && name != "n/a" && name != "none") {
+                let company  = p.packager.company.toLowerCase();
+                return (company != "xx" && company != "test" && company != "n/a" && company != "none");
+            } 
+            else return false;
+        }
+        else return true;
+    });
+    // Check "vfd" fields
+    filtered = filtered.filter(p => {
+        if ("vfd" in p && p.vfd) {
+            let name = p.vfd.manufacturer.toLowerCase();
+            if (name != "xx" && name != "test" && name != "n/a" && name != "none") {
+                let model  = p.vfd.model.toLowerCase();
+                return (model != "xx" && model != "test" && model != "n/a" && model != "none");
+            }
+            else return false;
+        }
+        else return true;
+    });
+    // Check the _id only if it is a string 
+    filtered = filtered.filter(p => {
+        if ("_id" in p && typeof(p._id) === 'string') {
+            let id = p._id.toLowerCase();
+            return (id && id != "xx" && id != "test" && id != "n/a" && id != "none");
+        }
+        else return true;
+    });
+    // Check the "pump" fields
+    filtered = filtered.filter(p => {
+        if ("pump" in p) 
+            return (p.pump && p.pump.rating_id && p.pump.participant && p.pump.basic_model);
+        else return true;
+    });
+    return filtered;
+}
+
 exports.getCertificates = get_listed;
 exports.getExportable = prep_for_export;
+exports.filterCertificates = filter_certificates;

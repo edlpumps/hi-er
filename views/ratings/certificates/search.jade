@@ -54,14 +54,17 @@ block content
                                 b Serial #: 
                                 a(v-bind:href="'/ratings/certificates/certificate/'+certificate.certificate_number") {{certificate.certificate_number}}
                            h3 
-                            span(v-if='certificate.pump.brand') {{certificate.pump.brand}} / {{certificate.pump.basic_model}}
-                            span(v-else) {{certificate.pump.basic_model}}
+                            span(v-if='certificate.pump && certificate.pump.brand') {{certificate.pump.brand}} / {{certificate.pump.basic_model}}
+                            span(v-else, v-if='certificate.pump && certificate.pump.basic_model') {{certificate.pump.basic_model}}
+                            span(v-else style='color:red;') Unknown
                             br
-                            span Issuer: {{certificate.packager.company}} 
+                            span(v-if='certificate.packager.company == "xx"', style="color:red;") Issuer: {{certificate.packager.company}} 
+                            span(v-else) Issuer: {{certificate.packager.company}}
                            p
                             span 
                                 b Rating ID:  
-                                a(v-bind:href="'/ratings/' + certificate.pump.rating_id", target="_blank") {{certificate.pump.rating_id}}
+                                a(v-if='certificate.pump', v-bind:href="'/ratings/' + certificate.pump.rating_id", target="_blank") {{certificate.pump.rating_id}}
+                                a(v-else style='color:red;') Unknown
                          .col.hidden-xs.col.hidden-sm.col-md-3(style="padding-top:20px")
                            p(v-if='certificate.motor && certificate.motor.model')
                             span 
@@ -84,9 +87,11 @@ block content
                            
                         .col.col-sm-2.energy_badge(style='border-right: thin solid rgb(221, 221, 221)')
                            .small(style="padding-top:20px; margin-bottom:0px") Energy Rating
-                           h2(style="margin-top:0px") {{certificate.pump.energy_rating}}
+                           h2(v-if='certificate.pump', style="margin-top:0px") {{certificate.pump.energy_rating}}
+                           h2(v-else style='color:red;') Unknown
                            .small(style="padding:unset;") PEI
-                           h4(style='margin-top:0px') {{certificate.pump.pei.toFixed(2)}}
+                           h4(v-if='certificate.pump', style='margin-top:0px') {{certificate.pump.pei.toFixed(2)}}
+                           h4(v-else style='color:red;') Unknown
                            .small(v-if="certificate.cee_tier", style="padding:unset; margin-bottom:0px") CEE
                            h4(v-if="certificate.cee_tier", style='margin-top:0px') Tier {{certificate.cee_tier}}
                         .col.col-sm-2.energy_badge

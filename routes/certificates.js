@@ -12,7 +12,7 @@ const archiver = require('archiver');
 const certcalc = require('../certificate_calculator');
 const moment = require('moment');
 const calculator = require('../calculator');
-
+const cert_exports = require('../certificate-export');
 
 router.get('/', aw(async (req, res) => {
     res.render("ratings/certificates/index", {});
@@ -498,6 +498,9 @@ router.get("/certificate/:cnumber", aw(async (req, res) => {
     if (!ct) {
         return res.sendStatus(404, 'Certificate not found');
     }
+    if (!ct.pump) {
+        return res.sendStatus(404, 'Pump not found for this certificate');
+    }
     res.render("ratings/certificates/certificate", {
         certificate: ct
     });
@@ -512,7 +515,8 @@ router.get('/search', aw(async (req, res) => {
             _id: '$packager.company'
         }
     }]);
-    const companies = packagers.map(p => p._id);
+    let filtered = cert_exports.filterCertificates(packagers, req.user);
+    const companies = filtered.map(p => p._id);
     res.render("ratings/certificates/search", {
         companies: companies,
         search: req.session.csearch
@@ -536,13 +540,12 @@ router.post("/search/:skip/:limit", aw(async (req, res) => {
         q.certificate_number = search.cnumber
     }
     const certificates = await req.Certificates.find(q).skip(skip).limit(limit).populate('pump').populate('pump.participant').exec();
-    const count = await req.Certificates.count(q);
+    let count = await req.Certificates.count(q);
+    let filtered = cert_exports.filterCertificates(certificates, req.user);
+    // Reduce the count by the number of items we filtered out
+    count = count - (certificates.length - filtered.length);
     let rows = [];
-    for (var row of certificates) { 
-        if (!("pump" in row) || ("pump" in row && !row.pump) || (("pump" in row) && (!("brand" in row.pump) || !("rating_id" in row.pump)))) {
-            console.log("SKIP Certificate "+ row.certificate_number);
-            continue;
-        }
+    for (var row of filtered) {
         let calc_map = {rating_id: row.certificate_number, pei: row.pei, energy_rating: row.energy_rating, motor_power_rated: row.vfd.power}
         let retval = calculator.calculate_pump_hp_group_and_tier(calc_map);
         row._doc.hp_group = retval.hp_group;
