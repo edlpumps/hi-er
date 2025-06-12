@@ -61,8 +61,7 @@ const prep_for_export = (listings, user) => {
         //console.log(`Listing details: ${JSON.stringify(listing, null, 2)}`);
         const row = {}
         fill_data(listing, row);
-        let calc_map = {rating_id: row.pump_rating_id, pei: row.extended_pei, energy_rating: row.extended_er, motor_power_rated: row.vfd_power}
-        let retval = calculator.calculate_pump_hp_group_and_tier(calc_map);
+        let retval = calculator.calculate_certificate_hp_group_and_tier(row);
         if (retval.cee_tier != "None") {
             retval.cee_tier = "Tier " + retval.cee_tier;
         }

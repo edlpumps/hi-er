@@ -58,7 +58,9 @@ block content
               label.col-sm-3.control-label 
 
              .form-group
-              label.col-sm-3.control-label CEE
+              label.col-sm-3.control-label 
+                +searchInfo_button()
+                span CEE
               .col.col-sm-6
                 ul.list-group
                   li.list-group-item
@@ -121,6 +123,7 @@ block content
                            .small(ng-show="(pump.cee_tier.length)", style="padding: unset;") CEE
                            h4(ng-show="(pump.cee_tier.length)", style='margin-top:0px') Tier {{pump.cee_tier}}
 
+      +search_modal('pump')
 
                  
                             
