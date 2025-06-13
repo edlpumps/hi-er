@@ -1051,15 +1051,15 @@ var calculate_circ_watts_calc_group_and_tier = function(pump) {
         if (!pump.most_input_power_100) {
             if (pump.control_methods) {
                 // This is least efficient BEP at 100% speed (element 3)
-                use_val = pump.most.input_power[3].toFixed(3);
+                use_val = parseFloat(parseFloat(pump.most.input_power[3]).toFixed(3));
             }
             else {
                 console.log("Pump ["+pump.rating.id+"] does not have most_input_power_100 or control_method");
                 return {'watts_group': watts_group, 'cee_tier': tier, 'watts_calc': watts_calc};
             }
         }
-        else use_val = pump.most_input_power_100.toFixed(3);
-        watts_calc = parseFloat(use_val.toString()) * 745.7;
+        else use_val = parseFloat(parseFloat(pump.most_input_power_100).toFixed(3));
+        watts_calc = use_val * 745.7;
         watts_group = watts_calc < 350 ? "1" : watts_calc < 500 ? "2" : "3";
         // Most efficient CEI is least_pei
         let least_pei = pump.least_pei ? parseFloat(pump.least_pei.toString()) : parseFloat(pump.least.pei.toString());

@@ -79,6 +79,7 @@ const filter_certificates = (certificates, user) => {
         return filtered;
     }
     // Check "packager" fields Make sure packager name and company
+    console.log(`Filtering ${certificates.length} certificates for export`);
     filtered = filtered.filter(p => {
         if ("packager" in p && p.packager) {
             let name = p.packager.name.toLowerCase();
@@ -90,6 +91,7 @@ const filter_certificates = (certificates, user) => {
         }
         else return true;
     });
+    console.log(`Filtered to ${filtered.length} certificates after packager check`);
     // Check "vfd" fields.  Make sure there is a basic model
     filtered = filtered.filter(p => {
         if ("vfd" in p && p.vfd) {
@@ -98,6 +100,7 @@ const filter_certificates = (certificates, user) => {
         }
         else return true;
     });
+    console.log(`Filtered to ${filtered.length} certificates after VFD check`);
     // Check the _id only if it is a string (this is used on the cert search page to retrieve the participants)
     filtered = filtered.filter(p => {
         if ("_id" in p && typeof(p._id) === 'string') {
@@ -106,6 +109,7 @@ const filter_certificates = (certificates, user) => {
         }
         else return true;
     });
+    console.log(`Filtered to ${filtered.length} certificates after ID check`);
     // Check the "pump" fields
     filtered = filtered.filter(p => {
         if ("pump" in p) 
