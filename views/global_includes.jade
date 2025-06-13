@@ -92,16 +92,12 @@ mixin search_modal(which)
                 button(type='button', class='close' data-dismiss='modal') &times;
                 h4.modal-title#title Consortium for Energy Efficiency (CEE)
             .modal-body(class=which)  
-                if (which == 'pump')
-                  | <u>For C&I Pumps</u><br><br>
-                else
-                  | <u>For Circulator Pumps</u><br><br>
                 | CEE is a consortium primarily of utility efficiency program administrators from across the United States and Canada. The CEE Pump Systems Initiative defines a  
                 if (which == 'pump') 
                   | Tier 1 performance metric for constant load clean water pumps and a Tier 2 and Tier 3 for variable load clean water pumps, respectively.<br><br>
                 else
                   | Tier 1 and Tier 2 performance metric for circulator pumps.<br><br>
-                | To learn more about the CEE Pump System Initiative, please visit their website at <a href="https://www.cee1.org">www.cee1.org</a>.<br><br>
+                | To learn more about the CEE Pump System Initiative, please visit their website at <a href="https://www.cee1.org" target="_blank">www.cee1.org</a>.<br><br>
 
 mixin searchInfo_button()
       a(href="#")
