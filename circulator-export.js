@@ -65,12 +65,18 @@ const prep_for_export = (listings, participants) => {
     const rows = [];
 
     for (const listing of listings) {
-        if (listing.participant) {
+        let row_participant = "ID";
+        if (listing.participant && participants && participants.length > 0) {
+            //Find the listing participant in the participants array
             listing.participant = participants.find(p => p._id.toString() === listing.participant._id.toString());
+            row_participant = listing.participant ? listing.participant.name : "ID";
+        }
+        else {
+            row_participant = listing.participant._id ? listing.participant.name : "ID";
         }
         const row = {
             rating_id: listing.rating_id,
-            participant: listing.participant ? listing.participant.name : "ID",
+            participant: row_participant,
             brand: listing.brand,
             basic_model: listing.basic_model,
             manufacturer_model: listing.manufacturer_model,
@@ -101,14 +107,16 @@ const prep_for_export = (listings, participants) => {
         } else {
             row.revision = "-";
         }
-        let retval = calculator.calculate_circ_watts_calc_group_and_tier(row);
-        row.watts_group = retval.watts_group;
-        row.watts_calc = retval.watts_calc;
-        if (retval.cee_tier != "None") {
-            row.cee_tier = "Tier " + retval.cee_tier;
-        }
-        else {
-            row.cee_tier = retval.cee_tier;
+        if (participants && participants.length > 0) {
+            let retval = calculator.calculate_circ_watts_calc_group_and_tier(row);
+            row.watts_group = retval.watts_group;
+            row.watts_calc = retval.watts_calc;
+            if (retval.cee_tier != "None") {
+                row.cee_tier = "Tier " + retval.cee_tier;
+            }
+            else {
+                row.cee_tier = retval.cee_tier;
+            }
         }
         rows.push(row);
     }
@@ -144,7 +152,7 @@ const getLCCMGroups = (details) => {
         try {
          label = `${bin[0].toLocaleString(undefined, { minimumIntegerDigits: 1, minimumFractionDigits: 3})}-${bin[1].toLocaleString(undefined, { minimumIntegerDigits: 1, minimumFractionDigits: 3})}`;
         } catch (e) {
-            console.log("Error! ", e);
+            //console.log("Error! ", e);
             label = "5.501+";
         }
         group[least_control_method][label] = group[least_control_method][label] || []
