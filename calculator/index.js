@@ -1014,12 +1014,13 @@ var auto_calculators = {
 }
 
 var calculate_pump_hp_group_and_tier = function(pump) {
-    // pump {'motor_power_rated', 'energy_rating', 'rating_id'}
+    // Calculate the HP group and CEE tier for a pump based on its motor power rated and energy rating
+    // Returns an object with hp_group and cee_tier
     let hp_group = "Unknown";
     let tier = "Unknown";
     try {
-        let motor_power_rated = parseFloat(pump.motor_power_rated.toString());
-        let energy_rating = parseFloat(pump.energy_rating.toString());
+        let motor_power_rated = parseFloat(pump.motor_power_rated);
+        let energy_rating = parseFloat(pump.energy_rating);
         //console.log(`Pump: ${pump.rating_id}, Motor Power Rated: ${motor_power_rated}, Energy Rating: ${energy_rating}`);
         hp_group = motor_power_rated < 10 ? "1" : "2";
         if (energy_rating >= 52) tier = "3";
@@ -1035,8 +1036,13 @@ var calculate_pump_hp_group_and_tier = function(pump) {
 exports.calculate_pump_hp_group_and_tier = calculate_pump_hp_group_and_tier;
 
 var calculate_certificate_hp_group_and_tier = function(cert) {
-    //Use the pump calculations for certificate and map values
-    let calc_map = {rating_id: cert.pump_rating_id, energy_rating: cert.extended_er, motor_power_rated: cert.vfd_power}
+    //Use the pump calculations for certificates and map values.
+    let calc_map = {rating_id: null, energy_rating: null, motor_power_rated: null};
+    try {
+        calc_map = {rating_id: cert.certificate_number, energy_rating: cert.energy_rating, motor_power_rated: cert.vfd.power}
+    } catch (e) {
+        console.error("Error mapping certificate data to pump calculation values: ", e);
+    }
     return exports.calculate_pump_hp_group_and_tier(calc_map);
 }
 
