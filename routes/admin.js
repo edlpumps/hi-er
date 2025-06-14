@@ -5,7 +5,8 @@ const common = require('./common');
 const mailer = require('../utils/mailer');
 const aw = require('./async_wrap');
 const svg_builder = require('../utils/label_builder.js');
-const exporter = require('../exporter');
+const fs = require('fs');
+const Circulator = require('../controllers/circulator');
 const lang = require('../utils/language');
 module.exports = router;
 
@@ -281,6 +282,62 @@ router.get('/participant/:id/circulators/:circulator_id/svg/label', aw(async (re
     res.setHeader('Content-Type', 'image/svg+xml');
     res.send(svg);
 }));
+router.get('/participant/:id/circulators/:circulator_id/png/label', aw(async (req, res) => {
+    const pump = await req.Circulators.findById(req.params.circulator_id).populate('participant').exec();
+    const svg = svg_builder.make_circulator_label(req, pump.participant, pump);
+    const png_buffer = svg_builder.svg_to_png(svg);
+    res.setHeader('Content-disposition', 'attachment; filename=Energy Rating Label-' + pump.rating_id + '-('+lang.get_label_language()+').png');
+    res.setHeader('Content-Type', 'image/png');
+    res.setHeader('Content-Length', png_buffer.length);
+    res.status(200).send(png_buffer);
+}));
+router.get('/participant/:id/circulators/:circulator_id/svg/sm-label', aw(async (req, res) => {
+    const pump = await req.Circulators.findById(req.params.circulator_id).populate('participant').exec();
+    const svg = svg_builder.make_circulator_label_small(req, pump.participant, pump);
+    res.setHeader('Content-disposition', 'attachment; filename=Energy Rating Label (sm) - ' + pump.rating_id + '.svg');
+    res.setHeader('Content-Type', 'image/svg+xml');
+    res.send(svg);
+}));
+router.get('/participant/:id/circulators/:circulator_id/png/sm-label', aw(async (req, res) => {
+    const pump = await req.Circulators.findById(req.params.circulator_id).populate('participant').exec();
+    const svg = svg_builder.make_circulator_label_small(req, pump.participant, pump);
+    const png_buffer = svg_builder.svg_to_png(svg);
+    res.setHeader('Content-disposition', 'attachment; filename=Energy Rating Label (sm) - ' + pump.rating_id + '.png');
+    res.setHeader('Content-Type', 'image/png');
+    res.setHeader('Content-Length', png_buffer.length);
+    res.status(200).send(png_buffer);
+}));
+router.get('/participant/:id/circulators/:circulator_id/svg/qr', aw(async (req, res) => {
+    const pump = await req.Circulators.findById(req.params.circulator_id).populate('participant').exec();
+    const svg = svg_builder.make_circulator_qr(req, pump.participant, pump);
+    res.setHeader('Content-disposition', 'attachment; filename=Energy Rating QR - ' + pump.rating_id + '.svg');
+    res.setHeader('Content-Type', 'image/svg+xml');
+    res.send(svg)
+}));
+router.get('/participant/:id/circulators/:circulator_id/png/qr', aw(async (req, res) => {
+    const pump = await req.Circulators.findById(req.params.circulator_id).populate('participant').exec();
+    const svg = svg_builder.make_circulator_qr(req, pump.participant, pump);
+    const png_buffer = svg_builder.svg_to_png(svg);
+    res.setHeader('Content-disposition', 'attachment; filename=Energy Rating QR - ' + pump.rating_id + '.png');
+    res.setHeader('Content-Type', 'image/png');
+    res.setHeader('Content-Length', png_buffer.length);
+    res.status(200).send(png_buffer);
+}));
+
+router.get('/participant/:id/circulators/:circulator_id/export', aw(async (req, res) => {
+    const pump = await req.Circulators.findById(req.params.circulator_id).exec();
+    if (!pump) {
+        return res.sendStatus(404);
+    }
+    const file = await Circulator.export([pump], req.session.unit_set);
+    res.download(file, 'Circulator Pump Listings.xlsx', function (err) {
+        if (err) console.error(err);
+        else fs.unlink(file, function () {
+            console.log('Removed template');
+        });
+    });
+}));
+
 
 router.get('/participant/:id/pumps/:pump_id/download', aw(async (req, res) => {
     const pump = await req.Pumps.findById(req.params.pump_id).populate('participant').exec();

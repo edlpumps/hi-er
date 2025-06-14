@@ -109,8 +109,12 @@ mixin download_pump(label,link)
           | &nbsp;
           .span.glyphicon.glyphicon-download-alt  
 
-mixin download_circulator(id,label,link)
-      a(href="/participant/circulators/"+id+link+"?download=true")
+mixin download_circulator(is_admin,id,label,link)
+      a(v-if='is_admin' href=id+link+"?download=true") 
+        button.btn-warning.btn-sm(style="color:black;font-weight:bold;margin-left:5px;",type="button") #{label}
+          | &nbsp;
+          .span.glyphicon.glyphicon-download-alt
+      a(v-else href="/participant/circulators/"+id+link+"?download=true")
         button.btn-warning.btn-sm(style="color:black;font-weight:bold;margin-left:5px;",type="button") #{label}
           | &nbsp;
           .span.glyphicon.glyphicon-download-alt

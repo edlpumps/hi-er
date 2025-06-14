@@ -53,28 +53,36 @@ mixin vue_circulator_components()
 	script#v-circulator-label(type='text/x-template')
 		section.text-center(v-if='pump')
 			div.padded
-				img(v-if='public != "true"', :src='"/participant/circulators/"+pump._id+"/svg/label"')
-				img(v-else, :src='"/circulator/ratings/"+pump._id+"/svg/label"')
 				- var pump_id = ""
-				- if ((public != "true") && pump && pump._id)
-					- pump_id = ""+pump._id+"";
-				span(v-if='public != "true"')
+				- var admin = "false"
+				- if (pump && pump._id)
+					- pump_id = ""+pump._id;""
+					- is_admin = ""+is_admin+""
+				- if (is_admin)
+					- admin = "true"
+					
+				img(v-if='public', :src='"/circulator/ratings/"+pump._id+"/svg/label"')
+				img(v-else-if='is_admin', :src='pump._id+"/svg/label"')
+				img(v-else :src='"/participant/circulators/"+pump._id+"/svg/label"')
+				span(v-if='!public')
 					p
-					+download_circulator(pump_id,'SVG','/svg/label')
+					+download_circulator(admin, pump_id,'SVG','/svg/label')
 					| &nbsp;&nbsp;
-					+download_circulator(pump_id, 'PNG','/png/label')
-			div.padded(v-if='public != "true"')
-				img(:src='"/participant/circulators/"+pump._id+"/svg/sm-label"')
+					+download_circulator(admin, pump_id, 'PNG','/png/label')
+			div.padded(v-if='!public')
+				img(v-if='is_admin', :src='pump._id+"/svg/sm-label"')
+				img(v-else :src='"/participant/circulators/"+pump._id+"/svg/sm-label"')
 				p
-				+download_circulator(pump_id,'SVG','/svg/sm-label')
+				+download_circulator(is_admin, pump_id,'SVG','/svg/sm-label')
 				| &nbsp;&nbsp;
-				+download_circulator(pump_id,'PNG','/png/sm-label')
-			div.padded(v-if='public != "true"')
-				img(:src='"/participant/circulators/"+pump._id+"/svg/qr"')
+				+download_circulator(is_admin, pump_id,'PNG','/png/sm-label')
+			div.padded(v-if='!public')
+				img(v-if='is_admin', :src='pump._id+"/svg/qr"')
+				img(v-else :src='"/participant/circulators/"+pump._id+"/svg/qr"')
 				p
-				+download_circulator(pump_id,'SVG','/svg/qr')
+				+download_circulator(is_admin, pump_id,'SVG','/svg/qr')
 				| &nbsp;&nbsp;
-				+download_circulator(pump_id,'PNG','/png/qr')
+				+download_circulator(is_admin, pump_id,'PNG','/png/qr')
 		
 
 	script#v-circulator-data-details(type='text/x-template')
@@ -261,7 +269,7 @@ mixin vue_circulator_components()
 			}
 		});
 		Vue.component('circulator-label', {
-			props: ['pump', 'public'],
+			props: ['pump', 'public', 'is_admin'],
 			template: '#v-circulator-label',
 			methods: {
 				moment(...args) {
