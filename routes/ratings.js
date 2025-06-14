@@ -188,59 +188,60 @@ router.post("/search", function (req, res) {
     });
 });
 
-//KK TEST
-const exporter = require('../exporter');
-const mailer = require('../utils/mailer');
-const fs = require('fs');
-const common = require('./common');
+//TESTING Exports
+
+// const exporter = require('../exporter');
+// const mailer = require('../utils/mailer');
+// const fs = require('fs');
+// const common = require('./common');
 
 
-async function qplbackendhandler(which, req, res) {
-    const exports = await exporter.create('all',req.user);
-    if (common.validateEmail(which)) {
-        const recipient = which;
-        console.log("Sending QPL email to " + recipient);
-        mailer.sendListings(recipient, exports.pumps.qpl, exports.circulators.qpl, exports.certificates.qpl, "qpl");
-        mailer.sendListings(recipient, exports.pumps.full, exports.circulators.full, exports.certificates.full, "full");
-        return res.status(200).send("Email sent to " + recipient);
-    }
-    else {
-        if (process.env.NODE_ENV == 'development') {
-            console.log("Downloading QPL files");
-            let file_list = [];
-            for (var list of Object.keys(exports)) {
-                for (var key of Object.keys(exports[list])) {
-                    if (exports[list][key] == null) continue;
-                    let filename = "./export-"+list+"-"+key+".xlsx";
-                    fs.writeFileSync(filename,exports[list][key]);
-                    file_list.push(filename);
-                }
-            }
-            return res.status(200).send('Files downloaded successfully: '+ file_list);
-        }
-        else {
-            return res.status(400).send('Please provide an emailaddress to send the files to.');
-        }
-    }
-}
+// async function qplbackendhandler(which, req, res) {
+//     const exports = await exporter.create('all',req.user);
+//     if (common.validateEmail(which)) {
+//         const recipient = which;
+//         console.log("Sending QPL email to " + recipient);
+//         mailer.sendListings(recipient, exports.pumps.qpl, exports.circulators.qpl, exports.certificates.qpl, "qpl");
+//         mailer.sendListings(recipient, exports.pumps.full, exports.circulators.full, exports.certificates.full, "full");
+//         return res.status(200).send("Email sent to " + recipient);
+//     }
+//     else {
+//         if (process.env.NODE_ENV == 'development') {
+//             console.log("Downloading QPL files");
+//             let file_list = [];
+//             for (var list of Object.keys(exports)) {
+//                 for (var key of Object.keys(exports[list])) {
+//                     if (exports[list][key] == null) continue;
+//                     let filename = "./export-"+list+"-"+key+".xlsx";
+//                     fs.writeFileSync(filename,exports[list][key]);
+//                     file_list.push(filename);
+//                 }
+//             }
+//             return res.status(200).send('Files downloaded successfully: '+ file_list);
+//         }
+//         else {
+//             return res.status(400).send('Please provide an emailaddress to send the files to.');
+//         }
+//     }
+// }
 
-router.get('/ceetest/:which', aw(async (req, res) => {
-    if (process.env.NODE_ENV && ['development','beta'].includes(process.env.NODE_ENV)) {
-        let which = req.params.which;
-        console.log("CEE Test: " + which);
-        try {
-            await qplbackendhandler(which, req, res);
-        } catch (err) {
-            console.error(err);
-            res.status(500).send("CEE Test Error: " + err.message);
-        }
-    }
-    else {
-        res.status(403).send("This endpoint is not available in production mode.");
-    }
-}));
+// router.get('/ceetest/:which', aw(async (req, res) => {
+//     if (process.env.NODE_ENV && ['development','beta'].includes(process.env.NODE_ENV)) {
+//         let which = req.params.which;
+//         console.log("CEE Test: " + which);
+//         try {
+//             await qplbackendhandler(which, req, res);
+//         } catch (err) {
+//             console.error(err);
+//             res.status(500).send("CEE Test Error: " + err.message);
+//         }
+//     }
+//     else {
+//         res.status(403).send("This endpoint is not available in production mode.");
+//     }
+// }));
 
-//END KK TEST
+//END 
 
 
 

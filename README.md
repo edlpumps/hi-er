@@ -100,33 +100,6 @@ Connect to the localhost on port:
 http://127.0.0.1:3003
 ```
 
-## Testing Subscriber XLSX Attachments
-- In your development environment, to test the generation of the subscriber Full and QPL spreadsheets, run `export-file.js`:
-```
-$> node export-file.js
-```
-- To test the **EMAIL** process, you can also log onto the portal as `admin` and type in the following URL:
-`https://<base_url>/admin/export/email/<email_address>` where `<email_address>` is the email address to which you want to receive the spreadsheets.
-  - If `<email_address>` is omitted, email will be sent to the logged-in admin's email address.
-- You will receive two emails:
-  - One with the Qualified Product List listings (Pumps & Circulators)
-  - One with the Full listings (Pumps, Circulators & Certificates)
-  
-- Admin endpoints for downloading the Full Listing spreadsheets to your computer are:
-  - `https://<base_url>/admin/export/pumps`
-  - `https://<base_url>/admin/export/circulators`
-  - `https://<base_url>/admin/export/certificates`
-  
-- Admin endpoints for downloading the QPL Listing spreadsheets to your computer are:
-  - `https://<base_url>/admin/export/pumps/qpl`
-  - `https://<base_url>/admin/export/circulators/qpl`
-
-- Development & Beta testing endpoints:
-  - Beta - `https://<base_url>/ratings/cee_test/<email_address>` - This will send the QPL and Full spreadsheets to the email address entered.
-  - Development - same as Beta plus:
-    - `https://<base_url>/ratings/cee_test/x` - This will download the spreadsheets to the project root folder (ex: `c:/projects/hi-er`)
-  
-  
 ## Deploying a GitHub branch to Heroku
 First, push the branch to GitHub and create a Pull Request.
 
@@ -143,12 +116,14 @@ Make sure all branches are merged to `master` on GitHub.
 
 Follow the steps above to Deploy a GitHub branch to Heroku, but instead, select the `intelliquip-hi/hi-er` project and deploy the `master` branch.
 
+
 ## ER LABELS
 - There are **hard coded** values for Pump Annual Run Hours (4000), Circulator Annual Run Hours (2500) and the Cost/KwH ($0.15). These are used in the Energy & Cost Savings calculations. (`routes/common.js`)
 - The year of the DOE Circulator Efficiency Regulation is a variable that is passed into the label pub (`utils/label_builder.js,  views/svg/circulator-label.pug`)
 - These values can easily become Environment Variables.
 - The *Meets the 2028 DOE circulator efficiency regulation* line on the large *Circulator Pump Label* should only display if the CEI value that is displayed in the black bar on the label is less than or equal to 1.00. (`utils/label_builder.js`)
   
+
 ### PNG to URI
 - If you add an image to the Energy Ratings label (such as a logo or icon), you need to convert the image to URI content and save that as a file.
   - Use an online coverter like `https://site24x7.com/tools/image-to-datauri.html`
@@ -164,6 +139,7 @@ Follow the steps above to Deploy a GitHub branch to Heroku, but instead, select 
 - The URI that is generated for the Circulator Labels with the approval check on the bottom of the large label are generated from:
   - All languages (`views/svg/hi-approval-check`): HI-Approval-Check-s.png
 
+
 ## TRANSLATIONS TO OTHER LANGUAGES
 - Pump LABELS can be translated using the English/French toggle at the top right of all Pump Detail pages.  
 - The pump details themselves are only translated for the PUBLIC pages (not the Admin or Participant pages per design).
@@ -173,6 +149,13 @@ Follow the steps above to Deploy a GitHub branch to Heroku, but instead, select 
     - label_lang
 - These are handled independently in the code. 
 
+
+## TESTING SUBSCRIBER EMAIL ATTACHMENTS (FULL & QPL LISTINGS)
+- In your development environment, to test the generation of the subscriber Full and QPL spreadsheets, run `export-file.js`:
+```
+$> node export-file.js
+```
+  
 ## Generate README.PDF
 - Make sure the `Markdown PDF` extension is installed on Visual Studio Code (Author yzane).
 - Open the README.md file

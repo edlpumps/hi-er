@@ -12,6 +12,7 @@ const get_listed = async () => {
 
 
 const fill_data = (listing, row) => {
+    const calculator = require('./calculator');
     if (listing.packager) {
         row.packager_name = listing.packager.name;
         row.packager_company = listing.packager.company;
@@ -50,69 +51,101 @@ const fill_data = (listing, row) => {
     row.extended_pei = listing.pei.toFixed(2);
     row.extended_er = listing.energy_rating.toFixed(0);
     row.certificate_number = listing.certificate_number;
+    
+    let retval = calculator.calculate_certificate_hp_group_and_tier(listing);
+    if (retval.cee_tier != "None") {
+        retval.cee_tier = "Tier " + retval.cee_tier;
+    }
+    row.hp_group = retval.hp_group;
+    row.cee_tier = retval.cee_tier;
 }
 
 const prep_for_export = (listings, user) => {
-    const calculator = require('./calculator');
     const rows = [];
-    let filtered = filter_certificates(listings, user);
+    let filtered = exports.filterCertificates(listings, user);
     for (var listing of filtered) {
         //console.log(`Processing Cert No: ${listing.certificate_number}`);
         //console.log(`Listing details: ${JSON.stringify(listing, null, 2)}`);
         const row = {}
         fill_data(listing, row);
-        let calc_map = {rating_id: row.pump_rating_id, pei: row.extended_pei, energy_rating: row.extended_er, motor_power_rated: row.vfd_power}
-        let retval = calculator.calculate_pump_hp_group_and_tier(calc_map);
-        if (retval.cee_tier != "None") {
-            retval.cee_tier = "Tier " + retval.cee_tier;
-        }
-        row.hp_group = retval.hp_group;
-        row.cee_tier = retval.cee_tier;
         rows.push(row);
     }
     return rows;
 }
 
+function invalid_field(id, field_str, value) {
+    if (!value || value == "xx" || value == "test" || value == "n/a" || value == "none") {
+        console.log(`Certificate ${id} has invalid ${field_str}: ${value}`);
+        return id;
+    }
+    return null;
+}
+
 const filter_certificates = (certificates, user) => {
     let filtered = certificates;
     if (!certificates || !certificates.length) return filtered;
+    let is_user_admin = false;
     if (user && user.admin) {
-        return filtered;
+        is_user_admin = true;
     }
-    // Check "packager" fields Make sure packager name and company
-    filtered = filtered.filter(p => {
-        if ("packager" in p && p.packager) {
-            let name = p.packager.name.toLowerCase();
-            if (name != "xx" && name != "test" && name != "n/a" && name != "none" && name != "") {
-                let company  = p.packager.company.toLowerCase();
-                return (company != "xx" && company != "test" && company != "n/a" && company != "none" && company != "");
-            } 
-            else return false;
-        }
-        else return true;
-    });
-    // Check "vfd" fields.  Make sure there is a basic model
-    filtered = filtered.filter(p => {
-        if ("vfd" in p && p.vfd) {
-            let model  = p.vfd.model.toLowerCase();
-            return (model != "xx" && model != "test" && model != "n/a" && model != "none" && model != "");
-        }
-        else return true;
-    });
+    let new_filtered = [];
+    let filter_count = {}; 
+    let filtered_list = [];
+    let invalid = null;
     // Check the _id only if it is a string (this is used on the cert search page to retrieve the participants)
-    filtered = filtered.filter(p => {
+    new_filtered = filtered.filter(p => {
         if ("_id" in p && typeof(p._id) === 'string') {
             let id = p._id.toLowerCase();
-            return (id && id != "xx" && id != "test" && id != "n/a" && id != "none");
+            return !invalid_field(p._id, "packager", id);
         }
         else return true;
     });
-    // Check the "pump" fields
-    filtered = filtered.filter(p => {
-        if ("pump" in p) 
-            return (p.pump && p.pump.rating_id && p.pump.participant && p.pump.basic_model);
+    filter_count['identifier'] = filtered.length - new_filtered.length;
+    if (!is_user_admin) filtered = new_filtered;
+    // Check "packager" fields Make sure packager name and company
+    new_filtered = filtered.filter(p => {
+        if ("packager" in p && p.packager) {
+            let name = p.packager.name.toLowerCase();
+            invalid = invalid_field(p.certificate_number, "packager_name", name);
+            if (!invalid) {
+                let company  = p.packager.company.toLowerCase();
+                invalid = invalid_field(p.certificate_number, "company", company);
+            } 
+            if (invalid)
+                filtered_list.push(invalid);
+            return !invalid;
+        }
         else return true;
     });
+    filter_count['packager_company'] = filtered.length - new_filtered.length;
+    if (!is_user_admin) filtered = new_filtered;
+    // Check "vfd" fields.  Make sure there is a basic model
+    new_filtered = filtered.filter(p => {
+        if ("vfd" in p && p.vfd) {
+            let model  = p.vfd.model.toLowerCase();
+            invalid = invalid_field(p.certificate_number, "vfd_model", model);
+            if (invalid) filtered_list.push(invalid);
+            return !invalid;
+        }
+        else return true;
+    });
+    filter_count['vfd_model'] = filtered.length - new_filtered.length;
+    if (!is_user_admin) filtered = new_filtered;
+    // Check the "pump" fields
+    new_filtered = filtered.filter(p => {
+        if ("pump" in p) 
+            if (!p.pump || !p.pump.rating_id || !p.pump.participant || !p.pump.basic_model) {
+                console.log(`Certificate ${p.certificate_number} has invalid pump data`);
+                filtered_list.push(p.certificate_number);
+                return false;
+            }
+        return true;
+    });
+    filter_count['pump'] = filtered.length - new_filtered.length;
+    if (!is_user_admin) filtered = new_filtered;
+    if (filtered.length != certificates.length) {
+        console.log("Filtered out " + (certificates.length - filtered.length) + " certificates");
+    }
     return filtered;
 }
 

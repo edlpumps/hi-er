@@ -584,39 +584,41 @@ router.post("/api/labs/delete/:id", function (req, res) {
 router.post("/api/users/delete/:id", common.deleteUser);
 router.post("/api/users/add", common.addUser)
 
-// EXPORTS
-async function exportAsyncEmailHandler(req, res) {
-    var recipient = req.params.recipient;
-    let user = {admin: true};// Force admin for email export
-    if (!recipient) {
-        recipient = req.user.email;
-        user = { admin: false }; 
-    }
-    const exports = await exporter.create('all',user);
-    mailer.sendListings(recipient, exports.pumps.qpl, exports.circulators.qpl, exports.certificates.qpl, "qpl");
-    mailer.sendListings(recipient, exports.pumps.full, exports.circulators.full, exports.certificates.full, "full");
-    res.status(200).send("Email sent");
-};
+// // EXPORTS Testing
+// // This was used to test the emailing of the Full & QPL spreadsheets
+// // Files can be downloaded in the Available Downloads section of the Admin page.
+// async function exportAsyncEmailHandler(req, res) {
+//     var recipient = req.params.recipient;
+//     let user = {admin: true};// Force admin for email export
+//     if (!recipient) {
+//         recipient = req.user.email;
+//         user = { admin: false }; 
+//     }
+//     const exports = await exporter.create('all',user);
+//     mailer.sendListings(recipient, exports.pumps.qpl, exports.circulators.qpl, exports.certificates.qpl, "qpl");
+//     mailer.sendListings(recipient, exports.pumps.full, exports.circulators.full, exports.certificates.full, "full");
+//     res.status(200).send("Email sent");
+// };
 
-async function exportAsyncHandler(req, res) {
-    let type = "full";
-    // Find the endpoint
-    let which = req.path.split('/')[2];
-    if (req.params.type) {
-        type = req.params.type.toString();
-    }
-    const exports = await exporter.create(which,req.user);
-    res.setHeader('Content-disposition', 'attachment; filename='+which+'-'+type+'.xlsx');
-    res.header('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    console.log('done');
-    return res.send(exports[which][type]);
-}
+// async function exportAsyncHandler(req, res) {
+//     let type = "full";
+//     // Find the endpoint
+//     let which = req.path.split('/')[2];
+//     if (req.params.type) {
+//         type = req.params.type.toString();
+//     }
+//     const exports = await exporter.create(which,req.user);
+//     res.setHeader('Content-disposition', 'attachment; filename='+which+'-'+type+'.xlsx');
+//     res.header('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+//     console.log('done');
+//     return res.send(exports[which][type]);
+// }
 
-router.get("/export/pumps/:type", exportAsyncHandler);
-router.get("/export/pumps", exportAsyncHandler);
-router.get("/export/circulators/:type", exportAsyncHandler);
-router.get("/export/circulators", exportAsyncHandler);
-router.get("/export/certificates/:type", exportAsyncHandler);
-router.get("/export/certificates", exportAsyncHandler);
-router.get("/export/email", exportAsyncEmailHandler);
-router.get("/export/email/:recipient", exportAsyncEmailHandler);
+// router.get("/export/pumps/:type", exportAsyncHandler);
+// router.get("/export/pumps", exportAsyncHandler);
+// router.get("/export/circulators/:type", exportAsyncHandler);
+// router.get("/export/circulators", exportAsyncHandler);
+// router.get("/export/certificates/:type", exportAsyncHandler);
+// router.get("/export/certificates", exportAsyncHandler);
+// router.get("/export/email", exportAsyncEmailHandler);
+// router.get("/export/email/:recipient", exportAsyncEmailHandler);

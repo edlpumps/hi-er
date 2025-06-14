@@ -546,8 +546,7 @@ router.post("/search/:skip/:limit", aw(async (req, res) => {
     count = count - (certificates.length - filtered.length);
     let rows = [];
     for (var row of filtered) {
-        let calc_map = {rating_id: row.certificate_number, pei: row.pei, energy_rating: row.energy_rating, motor_power_rated: row.vfd.power}
-        let retval = calculator.calculate_pump_hp_group_and_tier(calc_map);
+        let retval = calculator.calculate_certificate_hp_group_and_tier(row);
         row._doc.hp_group = retval.hp_group;
         row._doc.cee_tier = retval.cee_tier == "None"? "": retval.cee_tier;
         rows.push(row);
