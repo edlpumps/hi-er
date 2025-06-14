@@ -7,7 +7,7 @@ const common = require('./utils/export_common')
 
 var gParticipants = null;
 
-exports.create = async (which="all") => {
+exports.create = async (which="all", user={'admin': false}) => {
     let retval = {
         pumps: {
             qpl: null,
@@ -45,7 +45,7 @@ exports.create = async (which="all") => {
     if (which == "certificates" || which == "all") {
         console.log("Building certificate excel file");
         const certificates = await certificateExport.getCertificates();
-        const certificates_rows = certificateExport.getExportable(certificates);
+        const certificates_rows = certificateExport.getExportable(certificates, user);
         retval['certificates']['full'] = await common.toXLSX(certificates_rows, 
             {'headers': common.certificate_full_headers,'type': 'certificates', 'type_of_data': 'full'});
         retval['certificates']['qpl'] = await common.toXLSX(certificates_rows, 

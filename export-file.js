@@ -39,7 +39,7 @@ const go = async function (interval, override) {
             schemas.init(mongoose);
 
             try {
-                const { pumps, circulators, certificates } = await exporter.create();
+                const { pumps, circulators, certificates } = await exporter.create('all', {'admin': true});
                 for (var list of [pumps, circulators, certificates]) {
                     let list_str = list == pumps ? "pumps" : list == circulators ? "circulators" : "certificates";
                     for (var key of Object.keys(list)) {

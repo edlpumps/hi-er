@@ -335,7 +335,7 @@ const push_emails = async function (interval, override) {
         return;
     }
     try {
-        const {pumps, circulators, certificates} = await exporter.create();
+        const {pumps, circulators, certificates} = await exporter.create('all', {'admin': false});
 
         const subs_full = await app.locals.db.Subscribers.find({
             interval_days: interval,

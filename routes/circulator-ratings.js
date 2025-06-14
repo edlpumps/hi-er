@@ -65,7 +65,7 @@ router.get('/', aw(async function (req, res) {
     const filter = {
         $match: {
             $and: [{
-                listed: true
+                listed: { $eq: true }
             }, {
                 pending: { $ne: true }
             }

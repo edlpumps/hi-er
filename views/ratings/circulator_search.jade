@@ -155,7 +155,9 @@ block content
 											option(value="")
 											option(v-for='brand in search.participant.brands', :value='brand') {{brand}}
 							.form-group
-								label.col-sm-3.control-label CEE
+								label.col-sm-3.control-label 
+									+searchInfo_button()
+									span CEE
 								.col.col-sm-6
 									ul.list-group
 										li.list-group-item
@@ -208,3 +210,5 @@ block content
 											h4(style='margin-top:0px') {{pump.least.pei.toFixed(2)}}
 											.small(v-if="pump.cee_tier", style="padding:unset; margin-bottom:0px") CEE
 											h4(v-if="pump.cee_tier", style='margin-top:0px;') Tier {{pump.cee_tier}}
+
+			+search_modal()
