@@ -183,7 +183,7 @@ router.get('/participant/:id/pumps', aw(async (req, res) => {
 
     const participant = await req.Participants.findById(req.params.id).exec();
     const skip = parseInt(req.query.skip || 0);
-    const limit = parseInt(req.query.limit && req.query.limit < 100 ? req.query.limit : 10);
+    const limit = (req.query.limit ? Math.min(parseInt(req.query.limit), common.pump_query_limit) : common.pump_query_limit);
     const response = await req.Pumps.search(participant, req.query.search, parseInt(skip), parseInt(limit));
 
     //Set page language to english

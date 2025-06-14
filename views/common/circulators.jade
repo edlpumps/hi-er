@@ -53,23 +53,28 @@ mixin vue_circulator_components()
 	script#v-circulator-label(type='text/x-template')
 		section.text-center(v-if='pump')
 			div.padded
-				img(v-if='!public', :src='"/participant/circulators/"+pump._id+"/svg/label"')
+				img(v-if='public != "true"', :src='"/participant/circulators/"+pump._id+"/svg/label"')
 				img(v-else, :src='"/circulator/ratings/"+pump._id+"/svg/label"')
-				
-				span(v-if='!public')
-					br
-					a(:href='"/participant/circulators/"+pump._id+"/svg/label?download=true"').margin-right Download SVG
-					a(:href='"/participant/circulators/"+pump._id+"/png/label?download=true"') Download PNG
-			div.padded(v-if='!public')
+				- var pump_id = ""
+				- if ((public != "true") && pump && pump._id)
+					- pump_id = ""+pump._id+"";
+				span(v-if='public != "true"')
+					p
+					+download_circulator(pump_id,'SVG','/svg/label')
+					| &nbsp;&nbsp;
+					+download_circulator(pump_id, 'PNG','/png/label')
+			div.padded(v-if='public != "true"')
 				img(:src='"/participant/circulators/"+pump._id+"/svg/sm-label"')
-				br
-				a(:href='"/participant/circulators/"+pump._id+"/svg/sm-label?download=true"').margin-right Download SVG
-				a(:href='"/participant/circulators/"+pump._id+"/png/sm-label?download=true"') Download PNG
-			div.padded(v-if='!public')
+				p
+				+download_circulator(pump_id,'SVG','/svg/sm-label')
+				| &nbsp;&nbsp;
+				+download_circulator(pump_id,'PNG','/png/sm-label')
+			div.padded(v-if='public != "true"')
 				img(:src='"/participant/circulators/"+pump._id+"/svg/qr"')
-				br
-				a(:href='"/participant/circulators/"+pump._id+"/svg/qr?download=true"').margin-right Download SVG
-				a(:href='"/participant/circulators/"+pump._id+"/png/qr?download=true"') Download PNG
+				p
+				+download_circulator(pump_id,'SVG','/svg/qr')
+				| &nbsp;&nbsp;
+				+download_circulator(pump_id,'PNG','/png/qr')
 		
 
 	script#v-circulator-data-details(type='text/x-template')
@@ -145,7 +150,7 @@ mixin vue_circulator_components()
 				
 				
 				
-				.help-block(v-if='!public') #{i18n.t("note_input_power_not_shown_to_public",{lng:page_lang})}
+				.help-block(v-if='public != "true"') #{i18n.t("note_input_power_not_shown_to_public",{lng:page_lang})}
 		
 	script#v-circulator-details(type='text/x-template')
 		section

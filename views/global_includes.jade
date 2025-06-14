@@ -82,7 +82,7 @@ mixin qplInfo_button()
         button.btn-warning.btn-sm(style="color:black;font-weight:bold;margin-left:5px;",type="button") 
           | Request a QPL
       a(href="#")
-        .glyphicon.glyphicon-question-sign(id="iconinfo", style="margin-left:5px;",type="button", title="Click for information", data-toggle="modal", data-target="#qpl-info")
+        .glyphicon.glyphicon-question-sign(style="margin-left:5px;",type="button", title="Click for information", data-toggle="modal", data-target="#qpl-info")
         
 mixin search_modal(which)
   .modal.fade#search-info(tabindex='-1', role='dialog' aria-labelledby='titleLabel')
@@ -101,5 +101,16 @@ mixin search_modal(which)
 
 mixin searchInfo_button()
       a(href="#")
-        .glyphicon.glyphicon-question-sign(id="iconinfo", style="margin-right:5px;",type="button", title="Click for information", data-toggle="modal", data-target="#search-info")
+        .glyphicon.glyphicon-question-sign(style="margin-right:5px;",type="button", title="Filter by CEE Tier.\nClick for additional information", data-toggle="modal", data-target="#search-info")
        
+mixin download_pump(label,link)
+      a(href="/labels/#{participant._id}/#{pump._id}"+link+"?download=true")
+        button.btn-warning.btn-sm(style="color:black;font-weight:bold;margin-left:5px;",type="button") #{label}
+          | &nbsp;
+          .span.glyphicon.glyphicon-download-alt  
+
+mixin download_circulator(id,label,link)
+      a(href="/participant/circulators/"+id+link+"?download=true")
+        button.btn-warning.btn-sm(style="color:black;font-weight:bold;margin-left:5px;",type="button") #{label}
+          | &nbsp;
+          .span.glyphicon.glyphicon-download-alt

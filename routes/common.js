@@ -3,6 +3,7 @@ var units = require('../utils/uom');
 var mailer = require('../utils/mailer');
 const moment = require('moment');
 
+exports.pump_query_limit = 100;
 
 exports.validateEmail = function (email) {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;

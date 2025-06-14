@@ -47,12 +47,12 @@ block content
                     li.list-group-item
                       .checkbox
                         label
-                            input(type="checkbox", ng-model="app.search.cl") 
+                            input(type="checkbox", ng-model="app.search.cl", ng-change="app.clickLoad()") 
                             | Constant Load
                     li.list-group-item
                       .checkbox
                         label
-                            input(type="checkbox", ng-model="app.search.vl") 
+                            input(type="checkbox", ng-model="app.search.vl", ng-change="app.clickLoad()") 
                             | Variable Load
              .form-group
               label.col-sm-3.control-label 
@@ -87,11 +87,11 @@ block content
               label.col-sm-3.control-label 
                
               .col.col-sm-5
-               button.btn.btn-primary(ng-hide='app.search_error', type="button", ng-click="app.getPumps(); app.searched = true") Search for Rated Pumps
-            
+               button.btn.btn-primary(ng-hide="(app.pumps_error || app.search_error)", type="button", ng-click="app.getPumps();") Search for Rated Pumps 
+
          p.alert.alert-warning(ng-show="app.pumps_error") {{app.pumps_error}}
          p.alert.alert-warning(ng-show="app.search_error") {{app.search_error}}
-         .panel.panel-default(ng-show="(!app.pumps_error && !app.search_error)")
+         .panel.panel-default(ng-show="(!app.pumps_error && !app.search_error && app.search.fresh || app.searching)")
            .panel-heading
              h1 
               | Results 

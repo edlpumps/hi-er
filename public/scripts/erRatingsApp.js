@@ -30,10 +30,10 @@ var defaults = {
   il: true,
   rsv: true,
   st: true,
-  tier1: true,
-  tier2: true,
-  tier3: true,
-  tiernone: true
+  tier1: false,
+  tier2: false,
+  tier3: false,
+  tiernone: false
 };
 
 var app = angular.module('ERRatingsApp', ['rzModule']);
@@ -103,6 +103,7 @@ var ERRatingsController = function ($scope, $location, service, $http) {
       vm.search = JSON.parse(JSON.stringify(defaults));
     }
     vm.search.fresh = false;
+    vm.is_valid_search_variables();
     console.log("Search Initialized: ", vm.search);
     return vm.search;
   }
@@ -113,18 +114,42 @@ var ERRatingsController = function ($scope, $location, service, $http) {
     }
   }
 
-  vm.getPumps = function () {
+  vm.is_valid_search_variables = function () {
+    vm.search_error = "";
+    let search_sep = "";
+    vm.pumps_error = "";
     if (!vm.search.rating_id && !vm.search.participant && !vm.search.basic_model) {
       vm.pumps = [];
       vm.pumps_error = "You must enter at least one of the following:  Rating ID, Basic Model Number, Brand, or Participant";
-      return;
-    }
-    if (!vm.search.participant) {
-      vm.search.brand = "";
     }
     if (!vm.search.cl && !vm.search.vl) {
-      vm.search_error = "At least one load type must be specified (CL, VL, or both)";
+      vm.search_error += search_sep+"At least one load type must be specified (CL, VL, or both)";
+      search_sep="\n";
+    }
+    if (!vm.search.cl && !vm.search.vl) {
+      vm.search_error += search_sep+"At least one load type must be specified (CL, VL, or both)";
+      search_sep="\n";
+    }
+    if (!vm.search.esfm && !vm.search.escc && !vm.search.il && !vm.search.rsv && !vm.search.st) {
+      vm.search_error += search_sep+"At least one DOE designation must be specified";
+      search_sep="\n";
+    }
+    if (vm.search_error || vm.pumps_error) {
+      console.log("Search Error: "+vm.search_error);
+      console.log("Pumps Error: "+vm.pumps_error);
+      return false;
+    }
+    return true;
+  }
+
+  vm.getPumps = function () {
+    vm.search.fresh = false;
+
+    if (!vm.is_valid_search_variables()) 
       return;
+
+    if (!vm.search.participant) {
+      vm.search.brand = "";
     }
 
     vm.pumps_error = false;
@@ -134,6 +159,7 @@ var ERRatingsController = function ($scope, $location, service, $http) {
       vm.searching = false;
       vm.pumps = results.data.pumps;
       vm.pumps_error = false;
+      vm.search.fresh = true;
       vm.save_search_variables();
     }).catch(function (error) {
       vm.pumps_error = true;
@@ -143,6 +169,10 @@ var ERRatingsController = function ($scope, $location, service, $http) {
   }
 
   vm.getBrands = function () {
+    if (!vm.is_valid_search_variables() && vm.pumps_error) {
+      return;
+    }
+
     if (!vm.search) {
       vm.load_search_variables();
     }
@@ -173,14 +203,8 @@ var ERRatingsController = function ($scope, $location, service, $http) {
     if (vm.search.max_er === undefined) {
       vm.search.max_er = 100;
     }
-    if (!vm.search.cl && !vm.search.vl) {
-      vm.search_error = "At least one load type must be specified (CL, VL, or both)";
+    if (!vm.is_valid_search_variables()) 
       return;
-    }
-    if (!vm.search.esfm && !vm.search.escc && !vm.search.il && !vm.search.rsv && !vm.search.st) {
-      vm.search_error = "At least one DOE designation must be specified";
-      return;
-    }
 
     vm.counting = true;
     service.count(vm.search).then(function (results) {
@@ -217,6 +241,16 @@ var ERRatingsController = function ($scope, $location, service, $http) {
     return retval.length ? retval[0] : "Unknown";
   }
 
+  vm.clickLoad = function () {
+    if (!vm.search.cl && !vm.search.vl) {
+      vm.search_error = "At least one load type must be specified (CL, VL, or both)";
+      return;
+    }
+    if (vm.search_error) {
+      vm.search_error = "";
+    }
+    return;
+  }
 
   vm.erSlider = {
     options: {
