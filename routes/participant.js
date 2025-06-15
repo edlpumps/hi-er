@@ -859,7 +859,7 @@ router.post("/api/model_check", function (req, res) {
 
 router.get("/api/pumps", aw(async (req, res) => {
     const skip = req.query.skip || 0;
-    const limit = req.query.limit && req.query.limit < 100 ? req.query.limit : 10;
+    const limit = Math.min(parseInt(req.query.limit), common.pump_query_limit);
     const response = await req.Pumps.search(req.participant, req.query.search, parseInt(skip), parseInt(limit));
     res.json(response);
 }));

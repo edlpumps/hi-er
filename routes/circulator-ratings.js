@@ -2,7 +2,6 @@
 
 const express = require('express');
 const router = express.Router();
-const default_search_operators = require('../search').params;
 const aw = require('./async_wrap');
 const svg_builder = require('../utils/label_builder.js');
 const lang = require('../utils/language.js');

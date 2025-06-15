@@ -176,7 +176,7 @@ var ERParticipantController = function ($scope, $location, service) {
   vm.settings_readonly = true;
   vm.count = 0;
   vm.skip = 0;
-  vm.limit = 10;
+  vm.limit = 100;
 
 
   vm.post_search_query = function () {

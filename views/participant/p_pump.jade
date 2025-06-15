@@ -151,24 +151,24 @@ block content
           .row.solo
             .col.col-xs-12.text-center
               img(src="/labels/#{participant._id}/#{pump._id}/png", style="width:100%; max-width:600px;")
-              p 
-               a(href="/labels/#{participant._id}/#{pump._id}/png?download=true") Download as PNG
-               | &nbsp;&nbsp; - &nbsp;&nbsp; 
-               a(href="/labels/#{participant._id}/#{pump._id}/svg?download=true") Download as SVG 
+              .row(style="margin-top:6px;")
+                  +download_pump('SVG','/svg')
+                  | &nbsp;&nbsp;
+                  +download_pump('PNG','/png')
           .row.solo
             .col.col-xs-12.text-center
               img(src="/labels/#{participant._id}/#{pump._id}/png-sm", style="width:100%; max-width:400px;")
-              p 
-               a(href="/labels/#{participant._id}/#{pump._id}/png-sm?download=true") Download as PNG
-               | &nbsp;&nbsp; - &nbsp;&nbsp; 
-               a(href="/labels/#{participant._id}/#{pump._id}/svg-sm?download=true") Download as SVG 
+              .row(style="margin-top:6px;")
+                  +download_pump('SVG','/svg-sm')
+                  | &nbsp;&nbsp;
+                  +download_pump('PNG','/png-sm')
           .row.solo
             .col.col-xs-12.text-center
               img(src="/labels/#{participant._id}/#{pump._id}/qr/png", style="width:100%; max-width:600px;")
-              p
-               a(href="/labels/#{participant._id}/#{pump._id}/qr/png?download=true") Download as PNG
-               | &nbsp;&nbsp; - &nbsp;&nbsp; 
-               a(href="/labels/#{participant._id}/#{pump._id}/qr?download=true") Download as SVG 
+              .row(style="margin-top:6px;")
+                  +download_pump('SVG','/qr')
+                  | &nbsp;&nbsp;
+                  +download_pump('PNG','/qr/png')
               
           
       .panel.panel-default

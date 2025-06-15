@@ -17,13 +17,14 @@ block script
 							basic_model: null,
 							participant: null,
 							brand: undefined,
-							tier1: true,
-							tier2: true,
-							tiernone: true
+							tier1: false,
+							tier2: false,
+							tiernone: false
 						},
 						participants: [],
 						searching: false, 
-						restoring: false
+						restoring: false,
+						pumps_error: false
 					},
 
 					mounted: function () {
@@ -70,11 +71,25 @@ block script
 
 					computed: {
 						search_ready: function() {
-							return this.search.participant || this.search.rating_id || this.search.basic_model
+							if (this.search.participant || this.search.rating_id || this.search.basic_model) {
+								this.pumps_error = false;
+								return true;
+							}
+							this.pumps_error = "You must enter at least one of the following:  Rating ID, Basic Model Number, Brand, or Participant";
+							return false;
 						}
 					},         
 					watch: {
+						'search.rating_id': function() {
+							this.search_ready
+							return;
+						},
+						'search.basic_model': function() {
+							this.search_ready
+							return;
+						},
 						'search.participant': function() {
+							this.search_ready
 							if ( this.restoring ) {
 								this.restoring = false;
 								return;
@@ -85,6 +100,10 @@ block script
 					},
 					methods: {
 						findPumps: function() {
+							if (!this.search_ready) {
+								console.error("Search not ready");
+								return;
+							}
 							this.searching = true;
 
 							const search = {
@@ -179,7 +198,8 @@ block content
 									label.col-sm-3.control-label 
 									.col.col-sm-5
 										button.btn.btn-primary(v-if='search_ready', type="button", @click='findPumps') Search for Rated Pumps
-					.panel.panel-default
+					.alert.alert-warning(v-if='pumps_error') {{pumps_error}}
+					.panel.panel-default(v-if='!pumps_error')
 						.panel-heading
 							h1 
 								span Results 

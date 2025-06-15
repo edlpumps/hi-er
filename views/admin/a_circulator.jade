@@ -63,16 +63,15 @@ block content
           .row
             .col.col-xs-12
               circulator-data-details(:pump='pump', :units='units')  
-          //-.row(v-if='pump')
-            .col.col-xs-12
-              a(:href="'/participant/circulators/'+pump._id+'/export'").btn.btn-danger Download full data
+          .row(v-if='pump')
+            .col.col-xs-12.text-center
+              a(:href="'/admin/participant/#{participant._id}/circulators/#{pump._id}/export'").btn.btn-danger Download full data
       .panel.panel-default(v-if='pump')
         .panel-heading 
             h2 Downloadable Media
         .panel-body
           section.text-center(v-if='pump')
-            
-            img(:src='pump._id+"/svg/label"')
+            circulator-label(:pump="pump", :public="false", :is_admin="true")
 
       .panel.panel-default
         .panel-heading

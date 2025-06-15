@@ -1105,7 +1105,7 @@ var filter_pumps_by_cee_tiers = function(pumps, tiers_obj, type) {
     //Remove empty strings from the tiers_list
     tiers_list = tiers_list.filter(str => str !== "");
     if (!tiers_list.length) {
-        tiers_list.push("None");
+        tiers_list= ["1","2","3","None"];
     }
     let new_pumps = [];
     try {
