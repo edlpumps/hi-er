@@ -18,6 +18,24 @@ var configurations = [{
   }
 ];
 
+var defaults = {
+  brand: null,
+  participant: null,
+  min_er: 0,
+  max_er: 100,
+  cl: true,
+  vl: true,
+  esfm: true,
+  escc: true,
+  il: true,
+  rsv: true,
+  st: true,
+  tier1: false,
+  tier2: false,
+  tier3: false,
+  tiernone: false
+};
+
 var app = angular.module('ERRatingsApp', ['rzModule']);
 app.config(['$httpProvider', function ($httpProvider) {
   $httpProvider.defaults.cache = false;
@@ -73,18 +91,65 @@ var ERRatingsController = function ($scope, $location, service, $http) {
     vm.participants = results.data.participants;
   })
 
-  vm.getPumps = function () {
+  //This is called when the page loads.  the page is shared by utilities and search
+  vm.load_search_variables = function (id) {
+    vm.id = id;
+    const saved = localStorage.getItem(vm.id+'_ratings_search');
+    if (saved) {
+      vm.search = JSON.parse(saved);
+      console.log("Loading Saved Search");
+      }
+    else {
+      vm.search = JSON.parse(JSON.stringify(defaults));
+    }
+    vm.search.fresh = false;
+    vm.is_valid_search_variables();
+    console.log("Search Initialized: ", vm.search);
+    return vm.search;
+  }
+
+  vm.save_search_variables = function () {
+    if (vm.id) {
+      localStorage.setItem(vm.id+'_ratings_search', JSON.stringify(vm.search));
+    }
+  }
+
+  vm.is_valid_search_variables = function () {
+    vm.search_error = "";
+    let search_sep = "";
+    vm.pumps_error = "";
     if (!vm.search.rating_id && !vm.search.participant && !vm.search.basic_model) {
       vm.pumps = [];
       vm.pumps_error = "You must enter at least one of the following:  Rating ID, Basic Model Number, Brand, or Participant";
-      return;
-    }
-    if (!vm.search.participant) {
-      vm.search.brand = "";
     }
     if (!vm.search.cl && !vm.search.vl) {
-      vm.search_error = "At least one load type must be specified (CL, VL, or both)";
+      vm.search_error += search_sep+"At least one load type must be specified (CL, VL, or both)";
+      search_sep="\n";
+    }
+    if (!vm.search.cl && !vm.search.vl) {
+      vm.search_error += search_sep+"At least one load type must be specified (CL, VL, or both)";
+      search_sep="\n";
+    }
+    if (!vm.search.esfm && !vm.search.escc && !vm.search.il && !vm.search.rsv && !vm.search.st) {
+      vm.search_error += search_sep+"At least one DOE designation must be specified";
+      search_sep="\n";
+    }
+    if (vm.search_error || vm.pumps_error) {
+      console.log("Search Error: "+vm.search_error);
+      console.log("Pumps Error: "+vm.pumps_error);
+      return false;
+    }
+    return true;
+  }
+
+  vm.getPumps = function () {
+    vm.search.fresh = false;
+
+    if (!vm.is_valid_search_variables()) 
       return;
+
+    if (!vm.search.participant) {
+      vm.search.brand = "";
     }
 
     vm.pumps_error = false;
@@ -94,6 +159,8 @@ var ERRatingsController = function ($scope, $location, service, $http) {
       vm.searching = false;
       vm.pumps = results.data.pumps;
       vm.pumps_error = false;
+      vm.search.fresh = true;
+      vm.save_search_variables();
     }).catch(function (error) {
       vm.pumps_error = true;
       vm.searching = false;
@@ -102,6 +169,13 @@ var ERRatingsController = function ($scope, $location, service, $http) {
   }
 
   vm.getBrands = function () {
+    if (!vm.is_valid_search_variables() && vm.pumps_error) {
+      return;
+    }
+
+    if (!vm.search) {
+      vm.load_search_variables();
+    }
     var p = {};
     if (vm.search.participant) {
       p.name = vm.search.participant;
@@ -112,6 +186,7 @@ var ERRatingsController = function ($scope, $location, service, $http) {
       .success(function (docs) {
         console.log(docs);
         vm.brands = docs.brands;
+        vm.save_search_variables();
       });
   }
 
@@ -119,17 +194,7 @@ var ERRatingsController = function ($scope, $location, service, $http) {
     vm.search_error = "";
     console.log(vm.search);
     if (!vm.search) {
-      vm.search = {
-        min_er: 0,
-        max_er: 100,
-        cl: true,
-        vl: true,
-        esfm: true,
-        escc: true,
-        il: true,
-        rsv: true,
-        st: true
-      }
+      vm.load_search_variables();
     }
 
     if (!vm.search.min_er) {
@@ -138,19 +203,14 @@ var ERRatingsController = function ($scope, $location, service, $http) {
     if (vm.search.max_er === undefined) {
       vm.search.max_er = 100;
     }
-    if (!vm.search.cl && !vm.search.vl) {
-      vm.search_error = "At least one load type must be specified (CL, VL, or both)";
+    if (!vm.is_valid_search_variables()) 
       return;
-    }
-    if (!vm.search.esfm && !vm.search.escc && !vm.search.il && !vm.search.rsv && !vm.search.st) {
-      vm.search_error = "At least one DOE designation must be specified";
-      return;
-    }
 
     vm.counting = true;
     service.count(vm.search).then(function (results) {
       vm.counting = false;
       vm.num_pumps = results.data.pumps;
+      vm.save_search_variables();
     }).catch(function (error) {
       vm.pumps_error = true;
       vm.counting = false;
@@ -159,12 +219,15 @@ var ERRatingsController = function ($scope, $location, service, $http) {
   }
 
   vm.load_search = function () {
-
-    if (vm.search && !vm.search.fresh) {
+    if (!vm.search) {
+      vm.load_search_variables();
+    }
+    if (vm.search && !vm.search.fresh && vm.search.participant) {
       vm.getPumps();
       vm.getBrands();
     }
   }
+
   vm.load_count = function () {
     vm.countPumps();
   }
@@ -178,6 +241,16 @@ var ERRatingsController = function ($scope, $location, service, $http) {
     return retval.length ? retval[0] : "Unknown";
   }
 
+  vm.clickLoad = function () {
+    if (!vm.search.cl && !vm.search.vl) {
+      vm.search_error = "At least one load type must be specified (CL, VL, or both)";
+      return;
+    }
+    if (vm.search_error) {
+      vm.search_error = "";
+    }
+    return;
+  }
 
   vm.erSlider = {
     options: {
@@ -189,10 +262,6 @@ var ERRatingsController = function ($scope, $location, service, $http) {
       }
     }
   };
-
-
-
-
 }
 
 

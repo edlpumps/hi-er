@@ -61,3 +61,60 @@ mixin language_switch(active)
         .btn-group.btn-group-xs 
           button(type='button', data-lang='en', class=(label_lang == 'en' ? 'btn lang_switch btn-toggle-on' : 'btn lang_switch btn-dark') title='English labels') English
           button(type='button', data-lang='fr', class=(label_lang == 'fr' ? 'btn lang_switch btn-toggle-on' : 'btn lang_switch btn-dark') title='French labels') French
+
+mixin qplInfo_modal()
+  .modal.fade#qpl-info(tabindex='-1', role='dialog' aria-labelledby='titleLabel')
+    .modal-dialog.modal-lg
+        .modal-content
+            .modal-header
+                button(type='button', class='close' data-dismiss='modal') &times;
+                h4.modal-title#title Qualified Product List (QPL) 
+            .modal-body  
+              | The pump models listed in the HI Energy Rating Database can be utilized by utilities and incentive program implementers to create qualified product lists for pump incentive programs.
+              | All listed models have been tested at approved test labs in accordance with HI 40.7.<br><br>
+              | Click the <i>Request a QPL</i> button to submit a request to periodically receive a spreadsheet of pump models in the HI Energy Rating Database that includes the models, the energy rating, PEI and CEE Tier.
+
+mixin qplInfo_button()
+  ul.nav.navbar-right 
+   li(style="margin-right:10px;")
+    .btn-group.btn-group-xs
+      a(href="https://www.pumps.org/qpl-access-request", target="_blank")
+        button.btn-warning.btn-sm(style="color:black;font-weight:bold;margin-left:5px;",type="button") 
+          | Request a QPL
+      a(href="#")
+        .glyphicon.glyphicon-question-sign(style="margin-left:5px;",type="button", title="Click for information", data-toggle="modal", data-target="#qpl-info")
+        
+mixin search_modal(which)
+  .modal.fade#search-info(tabindex='-1', role='dialog' aria-labelledby='titleLabel')
+    .modal-dialog.modal-lg
+        .modal-content
+            .modal-header
+                button(type='button', class='close' data-dismiss='modal') &times;
+                h4.modal-title#title Consortium for Energy Efficiency (CEE)
+            .modal-body(class=which)  
+                | CEE is a consortium primarily of utility efficiency program administrators from across the United States and Canada. The CEE Pump Systems Initiative defines a  
+                if (which == 'pump') 
+                  | Tier 1 performance metric for constant load clean water pumps and a Tier 2 and Tier 3 for variable load clean water pumps, respectively.<br><br>
+                else
+                  | Tier 1 and Tier 2 performance metric for circulator pumps.<br><br>
+                | To learn more about the CEE Pump System Initiative, please visit their website at <a href="https://www.cee1.org" target="_blank">www.cee1.org</a>.<br><br>
+
+mixin searchInfo_button()
+      a(href="#")
+        .glyphicon.glyphicon-question-sign(style="margin-right:5px;",type="button", title="Filter by CEE Tier.\nClick for additional information", data-toggle="modal", data-target="#search-info")
+       
+mixin download_pump(label,link)
+      a(href="/labels/#{participant._id}/#{pump._id}"+link+"?download=true")
+        button.btn-warning.btn-sm(style="color:black;font-weight:bold;margin-left:5px;",type="button") #{label}
+          | &nbsp;
+          .span.glyphicon.glyphicon-download-alt  
+
+mixin download_circulator(is_admin,id,label,link)
+      a(v-if='is_admin' href=id+link+"?download=true") 
+        button.btn-warning.btn-sm(style="color:black;font-weight:bold;margin-left:5px;",type="button") #{label}
+          | &nbsp;
+          .span.glyphicon.glyphicon-download-alt
+      a(v-else href="/participant/circulators/"+id+link+"?download=true")
+        button.btn-warning.btn-sm(style="color:black;font-weight:bold;margin-left:5px;",type="button") #{label}
+          | &nbsp;
+          .span.glyphicon.glyphicon-download-alt

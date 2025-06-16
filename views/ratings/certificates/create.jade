@@ -8,7 +8,7 @@ block styles
             padding-right:5em;
         }
 block content
-    .container#vue(v-cloak, data-units=(JSON.stringify(units)), data-search=(JSON.stringify(search)), data-participants=(JSON.stringify(participants)))
+    .container#vue(v-cloak, data-units=(JSON.stringify(units)), data-participants=(JSON.stringify(participants)))
         form.form-horizontal
          .panel.panel-default.hi-panel-search.rating_panel
           .panel-heading
@@ -67,8 +67,10 @@ block content
                         .col.hidden-xs.col-sm-2.energy_badge
                            .small(style="padding-top:20px; margin-bottom:0px") Energy Rating
                            h2(style="margin-top:0px") {{pump.energy_rating}}
-                           .small(style="padding-top:20px; margin-bottom:0px") PEI
+                           .small(style="padding: unset;") PEI
                            h4(style='margin-top:0px') {{pump.pei.toFixed(2)}}
+                           .small(v-if="pump.cee_tier.length", style="padding: unset;") CEE
+                           h4(v-if="pump.cee_tier.length", style='margin-top:0px') Tier {{pump.cee_tier}}
                         .col.hidden-xs.col.col-sm-2(style='padding-top:2em')
                             a.btn.btn-danger(v-bind:href="'/ratings/certificates/create/'+pump.rating_id") Create ER Certificate 
                         .col.hidden-sm.hidden-md.hidden-lg.hidden-xs.col.col-xs-3(style='padding-top:2em')

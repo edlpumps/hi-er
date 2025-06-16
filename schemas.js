@@ -134,7 +134,8 @@ exports.init = function init(mongoose) {
         organization: String,
         recipients: [String],
         last_email_date: Date,
-        interval_days: Number
+        interval_days: Number,
+        type_of_data: String
     }, {
         usePushEach: true
     });

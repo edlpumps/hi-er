@@ -16,11 +16,15 @@ block script
 							rating_id: null,
 							basic_model: null,
 							participant: null,
-							brand: undefined
+							brand: undefined,
+							tier1: false,
+							tier2: false,
+							tiernone: false
 						},
 						participants: [],
-						searching: false,
-						restoring: false
+						searching: false, 
+						restoring: false,
+						pumps_error: false
 					},
 
 					mounted: function () {
@@ -49,7 +53,15 @@ block script
 							if (this.search.participant && _saved.brand) {
 								this.search.brand = _saved.brand;
 							}
-
+							if ( _saved.tier1 != null) {
+								this.search.tier1 = _saved.tier1;
+							}
+							if (_saved.tier2 != null) {
+								this.search.tier2 = _saved.tier2;
+							}
+							if (_saved.tiernone != null) {
+								this.search.tiernone = _saved.tiernone;
+							}
 							console.log(this.search);
 							if (this.search_ready) {
 								this.findPumps();
@@ -59,11 +71,25 @@ block script
 
 					computed: {
 						search_ready: function() {
-							return this.search.participant || this.search.rating_id || this.search.basic_model
+							if (this.search.participant || this.search.rating_id || this.search.basic_model) {
+								this.pumps_error = false;
+								return true;
+							}
+							this.pumps_error = "You must enter at least one of the following:  Rating ID, Basic Model Number, Brand, or Participant";
+							return false;
 						}
 					},         
 					watch: {
+						'search.rating_id': function() {
+							this.search_ready
+							return;
+						},
+						'search.basic_model': function() {
+							this.search_ready
+							return;
+						},
 						'search.participant': function() {
+							this.search_ready
 							if ( this.restoring ) {
 								this.restoring = false;
 								return;
@@ -74,13 +100,20 @@ block script
 					},
 					methods: {
 						findPumps: function() {
+							if (!this.search_ready) {
+								console.error("Search not ready");
+								return;
+							}
 							this.searching = true;
 
 							const search = {
 								rating_id: this.search.rating_id,
 								basic_model: this.search.basic_model,
 								participant: this.search.participant ? this.search.participant._id : undefined,
-								brand: this.search.brand
+								brand: this.search.brand,
+								tier1: this.search.tier1,
+								tier2: this.search.tier2,
+								tiernone: this.search.tiernone
 							}							
 							console.log("Circ Search Parameters: "+JSON.stringify(search,null,2));
 							localStorage.setItem('circulator_search', JSON.stringify(search));
@@ -141,10 +174,32 @@ block content
 											option(value="")
 											option(v-for='brand in search.participant.brands', :value='brand') {{brand}}
 							.form-group
+								label.col-sm-3.control-label 
+									+searchInfo_button()
+									span CEE
+								.col.col-sm-6
+									ul.list-group
+										li.list-group-item
+											.checkbox
+												label
+													input(type="checkbox", v-model="search.tiernone") 
+													| None
+										li.list-group-item
+											.checkbox
+												label
+													input(type="checkbox", v-model="search.tier1") 
+													| Tier 1
+										li.list-group-item
+											.checkbox
+												label
+													input(type="checkbox", v-model="search.tier2") 
+													| Tier 2
+							.form-group
 									label.col-sm-3.control-label 
 									.col.col-sm-5
 										button.btn.btn-primary(v-if='search_ready', type="button", @click='findPumps') Search for Rated Pumps
-					.panel.panel-default
+					.alert.alert-warning(v-if='pumps_error') {{pumps_error}}
+					.panel.panel-default(v-if='!pumps_error')
 						.panel-heading
 							h1 
 								span Results 
@@ -170,6 +225,10 @@ block content
 														control-method(:method='method')
 										.col.col-xs-4.col-sm-2.energy_badge
 											.small(style="padding-top:20px; margin-bottom:0px") Energy Rating
-											h2(style="margin-top:0px") {{pump.least.energy_rating.toFixed(0)}}
-											.small(style="padding-top:20px; margin-bottom:0px") CEI
+											h2(style="margin-top:0px;") {{pump.least.energy_rating.toFixed(0)}}
+											.small(style="padding:unset;") CEI
 											h4(style='margin-top:0px') {{pump.least.pei.toFixed(2)}}
+											.small(v-if="pump.cee_tier", style="padding:unset; margin-bottom:0px") CEE
+											h4(v-if="pump.cee_tier", style='margin-top:0px;') Tier {{pump.cee_tier}}
+
+			+search_modal()

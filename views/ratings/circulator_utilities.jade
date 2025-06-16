@@ -2,7 +2,6 @@ extends layout
 block nav
 	+navigation("utility")
 block script
-		script(src='/scripts/vue-slider.js')
 		script.
 				
 				new Vue({
@@ -32,12 +31,8 @@ block script
 										'max': [335]
 								}
 						});
-						ranger.noUiSlider.on('update', function () {
-								const vals = ranger.noUiSlider.get();
-								v.search.min = parseInt(vals[0]);
-								v.search.max = parseInt(vals[1]);
-						});
-						ranger.noUiSlider.on('end', function () {
+						//Set is called when the user stop sliding, or taps on the bar or uses arrow keys
+						ranger.noUiSlider.on('set', function () {
 								const vals = ranger.noUiSlider.get();
 								v.search.min = parseInt(vals[0]);
 								v.search.max = parseInt(vals[1]);
@@ -81,6 +76,7 @@ block content
 								a(href="/ratings/utilities") C&amp;I Pumps
 							li.active
 								a(href="#") Circulator Pumps
+							+qplInfo_button()
 						.form-group
 							label.col-sm-3.control-label Energy rating range
 							.col.col-sm-9(style="padding-top:5px")
@@ -100,3 +96,5 @@ block content
 								p.text-info(v-if="count != 1") There are {{count}} pumps in listed in the HI Energy Ratings program that fit the criteria you've specified above.
 							.col.col-sm-6(v-else="app.counting")
 								p: img(src="/images/loading-bar.gif")
+
+			+qplInfo_modal()

@@ -5,7 +5,7 @@ block nav
 
 block content
   div.ng-cloak(ng-app='ERRatingsApp')
-    .container(ng-controller="ERRatingsController as app",ng-init="app.units = #{JSON.stringify(units)}; app.search= #{JSON.stringify(search)}; app.load_search()")
+    .container(ng-controller="ERRatingsController as app",ng-init="app.units = #{JSON.stringify(units)}; app.search=app.load_search_variables('search'); app.load_search()")
         form.form-horizontal
         
          
@@ -35,10 +35,11 @@ block content
                .col.col-sm-6
                  select.form-control(ng-model="app.search.participant", ng-options="p for p in app.participants", ng-change="app.getBrands()")
                   option(value="")
-             .form-group(ng-show="app.search.participant && app.brands.length")
+             .form-group(ng-show="app.search.participant.length && app.brands.length")
                label.col-sm-3.control-label Brand
                .col.col-sm-6
                  select.form-control(ng-model="app.search.brand", ng-options="p for p in app.brands")
+                  option(value="")
              .form-group
                label.col-sm-3.control-label Load
                .col.col-sm-6
@@ -46,22 +47,51 @@ block content
                     li.list-group-item
                       .checkbox
                         label
-                            input(type="checkbox", ng-model="app.search.cl", ng-change="app.countPumps()") 
+                            input(type="checkbox", ng-model="app.search.cl", ng-change="app.clickLoad()") 
                             | Constant Load
                     li.list-group-item
                       .checkbox
                         label
-                            input(type="checkbox", ng-model="app.search.vl", ng-change="app.countPumps()") 
+                            input(type="checkbox", ng-model="app.search.vl", ng-change="app.clickLoad()") 
                             | Variable Load
+             .form-group
+              label.col-sm-3.control-label 
+
+             .form-group
+              label.col-sm-3.control-label 
+                +searchInfo_button()
+                span CEE
+              .col.col-sm-6
+                ul.list-group
+                  li.list-group-item
+                    .checkbox
+                      label
+                          input(type="checkbox", ng-model="app.search.tiernone") 
+                          | None
+                  li.list-group-item
+                    .checkbox
+                      label
+                          input(type="checkbox", ng-model="app.search.tier1") 
+                          | Tier 1
+                  li.list-group-item
+                    .checkbox
+                      label
+                          input(type="checkbox", ng-model="app.search.tier2") 
+                          | Tier 2
+                  li.list-group-item
+                    .checkbox
+                      label
+                          input(type="checkbox", ng-model="app.search.tier3") 
+                          | Tier 3
              .form-group
               label.col-sm-3.control-label 
                
               .col.col-sm-5
-               button.btn.btn-primary(ng-hide='app.search_error', type="button", ng-click="app.getPumps(); app.searched = true") Search for Rated Pumps
-            
+               button.btn.btn-primary(ng-hide="(app.pumps_error || app.search_error)", type="button", ng-click="app.getPumps();") Search for Rated Pumps 
+
          p.alert.alert-warning(ng-show="app.pumps_error") {{app.pumps_error}}
          p.alert.alert-warning(ng-show="app.search_error") {{app.search_error}}
-         .panel.panel-default(ng-show="(!app.pumps_error && !app.search_error)")
+         .panel.panel-default(ng-show="(!app.pumps_error && !app.search_error && app.search.fresh || app.searching)")
            .panel-heading
              h1 
               | Results 
@@ -83,14 +113,17 @@ block content
                         .col.hidden-xs.col-sm-4(style="padding-top:20px")
                            p Diameter:  {{pump.diameter * app.units.diameter.factor | number:3}} {{app.units.diameter.label}}
                            p Speed:  {{pump.speed}} rpm
-                           p {{pump.stages}} stages
+                           p {{pump.stages}} {{pump.stages > 1 ? 'stages' : 'stage'}}
                            p {{pump.configuration == 'bare' || pump.configuration == 'pump_motor' ? "Constant Load (CL)" : "Variable Load (VL)"}}
                         .col.col-xs-4.col-sm-2.energy_badge
                            .small(style="padding-top:20px; margin-bottom:0px") Energy Rating
                            h2(style="margin-top:0px") {{pump.energy_rating}}
-                           .small(style="padding-top:20px; margin-bottom:0px") PEI
+                           .small(style="padding: unset;") PEI
                            h4(style='margin-top:0px') {{pump.pei.toFixed(2)}}
+                           .small(ng-show="(pump.cee_tier.length)", style="padding: unset;") CEE
+                           h4(ng-show="(pump.cee_tier.length)", style='margin-top:0px') Tier {{pump.cee_tier}}
 
+      +search_modal('pump')
 
                  
                             

@@ -12,6 +12,7 @@ const get_listed = async () => {
 
 
 const fill_data = (listing, row) => {
+    const calculator = require('./calculator');
     if (listing.packager) {
         row.packager_name = listing.packager.name;
         row.packager_company = listing.packager.company;
@@ -43,16 +44,28 @@ const fill_data = (listing, row) => {
         row.vfd_model = listing.vfd.model;
         row.vfd_power = listing.vfd.power;
     }
+    if (listing.date) {
+        //Convert date to string
+        row.date = listing.date.toISOString().split('T')[0];
+    }
     row.extended_pei = listing.pei.toFixed(2);
     row.extended_er = listing.energy_rating.toFixed(0);
-    row.date = listing.date;
     row.certificate_number = listing.certificate_number;
+    
+    let retval = calculator.calculate_certificate_hp_group_and_tier(listing);
+    if (retval.cee_tier != "None") {
+        retval.cee_tier = "Tier " + retval.cee_tier;
+    }
+    row.hp_group = retval.hp_group;
+    row.cee_tier = retval.cee_tier;
 }
 
-const prep_for_export = (listings) => {
+const prep_for_export = (listings, user) => {
     const rows = [];
-
-    for (const listing of listings) {
+    let filtered = exports.filterCertificates(listings, user);
+    for (var listing of filtered) {
+        //console.log(`Processing Cert No: ${listing.certificate_number}`);
+        //console.log(`Listing details: ${JSON.stringify(listing, null, 2)}`);
         const row = {}
         fill_data(listing, row);
         rows.push(row);
@@ -60,84 +73,82 @@ const prep_for_export = (listings) => {
     return rows;
 }
 
-const toXLXS = (rows) => {
-    const headers = [
-        'certificate_number',
-        'date',
-        'pump_rating_id',
-        'pump_basic_model',
-        'pump_brand',
-        'pump_doe',
-        'pump_pei',
-        'pump_er',
-
-        'packager_name',
-        'packager_company',
-        'packager_email',
-        'installation_site_name',
-        'installation_site_address',
-        'motor_manufacturer',
-
-        'motor_model',
-        'motor_efficiency',
-
-        'motor_power',
-        'motor_type',
-        'vfd_manufacturer',
-        'vfd_model',
-        'vfd_power',
-        'extended_pei',
-
-        'extended_er'
-    ];
-
-    let sorter = function (a, b) {
-        let i = headers.indexOf(a.value);
-        let j = headers.indexOf(b.value);
-        return i - j;
+function invalid_field(id, field_str, value) {
+    if (!value || value == "xx" || value == "test" || value == "n/a" || value == "none") {
+        console.log(`Certificate ${id} has invalid ${field_str}: ${value}`);
+        return id;
     }
+    return null;
+}
 
-    const headings = {
-        'certificate_number': 'Certificate Number',
-        'date': "Date",
-        'pump_rating_id': "Basic Model Rating ID",
-        'pump_basic_model': "Basic Model Number",
-        'pump_brand': "Brand",
-        'pump_doe': "DOE Designation",
-        'pump_pei': "Basic Model PEI",
-        'pump_er': "Basic Model Energy Rating",
-
-        'packager_name': "Packager Name",
-        'packager_company': "Packaging Company",
-        'packager_email': "Packager Email",
-        'installation_site_name': "Installation Site",
-        'installation_site_address': "Installation Site Address",
-        'motor_manufacturer': "Motor Manufacturer",
-
-
-        'motor_model': "Motor Model",
-        'motor_efficiency': "Motor Efficiency",
-
-        'motor_power': "Motor Power",
-        'motor_type': "Motor Type",
-        'vfd_manufacturer': "VFD Manufactuer",
-        'vfd_model': "VFD Model",
-        'vfd_power': "VFD Power",
-        'extended_pei': "Extended Product PEI",
-
-        'extended_er': "Extended Product Energy Rating",
-
-    };
-    console.log("MAKING Certificate EXCEL");
-    console.log(JSON.stringify(rows, null, 2));
-    const buffer = toxl(rows, {
-        sort: sorter,
-        headings: headings
+const filter_certificates = (certificates, user) => {
+    let filtered = certificates;
+    if (!certificates || !certificates.length) return filtered;
+    let is_user_admin = false;
+    if (user && user.admin) {
+        is_user_admin = true;
+    }
+    let new_filtered = [];
+    let filter_count = {}; 
+    let filtered_list = [];
+    let invalid = null;
+    // Check the _id only if it is a string (this is used on the cert search page to retrieve the participants)
+    new_filtered = filtered.filter(p => {
+        if ("_id" in p && typeof(p._id) === 'string') {
+            let id = p._id.toLowerCase();
+            return !invalid_field(p._id, "packager", id);
+        }
+        else return true;
     });
-    console.log("RETURNING Certificate EXCEL");
-    return buffer;
+    filter_count['identifier'] = filtered.length - new_filtered.length;
+    if (!is_user_admin) filtered = new_filtered;
+    // Check "packager" fields Make sure packager name and company
+    new_filtered = filtered.filter(p => {
+        if ("packager" in p && p.packager) {
+            let name = p.packager.name.toLowerCase();
+            invalid = invalid_field(p.certificate_number, "packager_name", name);
+            if (!invalid) {
+                let company  = p.packager.company.toLowerCase();
+                invalid = invalid_field(p.certificate_number, "company", company);
+            } 
+            if (invalid)
+                filtered_list.push(invalid);
+            return !invalid;
+        }
+        else return true;
+    });
+    filter_count['packager_company'] = filtered.length - new_filtered.length;
+    if (!is_user_admin) filtered = new_filtered;
+    // Check "vfd" fields.  Make sure there is a basic model
+    new_filtered = filtered.filter(p => {
+        if ("vfd" in p && p.vfd) {
+            let model  = p.vfd.model.toLowerCase();
+            invalid = invalid_field(p.certificate_number, "vfd_model", model);
+            if (invalid) filtered_list.push(invalid);
+            return !invalid;
+        }
+        else return true;
+    });
+    filter_count['vfd_model'] = filtered.length - new_filtered.length;
+    if (!is_user_admin) filtered = new_filtered;
+    // Check the "pump" fields
+    new_filtered = filtered.filter(p => {
+        if ("pump" in p) 
+            if (!p.pump || !p.pump.rating_id || !p.pump.participant || !p.pump.basic_model) {
+                console.log(`Certificate ${p.certificate_number} has invalid pump data`);
+                filtered_list.push(p.certificate_number);
+                return false;
+            }
+        return true;
+    });
+    filter_count['pump'] = filtered.length - new_filtered.length;
+    if (!is_user_admin) filtered = new_filtered;
+    if (filtered.length != certificates.length) {
+        console.log("Filtered out " + (certificates.length - filtered.length) + " certificates");
+    }
+    return filtered;
 }
 
 exports.getCertificates = get_listed;
 exports.getExportable = prep_for_export;
-exports.toXLXS = toXLXS;
+exports.filterCertificates = filter_certificates;

@@ -180,7 +180,7 @@ block content
                     .most
                       energy-rating(:value='pump.most.energy_rating')
                   td(v-else)
-                    energy-rating(:value='pump.least.energy_rating')               
+                    energy-rating(:value='pump.least.energy_rating')              
                   td(v-if='user.participant_edit') 
                      button(v-if="pump.pending", type="button", @click='pump_to_delete=pump', data-toggle="modal" data-target="#delete").btn.btn-danger.btn-xs Delete
 

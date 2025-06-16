@@ -26,6 +26,8 @@ block content
               .col.col-sm-6.text-center
                 h4 Energy Rating
                 p.er_display #{pump.energy_rating}
+                if pump.cee_tier
+                  p.cee_tier CEE: Tier #{pump.cee_tier}
              .row
               .col.col-sm-12.text-center
                 img(src="/images/doe/#{pump_drawing}").hidden-xs
@@ -43,13 +45,25 @@ block content
           .row.solo
             .col.col-xs-12.text-center
               img(src="/labels/#{participant._id}/#{pump._id}/png", style="width:100%; max-width:600px;")
+              .row(style="margin-top:6px;")
+                  +download_pump('SVG','/svg')
+                  | &nbsp;&nbsp;
+                  +download_pump('PNG','/png')
           .row.solo
             .col.col-xs-12.text-center
               img(src="/labels/#{participant._id}/#{pump._id}/png-sm", style="width:100%; max-width:400px;")
+              .row(style="margin-top:6px;")
+                  +download_pump('SVG','/svg-sm')
+                  | &nbsp;&nbsp;
+                  +download_pump('PNG','/png-sm')
           
           .row.solo
             .col.col-xs-12.text-center
               img(src="/labels/#{participant._id}/#{pump._id}/qr/png", style="width:100%; max-width:600px;")
+              .row(style="margin-top:6px;")
+                  +download_pump('SVG','/qr')
+                  | &nbsp;&nbsp;
+                  +download_pump('PNG','/qr/png')
 
       if pump.revisions && pump.revisions.length > 1
        .panel.panel-default

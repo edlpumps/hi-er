@@ -217,6 +217,9 @@ var configure = function () {
 ////////////////////////////////////////////////////
 // Database configuration
 ////////////////////////////////////////////////////
+// Per deprecation warning
+mongoose.set('strictQuery', false);
+
 var conn = mongoose.connect(data_connection_str, {
 }, function (err, res) {
     if (err) {
@@ -318,31 +321,46 @@ var push_weekly = async function () {
 var push_twice_a_month = async function () {
     await push_emails(15);
 }
-
+var push_once_a_month = async function () {
+    await push_emails(30);
+}
 
 
 
 
 
 const push_emails = async function (interval, override) {
+    if (process.env.NODE_ENV && ['development', 'beta'].includes(process.env.NODE_ENV)) {
+        console.log("Skipping email push interval["+interval+"] in development/beta mode");
+        return;
+    }
     try {
-        const { pumps, circulators, certificates } = await exporter.create();
+        const {pumps, circulators, certificates} = await exporter.create('all', {'admin': false});
 
-        const subs = await app.locals.db.Subscribers.find({
-            interval_days: interval
+        const subs_full = await app.locals.db.Subscribers.find({
+            interval_days: interval,
+            type_of_data: "full"
         }).exec()
 
 
-        let recips = [];
+        const subs_qpl = await app.locals.db.Subscribers.find({
+            interval_days: interval,
+            type_of_data: "qpl"
+        }).exec()
+
+        let recips = {qpl: [], full: []};
         if (override !== undefined) {
-            recips = [override]
+            recips.full = [override]
         } else {
-            for (const subscriber of subs) {
-                recips = recips.concat(subscriber.recipients);
+            for (const subscriber of subs_full) {
+                recips.full = recips.full.concat(subscriber.recipients);
+            }
+            for (const subscriber of subs_qpl) {
+                recips.qpl = recips.qpl.concat(subscriber.recipients);
             }
         }
-
-        mailer.sendListings(recips, pumps, circulators, certificates);
+        mailer.sendListings(recips.qpl, pumps.qpl, circulators.qpl, certificates.qpl, 'qpl');
+        mailer.sendListings(recips.full, pumps.full, circulators.full, certificates.full, 'full');
     } catch (ex) {
         console.error(ex);
     }
@@ -360,7 +378,10 @@ weekly.hour = 13;
 weekly.minute = 10;
 
 const twiceAMonth = "0 11 1,15 * *"
+const onceAMonth = "0 11 1 * *"
 
+//sched.scheduleJob("5,10,15,20,25,30,35,40,45,50,55 * * * *", push_once_a_month);
 sched.scheduleJob(daily, push_daily);
 sched.scheduleJob(weekly, push_weekly);
 sched.scheduleJob(twiceAMonth, push_twice_a_month);
+sched.scheduleJob(onceAMonth, push_once_a_month);

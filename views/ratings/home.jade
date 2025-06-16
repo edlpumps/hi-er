@@ -4,8 +4,12 @@ block nav
 block styles
     style.
         .tile {
-            padding-left:5em;
-            padding-right:5em;
+            padding-left:4em;
+            padding-right:4em;
+        }
+        .tile-3 {
+            padding-left:2em;
+            padding-right:2em;
         }
 block content
   div.ng-cloak(ng-app='ERRatingsApp')
@@ -19,7 +23,7 @@ block content
                 
           .panel-body
             .row.ratings_home
-                .col.col-sm-12.tile
+                .col.col-sm-12(class=process.env.CERTIFICATES_ENABLED ? 'tile' : 'tile-3')
                     p 
                         span The HI Energy Rating database allows the public to search for energy efficient commercial/industrial pumps 
                         if process.env.CIRCULATORS
@@ -27,7 +31,7 @@ block content
                         span that are within the scope described in HI 40.5 and HI 41.5 Program Guidelines, respectively. HI 40.5 provides the program requirements for labeling and listing clean water pumps identified in the energy conservation standard developed by the US Department of Energy. 
                         if process.env.CIRCULATORS
                             span HI 41.5 provides the program requirements for labeling and listing clean water circulator pumps and describes the test method for evaluating circulator performance. 
-                        span The public can view and verify data on pumps with an HI Energy Rating (ER) Label. The ER Label is designed to clearly indicate the power savings obtained from pump system upgrades and changes. Manufacturers use the ER Label to differentiate products by power consumption. Public utilities and power companies can use the ER Label for incentive programs and rebates. Listed pumps have been tested at approved labs in accordance with HI 40.7.
+                        span The public can view and verify data on pumps with an HI Energy Rating (ER) Label. The ER Label is designed to clearly indicate the power savings obtained from pump system upgrades and changes. Manufacturers use the ER Label to differentiate products by power consumption. Public utilities and power companies can use the ER Label for incentive programs and rebates. The Consortium for Energy Efficiency (CEE) Pump Initiative defines efficiency tier levels and their qualifying products based on HI Energy Rating listed pumps. Listed pumps have been tested at approved labs in accordance with HI 40.7.
               //-.col.col-sm-12
                 p 
                  | HI developed the standard, HI 40.6, for testing pumps and determining their efficiency in a uniform and consistent manner.  The US Department of Energy (DOE) published an Energy Conservation Standard (ECS) and Uniform Test Procedure (TP) for Pumps on January 27, 2016; and in the uniform test procedure, HI 40.6 is incorporated by reference.  The ECS and TP can be referenced at 10 CFR 431.465 and 10 CFR 431.464 & Appendix A to Subpart Y.  
@@ -57,12 +61,13 @@ block content
                                 .glyphicon.glyphicon-unchecked.margin-right
                                 | ER Certificates
                             p Calculate a new ER and generate ER Certificates when adding a motor and/or continuous control to a constant load bare pump.
-                    .col.col-sm-6.tile
+                .row.ratings-home
+                   .col.col-sm-6.tile
                         a(href="/ratings/utilities")
                             h1 
                                 .glyphicon.glyphicon-stats.margin-right
-                                | Utility Search
-                            p Analyze the Energy Ratings database to see how many pumps achieve a given Energy Rating range.  This is especially helpful for utilities.
+                                | Qualified Product List
+                            p Explore how many pumps achieve a given Energy Rating range and explore options for utilities to receive a qualified product list. This is especially helpful for energy utilities offering energy incentive programs.
                     .col.col-sm-6.tile
                         a(href="/ratings/search")
                             h1 
@@ -71,25 +76,25 @@ block content
                             p Search for pumps by Basic Model Number, Manufacturer, and Rating ID - which can be found on the Hydraulic Energy Rating label distributed with the pump.
             else
                .row.ratings_home
-                    .col.col-sm-4
+                    .col.col-sm-4.tile-3
                         a(href="/portal")
                             h1 
                                 .glyphicon.glyphicon-log-in.margin-right
                                 | ER Program Portal
                             p Register as an Energy Rating Program participant to create pump energy rating labels, QR codes, and more.
-                    .col.col-sm-4
+                    .col.col-sm-4.tile-3
+                        a(href="/ratings/utilities")
+                            h1 
+                                .glyphicon.glyphicon-stats.margin-right
+                                | Qualified Product List
+                            p Explore how many pumps achieve a given Energy Rating range and explore options for utilities to receive a qualified product list. This is especially helpful for energy utilities offering energy incentive programs.
+                    .col.col-sm-4.tile-3
                         a(href="/ratings/search")
                             h1 
                                 .glyphicon.glyphicon-search.margin-right
                                 | Search Pumps
                             p Search for pumps by Basic Model Number, Manufacturer, and Rating ID - which can be found on the Hydraulic Energy Rating label distributed with the pump.
-                    .col.col-sm-4
-                        a(href="/ratings/utilities")
-                            h1 
-                                .glyphicon.glyphicon-stats.margin-right
-                                | Utility Search
-                            p Analyze the Energy Ratings database to see how many pumps achieve a given Energy Rating range.  This is especially helpful for utilities.
-                    
+                                       
             .row(style='margin-top:2em'): .col.col-xs-12: .well
              pAll Pump Energy Index (PEI) and Circulator Energy Index (CEI) representations are made by the participating pump manufacturer. The Hydraulic Institute makes no representation or warranty as to the suitability of the PEI or CEI information provided and does not purport to verify its accuracy. It is the responsibility of each participating pump manufacturer to ensure that all representations in this Energy Rating database are made in accordance with the requirements of the HI 40.5 and HI 41.5 Program Guideline, as well as with applicable regulatory requirements. Decisions based upon this material are the exclusive responsibility of the user. The Hydraulic Institute assumes no responsibility for any direct, indirect, special, incidental, or consequential damages arising from manufacturers’ listings in the Energy Rating database.
           

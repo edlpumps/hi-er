@@ -5,7 +5,8 @@ const common = require('./common');
 const mailer = require('../utils/mailer');
 const aw = require('./async_wrap');
 const svg_builder = require('../utils/label_builder.js');
-const exporter = require('../exporter');
+const fs = require('fs');
+const Circulator = require('../controllers/circulator');
 const lang = require('../utils/language');
 module.exports = router;
 
@@ -183,7 +184,7 @@ router.get('/participant/:id/pumps', aw(async (req, res) => {
 
     const participant = await req.Participants.findById(req.params.id).exec();
     const skip = parseInt(req.query.skip || 0);
-    const limit = parseInt(req.query.limit && req.query.limit < 100 ? req.query.limit : 10);
+    const limit = (req.query.limit ? Math.min(parseInt(req.query.limit), common.pump_query_limit) : common.pump_query_limit);
     const response = await req.Pumps.search(participant, req.query.search, parseInt(skip), parseInt(limit));
 
     //Set page language to english
@@ -241,8 +242,11 @@ router.get('/participant/:id/circulators', aw(async (req, res) => {
 
 
 router.get('/participant/:id/pumps/:pump_id', aw(async (req, res) => {
+    const calculator = require('../calculator');
     const participant = await req.Participants.findById(req.params.id).exec();
     const pump = await req.Pumps.findById(req.params.pump_id).lean().exec();
+    pump.cee_tier = calculator.calculate_pump_hp_group_and_tier(pump).cee_tier;
+    pump.cee_tier = pump.cee_tier == "None" ? "" : pump.cee_tier;
     //Set page language to english
     lang.set_page_language(req, res, 'en');
     res.render("admin/a_pump", {
@@ -258,7 +262,9 @@ router.get('/participant/:id/circulators/:circulator_id', aw(async (req, res) =>
     const circulator = await req.Circulators.findById(req.params.circulator_id).lean().exec();
     //Set page language to english
     lang.set_page_language(req, res, 'en');
-
+    const calculator = require('../calculator');
+    circulator.cee_tier = calculator.calculate_circ_watts_calc_group_and_tier(circulator).cee_tier;
+    circulator.cee_tier = circulator.cee_tier == "None" ? "" : circulator.cee_tier;
     res.render("admin/a_circulator", {
         user: req.user,
         participant: participant,
@@ -276,6 +282,62 @@ router.get('/participant/:id/circulators/:circulator_id/svg/label', aw(async (re
     res.setHeader('Content-Type', 'image/svg+xml');
     res.send(svg);
 }));
+router.get('/participant/:id/circulators/:circulator_id/png/label', aw(async (req, res) => {
+    const pump = await req.Circulators.findById(req.params.circulator_id).populate('participant').exec();
+    const svg = svg_builder.make_circulator_label(req, pump.participant, pump);
+    const png_buffer = svg_builder.svg_to_png(svg);
+    res.setHeader('Content-disposition', 'attachment; filename=Energy Rating Label-' + pump.rating_id + '-('+lang.get_label_language()+').png');
+    res.setHeader('Content-Type', 'image/png');
+    res.setHeader('Content-Length', png_buffer.length);
+    res.status(200).send(png_buffer);
+}));
+router.get('/participant/:id/circulators/:circulator_id/svg/sm-label', aw(async (req, res) => {
+    const pump = await req.Circulators.findById(req.params.circulator_id).populate('participant').exec();
+    const svg = svg_builder.make_circulator_label_small(req, pump.participant, pump);
+    res.setHeader('Content-disposition', 'attachment; filename=Energy Rating Label (sm) - ' + pump.rating_id + '.svg');
+    res.setHeader('Content-Type', 'image/svg+xml');
+    res.send(svg);
+}));
+router.get('/participant/:id/circulators/:circulator_id/png/sm-label', aw(async (req, res) => {
+    const pump = await req.Circulators.findById(req.params.circulator_id).populate('participant').exec();
+    const svg = svg_builder.make_circulator_label_small(req, pump.participant, pump);
+    const png_buffer = svg_builder.svg_to_png(svg);
+    res.setHeader('Content-disposition', 'attachment; filename=Energy Rating Label (sm) - ' + pump.rating_id + '.png');
+    res.setHeader('Content-Type', 'image/png');
+    res.setHeader('Content-Length', png_buffer.length);
+    res.status(200).send(png_buffer);
+}));
+router.get('/participant/:id/circulators/:circulator_id/svg/qr', aw(async (req, res) => {
+    const pump = await req.Circulators.findById(req.params.circulator_id).populate('participant').exec();
+    const svg = svg_builder.make_circulator_qr(req, pump.participant, pump);
+    res.setHeader('Content-disposition', 'attachment; filename=Energy Rating QR - ' + pump.rating_id + '.svg');
+    res.setHeader('Content-Type', 'image/svg+xml');
+    res.send(svg)
+}));
+router.get('/participant/:id/circulators/:circulator_id/png/qr', aw(async (req, res) => {
+    const pump = await req.Circulators.findById(req.params.circulator_id).populate('participant').exec();
+    const svg = svg_builder.make_circulator_qr(req, pump.participant, pump);
+    const png_buffer = svg_builder.svg_to_png(svg);
+    res.setHeader('Content-disposition', 'attachment; filename=Energy Rating QR - ' + pump.rating_id + '.png');
+    res.setHeader('Content-Type', 'image/png');
+    res.setHeader('Content-Length', png_buffer.length);
+    res.status(200).send(png_buffer);
+}));
+
+router.get('/participant/:id/circulators/:circulator_id/export', aw(async (req, res) => {
+    const pump = await req.Circulators.findById(req.params.circulator_id).exec();
+    if (!pump) {
+        return res.sendStatus(404);
+    }
+    const file = await Circulator.export([pump], req.session.unit_set);
+    res.download(file, 'Circulator Pump Listings.xlsx', function (err) {
+        if (err) console.error(err);
+        else fs.unlink(file, function () {
+            console.log('Removed template');
+        });
+    });
+}));
+
 
 router.get('/participant/:id/pumps/:pump_id/download', aw(async (req, res) => {
     const pump = await req.Pumps.findById(req.params.pump_id).populate('participant').exec();
@@ -579,23 +641,41 @@ router.post("/api/labs/delete/:id", function (req, res) {
 router.post("/api/users/delete/:id", common.deleteUser);
 router.post("/api/users/add", common.addUser)
 
+// // EXPORTS Testing
+// // This was used to test the emailing of the Full & QPL spreadsheets
+// // Files can be downloaded in the Available Downloads section of the Admin page.
+// async function exportAsyncEmailHandler(req, res) {
+//     var recipient = req.params.recipient;
+//     let user = {admin: true};// Force admin for email export
+//     if (!recipient) {
+//         recipient = req.user.email;
+//         user = { admin: false }; 
+//     }
+//     const exports = await exporter.create('all',user);
+//     mailer.sendListings(recipient, exports.pumps.qpl, exports.circulators.qpl, exports.certificates.qpl, "qpl");
+//     mailer.sendListings(recipient, exports.pumps.full, exports.circulators.full, exports.certificates.full, "full");
+//     res.status(200).send("Email sent");
+// };
 
+// async function exportAsyncHandler(req, res) {
+//     let type = "full";
+//     // Find the endpoint
+//     let which = req.path.split('/')[2];
+//     if (req.params.type) {
+//         type = req.params.type.toString();
+//     }
+//     const exports = await exporter.create(which,req.user);
+//     res.setHeader('Content-disposition', 'attachment; filename='+which+'-'+type+'.xlsx');
+//     res.header('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+//     console.log('done');
+//     return res.send(exports[which][type]);
+// }
 
-router.get("/export/pumps", async (req, res) => {
-    const { pumps, circulators, certificates } = await exporter.create();
-    res.setHeader('Content-disposition', 'attachment; filename=pumps.xlsx');
-    res.header('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    console.log(pumps)
-    return res.send(pumps);
-})
-router.get("/export/circulators", async (req, res) => {
-    const { pumps, circulators, certificates } = await exporter.create();
-    res.setHeader('Content-disposition', 'attachment; filename=pumps.xlsx');
-    res.header('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    return res.send(circulators);
-})
-router.get("/export/certificates", async (req, res) => {
-    const { pumps_excel, circulator_excel, certificates_excel } = await exporter.create();
-    res.header('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    return res.send(certificates_excel);
-})
+// router.get("/export/pumps/:type", exportAsyncHandler);
+// router.get("/export/pumps", exportAsyncHandler);
+// router.get("/export/circulators/:type", exportAsyncHandler);
+// router.get("/export/circulators", exportAsyncHandler);
+// router.get("/export/certificates/:type", exportAsyncHandler);
+// router.get("/export/certificates", exportAsyncHandler);
+// router.get("/export/email", exportAsyncEmailHandler);
+// router.get("/export/email/:recipient", exportAsyncEmailHandler);

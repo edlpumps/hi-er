@@ -11,7 +11,8 @@ const pug = require('pug');
 const archiver = require('archiver');
 const certcalc = require('../certificate_calculator');
 const moment = require('moment');
-
+const calculator = require('../calculator');
+const cert_exports = require('../certificate-export');
 
 router.get('/', aw(async (req, res) => {
     res.render("ratings/certificates/index", {});
@@ -480,6 +481,9 @@ router.get("/er-pump/:id", aw(async (req, res) => {
         res.redirect("/error");
         return;
     }
+    
+    pump.cee_tier = calculator.calculate_pump_hp_group_and_tier(pump).cee_tier;
+    pump.cee_tier = pump.cee_tier == "None"? "": pump.cee_tier;
     res.render("ratings/certificates/c_pump", {
         pump: pump,
         participant: pump.participant,
@@ -493,6 +497,9 @@ router.get("/certificate/:cnumber", aw(async (req, res) => {
     }).populate('pump').exec();
     if (!ct) {
         return res.sendStatus(404, 'Certificate not found');
+    }
+    if (!ct.pump) {
+        return res.sendStatus(404, 'Pump not found for this certificate');
     }
     res.render("ratings/certificates/certificate", {
         certificate: ct
@@ -508,7 +515,8 @@ router.get('/search', aw(async (req, res) => {
             _id: '$packager.company'
         }
     }]);
-    const companies = packagers.map(p => p._id);
+    let filtered = cert_exports.filterCertificates(packagers, req.user);
+    const companies = filtered.map(p => p._id);
     res.render("ratings/certificates/search", {
         companies: companies,
         search: req.session.csearch
@@ -532,9 +540,19 @@ router.post("/search/:skip/:limit", aw(async (req, res) => {
         q.certificate_number = search.cnumber
     }
     const certificates = await req.Certificates.find(q).skip(skip).limit(limit).populate('pump').populate('pump.participant').exec();
-    const count = await req.Certificates.count(q);
+    let count = await req.Certificates.count(q);
+    let filtered = cert_exports.filterCertificates(certificates, req.user);
+    // Reduce the count by the number of items we filtered out
+    count = count - (certificates.length - filtered.length);
+    let rows = [];
+    for (var row of filtered) {
+        let retval = calculator.calculate_certificate_hp_group_and_tier(row);
+        row._doc.hp_group = retval.hp_group;
+        row._doc.cee_tier = retval.cee_tier == "None"? "": retval.cee_tier;
+        rows.push(row);
+    }
     res.json({
-        certificates: certificates,
+        certificates: rows,
         total: count
     });
 }));

@@ -2,10 +2,10 @@
 
 const express = require('express');
 const router = express.Router();
-const default_search_operators = require('../search').params;
 const aw = require('./async_wrap');
 const svg_builder = require('../utils/label_builder.js');
 const lang = require('../utils/language.js');
+const calculator = require('../calculator');
 
 // Route to search (public search)
 router.post('/', aw(async function (req, res) {
@@ -43,8 +43,11 @@ router.post('/', aw(async function (req, res) {
     //console.log("Query: "+JSON.stringify(q));
     const sort_order = {'least.pei': 1, 'basic_model': 1};
     const results = await req.Circulators.find(q).sort(sort_order).populate('participant').exec();
-
-    res.json(results)
+    let new_results = results;
+    
+    new_results = calculator.filter_pumps_by_cee_tiers(results, req.body, 'circulators');
+ 
+    res.json(new_results)
 }));
 
 
@@ -61,7 +64,7 @@ router.get('/', aw(async function (req, res) {
     const filter = {
         $match: {
             $and: [{
-                listed: true
+                listed: { $eq: true }
             }, {
                 pending: { $ne: true }
             }
@@ -123,6 +126,8 @@ router.get("/:id", aw(async (req, res) => {
     }
     //Set page language to the label language
     lang.set_page_language(req, res, lang.get_label_language());
+    pump.cee_tier = calculator.calculate_circ_watts_calc_group_and_tier(pump).cee_tier;
+    pump.cee_tier = pump.cee_tier == "None" ? "": pump.cee_tier;
     res.render("ratings/circulator", {
         pump: pump,
         participant: pump.participant

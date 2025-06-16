@@ -261,7 +261,12 @@ router.get('/:id', aw(async (req, res) => {
         return res.sendStatus(404);
     }
 
+    const calculator = require('../calculator');
+    pump._doc.cee_tier = calculator.calculate_circ_watts_calc_group_and_tier(pump._doc).cee_tier;
+    pump._doc.cee_tier = pump._doc.cee_tier == "None" ? "" : pump._doc.cee_tier;
     const check = await model_check(req, pump);
+    //Set the page lang to english
+    lang.set_page_language(req, res, 'en');
     res.render("participant/p_circulator", {
         user: req.user,
         participant: req.participant,
@@ -330,14 +335,16 @@ router.delete('/:id', aw(async (req, res) => {
 router.get('/:id/svg/label', aw(async (req, res) => {
     const pump = await req.Circulators.findById(req.params.id).populate('participant').exec();
     const svg = svg_builder.make_circulator_label(req, pump.participant, pump);
-    res.setHeader('Content-disposition', 'attachment; filename=Energy Rating Label-' + pump.rating_id + '-('+lang.get_label_language()+').svg');res.setHeader('Content-Type', 'image/svg+xml');
+    res.setHeader('Content-disposition', 'attachment; filename=Energy Rating Label-' + pump.rating_id + '-('+lang.get_label_language()+').svg');
+    res.setHeader('Content-Type', 'image/svg+xml');
     res.send(svg);
 }));
 router.get('/:id/png/label', aw(async (req, res) => {
     const pump = await req.Circulators.findById(req.params.id).populate('participant').exec();
     const svg = svg_builder.make_circulator_label(req, pump.participant, pump);
     const png_buffer = svg_builder.svg_to_png(svg);
-    res.setHeader('Content-disposition', 'attachment; filename=Energy Rating Label-' + pump.rating_id + '-('+lang.get_label_language()+').png');res.setHeader('Content-Type', 'image/png');
+    res.setHeader('Content-disposition', 'attachment; filename=Energy Rating Label-' + pump.rating_id + '-('+lang.get_label_language()+').png');
+    res.setHeader('Content-Type', 'image/png');
     res.setHeader('Content-Length', png_buffer.length);
     res.status(200).send(png_buffer);
 }));
