@@ -93,7 +93,7 @@ var ERRatingsController = function ($scope, $location, service, $http) {
 
   //This is called when the page loads.  the page is shared by utilities and search
   vm.load_search_variables = function (id) {
-    vm.id = id;
+    vm.id = id; // This is the id of the page, either 'search' or 'utilities'
     const saved = localStorage.getItem(vm.id+'_ratings_search');
     if (saved) {
       vm.search = JSON.parse(saved);
@@ -118,7 +118,7 @@ var ERRatingsController = function ($scope, $location, service, $http) {
     vm.search_error = "";
     let search_sep = "";
     vm.pumps_error = "";
-    if (!vm.search.rating_id && !vm.search.participant && !vm.search.basic_model) {
+    if ((vm.id == 'search') && !vm.search.rating_id && !vm.search.participant && !vm.search.basic_model) {
       vm.pumps = [];
       vm.pumps_error = "You must enter at least one of the following:  Rating ID, Basic Model Number, Brand, or Participant";
     }
@@ -222,7 +222,7 @@ var ERRatingsController = function ($scope, $location, service, $http) {
     if (!vm.search) {
       vm.load_search_variables();
     }
-    if (vm.search && !vm.search.fresh && vm.search.participant) {
+    if (vm.is_valid_search_variables() && !vm.search.fresh) {
       vm.getPumps();
       vm.getBrands();
     }
