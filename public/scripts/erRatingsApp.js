@@ -138,6 +138,7 @@ var ERRatingsController = function ($scope, $location, service, $http) {
     if (vm.search_error || vm.pumps_error) {
       console.log("Search Error: "+vm.search_error);
       console.log("Pumps Error: "+vm.pumps_error);
+      vm.search.fresh = false;
       return false;
     }
     return true;
