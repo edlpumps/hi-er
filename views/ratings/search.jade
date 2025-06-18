@@ -25,11 +25,11 @@ block content
              .form-group
                label.col-sm-3.control-label Rating ID
                .col.col-sm-6
-                 input.form-control(ng-model="app.search.rating_id", type="text")
+                 input.form-control(ng-model="app.search.rating_id", type="text", ng-change="app.is_valid_search_variables()")
              .form-group
                label.col-sm-3.control-label Basic Model Number
                .col.col-sm-6
-                 input.form-control(ng-model="app.search.basic_model", type="text")
+                 input.form-control(ng-model="app.search.basic_model", type="text", ng-change="app.is_valid_search_variables()")
              .form-group
                label.col-sm-3.control-label Participating Organization
                .col.col-sm-6

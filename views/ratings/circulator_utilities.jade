@@ -89,12 +89,13 @@ block content
 										p {{search.max}}
 						hr
 						.form-group
-							label.col-sm-3.control-label 
-							.col.col-sm-6(v-if='!searching')
-								h2.utility_search_count {{count}} pumps found
-								p.text-info(v-if="count == 1") There is {{count}} pump in listed in the HI Energy Ratings program that fit the criteria you've specified above.
-								p.text-info(v-if="count != 1") There are {{count}} pumps in listed in the HI Energy Ratings program that fit the criteria you've specified above.
-							.col.col-sm-6(v-else="app.counting")
-								p: img(src="/images/loading-bar.gif")
+							.row(style="min-height:110px")
+								label.col-sm-3.control-label 
+								.col.col-sm-6(v-if='!searching')
+									h2.utility_search_count {{count}} pumps found
+									p.text-info(v-if="count == 1") There is {{count}} pump in listed in the HI Energy Ratings program that fit the criteria you've specified above.
+									p.text-info(v-if="count != 1") There are {{count}} pumps in listed in the HI Energy Ratings program that fit the criteria you've specified above.
+								.col.col-sm-6(v-else="app.counting")
+									p: img(src="/images/loading-bar.gif")
 
 			+qplInfo_modal()

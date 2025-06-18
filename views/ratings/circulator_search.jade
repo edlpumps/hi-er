@@ -24,7 +24,8 @@ block script
 						participants: [],
 						searching: false, 
 						restoring: false,
-						pumps_error: false
+						pumps_error: false,
+						search_fresh: false
 					},
 
 					mounted: function () {
@@ -62,6 +63,7 @@ block script
 							if (_saved.tiernone != null) {
 								this.search.tiernone = _saved.tiernone;
 							}
+							this.search_fresh = false;
 							console.log(this.search);
 							if (this.search_ready) {
 								this.findPumps();
@@ -105,6 +107,7 @@ block script
 								return;
 							}
 							this.searching = true;
+							this.search_fresh = false;
 
 							const search = {
 								rating_id: this.search.rating_id,
@@ -130,6 +133,7 @@ block script
 									v.searching = false;
 							}).done(function (data) {
 									v.searching = false;
+									v.search_fresh = true;
 									v.pumps = data;
 									console.log(v.pumps);
 							});
@@ -199,7 +203,7 @@ block content
 									.col.col-sm-5
 										button.btn.btn-primary(v-if='search_ready', type="button", @click='findPumps') Search for Rated Pumps
 					.alert.alert-warning(v-if='pumps_error') {{pumps_error}}
-					.panel.panel-default(v-if='!pumps_error')
+					.panel.panel-default(v-if='!pumps_error && search_fresh || searching')
 						.panel-heading
 							h1 
 								span Results 

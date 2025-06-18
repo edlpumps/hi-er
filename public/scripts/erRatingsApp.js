@@ -103,6 +103,7 @@ var ERRatingsController = function ($scope, $location, service, $http) {
       vm.search = JSON.parse(JSON.stringify(defaults));
     }
     vm.search.fresh = false;
+    vm.searching = false;
     vm.is_valid_search_variables();
     console.log("Search Initialized: ", vm.search);
     return vm.search;
