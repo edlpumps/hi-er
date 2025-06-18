@@ -34,7 +34,7 @@ router.post('/', aw(async function (req, res) {
     // If the search does not include a rating ID, unlisted pumps
     // are never returned.
     if (!req.body.rating_id) {
-        q.listed = { $eq: true}
+        q.listed = { $eq: true};
     }
     if (!valid) {
         //console.log("Invalid");
@@ -145,17 +145,51 @@ router.get('/:id/svg/label', aw(async (req, res) => {
 router.post('/utilities', aw(async function (req, res) {
     const min = req.body.min || 0;
     const max = Math.min(req.body.max || 335);
-    const count = await req.Circulators.count({
-        'least.energy_rating': {
-            $gte: min,
-            $lt: max + 1
+    const operators = [];
+    operators.push({
+        $match: {
+            'least.energy_rating': {
+                $gte: min,
+                $lt: max + 1
+            }
         }
     });
-    res.json({
-        count: count
+    const criteria = {
+        $and: [{
+            listed: { $eq: true },
+        }, 
+        {
+            $or: [{
+                pending: {
+                    $eq: false
+                }
+                }, {
+                pending: {
+                    $exists: false
+                }
+            }]
+        }]
+    };
+    operators.push({
+        $match: criteria
+    });
+    operators.push({
+        $count: 'count'
+    });
+    req.Circulators.aggregate(operators).exec(function (err, docs) {
+        if (err) {
+            console.log(err);
+        }
+        let count = 0;
+        if (docs.length) {
+            count = docs[0].count;
+        }
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({
+            count: count
+        }));
     });
 }));
-
 
 
 module.exports = router;
