@@ -137,7 +137,7 @@ const filter_certificates = (certificates, user) => {
             filtered_list.push(p.certificate_number);
             return false;
         }
-        invalid = invalid_field(p.certificate_number, "model", model);
+        invalid = invalid_field(p.certificate_number, validate_field, model);
         if (invalid) filtered_list.push(invalid);
         return !invalid;
     });
