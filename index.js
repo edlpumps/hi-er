@@ -337,16 +337,25 @@ const push_emails = async function (interval, override) {
     try {
         const {pumps, circulators, certificates} = await exporter.create('all', {'admin': false});
 
-        const subs_full = await app.locals.db.Subscribers.find({
+        const subs = await app.locals.db.Subscribers.find({
             interval_days: interval,
-            type_of_data: "full"
         }).exec()
-
-
-        const subs_qpl = await app.locals.db.Subscribers.find({
-            interval_days: interval,
-            type_of_data: "qpl"
-        }).exec()
+        
+        let subs_full = [];
+        let subs_qpl = [];
+        for (const sub of subs) {
+            //console.log('Subscriber ['+sub.type_of_data+'] recipients: ' + sub.recipients);
+            if (!sub.type_of_data || sub.type_of_data.includes('full')) {
+                // Only full
+                subs_full.push(sub);
+            }
+            else {
+                if (sub.type_of_data && sub.type_of_data.includes('qpl')) {
+                    // Only qpl
+                    subs_qpl.push(sub);
+                }
+            }
+        }
 
         let recips = {qpl: [], full: []};
         if (override !== undefined) {
@@ -359,8 +368,10 @@ const push_emails = async function (interval, override) {
                 recips.qpl = recips.qpl.concat(subscriber.recipients);
             }
         }
-        mailer.sendListings(recips.qpl, pumps.qpl, circulators.qpl, certificates.qpl, 'qpl');
-        mailer.sendListings(recips.full, pumps.full, circulators.full, certificates.full, 'full');
+        if (recips.qpl.length)
+            mailer.sendListings(recips.qpl, pumps.qpl, circulators.qpl, certificates.qpl, 'qpl');
+        if (recips.full.length)
+            mailer.sendListings(recips.full, pumps.full, circulators.full, certificates.full, 'full');
     } catch (ex) {
         console.error(ex);
     }

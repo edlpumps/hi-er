@@ -121,14 +121,27 @@ const filter_certificates = (certificates, user) => {
     if (!is_user_admin) filtered = new_filtered;
     // Check "vfd" fields.  Make sure there is a basic model
     new_filtered = filtered.filter(p => {
-        if ("vfd" in p && p.vfd) {
-            let model  = p.vfd.model.toLowerCase();
-            invalid = invalid_field(p.certificate_number, "vfd_model", model);
-            if (invalid) filtered_list.push(invalid);
-            return !invalid;
+        let model="";
+        let validate_field = "";
+        //console.log(`${p.vfd.model} ${p.motor.model}`);
+        if (p.vfd && p.vfd.model) {
+            model = p.vfd.model.toLowerCase();
+            validate_field = "vfd_model";
         }
-        else return true;
+        else if (p.motor && p.motor.model) {
+            model  = p.motor.model.toLowerCase();
+            validate_field = "motor_model";
+        }
+        else {
+            console.log(`Certificate ${p.certificate_number} has no motor or vfd model`);
+            filtered_list.push(p.certificate_number);
+            return false;
+        }
+        invalid = invalid_field(p.certificate_number, validate_field, model);
+        if (invalid) filtered_list.push(invalid);
+        return !invalid;
     });
+
     filter_count['vfd_model'] = filtered.length - new_filtered.length;
     if (!is_user_admin) filtered = new_filtered;
     // Check the "pump" fields
