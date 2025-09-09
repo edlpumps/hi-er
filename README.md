@@ -162,3 +162,13 @@ $> node export-file.js
 - Press the 'F1' key
 - Select the `Markdown PDF` extension (or search for it).
 The README.pdf file will automatically be generated.
+
+## Copying MongoDB Collections between databases
+- Use `mongodump` and `mongorestore` commands from a terminal window.
+- Example: Copy all collections from production to local into the 'er' database:
+```
+$> mongodump --uri="mongodb://hi-db-admin:<password>@hi-er-prod-shard-00-00.kq34k.mongodb.net:27017,hi-er-prod-shard-00-01.kq34k.mongodb.net:27017,hi-er-prod-shard-00-02.kq34k.mongodb.net:27017/heroku_b5n55m48?authSource=admin&replicaSet=atlas-obx42v-shard-0&w=majority&readPreference=primary&retryWrites=true&ssl=true" --out ~/dump
+```
+```
+$> mongorestore --host localhost -db er ~/dump/heroku_b5n55m48
+```

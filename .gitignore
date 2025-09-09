@@ -1,6 +1,9 @@
 db-snapshot/*
 delete.txt
 
+# Rider
+.idea/
+
 # Logs
 logs
 *.log
