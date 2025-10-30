@@ -149,6 +149,8 @@ Follow the steps above to Deploy a GitHub branch to Heroku, but instead, select 
     - label_lang
 - These are handled independently in the code. 
 
+## GOOGLE ANALYTICS
+- The Google Analytics ID is G-1RZZNP84J1.  Code is in global_includes.jade
 
 ## TESTING SUBSCRIBER EMAIL ATTACHMENTS (FULL & QPL LISTINGS)
 - In your development environment, to test the generation of the subscriber Full and QPL spreadsheets, run `export-file.js`:
