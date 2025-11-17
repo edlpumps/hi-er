@@ -485,7 +485,7 @@ router.post("/pumps/upload", get_labels, aw(async (req, res) => {
                 if (typeof value === 'object' && "formula" in value) {
                     if ("result" in value)
                         value = value.result;
-                    parse_warning.push("There is a formula in row:"+r+" column:"+prop.column+" in your spreadsheet.");
+                    parse_warning.push("Column ["+prop.column+"] contains a formula. Formulas should not be used.");
                 }
 
                 if (value && value.trim) value = value.trim();
