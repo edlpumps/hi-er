@@ -461,16 +461,18 @@ router.post("/pumps/upload", get_labels, aw(async (req, res) => {
     await workbook.xlsx.readFile(req.files.template.file);
     const pumps_succeeded = [];
     const pumps_failed = [];
+    const parse_warning = [];
     const template = require('./template_map.json');
     var r = template.config.first_row;
     var worksheet = workbook.getWorksheet(1);
     var first_cell = null;
     var done = false;
     while (!done) {
+        parse_warning.length = 0;
         first_cell = worksheet.getCell(template.mappings.participant.column + r)
 
         if (first_cell.value) {
-            var pump = {}
+            var pump = {};
             pump.row = r;
             var load120Cell = worksheet.getCell(template.mappings.bep120.column + r);
             var load120 = common.map_boolean_input(load120Cell.value);
@@ -480,6 +482,12 @@ router.post("/pumps/upload", get_labels, aw(async (req, res) => {
                 var cell = worksheet.getCell(prop.column + r);
                 var value = cell.value;
                 if (!value) value = "";
+                if (typeof value === 'object' && "formula" in value) {
+                    if ("result" in value)
+                        value = value.result;
+                    parse_warning.push("Column ["+prop.column+"] contains a formula. Formulas should not be used.");
+                }
+
                 if (value && value.trim) value = value.trim();
                 var enabled = true;
                 if (mapping == "configuration") {
@@ -507,6 +515,7 @@ router.post("/pumps/upload", get_labels, aw(async (req, res) => {
                     }
                 }
             }
+            pump.parse_warning = parse_warning;
 
             // strip out driver/control if not used.
             if (!pump.driver_input_power.bep100) {
@@ -566,7 +575,11 @@ router.post("/pumps/upload", get_labels, aw(async (req, res) => {
                     pump.pending_reasons.push("This pump cannot be listed because there are already pump(s) listed under this basic model (" + pump.basic_model + ") with a conflicting Energy Rating value")
                 }
             }
-
+            if (pump.parse_warning.length) {
+                pump.results.success = false;
+                if (!pump.results.reasons) pump.results.reasons = [];
+                pump.results.reasons.push(...pump.parse_warning);
+            }
             if (pump.results.success) {
                 pumps_succeeded.push(pump);
             } else {

@@ -117,7 +117,9 @@ block content
                     td 
                       if fail.least
                         +control_method(fail.least.control_method)
-                   td #{fail.failure}
+                   td 
+                    each reason in fail.failure
+                     p.text-danger #{reason}
       if (!succeeded || succeeded.length == 0) && (!failed || failed.length == 0)
         .panel.panel-warning
           .panel-body

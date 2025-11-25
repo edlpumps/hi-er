@@ -101,6 +101,13 @@ const readCell = (sheet, column, row) => {
 const readNumeric = (sheet, column, row) => {
     const cell = sheet.getCell(`${column}${row}`)
     if (cell && cell.value) {
+        if (typeof cell.value === 'object' && cell.value.formula) {
+            const readNumericCellError = {
+                name: "ReadNumericCellError",
+                message: "Column ["+column+"] contains a formula. Formulas should not be used.",
+            };
+            throw readNumericCellError;
+        }
         return parseFloat(cell.value);
     }
 }
@@ -130,10 +137,12 @@ const resolve_control_method = (sheet, column, row) => {
 
 const extract_row = (sheet, rowNumber, labs) => {
     const row = {}
+    row.failure = [];
+
     row.template_row = rowNumber;
     row.participant = readCell(sheet, PARTICIPANT_COLUMN, rowNumber);
     if (!row.participant) {
-        return;
+        row.failure.push('No participant specified');
     }
 
     row.brand = readCell(sheet, BRAND_COLUMN, rowNumber);
@@ -143,8 +152,7 @@ const extract_row = (sheet, rowNumber, labs) => {
     row.type = readCell(sheet, PUMP_TYPE_COLUMN, rowNumber);
     row.laboratory = findLab(readCell(sheet, LABORATORY_COLUMN, rowNumber), labs);
     if (!row.laboratory) {
-        row.failure = "Laboratory does not match an approved HI lab";
-        return row;
+        row.failure.push("Laboratory does not match an approved HI lab");
     }
     const lc = resolve_control_method(sheet, LC_CONTROL_METHOD_COLUMN, rowNumber);
     if (lc) {
@@ -153,8 +161,7 @@ const extract_row = (sheet, rowNumber, labs) => {
             pressure_curve: readCell(sheet, "P", rowNumber)
         }
     } else {
-        row.failure = 'No control methods specified';
-        return row;
+        row.failure.push('No control methods specified');
     }
 
     const mc = resolve_control_method(sheet, MC_CONTROL_METHOD_COLUMN, rowNumber);
@@ -172,12 +179,10 @@ const extract_row = (sheet, rowNumber, labs) => {
         }
     }
     if (row.control_methods.length < 1) {
-        row.failure = 'No control methods specified';
-        return row;
+        row.failure.push('No control methods specified');
     }
     if (row.control_methods.indexOf(lc.label) < 0) {
-        row.failure = 'Control method conflict';
-        return row;
+        row.failure.push('Control method conflict');
     }
 
     const pump_types = ['CP1', 'CP2', 'CP3'];
@@ -186,66 +191,73 @@ const extract_row = (sheet, rowNumber, labs) => {
             row.type = t;
         }
     }
-
-    row.head = readNumericArray(sheet, ["AD", "AE", "AF", "AG"], rowNumber);
-    row.flow = readNumeric(sheet, "AH", rowNumber);
-    row.least.pei = readNumeric(sheet, "AI", rowNumber);
-
-    if (row.head.length != 4) {
-        row.failure = 'Four head data points are required';
-        return row;
-    }
-    if (isNaN(row.flow)) {
-        row.failure = 'Flow Rate is required';
-        return row;
-    }
-    if (isNaN(row.least.pei)) {
-        row.failure = 'PEI for most efficient method is required';
-        return row;
-    }
+    try { 
+        row.head = readNumericArray(sheet, ["AD", "AE", "AF", "AG"], rowNumber); 
+        if (row.head.length != 4) {
+            row.failure.push('Four head data points are required');
+        }
+    } 
+    catch (ex) { row.failure.push(ex.message); } 
+    try { 
+        row.flow = readNumeric(sheet, "AH", rowNumber);
+        if (isNaN(row.flow)) {
+            row.failure.push('Flow Rate is required');
+        }
+    } catch (ex) { row.failure.push(ex.message); }
+    try { 
+        row.least.pei = readNumeric(sheet, "AI", rowNumber); 
+        if (isNaN(row.least.pei)) {
+            row.failure.push('PEI for most efficient method is required');
+        }
+        } catch (ex) { row.failure.push(ex.message); }
 
     if (lc.number <= 4) {
-        row.least.input_power = readNumericArray(sheet, ["R", "S", "T", "U"], rowNumber);
-        if (row.least.input_power.length !== 4) {
-            row.failure = 'Most efficient method specified requires four power inputs';
-            return row;
-        }
+        try { 
+            row.least.input_power = readNumericArray(sheet, ["R", "S", "T", "U"], rowNumber); 
+            if (row.least.input_power.length !== 4) {
+                row.failure.push('Most efficient method specified requires four power inputs');
+            }
+        } catch (ex) { row.failure.push(ex.message); }
     } else {
-        row.least.input_power = readNumericArray(sheet, ["V", "W"], rowNumber);
-        if (row.least.input_power.length !== 2) {
-            row.failure = 'Most efficient method specified requires max/reduced power inputs';
-            return row;
-        }
+        try { 
+            row.least.input_power = readNumericArray(sheet, ["V", "W"], rowNumber);
+            if (row.least.input_power.length !== 2) {
+                row.failure.push('Most efficient method specified requires max/reduced power inputs');
+            }
+        } catch (ex) { row.failure.push(ex.message); }
     }
 
 
 
     if (mc) {
         if (row.control_methods.indexOf(mc.label) < 0) {
-            row.failure = 'Control method conflict';
-            return row;
+            row.failure.push('Control method conflict');
         }
         if (mc.number <= 4) {
-            row.most.input_power = readNumericArray(sheet, ["X", "Y", "Z", "AA"], rowNumber);
-            if (row.most.input_power.length !== 4) {
-                row.failure = 'Least efficient method specified requires four power inputs';
-                return row;
-            }
+            try { 
+                row.most.input_power = readNumericArray(sheet, ["X", "Y", "Z", "AA"], rowNumber); 
+                if (row.most.input_power.length !== 4) {
+                    row.failure.push('Least efficient method specified requires four power inputs');
+                }
+            } catch (ex) { row.failure.push(ex.message); }
         } else {
-            row.most.input_power = readNumericArray(sheet, ["AB", "AC"], rowNumber);
-            if (row.most.input_power.length !== 2) {
-                row.failure = 'Least efficient method specified requires max/reduced power inputs';
-                return row;
+           try { 
+                row.most.input_power = readNumericArray(sheet, ["AB", "AC"], rowNumber); 
+                if (row.most.input_power.length !== 2) {
+                    row.failure.push('Least efficient method specified requires max/reduced power inputs');
+                }
+            } catch (ex) { row.failure.push(ex.message); }
+        }
+        try { row.most.pei = readNumeric(sheet, "AJ", rowNumber); 
+            if (isNaN(row.most.pei)) {
+                row.failure.push('PEI for least efficient method is required');
             }
-        }
-        row.most.pei = readNumeric(sheet, "AJ", rowNumber);
-
-        if (isNaN(row.most.pei)) {
-            row.failure = 'PEI for least efficient method is required';
-            return row;
-        }
+        } catch (ex) { row.failure.push(ex.message); }
     }
 
+    if (row.failure.length > 0 ) {
+        return row;
+    }
 
     // calculate the energy rating for the pump (lc and mc)
     const least = {
@@ -322,7 +334,6 @@ exports.calculate_assembled_circulator = (circulator) => {
 }
 
 
-
 const apply_units = (pump, units) => {
     if (units == UOM.US) return;
 
@@ -348,7 +359,8 @@ const load_file = async (participant, labs, unit_set, filename) => {
 
         let row = FIRST_PUMP_ROW;
         let input = undefined;
-        while (input = extract_row(worksheet, row, labs)) {
+        while (row <= worksheet.rowCount) {
+            input = extract_row(worksheet, row, labs);
             // The first colum was the participant, but this
             // isn't honored - the logged in user is associated
             // with a participant account, and this is the only
