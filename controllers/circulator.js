@@ -334,7 +334,6 @@ exports.calculate_assembled_circulator = (circulator) => {
 }
 
 
-//KK
 const apply_units = (pump, units) => {
     if (units == UOM.US) return;
 
