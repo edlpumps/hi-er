@@ -56,5 +56,6 @@ jspm_packages
 
 # Environment variables
 .env
+dev.env
 
 *.DS_Store
