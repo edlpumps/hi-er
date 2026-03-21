@@ -25,7 +25,7 @@ export const labelJobRequestSchema = z.object({
     description:
       "The zip filename that will ultimately be generated for this labeling job",
   }),
-  requestDate: z.string().openapi({
+  requestDate: z.string().optional().openapi({
     example: "2026-03-13T14:06:00Z",
     description: "The date and time when the labeling job was requested",
   }),
@@ -42,11 +42,14 @@ export const labelJobRequestSchema = z.object({
     description:
       "The URL template that the activity function will call to generate each label. It should include {participantId}, {labelId}, {format}, and {locale} as placeholders.",
   }),
-  format: z.enum(["svg", "png", "qr", "qr/png"]).openapi({
+  format: z.enum(["svg", "png", "qr"]).openapi({
     description: "The desired output format for the labels in this job",
   }),
-  formatSize: z.enum(["sm"]).optional().openapi({
+  formatSize: z.enum(["sm", ""]).optional().openapi({
     description: "The desired output size for the labels in this job",
+  }),
+  extension: z.enum(["svg", "png"]).openapi({
+    description: "The file extension for the generated label images",
   }),
   locale: z.enum(["en", "fr"]).openapi({
     description: "The desired output locale for the labels in this job",
@@ -111,6 +114,7 @@ export type AddLabelActivityInput = {
   LabelJobRequest,
   | "format"
   | "formatSize"
+  | "extension"
   | "locale"
   | "swVersion"
   | "labelGenerationUrl"

@@ -1,0 +1,363 @@
+const express = require("express");
+const lang = require("../utils/language");
+const svg_builder = require("../utils/label_builder.js");
+const aw = require("./async_wrap");
+
+const router = express.Router();
+
+module.exports = router;
+
+router.use((req, res, next) => {
+  const languageHeader = req.header("Accept-Language");
+  if (languageHeader) {
+    lang.set_label_language(req, res, languageHeader);
+  }
+  next();
+});
+
+// create a labeling job
+router.post(
+  "/participant/:participantId/label-job/:jobId",
+  async (req, res) => {
+    try {
+      const {participantId, jobId} = req.params;
+      const {format, formatSize, extension, locale, equipmentType, submitJob} =
+        req.body;
+      //   const language = lang.get_label_language();
+
+      const participant = await req.Participants.findById(participantId);
+      const pumps =
+        equipmentType === "pump"
+          ? await req.Pumps.getAllByParticipantId(participantId)
+          : await req.Circulators.getAllByParticipantId(participantId);
+
+      const labels = pumps.map((pump) => {
+        const labelId = pump._id.toString();
+        const archiveName = `${pump.rating_id}-(${locale})`;
+        return {labelId, archiveName};
+      });
+
+      const jobBody = {
+        id: crypto.randomUUID(),
+        name: `Labeling Job for ${participant.name}`,
+        archiveName: `${participant.name}-(${equipmentType})-labels-(${locale})-(${format.replace(/\//g, "-")})${formatSize ? `-(${formatSize})` : ""}`,
+        format,
+        formatSize,
+        extension,
+        locale,
+        equipmentType,
+        swVersion: "local",
+        labelsCount: labels.length,
+        labels,
+      };
+
+      if (submitJob) {
+        await fetch(
+          `http://localhost:7071/api/participant/${participantId}/label-jobs`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(jobBody),
+          },
+        );
+      }
+
+      return res.json(jobBody);
+    } catch (error) {
+      console.error("Error adding participant label job:", error);
+      res.status(500).json({success: false, message: "Internal Server Error"});
+    }
+  },
+);
+
+// circulator label endpoints
+router.get(
+  "/participants/:id/circulators/:circulator_id/svg/label",
+  aw(async (req, res) => {
+    const pump = await req.Circulators.findById(req.params.circulator_id)
+      .populate("participant")
+      .exec();
+    const svg = svg_builder.make_circulator_label(req, pump.participant, pump);
+    res.setHeader(
+      "Content-disposition",
+      "attachment; filename=Energy Rating Label-" +
+        pump.rating_id +
+        "-(" +
+        lang.get_label_language() +
+        ").svg",
+    );
+    res.setHeader("Content-Type", "image/svg+xml");
+    res.send(svg);
+  }),
+);
+router.get(
+  "/participants/:id/circulators/:circulator_id/png/label",
+  aw(async (req, res) => {
+    const pump = await req.Circulators.findById(req.params.circulator_id)
+      .populate("participant")
+      .exec();
+    const svg = svg_builder.make_circulator_label(req, pump.participant, pump);
+    const png_buffer = svg_builder.svg_to_png(svg);
+    res.setHeader(
+      "Content-disposition",
+      "attachment; filename=Energy Rating Label-" +
+        pump.rating_id +
+        "-(" +
+        lang.get_label_language() +
+        ").png",
+    );
+    res.setHeader("Content-Type", "image/png");
+    res.setHeader("Content-Length", png_buffer.length);
+    res.status(200).send(png_buffer);
+  }),
+);
+router.get(
+  "/participants/:id/circulators/:circulator_id/svg/label/sm",
+  aw(async (req, res) => {
+    const pump = await req.Circulators.findById(req.params.circulator_id)
+      .populate("participant")
+      .exec();
+    const svg = svg_builder.make_circulator_label_small(
+      req,
+      pump.participant,
+      pump,
+    );
+    res.setHeader(
+      "Content-disposition",
+      "attachment; filename=Energy Rating Label (sm) - " +
+        pump.rating_id +
+        ".svg",
+    );
+    res.setHeader("Content-Type", "image/svg+xml");
+    res.send(svg);
+  }),
+);
+router.get(
+  "/participants/:id/circulators/:circulator_id/png/label/sm",
+  aw(async (req, res) => {
+    const pump = await req.Circulators.findById(req.params.circulator_id)
+      .populate("participant")
+      .exec();
+    const svg = svg_builder.make_circulator_label_small(
+      req,
+      pump.participant,
+      pump,
+    );
+    const png_buffer = svg_builder.svg_to_png(svg);
+    res.setHeader(
+      "Content-disposition",
+      "attachment; filename=Energy Rating Label (sm) - " +
+        pump.rating_id +
+        ".png",
+    );
+    res.setHeader("Content-Type", "image/png");
+    res.setHeader("Content-Length", png_buffer.length);
+    res.status(200).send(png_buffer);
+  }),
+);
+router.get(
+  "/participants/:id/circulators/:circulator_id/svg/qr",
+  aw(async (req, res) => {
+    const pump = await req.Circulators.findById(req.params.circulator_id)
+      .populate("participant")
+      .exec();
+    const svg = svg_builder.make_circulator_qr(req, pump.participant, pump);
+    res.setHeader(
+      "Content-disposition",
+      "attachment; filename=Energy Rating QR - " + pump.rating_id + ".svg",
+    );
+    res.setHeader("Content-Type", "image/svg+xml");
+    res.send(svg);
+  }),
+);
+router.get(
+  "/participants/:id/circulators/:circulator_id/png/qr",
+  aw(async (req, res) => {
+    const pump = await req.Circulators.findById(req.params.circulator_id)
+      .populate("participant")
+      .exec();
+    const svg = svg_builder.make_circulator_qr(req, pump.participant, pump);
+    const png_buffer = svg_builder.svg_to_png(svg);
+    res.setHeader(
+      "Content-disposition",
+      "attachment; filename=Energy Rating QR - " + pump.rating_id + ".png",
+    );
+    res.setHeader("Content-Type", "image/png");
+    res.setHeader("Content-Length", png_buffer.length);
+    res.status(200).send(png_buffer);
+  }),
+);
+
+// pump label endpoints
+function get_filename(rating_id, type = "Label") {
+  let label_lang = lang.get_label_language();
+  return "Energy Rating " + type + "-" + rating_id + "-(" + label_lang + ")";
+}
+
+const render_svg = async (req, res, svg_maker, callback) => {
+  try {
+    const participant = await req.Participants.findById(
+      req.params.participant_id,
+    ).exec();
+    const pump = await req.Pumps.findById(req.params.id).exec();
+    if (!participant || !pump) {
+      return callback("Unknown participant");
+    }
+    var load =
+      pump.configuration == "bare" || pump.configuration == "pump_motor"
+        ? "CL"
+        : "VL";
+    req.Labels.findOne()
+      .and([
+        {
+          speed: pump.speed,
+        },
+        {
+          doe: pump.doe,
+        },
+        {
+          load: load,
+        },
+      ])
+      .exec(function (err, label) {
+        if (err) return callback(err);
+        else
+          return callback(null, svg_maker(req, participant, pump, label), pump);
+      });
+  } catch (ex) {
+    return callback(ex);
+  }
+};
+
+router.get(
+  "/participants/:participant_id/pumps/:id/svg/label",
+  function (req, res) {
+    render_svg(req, res, svg_builder.make_label, function (err, svg, pump) {
+      if (err) {
+        res.status(500).send(err);
+        return;
+      }
+      res.setHeader(
+        "Content-disposition",
+        "attachment; filename=" + get_filename(pump.rating_id) + ".svg",
+      );
+      res.setHeader("Content-Type", "image/svg+xml");
+      res.send(svg);
+    });
+  },
+);
+
+router.get(
+  "/participants/:participant_id/pumps/:id/svg/label/sm",
+  function (req, res) {
+    render_svg(req, res, svg_builder.make_sm_label, function (err, svg, pump) {
+      if (err) {
+        res.status(500).send(err);
+        return;
+      }
+      res.setHeader(
+        "Content-disposition",
+        "attachment; filename=" + get_filename(pump.rating_id) + "-sm.svg",
+      );
+      res.setHeader("Content-Type", "image/svg+xml");
+      res.send(svg);
+    });
+  },
+);
+
+router.get(
+  "/participants/:participant_id/pumps/:id/png/label",
+  function (req, res) {
+    try {
+      render_svg(req, res, svg_builder.make_label, function (err, svg, pump) {
+        if (err) {
+          res.status(500).send(err);
+          return;
+        }
+        const png_buffer = svg_builder.svg_to_png(svg);
+        res.setHeader(
+          "Content-disposition",
+          "attachment; filename=" + get_filename(pump.rating_id) + ".png",
+        );
+        res.setHeader("Content-Type", "image/png");
+        res.setHeader("Content-Length", png_buffer.length);
+        res.status(200).send(png_buffer);
+      });
+    } catch (e) {
+      res.status(500).send(e);
+    }
+  },
+);
+
+router.get(
+  "/participants/:participant_id/pumps/:id/png/label/sm",
+  function (req, res) {
+    try {
+      render_svg(
+        req,
+        res,
+        svg_builder.make_sm_label,
+        function (err, svg, pump) {
+          if (err) {
+            res.status(500).send(err);
+            return;
+          }
+          const png_buffer = svg_builder.svg_to_png(svg);
+          res.setHeader(
+            "Content-disposition",
+            "attachment; filename=" + get_filename(pump.rating_id) + "-sm.png",
+          );
+          res.setHeader("Content-Type", "image/png");
+          res.setHeader("Content-Length", png_buffer.length);
+          res.status(200).send(png_buffer);
+        },
+      );
+    } catch (e) {
+      res.status(500).send(e);
+    }
+  },
+);
+
+router.get(
+  "/participants/:participant_id/pumps/:id/svg/qr",
+  function (req, res) {
+    render_svg(req, res, svg_builder.make_qr, function (err, svg, pump) {
+      if (err) {
+        res.status(500).send(err);
+        return;
+      }
+      res.setHeader(
+        "Content-disposition",
+        "attachment; filename=" + get_filename(pump.rating_id, "QR") + ".svg",
+      );
+      res.setHeader("Content-Type", "image/svg+xml");
+      res.send(svg);
+    });
+  },
+);
+
+router.get(
+  "/participants/:participant_id/pumps/:id/png/qr",
+  function (req, res) {
+    try {
+      render_svg(req, res, svg_builder.make_qr, function (err, svg, pump) {
+        if (err) {
+          res.status(500).send(err);
+          return;
+        }
+        const png_buffer = svg_builder.svg_to_png(svg);
+        res.setHeader(
+          "Content-disposition",
+          "attachment; filename=" + get_filename(pump.rating_id, "QR") + ".png",
+        );
+        res.setHeader("Content-Type", "image/png");
+        res.setHeader("Content-Length", png_buffer.length);
+        res.status(200).send(png_buffer);
+      });
+    } catch (e) {
+      res.status(500).send(e);
+    }
+  },
+);

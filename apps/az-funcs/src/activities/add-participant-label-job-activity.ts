@@ -8,6 +8,7 @@ import {
   ImageLabelParams,
   LabelImageRepository,
 } from "../labels/label-image-repository";
+import {Readable} from "stream";
 
 export type AddParticipantLabelJobActivityResult = {
   success: boolean;
@@ -26,26 +27,28 @@ const addParticipantLabelJobActivityHandler: ActivityHandler = async (
   input: AddLabelActivityInput,
   context: InvocationContext,
 ): Promise<AddParticipantLabelJobActivityResult> => {
-  const {participantId, jobId, label} = input;
+  const {participantId, jobId, label, equipmentType} = input;
   const itemRepository = new LabelJobItemRepository();
 
-  let format = input.format;
-  if (input.formatSize === "sm" && format !== "qr" && format !== "qr/png") {
-    format += "-sm";
-  }
+  const extension =
+    input.format === "svg" || input.format === "png"
+      ? input.format
+      : input.extension;
 
-  let extension = "svg";
-  if (format === "png" || format === "qr/png") {
-    extension = "png";
-  }
+  const labelSegment = input.format === "qr" ? "qr" : "label";
+  const formatSize = input.format === "qr" ? "" : input.formatSize || "";
 
-  const buildUrl = `http://localhost:3003/labels/${participantId}/${label.labelId}/${format}`;
+  const buildUrl = `http://localhost:3003/api/participants/${participantId}/${equipmentType}s/${label.labelId}/${extension}/${labelSegment}/${formatSize}`;
 
-  const labelParams: ImageLabelParams = {
+  // i'd like... GET /api/labels/participants/{participantId}/{equipmentType}s/{labelId}/{format(svg|png|qr)}/{locale}?size=sm|undefined&extension=png|svg|undefined
+  // for a qr format, you'd need to supply the extension, for others it can be inferred from the format.
+
+  const labelParams: Omit<ImageLabelParams, "blob"> = {
     labelId: label.labelId,
     swVersion: input.swVersion,
     locale: input.locale,
-    format,
+    format: input.format,
+    formatSize: input.formatSize || "",
     extension,
   };
 
@@ -56,6 +59,9 @@ const addParticipantLabelJobActivityHandler: ActivityHandler = async (
     if (!existingImage.exists) {
       const response = await fetch(buildUrl, {
         method: "GET",
+        headers: {
+          "Accept-Language": input.locale,
+        },
       });
 
       if (!response.ok) {
@@ -69,20 +75,26 @@ const addParticipantLabelJobActivityHandler: ActivityHandler = async (
         };
       }
 
-      const blob = await response.blob();
-      const buffer = await blob.arrayBuffer();
+      const blob = Readable.fromWeb(response.body as any);
+      const blobSize = Number(response.headers.get("Content-Length"));
+      const contentType =
+        extension === "svg" ? "image/svg+xml" : `image/${extension}`;
+
+      // const buffer = await blob.arrayBuffer();
 
       const uploadResponse = await imageRepo.uploadLabelImage({
-        buffer,
+        blob,
+        contentType,
         labelId: label.labelId,
         swVersion: input.swVersion,
         locale: input.locale,
-        format,
+        format: input.format,
+        formatSize: input.formatSize || "",
         extension,
       });
 
       existingImage.blobUrl = uploadResponse.blobUrl;
-      existingImage.blobLength = buffer.byteLength;
+      existingImage.blobLength = blobSize;
       existingImage.status = uploadResponse.status;
       existingImage.blobPath = uploadResponse.blobPath;
     }
@@ -91,7 +103,8 @@ const addParticipantLabelJobActivityHandler: ActivityHandler = async (
       jobId,
       labelId: label.labelId,
       status: "completed",
-      archiveName: label.archiveName,
+      archiveName: label.archiveName + "." + extension,
+      buildUrl: buildUrl || "giggles",
       location: existingImage.blobUrl,
       size: existingImage.blobLength,
       lastUpdated: new Date().toISOString(),
@@ -106,7 +119,7 @@ const addParticipantLabelJobActivityHandler: ActivityHandler = async (
       size: existingImage.blobLength,
       existingImage: existingImage.exists,
       labelId: label.labelId,
-      archiveName: label.archiveName,
+      archiveName: label.archiveName + "." + extension,
     };
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);

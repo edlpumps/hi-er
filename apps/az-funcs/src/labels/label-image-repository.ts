@@ -6,23 +6,26 @@ import {
   NodeJSReadableStream,
 } from "@azure/storage-blob";
 import archiver from "archiver";
-import {Writable} from "stream";
+import {Writable, Readable} from "stream";
 
 export type ImageLabelUploadParams = {
-  buffer: ArrayBuffer;
+  // buffer: ArrayBuffer;
+  blob: Readable;
   labelId: string;
   swVersion: string;
   locale: string;
   format: string;
+  formatSize: string;
   extension: string;
 };
 
-export type ImageLabelParams = Omit<ImageLabelUploadParams, "buffer">;
+export type ImageLabelParams = Omit<ImageLabelUploadParams, "blob">;
 
 export type ZipJobParams = {
   participantId: string;
   jobId: string;
   index?: number;
+  archiveName: string;
 };
 
 class BlobWritable extends Writable {
@@ -49,21 +52,29 @@ export class LabelImageRepository {
     );
   }
 
-  private getBlobName(params: ImageLabelParams): string {
-    return `labels/${params.labelId}/${params.swVersion}/label-(${params.locale})-(${params.format}).${params.extension}`;
+  private getBlobName(params: Omit<ImageLabelParams, "blob">): string {
+    return `labels/${params.labelId}/${params.swVersion}/label-(${params.locale})-(${params.format})${params.formatSize ? `-${params.formatSize}` : ""}.${params.extension}`;
   }
 
-  private getZipBlobName({participantId, jobId, index}: ZipJobParams): string {
+  private getZipBlobName({
+    participantId,
+    jobId,
+    index,
+    archiveName,
+  }: ZipJobParams): string {
     const folder = this.getZipBlobFolder({participantId, jobId});
     const indexSuffix = index !== undefined ? `-${index}` : "";
-    return `${folder}labels${indexSuffix}.zip`;
+    return `${folder}${archiveName}${indexSuffix}.zip`;
   }
 
-  private getZipBlobFolder({participantId, jobId}: ZipJobParams): string {
+  private getZipBlobFolder({
+    participantId,
+    jobId,
+  }: Omit<ZipJobParams, "archiveName">): string {
     return `participants/${participantId}/label-jobs/${jobId}/`;
   }
 
-  async labelImageExists(params: ImageLabelParams): Promise<{
+  async labelImageExists(params: Omit<ImageLabelParams, "blob">): Promise<{
     exists: boolean;
     blobUrl?: string;
     blobPath?: string;
@@ -89,13 +100,15 @@ export class LabelImageRepository {
   }
 
   async uploadLabelImage({
-    buffer,
+    blob,
+    contentType,
     labelId,
     swVersion,
     locale,
     format,
+    formatSize,
     extension,
-  }: ImageLabelUploadParams): Promise<{
+  }: ImageLabelUploadParams & {contentType: string}): Promise<{
     blobUrl: string;
     blobPath: string;
     status: number;
@@ -109,10 +122,21 @@ export class LabelImageRepository {
       swVersion,
       locale,
       format,
+      formatSize,
       extension,
     });
     const blockBlobClient = client.getBlockBlobClient(blobName);
-    const response = await blockBlobClient.uploadData(buffer);
+    const response = await blockBlobClient.uploadStream(
+      blob,
+      undefined,
+      undefined,
+      {
+        blobHTTPHeaders: {
+          blobContentType: contentType,
+        },
+      },
+    );
+    // const response = await blockBlobClient.uploadData(buffer);
     return {
       blobUrl: blockBlobClient.url,
       blobPath: blobName,
@@ -143,7 +167,7 @@ export class LabelImageRepository {
     await blockBlobClient.deleteIfExists();
   }
 
-  async deleteZips({participantId, jobId}: ZipJobParams) {
+  async deleteZips({participantId, jobId}: Omit<ZipJobParams, "archiveName">) {
     const client = this.blobServiceClient.getContainerClient(
       this.containerName,
     );
@@ -151,11 +175,16 @@ export class LabelImageRepository {
     const blobs = client.listBlobsFlat({prefix: folder});
     for await (const blob of blobs) {
       const blockBlobClient = client.getBlockBlobClient(blob.name);
-      await blockBlobClient.deleteIfExists();
+      await blockBlobClient.deleteIfExists({deleteSnapshots: "include"});
     }
   }
 
-  async initZipUpload({participantId, jobId, index}: ZipJobParams): Promise<{
+  async initZipUpload({
+    participantId,
+    jobId,
+    index,
+    archiveName,
+  }: ZipJobParams): Promise<{
     archive: any;
     blobClient: BlockBlobClient;
     blobWritable: BlobWritable;
@@ -164,8 +193,13 @@ export class LabelImageRepository {
     const containerClient = this.blobServiceClient.getContainerClient(
       this.containerName,
     );
-    const archiveName = this.getZipBlobName({participantId, jobId, index});
-    const blobClient = containerClient.getBlockBlobClient(archiveName);
+    const archiveBlobName = this.getZipBlobName({
+      participantId,
+      jobId,
+      index,
+      archiveName,
+    });
+    const blobClient = containerClient.getBlockBlobClient(archiveBlobName);
     const blobWritable = new BlobWritable();
     const archive = archiver("zip", {zlib: {level: 9}});
 

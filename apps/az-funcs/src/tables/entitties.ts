@@ -29,6 +29,7 @@ export type LabelJobItemEntity = {
   labelId: string;
   status: "pending" | "completed" | "failed";
   archiveName: string;
+  buildUrl?: string;
   location?: string;
   size?: number;
   lastUpdated: string; // ISO date string

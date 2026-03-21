@@ -32,6 +32,7 @@ export const participantLabelJobOrchHandler: OrchestrationHandler = function* (
       jobId: request.id,
       format: request.format,
       formatSize: request.formatSize,
+      extension: request.extension,
       locale: request.locale,
       swVersion: request.swVersion,
       labelGenerationUrl: request.labelGenerationUrl,
@@ -53,6 +54,7 @@ export const participantLabelJobOrchHandler: OrchestrationHandler = function* (
     zipLabelsChunkActivity({
       participantId: request.participantId,
       jobId: request.id,
+      archiveName: request.archiveName,
       chunkIndex: index,
       chunk,
     }),

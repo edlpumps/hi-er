@@ -9,6 +9,7 @@ export type ZipLabelsChunkActivityInput = {
   participantId: string;
   jobId: string;
   chunkIndex: number;
+  archiveName: string;
   chunk: AddParticipantLabelJobActivityResult[];
 };
 
@@ -27,6 +28,7 @@ const zipLabelsChunkActivityHandler: ActivityHandler = async (
     participantId: input.participantId,
     jobId: input.jobId,
     index: input.chunkIndex,
+    archiveName: input.archiveName,
   });
 
   // add files to the zip
