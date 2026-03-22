@@ -4,6 +4,7 @@ import {input, InvocationContext} from "@azure/functions";
 import * as df from "durable-functions";
 import {ACTIVITY_NAMES} from "./activity-names";
 import {LabelImageRepository} from "../labels/label-image-repository";
+import {LabelJobItemRepository} from "../tables/repository";
 
 export type ZipLabelsChunkActivityInput = {
   participantId: string;
@@ -43,6 +44,24 @@ const zipLabelsChunkActivityHandler: ActivityHandler = async (
   }
 
   await imageRepo.finalizeZipUpload(zipArgs);
+
+  try {
+    const repo = new LabelJobItemRepository();
+    const tasks = input.chunk.map((item) =>
+      repo.upsert(
+        {
+          jobId: input.jobId,
+          labelId: item.labelId || "",
+          zipChunkIndex: input.chunkIndex,
+          status: "zipped",
+        },
+        "Merge",
+      ),
+    );
+    await Promise.all(tasks);
+  } catch (error) {
+    console.error("Error recording zip chunk to items", error);
+  }
 
   return {
     success: true,

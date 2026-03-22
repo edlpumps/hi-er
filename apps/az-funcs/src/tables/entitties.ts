@@ -1,19 +1,15 @@
-// export interface BaseEntity {
-//   partitionKey: string;
-//   rowKey: string;
-// }
-
-// export interface BaseEntity<TEntity, pkName extends keyof TEntity, rkName extends keyof TEntity> {
-//   partitionKey: string;
-//   rowKey: string;
-//   rowKeyName: rkName;
-//   partitionKeyName: pkName;
-// }
-
 export type LabelJobEntity = {
   participantId: string;
   jobId: string;
-  status: "running" | "success" | "cancelling" | "cancelled" | "failed";
+  status:
+    | "pending"
+    | "building"
+    | "chunkning"
+    | "zipping"
+    | "done"
+    | "cancelling"
+    | "cancelled"
+    | "failed";
   progress: number;
   format: string;
   formatSize?: string;
@@ -22,13 +18,25 @@ export type LabelJobEntity = {
   labelGenerationUrl?: string;
   durableInstanceId: string;
   equipmentType: "pump" | "circulator";
+  labelCount: number;
+  zipChunkCount?: number;
+};
+
+export type LabelJobZipChunkEntity = {
+  jobId: string;
+  chunkIndex: number;
+  status: "pending" | "processing" | "completed" | "failed";
+  archiveName: string;
+  blobUrl?: string;
+  lastUpdated: string; // ISO date string
 };
 
 export type LabelJobItemEntity = {
   jobId: string;
   labelId: string;
-  status: "pending" | "completed" | "failed";
+  status: "pending" | "built" | "zipped" | "failed";
   archiveName: string;
+  zipChunkIndex?: number; // which chunk this item belongs to, used for zipping
   buildUrl?: string;
   location?: string;
   size?: number;

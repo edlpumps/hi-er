@@ -9,6 +9,7 @@ import {
   zipLabelsChunkActivity,
   ZipLabelsChunkActivityResult,
 } from "./zip-labels-chunk-activity";
+import {recordJobStatusActivity} from "./recording-activities";
 
 export const participantLabelJobOrchHandler: OrchestrationHandler = function* (
   context: OrchestrationContext,
@@ -19,13 +20,19 @@ export const participantLabelJobOrchHandler: OrchestrationHandler = function* (
 
   const durableInstanceId = context.df.instanceId;
 
-  // set up the job
+  // 1. Initialize the job
   yield initializeParticipantLabelJobActivity({
     ...request,
     participantId: request.participantId,
     durableInstanceId,
   });
 
+  // 2. Build the labels in parallel and put on shelf for zipping
+  yield recordJobStatusActivity({
+    participantId: request.participantId,
+    jobId: request.id,
+    status: "building",
+  });
   const labelTasks = request.labels.map((label) =>
     addParticipantLabelJobActivity({
       participantId: request.participantId,
@@ -45,11 +52,22 @@ export const participantLabelJobOrchHandler: OrchestrationHandler = function* (
   const results: AddParticipantLabelJobActivityResult[] =
     yield context.df.Task.all(labelTasks);
 
-  // chunk results into groups no greater than 256MB zip size limit for app.
+  // 3. chunk results into groups no greater than 256MB zip size limit for app.
+  yield recordJobStatusActivity({
+    participantId: request.participantId,
+    jobId: request.id,
+    status: "chunkning",
+  });
   const chunkableResults: AddParticipantLabelJobActivityResult[][] =
     getChunkedResults(results, 256 * 1024 * 1024);
 
   // spin off zip activities for each chunk of results
+  yield recordJobStatusActivity({
+    participantId: request.participantId,
+    jobId: request.id,
+    status: "zipping",
+    zipChunkCount: chunkableResults.length,
+  });
   const zipTasks = chunkableResults.map((chunk, index) =>
     zipLabelsChunkActivity({
       participantId: request.participantId,
@@ -63,6 +81,12 @@ export const participantLabelJobOrchHandler: OrchestrationHandler = function* (
   // wait for all zip tasks to complete and gather their results
   const zipResults: ZipLabelsChunkActivityResult[] =
     yield context.df.Task.all(zipTasks);
+
+  yield recordJobStatusActivity({
+    participantId: request.participantId,
+    jobId: request.id,
+    status: "done",
+  });
 
   return {zipResults};
 };

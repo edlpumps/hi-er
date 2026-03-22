@@ -371,11 +371,20 @@ exports.init = function init(mongoose) {
     },
   );
 
-  pumpSchema.statics.getAllByParticipantId = async (participantId) => {
-    return Pumps.find(
-      {participant: participantId},
-      {_id: 1, rating_id: 1, brand: 1, basic_model: 1},
-    ).exec();
+  pumpSchema.statics.getAllByParticipantId = async (
+    participantId,
+    listedOnly,
+  ) => {
+    const query = {participant: participantId};
+    if (listedOnly) {
+      query.listed = true;
+    }
+    return Pumps.find(query, {
+      _id: 1,
+      rating_id: 1,
+      brand: 1,
+      basic_model: 1,
+    }).exec();
   };
 
   pumpSchema.statics.search = async (participant, search, skip, limit) => {
@@ -542,11 +551,20 @@ exports.init = function init(mongoose) {
     },
   );
 
-  circulatorSchema.statics.getAllByParticipantId = async (participantId) => {
-    return Circulators.find(
-      {participant: participantId},
-      {_id: 1, rating_id: 1, brand: 1, basic_model: 1},
-    ).exec();
+  circulatorSchema.statics.getAllByParticipantId = async (
+    participantId,
+    listedOnly,
+  ) => {
+    const query = {participant: participantId};
+    if (listedOnly) {
+      query.listed = true;
+    }
+    return Circulators.find(query, {
+      _id: 1,
+      rating_id: 1,
+      brand: 1,
+      basic_model: 1,
+    }).exec();
   };
 
   circulatorSchema.statics.countsByParticipant = async (

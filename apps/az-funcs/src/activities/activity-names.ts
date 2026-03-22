@@ -4,4 +4,6 @@ export const ACTIVITY_NAMES = {
   ADD_LABEL_ACTIVITY: "participant-label-job-add-label-activity",
   INITIALIZE_LABEL_JOB_ACTIVITY: "participant-label-job-initialize-activity",
   ZIP_LABELS_CHUNK_ACTIVITY: "participant-label-job-zip-labels-chunk-activity",
+  RECORD_JOB_STATUS_ACTIVITY:
+    "participant-label-job-record-job-status-activity",
 };

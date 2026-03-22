@@ -99,16 +99,21 @@ const addParticipantLabelJobActivityHandler: ActivityHandler = async (
       existingImage.blobPath = uploadResponse.blobPath;
     }
 
-    await itemRepository.upsert({
-      jobId,
-      labelId: label.labelId,
-      status: "completed",
-      archiveName: label.archiveName + "." + extension,
-      buildUrl: buildUrl || "giggles",
-      location: existingImage.blobUrl,
-      size: existingImage.blobLength,
-      lastUpdated: new Date().toISOString(),
-    });
+    const labelArchiveName = `${label.labelId}.${extension}`;
+
+    await itemRepository.upsert(
+      {
+        jobId,
+        labelId: label.labelId,
+        status: "built",
+        archiveName: labelArchiveName,
+        buildUrl: buildUrl,
+        location: existingImage.blobUrl,
+        size: existingImage.blobLength,
+        lastUpdated: new Date().toISOString(),
+      },
+      "Replace",
+    );
 
     return {
       success: true,
@@ -119,7 +124,7 @@ const addParticipantLabelJobActivityHandler: ActivityHandler = async (
       size: existingImage.blobLength,
       existingImage: existingImage.exists,
       labelId: label.labelId,
-      archiveName: label.archiveName + "." + extension,
+      archiveName: labelArchiveName,
     };
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);

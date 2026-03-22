@@ -1,5 +1,9 @@
-import {TableClient, UpdateMode, odata} from "@azure/data-tables";
-import {LabelJobEntity, LabelJobItemEntity} from "./entitties";
+import {TableClient, TableEntity, UpdateMode, odata} from "@azure/data-tables";
+import {
+  LabelJobEntity,
+  LabelJobItemEntity,
+  LabelJobZipChunkEntity,
+} from "./entitties";
 import * as dotenv from "dotenv";
 
 dotenv.config();
@@ -73,6 +77,26 @@ export class TableRepository<TEntity> {
     };
     await client.upsertEntity(tableEntity, mode || "Merge");
   }
+
+  async deleteByPartitionKey(partitionKey: string) {
+    const client = await this.initialize();
+    const entities: TableEntity[] = [];
+    const listResult = client.listEntities<TableEntity>({
+      queryOptions: {
+        filter: odata`PartitionKey eq ${partitionKey}`,
+        select: ["PartitionKey", "RowKey"], // only select keys for deletion
+      },
+    });
+    for await (const entity of listResult) {
+      entities.push(entity);
+    }
+
+    const tasks = entities.map((entity) =>
+      client.deleteEntity(entity.partitionKey, entity.rowKey),
+    );
+
+    await Promise.all(tasks);
+  }
 }
 
 export class LabelJobRepository extends TableRepository<LabelJobEntity> {
@@ -96,27 +120,22 @@ export class LabelJobRepository extends TableRepository<LabelJobEntity> {
   }
 }
 
+export class LabelJobZipChunkRepository extends TableRepository<LabelJobZipChunkEntity> {
+  constructor() {
+    super("HILabelJobZipChunks", "jobId", "chunkIndex");
+  }
+
+  async deleteByJobId(jobId: string) {
+    await this.deleteByPartitionKey(jobId);
+  }
+}
+
 export class LabelJobItemRepository extends TableRepository<LabelJobItemEntity> {
   constructor() {
     super("HILabelJobItems", "jobId", "labelId");
   }
 
   async deleteByJobId(jobId: string) {
-    const client = await this.initialize();
-    const entities: LabelJobItemEntity[] = [];
-    const itemsResult = client.listEntities<LabelJobItemEntity>({
-      queryOptions: {
-        filter: `partitionKey eq ${jobId}`,
-      },
-    });
-    for await (const entity of itemsResult) {
-      entities.push(entity);
-    }
-
-    const tasks = entities.map((entity) =>
-      client.deleteEntity(entity.jobId, entity.labelId),
-    );
-
-    await Promise.all(tasks);
+    await this.deleteByPartitionKey(jobId);
   }
 }

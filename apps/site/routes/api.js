@@ -16,61 +16,68 @@ router.use((req, res, next) => {
 });
 
 // create a labeling job
-router.post(
-  "/participant/:participantId/label-job/:jobId",
-  async (req, res) => {
-    try {
-      const {participantId, jobId} = req.params;
-      const {format, formatSize, extension, locale, equipmentType, submitJob} =
-        req.body;
-      //   const language = lang.get_label_language();
+router.post("/participant/:participantId/label-job", async (req, res) => {
+  try {
+    const {participantId} = req.params;
+    const {
+      format,
+      formatSize,
+      extension,
+      locale,
+      equipmentType,
+      submitJob,
+      listedOnly,
+    } = req.body;
+    //   const language = lang.get_label_language();
 
-      const participant = await req.Participants.findById(participantId);
-      const pumps =
-        equipmentType === "pump"
-          ? await req.Pumps.getAllByParticipantId(participantId)
-          : await req.Circulators.getAllByParticipantId(participantId);
+    const participant = await req.Participants.findById(participantId);
+    const pumps =
+      equipmentType === "pump"
+        ? await req.Pumps.getAllByParticipantId(participantId, listedOnly)
+        : await req.Circulators.getAllByParticipantId(
+            participantId,
+            listedOnly,
+          );
 
-      const labels = pumps.map((pump) => {
-        const labelId = pump._id.toString();
-        const archiveName = `${pump.rating_id}-(${locale})`;
-        return {labelId, archiveName};
-      });
+    const labels = pumps.map((pump) => {
+      const labelId = pump._id.toString();
+      const archiveName = `${pump.rating_id}-(${locale})`;
+      return {labelId, archiveName};
+    });
 
-      const jobBody = {
-        id: crypto.randomUUID(),
-        name: `Labeling Job for ${participant.name}`,
-        archiveName: `${participant.name}-(${equipmentType})-labels-(${locale})-(${format.replace(/\//g, "-")})${formatSize ? `-(${formatSize})` : ""}`,
-        format,
-        formatSize,
-        extension,
-        locale,
-        equipmentType,
-        swVersion: "local",
-        labelsCount: labels.length,
-        labels,
-      };
+    const jobBody = {
+      id: crypto.randomUUID(),
+      name: `Labeling Job for ${participant.name}`,
+      archiveName: `${participant.name}-(${equipmentType})-labels-(${locale})-(${format.replace(/\//g, "-")})${formatSize ? `-(${formatSize})` : ""}`,
+      format,
+      formatSize,
+      extension,
+      locale,
+      equipmentType,
+      swVersion: "local",
+      labelsCount: labels.length,
+      labels,
+    };
 
-      if (submitJob) {
-        await fetch(
-          `http://localhost:7071/api/participant/${participantId}/label-jobs`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(jobBody),
+    if (submitJob) {
+      await fetch(
+        `http://localhost:7071/api/participant/${participantId}/label-jobs`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
           },
-        );
-      }
-
-      return res.json(jobBody);
-    } catch (error) {
-      console.error("Error adding participant label job:", error);
-      res.status(500).json({success: false, message: "Internal Server Error"});
+          body: JSON.stringify(jobBody),
+        },
+      );
     }
-  },
-);
+
+    return res.json(jobBody);
+  } catch (error) {
+    console.error("Error adding participant label job:", error);
+    res.status(500).json({success: false, message: "Internal Server Error"});
+  }
+});
 
 // circulator label endpoints
 router.get(
@@ -85,7 +92,7 @@ router.get(
       "attachment; filename=Energy Rating Label-" +
         pump.rating_id +
         "-(" +
-        lang.get_label_language() +
+        lang.get_label_language(req, res) +
         ").svg",
     );
     res.setHeader("Content-Type", "image/svg+xml");
@@ -105,7 +112,7 @@ router.get(
       "attachment; filename=Energy Rating Label-" +
         pump.rating_id +
         "-(" +
-        lang.get_label_language() +
+        lang.get_label_language(req, res) +
         ").png",
     );
     res.setHeader("Content-Type", "image/png");
@@ -191,8 +198,8 @@ router.get(
 );
 
 // pump label endpoints
-function get_filename(rating_id, type = "Label") {
-  let label_lang = lang.get_label_language();
+function get_filename(req, res, rating_id, type = "Label") {
+  let label_lang = lang.get_label_language(req, res);
   return "Energy Rating " + type + "-" + rating_id + "-(" + label_lang + ")";
 }
 
@@ -241,7 +248,9 @@ router.get(
       }
       res.setHeader(
         "Content-disposition",
-        "attachment; filename=" + get_filename(pump.rating_id) + ".svg",
+        "attachment; filename=" +
+          get_filename(req, res, pump.rating_id) +
+          ".svg",
       );
       res.setHeader("Content-Type", "image/svg+xml");
       res.send(svg);
@@ -259,7 +268,9 @@ router.get(
       }
       res.setHeader(
         "Content-disposition",
-        "attachment; filename=" + get_filename(pump.rating_id) + "-sm.svg",
+        "attachment; filename=" +
+          get_filename(req, res, pump.rating_id) +
+          "-sm.svg",
       );
       res.setHeader("Content-Type", "image/svg+xml");
       res.send(svg);
@@ -279,7 +290,9 @@ router.get(
         const png_buffer = svg_builder.svg_to_png(svg);
         res.setHeader(
           "Content-disposition",
-          "attachment; filename=" + get_filename(pump.rating_id) + ".png",
+          "attachment; filename=" +
+            get_filename(req, res, pump.rating_id) +
+            ".png",
         );
         res.setHeader("Content-Type", "image/png");
         res.setHeader("Content-Length", png_buffer.length);
@@ -307,7 +320,9 @@ router.get(
           const png_buffer = svg_builder.svg_to_png(svg);
           res.setHeader(
             "Content-disposition",
-            "attachment; filename=" + get_filename(pump.rating_id) + "-sm.png",
+            "attachment; filename=" +
+              get_filename(req, res, pump.rating_id) +
+              "-sm.png",
           );
           res.setHeader("Content-Type", "image/png");
           res.setHeader("Content-Length", png_buffer.length);
@@ -330,7 +345,9 @@ router.get(
       }
       res.setHeader(
         "Content-disposition",
-        "attachment; filename=" + get_filename(pump.rating_id, "QR") + ".svg",
+        "attachment; filename=" +
+          get_filename(req, res, pump.rating_id, "QR") +
+          ".svg",
       );
       res.setHeader("Content-Type", "image/svg+xml");
       res.send(svg);
@@ -350,7 +367,9 @@ router.get(
         const png_buffer = svg_builder.svg_to_png(svg);
         res.setHeader(
           "Content-disposition",
-          "attachment; filename=" + get_filename(pump.rating_id, "QR") + ".png",
+          "attachment; filename=" +
+            get_filename(req, res, pump.rating_id, "QR") +
+            ".png",
         );
         res.setHeader("Content-Type", "image/png");
         res.setHeader("Content-Length", png_buffer.length);

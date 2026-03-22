@@ -23,7 +23,7 @@ const initializeParticipantLabelJobHandler = async (
     participantId,
     jobId,
     format: input.format,
-    status: "running",
+    status: "pending",
     progress: 0,
     locale: input.locale,
     swVersion: input.swVersion,
@@ -31,6 +31,7 @@ const initializeParticipantLabelJobHandler = async (
     formatSize: input.formatSize,
     labelGenerationUrl: input.labelGenerationUrl,
     durableInstanceId: durableInstanceId,
+    labelCount: input.labels.length,
   });
 
   const labelItems = input.labels.map((label) => {
