@@ -10,6 +10,9 @@ import {
   ZipLabelsChunkActivityResult,
 } from "./zip-labels-chunk-activity";
 import {recordJobStatusActivity} from "./recording-activities";
+import * as df from "durable-functions";
+import moment from "moment";
+import {ACTIVITY_NAMES} from "./activity-names";
 
 export const participantLabelJobOrchHandler: OrchestrationHandler = function* (
   context: OrchestrationContext,
@@ -26,6 +29,31 @@ export const participantLabelJobOrchHandler: OrchestrationHandler = function* (
     participantId: request.participantId,
     durableInstanceId,
   });
+
+  // // 2. Monitor rate limit on building.
+  // const rateLimiterEntityId = new df.EntityId(
+  //   ACTIVITY_NAMES.JOB_BUILDER_RATE_LIMITER_ENTITY,
+  //   "global",
+  // );
+
+  // // only one may build at a time, so we acquire the lock before building and release after all builds are done.
+  // while (true) {
+  //   const acquired = yield context.df.callEntity(
+  //     rateLimiterEntityId,
+  //     "getLock",
+  //     {maxCount: 1},
+  //   );
+  //   if (!acquired) {
+  //     // if lock is held by another, wait for a bit before retrying
+  //     const nextRetry = moment
+  //       .utc(context.df.currentUtcDateTime)
+  //       .add(10, "seconds")
+  //       .toDate(); // retry after 10 seconds
+  //     yield context.df.createTimer(nextRetry);
+  //   } else {
+  //     break; // lock acquired, proceed with building
+  //   }
+  // }
 
   // 2. Build the labels in parallel and put on shelf for zipping
   yield recordJobStatusActivity({
@@ -48,6 +76,9 @@ export const participantLabelJobOrchHandler: OrchestrationHandler = function* (
     }),
   );
 
+  // release lock immediately after building tasks are kicked off, as the actual building happens in the activity and we don't want to block other jobs from starting their build process while we wait for these builds to complete.
+  // yield context.df.callEntity(rateLimiterEntityId, "releaseLock");
+
   // wait for all label generation tasks to complete
   const results: AddParticipantLabelJobActivityResult[] =
     yield context.df.Task.all(labelTasks);
@@ -56,10 +87,10 @@ export const participantLabelJobOrchHandler: OrchestrationHandler = function* (
   yield recordJobStatusActivity({
     participantId: request.participantId,
     jobId: request.id,
-    status: "chunkning",
+    status: "chunking",
   });
   const chunkableResults: AddParticipantLabelJobActivityResult[][] =
-    getChunkedResults(results, 256 * 1024 * 1024);
+    getChunkedResults(results, 256 * 1024 * 1024); // .5 GB in bytes
 
   // spin off zip activities for each chunk of results
   yield recordJobStatusActivity({

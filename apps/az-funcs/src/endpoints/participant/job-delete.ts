@@ -6,8 +6,8 @@ import {
 } from "../../tables/repository";
 import {AppContext} from "../../app-context";
 import * as df from "durable-functions";
-import {HttpRequest} from "@azure/functions";
 import {LabelImageRepository} from "../../labels/label-image-repository";
+import {ACTIVITY_NAMES} from "../../activities/activity-names";
 
 export class ParticipantLabelJobDelete extends OpenAPIRoute {
   schema = {
@@ -75,6 +75,13 @@ export class ParticipantLabelJobDelete extends OpenAPIRoute {
       "Suspended while deleting label job",
     );
     await durableClient.purgeInstanceHistory(durableInstanceId);
+
+    const rateLimiterEntityId = new df.EntityId(
+      ACTIVITY_NAMES.JOB_BUILDER_RATE_LIMITER_ENTITY,
+      "global",
+    );
+
+    await durableClient.signalEntity(rateLimiterEntityId, "reset");
 
     // delete tables entries, remove from storage, etc.
     await jobRepo.delete(participantId, jobId);

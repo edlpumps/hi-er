@@ -4,7 +4,7 @@ export type LabelJobEntity = {
   status:
     | "pending"
     | "building"
-    | "chunkning"
+    | "chunking"
     | "zipping"
     | "done"
     | "cancelling"

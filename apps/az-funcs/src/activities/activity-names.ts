@@ -6,4 +6,6 @@ export const ACTIVITY_NAMES = {
   ZIP_LABELS_CHUNK_ACTIVITY: "participant-label-job-zip-labels-chunk-activity",
   RECORD_JOB_STATUS_ACTIVITY:
     "participant-label-job-record-job-status-activity",
+
+  JOB_BUILDER_RATE_LIMITER_ENTITY: "job-builder-rate-limiter-entity",
 };

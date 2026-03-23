@@ -8,7 +8,7 @@ const router = express.Router();
 module.exports = router;
 
 router.use((req, res, next) => {
-  const languageHeader = req.header("Accept-Language");
+  const languageHeader = req.header("x-label-language");
   if (languageHeader) {
     lang.set_label_language(req, res, languageHeader);
   }
@@ -19,60 +19,76 @@ router.use((req, res, next) => {
 router.post("/participant/:participantId/label-job", async (req, res) => {
   try {
     const {participantId} = req.params;
-    const {
-      format,
-      formatSize,
-      extension,
-      locale,
-      equipmentType,
-      submitJob,
-      listedOnly,
-    } = req.body;
-    //   const language = lang.get_label_language();
-
-    const participant = await req.Participants.findById(participantId);
-    const pumps =
-      equipmentType === "pump"
-        ? await req.Pumps.getAllByParticipantId(participantId, listedOnly)
-        : await req.Circulators.getAllByParticipantId(
-            participantId,
-            listedOnly,
-          );
-
-    const labels = pumps.map((pump) => {
-      const labelId = pump._id.toString();
-      const archiveName = `${pump.rating_id}-(${locale})`;
-      return {labelId, archiveName};
+    const jobs = (req.body || []).map((job) => {
+      return {
+        ...job,
+        id: crypto.randomUUID(),
+      };
     });
 
-    const jobBody = {
-      id: crypto.randomUUID(),
-      name: `Labeling Job for ${participant.name}`,
-      archiveName: `${participant.name}-(${equipmentType})-labels-(${locale})-(${format.replace(/\//g, "-")})${formatSize ? `-(${formatSize})` : ""}`,
-      format,
-      formatSize,
-      extension,
-      locale,
-      equipmentType,
-      swVersion: "local",
-      labelsCount: labels.length,
-      labels,
-    };
+    const participant = await req.Participants.findById(participantId);
+    const submittedJobs = [];
+    const failedJobs = [];
+    for (const job of jobs) {
+      const {
+        format,
+        formatSize,
+        extension,
+        locale,
+        equipmentType,
+        submitJob,
+        listedOnly,
+      } = job;
 
-    if (submitJob) {
-      await fetch(
-        `http://localhost:7071/api/participant/${participantId}/label-jobs`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
+      const pumps =
+        equipmentType === "pump"
+          ? await req.Pumps.getAllByParticipantId(participantId, listedOnly)
+          : await req.Circulators.getAllByParticipantId(
+              participantId,
+              listedOnly,
+            );
+
+      const labels = pumps.map((pump) => {
+        const labelId = pump._id.toString();
+        const archiveName = `${pump.rating_id}-(${locale})`;
+        return {labelId, archiveName};
+      });
+
+      const jobBody = {
+        id: crypto.randomUUID(),
+        name: `Labeling Job for ${participant.name}`,
+        archiveName: `${participant.name}-(${equipmentType})-labels-(${locale})-(${format.replace(/\//g, "-")})${formatSize ? `-(${formatSize})` : ""}`,
+        format,
+        formatSize,
+        extension,
+        locale,
+        equipmentType,
+        swVersion: "production",
+        labelsCount: labels.length,
+        labels,
+      };
+
+      if (submitJob) {
+        const response = await fetch(
+          `http://localhost:7071/api/participant/${participantId}/label-jobs`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(jobBody),
           },
-          body: JSON.stringify(jobBody),
-        },
-      );
+        );
+        if (!response.ok) {
+          console.error("Failed to submit job:", await response.text());
+          failedJobs.push(jobBody);
+          continue;
+        }
+        submittedJobs.push(jobBody);
+      }
     }
 
-    return res.json(jobBody);
+    return res.json({submitted: submittedJobs, failed: failedJobs});
   } catch (error) {
     console.error("Error adding participant label job:", error);
     res.status(500).json({success: false, message: "Internal Server Error"});
@@ -86,7 +102,12 @@ router.get(
     const pump = await req.Circulators.findById(req.params.circulator_id)
       .populate("participant")
       .exec();
-    const svg = svg_builder.make_circulator_label(req, pump.participant, pump);
+    const svg = svg_builder.make_circulator_label(
+      req,
+      pump.participant,
+      pump,
+      res,
+    );
     res.setHeader(
       "Content-disposition",
       "attachment; filename=Energy Rating Label-" +
@@ -105,7 +126,12 @@ router.get(
     const pump = await req.Circulators.findById(req.params.circulator_id)
       .populate("participant")
       .exec();
-    const svg = svg_builder.make_circulator_label(req, pump.participant, pump);
+    const svg = svg_builder.make_circulator_label(
+      req,
+      pump.participant,
+      pump,
+      res,
+    );
     const png_buffer = svg_builder.svg_to_png(svg);
     res.setHeader(
       "Content-disposition",
@@ -130,6 +156,7 @@ router.get(
       req,
       pump.participant,
       pump,
+      res,
     );
     res.setHeader(
       "Content-disposition",
@@ -151,6 +178,7 @@ router.get(
       req,
       pump.participant,
       pump,
+      res,
     );
     const png_buffer = svg_builder.svg_to_png(svg);
     res.setHeader(
@@ -170,7 +198,12 @@ router.get(
     const pump = await req.Circulators.findById(req.params.circulator_id)
       .populate("participant")
       .exec();
-    const svg = svg_builder.make_circulator_qr(req, pump.participant, pump);
+    const svg = svg_builder.make_circulator_qr(
+      req,
+      pump.participant,
+      pump,
+      res,
+    );
     res.setHeader(
       "Content-disposition",
       "attachment; filename=Energy Rating QR - " + pump.rating_id + ".svg",
@@ -185,7 +218,12 @@ router.get(
     const pump = await req.Circulators.findById(req.params.circulator_id)
       .populate("participant")
       .exec();
-    const svg = svg_builder.make_circulator_qr(req, pump.participant, pump);
+    const svg = svg_builder.make_circulator_qr(
+      req,
+      pump.participant,
+      pump,
+      res,
+    );
     const png_buffer = svg_builder.svg_to_png(svg);
     res.setHeader(
       "Content-disposition",

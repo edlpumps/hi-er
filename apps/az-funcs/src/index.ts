@@ -4,6 +4,7 @@ import * as df from "durable-functions";
 import {azureContextHonoApiHandler} from "./app-context";
 import {participantLabelJobOrchHandler} from "./activities/participant-label-job-orch";
 import {ACTIVITY_NAMES} from "./activities/activity-names";
+import {jobBuilderRateLimiterEntity} from "./activities/job-building-rate-limiter-entity";
 
 app.http("httpTrigger", {
   methods: ["GET", "POST", "DELETE", "PUT"],
@@ -17,4 +18,9 @@ app.http("httpTrigger", {
 df.app.orchestration(
   ACTIVITY_NAMES.PARTICIPANT_LABEL_JOB_ORCH,
   participantLabelJobOrchHandler,
+);
+
+df.app.entity(
+  ACTIVITY_NAMES.JOB_BUILDER_RATE_LIMITER_ENTITY,
+  jobBuilderRateLimiterEntity,
 );

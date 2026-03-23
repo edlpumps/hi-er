@@ -60,7 +60,7 @@ const addParticipantLabelJobActivityHandler: ActivityHandler = async (
       const response = await fetch(buildUrl, {
         method: "GET",
         headers: {
-          "Accept-Language": input.locale,
+          "x-label-language": input.locale,
         },
       });
 
@@ -99,7 +99,7 @@ const addParticipantLabelJobActivityHandler: ActivityHandler = async (
       existingImage.blobPath = uploadResponse.blobPath;
     }
 
-    const labelArchiveName = `${label.labelId}.${extension}`;
+    const labelArchiveName = `${label.archiveName}.${extension}`;
 
     await itemRepository.upsert(
       {
