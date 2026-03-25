@@ -261,6 +261,7 @@ router.get("/pumps/:id/revise", aw(async (req, res) => {
     pump.motor_type = {
         value: pump.motor_type
     };
+
     var help = require("../public/resources/help.json");
     res.render("participant/new_pump", {
         user: req.user,
@@ -734,7 +735,7 @@ router.post("/pumps/:id/submitRevision", aw(async (req, res) => {
         res.redirect("/unauthorized");
         return;
     }
-    const old = await req.Pumps.findById(req.params.id).exec();
+    let orig = await req.Pumps.findById(req.params.id).exec();
     let pump = req.body.pump;
 
     if (pump.results) {
@@ -744,26 +745,34 @@ router.post("/pumps/:id/submitRevision", aw(async (req, res) => {
     pump = units.convert_to_us(pump);
     pump.date = new Date();
 
-    // will retain the listed/pending status
-    delete pump.listed;
-    delete pump.pending;
-    pump = Object.assign(old, pump);
-    pump.date = new Date();
-    pump.participant = req.participant._id;
-    pump.revisions.push({
-        note: req.body.revision_note,
-        date: new Date()
-    })
-
     const check = await model_check(req, pump, req.participant);
     if (!check.ok) {
         pump.listed = false;
     }
-    delete pump._id;
-    await req.Pumps.update({
-        _id: req.params.id
-    }, pump);
-    res.redirect("/participant/pumps");
+    else {
+        pump.listed = orig.listed;
+    }
+    // will retain the listed/pending status
+    pump.pending = orig.pending;
+    delete pump._id; //Delete this because it doesn't need to get updated
+    delete pump.participant; //Delete this because it comes across as a string vs an Object. And it doesn't need to be updated.
+    //delete orig.participant;
+    orig = Object.assign(orig, pump);
+    orig.revisions.push({
+        note: req.body.revision_note,
+        date: new Date()
+    })
+
+    try {
+        //console.log("Update Pump:");
+        //console.log(JSON.stringify(orig, null, 2));
+        const updated_pump = await orig.save();
+        res.redirect("/participant/pumps/" + updated_pump._id);
+    } catch (ex) {
+        console.log("Error Updating Pump");
+        console.log(JSON.stringify(ex, null, 2));
+        res.redirect("/participant/pumps");
+    }
 }));
 
 

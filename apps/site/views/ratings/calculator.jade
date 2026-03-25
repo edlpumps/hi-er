@@ -69,7 +69,13 @@ mixin calculator(er, mode)
                     +help(help.individual_model_number, er)
                   .col.col-xs-7.col-sm-4
                     input.form-control(type="text" ng-model="app.pump.individual_model" name="pump[individual_model]")
-              
+
+            .row.form-group(ng-show="revision || app.pump.alternative_part_number")
+                  .col.col-xs-5
+                    label.text-primary Alternative Model Number
+                  .col.col-xs-7.col-sm-4
+                    input.form-control(type="text" ng-model="app.pump.alternative_part_number" name="pump[alternative_part_number]")
+
             .row 
               .form-group
                 .col.col-xs-5
@@ -187,6 +193,13 @@ mixin calculator(er, mode)
                     label Basic / Individual Model Number:
                   .col.col-xs-7
                     .form-control-static {{app.pump.basic_model}} / {{app.pump.individual_model}}
+
+            .row(ng-show="revision || app.pump.alternative_part_number")
+                .form-group
+                  .col.col-xs-5
+                    label Alternative Model Number:
+                  .col.col-xs-7
+                    form-control-static {{app.pump.alternative_part_number}}
          
             .row 
                 .form-group
@@ -256,6 +269,14 @@ mixin calculator(er, mode)
                     label Basic / Individual Model Number:
                   .col.col-xs-7
                     .form-control-static {{app.pump.basic_model}} / {{app.pump.individual_model}}
+
+            .row(ng-show="revision || app.pump.alternative_part_number")
+                .form-group
+                  .col.col-xs-5
+                    label Alternative Model Number:
+                  .col.col-xs-7
+                    .form-control-static  {{app.pump.alternative_part_number}}
+
             .row 
                 .form-group
                   .col.col-xs-5
@@ -388,6 +409,12 @@ mixin calculator(er, mode)
                     label Basic / Individual Model Number:
                   .col.col-xs-7
                     .form-control-static {{app.pump.basic_model}} / {{app.pump.individual_model}}
+            .row(ng-show="revision || app.pump.alternative_part_number")
+                .form-group
+                  .col.col-xs-5
+                    label Alternative Model Number:
+                  .col.col-xs-7
+                   .form-control-static {{app.pump.alternative_part_number}}
             .row 
                 .form-group
                   .col.col-xs-5

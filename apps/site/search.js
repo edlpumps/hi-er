@@ -99,13 +99,38 @@ exports.params = function (search_parameters, allow_inactive) {
         });
     }
 
+    var model_criteria = [];
     if (search.basic_model) {
-        operators.push({
-            $match: {
+        model_criteria.push({
                 basic_model: {
                     $regex: new RegExp(search.basic_model, "ig")
                 }
+            }
+        );
+    }
 
+    if (search.individual_model) {
+        model_criteria.push({
+                individual_model: {
+                    $regex: new RegExp(search.individual_model, "ig")
+                }
+            }
+        );
+    }
+
+    if (search.alternative_part_number) {
+        model_criteria.push({
+                alternative_part_number: {
+                    $regex: new RegExp(search.alternative_part_number, "ig")
+                }
+            }
+        );
+    }
+
+    if (model_criteria.length > 0) {
+        operators.push({
+            $match: {
+                $or: model_criteria
             }
         });
     }

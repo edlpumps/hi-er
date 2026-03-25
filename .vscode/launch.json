@@ -9,7 +9,7 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Export",
-            "program": "${workspaceRoot}/export-file.js",
+            "program": "${workspaceRoot}/apps/site/export-file.js",
             "cwd": "${workspaceRoot}"
         },
     {
@@ -31,7 +31,7 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
-            "program": "${workspaceRoot}/index.js",
+            "program": "${workspaceRoot}/apps/site/index.js",
             "cwd": "${workspaceRoot}"
         },
         {
