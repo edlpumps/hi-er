@@ -446,11 +446,11 @@ mixin calculator(er, mode)
                   .col.col-xs-7
                     div.radio
                       label.radio-inline
-                        input(type="radio", name="pump[load120]", ng-model="app.pump.load120", ng-value="true", value="true") 
+                        input(type="radio", name="pump[load120]", ng-model="app.pump.load120", ng-value="true", value="true", ng-checked="app.pump.load120") 
                         | Yes (75% / 100% / 110% load points)
                     div.radio
                       label.radio-inline
-                        input(type="radio", name="pump[load120]", ng-model="app.pump.load120", ng-value="false", value="false") 
+                        input(type="radio", name="pump[load120]", ng-model="app.pump.load120", ng-value="false", value="false", ng-checked="!app.pump.load120") 
                         | No (65% / 90% / 100% load points)
 
             hr
@@ -468,9 +468,12 @@ mixin calculator(er, mode)
                          th.col-label 
                          | Values at Nominal Speed of Rotation
                          +help(help.rep_nominal_speed, er)
-                       th {{app.pump.load120 ? "@ 75% BEP" : "@ 65% BEP"}}
-                       th {{app.pump.load120 ? "@ 100% BEP" : "@ 90% BEP"}}
-                       th {{app.pump.load120 ? "@ 110% BEP" : "@ 100% BEP"}}
+                       th(ng-show='app.pump.load120')@ 75% BEP
+                       th(ng-show='app.pump.load120')@ 100% BEP
+                       th(ng-show='app.pump.load120')@ 110% BEP
+                       th(ng-hide='app.pump.load120')@ 65% BEP
+                       th(ng-hide='app.pump.load120')@ 90% BEP
+                       th(ng-hide='app.pump.load120')@ 100% BEP
                        th(ng-show="app.bep120_visible()") @ 120% BEP
                     tbody
                       tr(ng-show='app.pump.load120')

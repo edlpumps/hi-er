@@ -47,6 +47,7 @@ block content
               .form-group
                 .col.col-xs-5
                   label.text-primary Alternative Model Number
+                    +help(help.alternative_part_number, true)
                 .col.col-xs-7.col-sm-4
                   input.form-control(name="alternative_part_number", id="alternative_part_number", type="text" ng-model="app.pump.alternative_part_number")
 
