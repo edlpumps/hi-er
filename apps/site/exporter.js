@@ -113,8 +113,9 @@ const getExportable = (pumps) => {
         pump.motor_power_rated = pump.motor_power_rated.toFixed(2);
 
         pump.motor_type = pump.motor_type ? pump.motor_type:null;
-
-        
+        let configuration = pump.configuration.value || pump.configuration;
+        pump.load_type  = configuration == "bare" || configuration == "pump_motor" ? "Constant Load" : "Variable Load";
+        pump.pump_type = pump.doe
     }
     return pumps;
 }
