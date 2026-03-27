@@ -4,12 +4,19 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-    
+
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Build Help",
+            "program": "${workspaceRoot}/apps/site/help_gen.js",
+            "cwd": "${workspaceRoot}"
+        },
         {
             "type": "node",
             "request": "launch",
             "name": "Launch Export",
-            "program": "${workspaceRoot}/export-file.js",
+            "program": "${workspaceRoot}/apps/site/export-file.js",
             "cwd": "${workspaceRoot}"
         },
     {
@@ -31,7 +38,7 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
-            "program": "${workspaceRoot}/index.js",
+            "program": "${workspaceRoot}/apps/site/index.js",
             "cwd": "${workspaceRoot}"
         },
         {

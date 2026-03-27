@@ -658,7 +658,12 @@ exports.calculate = function (pump, labels) {
     if (!labels) return retval;
 
     var configuration = pump.configuration.value || pump.configuration;
+    //TODO CL VL Issue.  What is configuration?  It should just be configuration not value.
     var load = configuration == "bare" || configuration.value == "pump_motor" ? "CL" : "VL";
+    var test = configuration == "bare" || configuration == "pump_motor" ? "CL" : "VL";
+    if (test != load) {
+        console.log("PUMP: "+ pump.rating_id + " - calculator/index.js - Configuration parsing issue, verify configuration value is correct and does not have a nested value property");
+    }
     var range = labels.filter(function (label) {
         return label.doe == pump.doe && label.speed == pump.speed && label.load == load;
     })[0];
