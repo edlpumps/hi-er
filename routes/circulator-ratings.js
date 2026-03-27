@@ -7,7 +7,7 @@ const svg_builder = require('../utils/label_builder.js');
 const lang = require('../utils/language.js');
 const calculator = require('../calculator');
 
-// Route to search (public search)
+// Route to circulator search (public search)
 router.post('/', aw(async function (req, res) {
     const q = [];
     let valid = false;
@@ -52,7 +52,7 @@ router.post('/', aw(async function (req, res) {
 }));
 
 
-/// Serves the public search page
+/// Serves the circulator public search page
 router.get('/', aw(async function (req, res) {
     const lookup = {
         $lookup: {

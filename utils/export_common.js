@@ -111,6 +111,7 @@ exports.pump_full_headers = [
         'participant',
         'basic_model',
         'individual_model',
+        'alternative_part_number',
         'motor_type',
         'brand',
         'laboratory',
