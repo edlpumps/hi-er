@@ -56,7 +56,7 @@ mixin beta_btn()
  if is_beta
   li
     .navbar-text
-      button.btn-group-xs.btn-danger #{is_beta}
+      button.btn-group-xs.btn-danger(title="#{db_connection}") #{is_beta}
       
 mixin unit_switch()
  if certificate_cart_exists
