@@ -226,7 +226,7 @@ router.post("/search", function (req, res) {
 // }
 
 // router.get('/ceetest/:which', aw(async (req, res) => {
-//     if (process.env.NODE_ENV && ['development','beta'].includes(process.env.NODE_ENV)) {
+//     if (process.env.NODE_ENV && !(process.env.NODE_ENV.toUpperCase()).includes('PROD')) {
 //         let which = req.params.which;
 //         console.log("CEE Test: " + which);
 //         try {

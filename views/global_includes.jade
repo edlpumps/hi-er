@@ -52,6 +52,12 @@ script(type="text/javascript", src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist
 
 include common/help
 
+mixin beta_btn() 
+ if is_beta
+  li
+    .navbar-text
+      button.btn-group-xs.btn-danger #{is_beta}
+      
 mixin unit_switch()
  if certificate_cart_exists
   li
