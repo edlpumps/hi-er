@@ -28,6 +28,13 @@ mixin pump_page_info(pump, lang)
                 label #{i18n.t("manufacturer_model_designation",{lng:loc_lang})}:
             .col.col-xs-7
                 .form-control-static #{pump.individual_model}
+    if pump.alternative_part_number
+      .row
+        .form-group
+            .col.col-xs-5
+                label #{i18n.t("alternative_model",{lng:loc_lang})}:
+            .col.col-xs-7
+                .form-control-static #{pump.alternative_part_number}
     .row 
         .form-group
             .col.col-xs-5

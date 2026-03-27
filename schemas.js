@@ -222,6 +222,10 @@ exports.init = function init(mongoose) {
             type: String,
             default: "N/A"
         },
+        alternative_part_number: { 
+            type: String,
+            default: ""
+        },
         diameter: Number,
         speed: Number,
         laboratory: {
@@ -417,7 +421,10 @@ exports.init = function init(mongoose) {
         brand: String,
         basic_model: String,
         manufacturer_model: String,
-        alternative_part_number: String,
+        alternative_part_number: {
+            type: String,
+            default: ""
+        },
         type: String,
         control_methods: [String],
         head: [Number],

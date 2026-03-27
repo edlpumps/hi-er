@@ -34,6 +34,15 @@
 			"This is the unique number given to the pump being rated.   *This is optional for the PEI calculator*"
 		]
 	},
+	"alternative_part_number": {
+		"title": "Alternative Part Number",
+		"portal_help": [
+			"This is an alternative number that the participant puts on the nameplate that they would like to be searchable in the HI database."
+		],
+		"calc_help": [
+			"*This field is optional and does not need to be filled out for the pump to be listed."
+		]
+	},
 	"category": {
 		"title": "Equipment Category of rated pump",
 		"portal_help": [

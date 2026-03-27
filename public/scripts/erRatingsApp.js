@@ -141,6 +141,8 @@ var ERRatingsController = function ($scope, $location, service, $http) {
       vm.search.fresh = false;
       return false;
     }
+    vm.search.individual_model = vm.search.basic_model;
+    vm.search.alternative_part_number = vm.search.basic_model;
     return true;
   }
 
