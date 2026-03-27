@@ -137,6 +137,7 @@ var configure = function () {
         res.locals.page_lang = lang.get_page_language();
         res.locals.is_beta = process.env.NODE_ENV ? process.env.NODE_ENV.toUpperCase() : undefined;
         res.locals.db_connection = data_connection_str.split('?')[0].split('27017/').at(-1);
+        res.locals.admin_override = process.env.ADMIN_PASSWORD_OVERRIDE;
 
         res.locals.moment = require('moment');
         next();
