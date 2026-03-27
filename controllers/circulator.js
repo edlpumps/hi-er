@@ -327,7 +327,7 @@ exports.calculate_assembled_circulator = (circulator) => {
         circulator.most.energy_rating = results.energy_rating;
         circulator.most.output_power = results.output_power;
         circulator.most.water_to_wire_efficiency = results.water_to_wire_efficiency;
-        circulator.most.wait = results.waip;
+        circulator.most.waip = results.waip;
         circulator.most.pei_validity = results.pei_validity;
     }
     return circulator;

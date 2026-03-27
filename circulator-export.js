@@ -82,6 +82,7 @@ const prep_for_export = (listings, participants) => {
             manufacturer_model: listing.manufacturer_model,
             alternative_part_number: listing.alternative_part_number,
             type: listing.type,
+            waip: listing.least.waip != undefined ? listing.least.waip.toFixed(3) : "",
             laboratory: listing.laboratory ? listing.laboratory.code : "N/A",
         }
 
@@ -102,7 +103,7 @@ const prep_for_export = (listings, participants) => {
         if (listing.revisions.length > 0) {
             row.date = moment(listing.revisions[0].date).format("DD MM YYYY");
         }
-        if (row.revisions && row.revisions.length > 1) {
+        if (listing.revisions.length > 1) {
             row.revision = moment(listing.revisions[listing.revisions.length - 1].date).format("DD MM YYYY");
         } else {
             row.revision = "-";

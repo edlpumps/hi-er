@@ -163,7 +163,7 @@ block content
 									.col.col-sm-6
 										input.form-control(v-model="search.rating_id", type="text")
 							.form-group
-									label.col-sm-3.control-label Basic Model Number
+									label.col-sm-3.control-label Basic Model<br>Manufacturer Model<br>Alternative Part Number
 									.col.col-sm-6
 										input.form-control(v-model="search.basic_model", type="text")
 							.form-group
@@ -220,7 +220,7 @@ block content
 										.col.col-xs-8.col-sm-6
 													h3 {{pump.brand}} {{pump.brand ? ' / ' : ''}} {{pump.basic_model}}
 													p: b Manufacturer's model number:  {{pump.manufacturer_model}} 
-													p(v-if='pump.alternative_part_number'): b Alternative's model number:  {{pump.alternative_part_number}} 
+													p(v-if='pump.alternative_part_number'): b Alternative model number:  {{pump.alternative_part_number}} 
 													p {{pump.participant.name}}
 													p {{pump.type}}
 										.col.hidden-xs.col-sm-4(style="padding-top:20px")
