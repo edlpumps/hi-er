@@ -135,6 +135,9 @@ var configure = function () {
         res.locals.lang_set = req.session.lang_set;
         res.locals.label_lang = lang.get_label_language();
         res.locals.page_lang = lang.get_page_language();
+        res.locals.is_beta = process.env.NODE_ENV ? process.env.NODE_ENV.toUpperCase() : undefined;
+        res.locals.db_connection = data_connection_str.split('?')[0].split('27017/').at(-1);
+        res.locals.admin_override = process.env.ADMIN_PASSWORD_OVERRIDE;
 
         res.locals.moment = require('moment');
         next();
@@ -225,6 +228,9 @@ var conn = mongoose.connect(data_connection_str, {
     if (err) {
         mainlog.fatal("Could not connect to mongo database at %s", data_connection_str);
     } else {
+        if (process.env.NODE_ENV && (process.env.NODE_ENV.toUpperCase()).includes('DEV')) {
+            console.log("Connected to mongo database at %s", data_connection_str);
+        }
         mainlog.info("Connected to mongo database at %s", data_connection_str);
         schemas.init(mongoose);
         app.locals.db = {
@@ -330,7 +336,7 @@ var push_once_a_month = async function () {
 
 
 const push_emails = async function (interval, override) {
-    if (process.env.NODE_ENV && ['development', 'beta'].includes(process.env.NODE_ENV)) {
+    if (process.env.NODE_ENV && !(process.env.NODE_ENV.toUpperCase()).includes('PROD')) {
         console.log("Skipping email push interval["+interval+"] in development/beta mode");
         return;
     }

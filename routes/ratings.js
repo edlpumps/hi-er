@@ -144,6 +144,8 @@ router.post("/search", function (req, res) {
         rating_id: req.session.search.rating_id,
         participant: req.session.search.participant,
         basic_model: req.session.search.basic_model,
+        individual_model: req.session.search.individual_model,
+        alternative_part_number: req.session.search.alternative_part_number,
         brand: req.session.search.brand,
         cl: req.session.search.cl,
         vl: req.session.search.vl
@@ -162,6 +164,8 @@ router.post("/search", function (req, res) {
             rating_id: 1,
             brand: 1,
             individual_model: 1,
+            alternative_part_number: 1,
+            basic_model: 1,
             'joined_participant.name': 1,
             doe: 1,
             configuration: 1,
@@ -222,7 +226,7 @@ router.post("/search", function (req, res) {
 // }
 
 // router.get('/ceetest/:which', aw(async (req, res) => {
-//     if (process.env.NODE_ENV && ['development','beta'].includes(process.env.NODE_ENV)) {
+//     if (process.env.NODE_ENV && !(process.env.NODE_ENV.toUpperCase()).includes('PROD')) {
 //         let which = req.params.which;
 //         console.log("CEE Test: " + which);
 //         try {

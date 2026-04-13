@@ -7,42 +7,43 @@ const svg_builder = require('../utils/label_builder.js');
 const lang = require('../utils/language.js');
 const calculator = require('../calculator');
 
-// Route to search (public search)
+// Route to circulator search (public search)
 router.post('/', aw(async function (req, res) {
-    const q = {};
+    const q = [];
     let valid = false;
     //console.log("Search Request: "+JSON.stringify(req.body));
     if (req.body.participant) {
-        q.participant = req.body.participant;
+        q.push({ participant: req.body.participant});
         valid = true;
     }
     if (req.body.rating_id) {
-        q.rating_id = req.body.rating_id;
+        q.push({rating_id:req.body.rating_id});
         valid = true;
     }
     if (req.body.basic_model) {
-        q.basic_model = {
-            $regex: new RegExp(req.body.basic_model, "ig")
-        };
+        q.push({ $or: [ {basic_model: { $regex: new RegExp(req.body.basic_model, "ig") } }, {manufacturer_model: { $regex: new RegExp(req.body.basic_model, "ig") } }, {alternative_part_number: { $regex: new RegExp(req.body.basic_model, "ig") } } ] });
         valid = true;
     }
     if (req.body.brand) {
-        q.brand = req.body.brand;
+        q.push({brand: req.body.brand});
         valid = true;
     }
-    q.pending = { $ne: true };
+    q.push({pending: { $ne: true }});
     // If the search does not include a rating ID, unlisted pumps
     // are never returned.
     if (!req.body.rating_id) {
-        q.listed = { $eq: true};
+        q.push({listed: { $eq: true}});
     }
     if (!valid) {
         //console.log("Invalid");
         return res.json([]);
     }
+    
+    // This is the format I need
+    // { $and: [ { $or: [ { basic_model: { $regex: /abc/ig } }, { manufacturer_model: { $regex: /abc/ig } }, { alternative_part_number: { $regex: /abc/ig } } ] }, { pending: { $ne: true } }, { listed: { $eq: true } } , etc] }
     //console.log("Query: "+JSON.stringify(q));
     const sort_order = {'least.pei': 1, 'basic_model': 1};
-    const results = await req.Circulators.find(q).sort(sort_order).populate('participant').exec();
+    const results = await req.Circulators.find({$and: q}).sort(sort_order).populate('participant').exec();
     let new_results = results;
     
     new_results = calculator.filter_pumps_by_cee_tiers(results, req.body, 'circulators');
@@ -51,7 +52,7 @@ router.post('/', aw(async function (req, res) {
 }));
 
 
-/// Serves the public search page
+/// Serves the circulator public search page
 router.get('/', aw(async function (req, res) {
     const lookup = {
         $lookup: {

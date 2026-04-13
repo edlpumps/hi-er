@@ -92,13 +92,16 @@ const gAllHeadings={
         {
             "basic_model": "Basic Model Number",
             "manufacturer_model": "Manufacturer Model Number",
-            "laboratory": "HI Laboratory Number"
+            "laboratory": "HI Laboratory Number",
+            "waip": "WAIP at max speed"
         }, common_xlsx_headings ),
     'pumps': Object.assign( {}, 
         {
             "basic_model": "Basic model designation",
             "individual_model": "Manufacturer's model designation",
-            "laboratory": "HI Approved laboratory"
+            "laboratory": "HI Approved laboratory",
+            "load_type": "Load Type",
+            "pump_type": "Pump Type",
         }, common_xlsx_headings ),
     'certificates': common_xlsx_headings
 };
@@ -108,6 +111,7 @@ exports.pump_full_headers = [
         'participant',
         'basic_model',
         'individual_model',
+        'alternative_part_number',
         'motor_type',
         'brand',
         'laboratory',
@@ -134,6 +138,11 @@ exports.pump_qpl_headers = [
         'rating_id',
         'basic_model',
         'individual_model',
+        'alternative_part_number',
+        'brand',
+        'motor_power_rated',
+        'load_type',
+        'pump_type',
         'pei',
         'energy_rating',
         'date',
@@ -178,9 +187,12 @@ exports.circulator_full_headers = [
     ];
 exports.circulator_qpl_headers = [
         'rating_id',
+        'brand',
         'basic_model',
         'manufacturer_model',
         'alternative_part_number',
+        'type',
+        'waip',
         'least_pei',
         'least_energy_rating',
         'most_pei',
