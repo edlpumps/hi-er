@@ -22,13 +22,17 @@ block content
                 a(href="#") C&amp;I Pumps
               li
                 a(href="/circulator/ratings") Circulator Pumps
-             .form-group
+             .form-group(style="margin-bottom:7px")
                label.col-sm-3.control-label Rating ID
-               .col.col-sm-6
+               .col.visible-xs-block.col-sm-6(style="padding-bottom:7px")
+                 input.form-control(ng-model="app.search.rating_id", type="text", ng-change="app.is_valid_search_variables()")
+               .col.hidden-xs.col-sm-6
                  input.form-control(ng-model="app.search.rating_id", type="text", ng-change="app.is_valid_search_variables()")
              .form-group
                label.col-sm-3.control-label Basic Model<br>Manufacturer Model<br>Alternative Part Number
-               .col.col-sm-6
+               .col.visible-xs-block.col-sm-6
+                 input.form-control(ng-model="app.search.basic_model", type="text", ng-change="app.is_valid_search_variables()")
+                .col.hidden-xs.col-sm-6(style="padding-top:20px")
                  input.form-control(ng-model="app.search.basic_model", type="text", ng-change="app.is_valid_search_variables()")
              .form-group
                label.col-sm-3.control-label Participating Organization

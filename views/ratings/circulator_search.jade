@@ -158,13 +158,17 @@ block content
 									a(href="/ratings/search") C&amp;I Pumps
 								li.active
 									a(href="#") Circulator Pumps
-							.form-group
+							.form-group(style="margin-bottom:7px;")
 									label.col-sm-3.control-label Rating ID
-									.col.col-sm-6
+									.col.visible-xs-block.col-sm-6(style="padding-bottom:7px")
+										input.form-control(v-model="search.rating_id", type="text")
+									.col.hidden-xs.col-sm-6
 										input.form-control(v-model="search.rating_id", type="text")
 							.form-group
 									label.col-sm-3.control-label Basic Model<br>Manufacturer Model<br>Alternative Part Number
-									.col.col-sm-6
+									.col.visible-xs-block.col-sm-6
+										input.form-control(v-model="search.basic_model", type="text")
+									.col.hidden-xs.col-sm-6(style="padding-top:20px")
 										input.form-control(v-model="search.basic_model", type="text")
 							.form-group
 									label.col-sm-3.control-label Participating Organization
