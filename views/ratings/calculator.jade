@@ -70,9 +70,10 @@ mixin calculator(er, mode)
                   .col.col-xs-7.col-sm-4
                     input.form-control(type="text" ng-model="app.pump.individual_model" name="pump[individual_model]")
 
-            .row.form-group(ng-show="revision || app.pump.alternative_part_number")
+            .row.form-group
                   .col.col-xs-5
                     label.text-primary Alternative Model Number
+                    +help(help.alternative_part_number, er)
                   .col.col-xs-7.col-sm-4
                     input.form-control(type="text" ng-model="app.pump.alternative_part_number" name="pump[alternative_part_number]")
 
@@ -194,7 +195,7 @@ mixin calculator(er, mode)
                   .col.col-xs-7
                     .form-control-static {{app.pump.basic_model}} / {{app.pump.individual_model}}
 
-            .row(ng-show="revision || app.pump.alternative_part_number")
+            .row
                 .form-group
                   .col.col-xs-5
                     label Alternative Model Number:
@@ -270,8 +271,8 @@ mixin calculator(er, mode)
                   .col.col-xs-7
                     .form-control-static {{app.pump.basic_model}} / {{app.pump.individual_model}}
 
-            .row(ng-show="revision || app.pump.alternative_part_number")
-                .form-group
+            .row
+                .form-group(ng-show="app.pump.revision || app.pump.alternative_part_number")
                   .col.col-xs-5
                     label Alternative Model Number:
                   .col.col-xs-7
@@ -468,12 +469,12 @@ mixin calculator(er, mode)
                          th.col-label 
                          | Values at Nominal Speed of Rotation
                          +help(help.rep_nominal_speed, er)
-                       th(ng-show='app.pump.load120')@ 75% BEP
-                       th(ng-show='app.pump.load120')@ 100% BEP
-                       th(ng-show='app.pump.load120')@ 110% BEP
-                       th(ng-hide='app.pump.load120')@ 65% BEP
-                       th(ng-hide='app.pump.load120')@ 90% BEP
-                       th(ng-hide='app.pump.load120')@ 100% BEP
+                       th(ng-show='app.pump.load120') @ 75% BEP
+                       th(ng-show='app.pump.load120') @ 100% BEP
+                       th(ng-show='app.pump.load120') @ 110% BEP
+                       th(ng-hide='app.pump.load120') @ 65% BEP
+                       th(ng-hide='app.pump.load120') @ 90% BEP
+                       th(ng-hide='app.pump.load120') @ 100% BEP
                        th(ng-show="app.bep120_visible()") @ 120% BEP
                     tbody
                       tr(ng-show='app.pump.load120')
