@@ -148,6 +148,11 @@ const extract_row = (sheet, rowNumber, labs) => {
     row.brand = readCell(sheet, BRAND_COLUMN, rowNumber);
     row.basic_model = readCell(sheet, BASIC_MODEL_COLUMN, rowNumber);
     row.manufacturer_model = readCell(sheet, MANUFACTURER_MODEL_COLUMN, rowNumber);
+    //Check the basic required columns
+    // if (!row.participant && !row.brand && !row.basic_model && !row.manufacturer_model) {
+    //     // Skip this row
+    //     return null;
+    // }
     row.alternative_part_number = readCell(sheet, ALTERNATIVE_PART_NUMBER_COLUMN, rowNumber);
     row.type = readCell(sheet, PUMP_TYPE_COLUMN, rowNumber);
     row.laboratory = findLab(readCell(sheet, LABORATORY_COLUMN, rowNumber), labs);
@@ -182,7 +187,7 @@ const extract_row = (sheet, rowNumber, labs) => {
         row.failure.push('No control methods specified');
     }
     if (row.control_methods.indexOf(lc.label) < 0) {
-        row.failure.push('Control method conflict');
+        row.failure.push('Most efficient control method is not marked as YES in the appropriate column');
     }
 
     const pump_types = ['CP1', 'CP2', 'CP3'];
@@ -231,7 +236,7 @@ const extract_row = (sheet, rowNumber, labs) => {
 
     if (mc) {
         if (row.control_methods.indexOf(mc.label) < 0) {
-            row.failure.push('Control method conflict');
+            row.failure.push('Least efficient control method is not marked as YES in the appropriate column');
         }
         if (mc.number <= 4) {
             try { 
@@ -361,13 +366,17 @@ const load_file = async (participant, labs, unit_set, filename) => {
         let input = undefined;
         while (row <= worksheet.rowCount) {
             input = extract_row(worksheet, row, labs);
+            if (!input) {
+                //Skip blank row
+                continue;
+            }
             // The first colum was the participant, but this
             // isn't honored - the logged in user is associated
             // with a participant account, and this is the only
             // participant the pumps can be listed under.
             input.participant = participant;
 
-            if (input.failure) {
+            if (input.failure.length) {
                 result.failed.push(input);
             } else {
                 apply_units(input, unit_set);
