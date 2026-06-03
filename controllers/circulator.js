@@ -280,8 +280,7 @@ const extract_row = (sheet, rowNumber, labs) => {
     row.least.pei_validity = results.pei_validity;
     if (row.least.pei_validity == 'RE-TEST') {
         const v = mc ? '(most efficient)' : '';
-        row.failure = `PEI Input is too low ${v}.  Please re-test`;
-        return row;
+        row.failure.push(`PEI Input is too low ${v}.  Please re-test`);
     }
     if (mc) {
         const most = {
@@ -298,8 +297,7 @@ const extract_row = (sheet, rowNumber, labs) => {
         row.most.waip = results.waip;
         row.most.pei_validity = results.pei_validity;
         if (row.most.pei_validity == 'RE-TEST') {
-            row.failure = 'PEI Input is too low (least efficient).  Please re-test';
-            return row;
+            row.failure.push('PEI Input is too low (least efficient).  Please re-test');
         }
     }
 
@@ -540,7 +538,7 @@ const conflict = (e, i) => {
 const check_method_conflict = (pump) => {
     if (pump.least && pump.most) {
         if (pump.least.energy_rating < pump.most.energy_rating) {
-            pump.failure = 'Most efficient measure must have higher energy rating than least efficient.';
+            pump.failure.push('Most efficient measure must have higher energy rating than least efficient.');
         }
     }
 }
@@ -553,12 +551,12 @@ exports.check_import = (importing, existing) => {
             return conflict(e, _import)
         });
         if (conflicts.length > 0) {
-            _import.failure = "Manufacturer number or energy rating conflicts with another active pump under the same basic model number"
+            _import.failure.push("Manufacturer number or energy rating conflicts with another active pump under the same basic model number");
             continue;
         }
         for (let k = 0; k < i; k++) {
             if (conflict(_import, importing[k])) {
-                _import.failure = "Manufactuer number or energy rating conflicts with a pump already being imported"
+                _import.failure.push("Manufactuer number or energy rating conflicts with a pump already being imported");
             }
         }
     }
