@@ -131,6 +131,7 @@ const resolve_control_method = (sheet, column, row) => {
             return control_method;
         }
     }
+    return "INVALID";
 }
 
 
@@ -159,23 +160,33 @@ const extract_row = (sheet, rowNumber, labs) => {
     if (!row.laboratory) {
         row.failure.push("Laboratory does not match an approved HI lab");
     }
-    const lc = resolve_control_method(sheet, LC_CONTROL_METHOD_COLUMN, rowNumber);
-    if (lc) {
-        row.least = {
-            control_method: lc.label,
-            pressure_curve: readCell(sheet, "P", rowNumber)
-        }
-    } else {
-        row.failure.push('No control methods specified');
-    }
 
-    const mc = resolve_control_method(sheet, MC_CONTROL_METHOD_COLUMN, rowNumber);
-    if (mc) {
-        row.most = {
-            control_method: mc.label,
-            pressure_curve: readCell(sheet, "Q", rowNumber)
-        }
+    let mc = resolve_control_method(sheet, MC_CONTROL_METHOD_COLUMN, rowNumber);
+    if (mc == "INVALID") {
+        row.failure.push('Invalid Least Efficient control method');
+        mc = undefined;
     }
+    else if (mc) {
+            row.most = {
+                control_method: mc.label,
+                pressure_curve: readCell(sheet, "Q", rowNumber)
+            }
+        } 
+ 
+    let lc = resolve_control_method(sheet, LC_CONTROL_METHOD_COLUMN, rowNumber);
+    if (lc == "INVALID")  { 
+        row.failure.push('Invalid Most Efficient control method');
+        lc = undefined;
+    }
+    else if (lc) {
+            row.least = {
+                control_method: lc.label,
+                pressure_curve: readCell(sheet, "P", rowNumber)
+            }
+        } else {
+            if (mc) row.failure.push('No Most Efficient control method specified');
+            else row.failure.push('No control method specified')
+        }
 
     row.control_methods = [];
     for (const control_method of control_methods) {
@@ -186,53 +197,35 @@ const extract_row = (sheet, rowNumber, labs) => {
     if (row.control_methods.length < 1) {
         row.failure.push('No control methods specified');
     }
-    if (row.control_methods.indexOf(lc.label) < 0) {
-        row.failure.push('Most efficient control method is not marked as YES in the appropriate column');
-    }
+    
+    if (lc) {
+        if (row.control_methods.indexOf(lc.label) < 0) {
+            row.failure.push('Most efficient control method is not marked as YES in the appropriate column');
+        }
 
-    const pump_types = ['CP1', 'CP2', 'CP3'];
-    for (const t of pump_types) {
-        if (row.type.indexOf(t) >= 0) {
-            row.type = t;
-        }
-    }
-    try { 
-        row.head = readNumericArray(sheet, ["AD", "AE", "AF", "AG"], rowNumber); 
-        if (row.head.length != 4) {
-            row.failure.push('Four head data points are required');
-        }
-    } 
-    catch (ex) { row.failure.push(ex.message); } 
-    try { 
-        row.flow = readNumeric(sheet, "AH", rowNumber);
-        if (isNaN(row.flow)) {
-            row.failure.push('Flow Rate is required');
-        }
-    } catch (ex) { row.failure.push(ex.message); }
-    try { 
-        row.least.pei = readNumeric(sheet, "AI", rowNumber); 
-        if (isNaN(row.least.pei)) {
-            row.failure.push('PEI for most efficient method is required');
-        }
-        } catch (ex) { row.failure.push(ex.message); }
-
-    if (lc.number <= 4) {
         try { 
-            row.least.input_power = readNumericArray(sheet, ["R", "S", "T", "U"], rowNumber); 
-            if (row.least.input_power.length !== 4) {
-                row.failure.push('Most efficient method specified requires four power inputs');
+            row.least.pei = readNumeric(sheet, "AI", rowNumber); 
+            if (isNaN(row.least.pei)) {
+                row.failure.push('PEI for most efficient method is required');
             }
-        } catch (ex) { row.failure.push(ex.message); }
-    } else {
-        try { 
-            row.least.input_power = readNumericArray(sheet, ["V", "W"], rowNumber);
-            if (row.least.input_power.length !== 2) {
-                row.failure.push('Most efficient method specified requires max/reduced power inputs');
-            }
-        } catch (ex) { row.failure.push(ex.message); }
+            } catch (ex) { row.failure.push(ex.message); }
+
+        if (lc.number <= 4) {
+            try { 
+                row.least.input_power = readNumericArray(sheet, ["R", "S", "T", "U"], rowNumber); 
+                if (row.least.input_power.length !== 4) {
+                    row.failure.push('Most efficient method specified requires four power inputs');
+                }
+            } catch (ex) { row.failure.push(ex.message); }
+        } else {
+            try { 
+                row.least.input_power = readNumericArray(sheet, ["V", "W"], rowNumber);
+                if (row.least.input_power.length !== 2) {
+                    row.failure.push('Most efficient method specified requires max/reduced power inputs');
+                }
+            } catch (ex) { row.failure.push(ex.message); }
+        }
     }
-
-
 
     if (mc) {
         if (row.control_methods.indexOf(mc.label) < 0) {
@@ -260,6 +253,27 @@ const extract_row = (sheet, rowNumber, labs) => {
         } catch (ex) { row.failure.push(ex.message); }
     }
 
+    
+    const pump_types = ['CP1', 'CP2', 'CP3'];
+    for (const t of pump_types) {
+        if (row.type.indexOf(t) >= 0) {
+            row.type = t;
+        }
+    }
+    try { 
+        row.head = readNumericArray(sheet, ["AD", "AE", "AF", "AG"], rowNumber); 
+        if (row.head.length != 4) {
+            row.failure.push('Four head data points are required');
+        }
+    } 
+    catch (ex) { row.failure.push(ex.message); } 
+    try { 
+        row.flow = readNumeric(sheet, "AH", rowNumber);
+        if (isNaN(row.flow)) {
+            row.failure.push('Flow Rate is required');
+        }
+    } catch (ex) { row.failure.push(ex.message); }
+
     if (row.failure.length > 0 ) {
         return row;
     }
@@ -280,8 +294,7 @@ const extract_row = (sheet, rowNumber, labs) => {
     row.least.pei_validity = results.pei_validity;
     if (row.least.pei_validity == 'RE-TEST') {
         const v = mc ? '(most efficient)' : '';
-        row.failure = `PEI Input is too low ${v}.  Please re-test`;
-        return row;
+        row.failure.push(`PEI Input is too low ${v}.  Please re-test`);
     }
     if (mc) {
         const most = {
@@ -298,8 +311,7 @@ const extract_row = (sheet, rowNumber, labs) => {
         row.most.waip = results.waip;
         row.most.pei_validity = results.pei_validity;
         if (row.most.pei_validity == 'RE-TEST') {
-            row.failure = 'PEI Input is too low (least efficient).  Please re-test';
-            return row;
+            row.failure.push('PEI Input is too low (least efficient).  Please re-test');
         }
     }
 
@@ -540,7 +552,7 @@ const conflict = (e, i) => {
 const check_method_conflict = (pump) => {
     if (pump.least && pump.most) {
         if (pump.least.energy_rating < pump.most.energy_rating) {
-            pump.failure = 'Most efficient measure must have higher energy rating than least efficient.';
+            pump.failure.push('Most efficient measure must have higher energy rating than least efficient.');
         }
     }
 }
@@ -553,12 +565,12 @@ exports.check_import = (importing, existing) => {
             return conflict(e, _import)
         });
         if (conflicts.length > 0) {
-            _import.failure = "Manufacturer number or energy rating conflicts with another active pump under the same basic model number"
+            _import.failure.push("Manufacturer number or energy rating conflicts with another active pump under the same basic model number");
             continue;
         }
         for (let k = 0; k < i; k++) {
             if (conflict(_import, importing[k])) {
-                _import.failure = "Manufactuer number or energy rating conflicts with a pump already being imported"
+                _import.failure.push("Manufactuer number or energy rating conflicts with a pump already being imported");
             }
         }
     }

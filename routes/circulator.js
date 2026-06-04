@@ -77,9 +77,11 @@ router.post("/upload", aw(async (req, res) => {
     let result = await Circulator.load_file(req.participant, req.labs, units.US, req.files.template.file);
     const existing = await req.Circulators.find({}, 'basic_model manufacturer_model listed least.energy_rating most.energy_rating');
     result.ready = Circulator.check_import(result.ready, existing);
+    //Add any failures to the failed queue
     for (const f of result.ready.filter(r => r.failure.length)) {
         result.failed.push(f);
     }
+    //Remove failures from the ready queue
     result.ready = result.ready.filter(r => !r.failure.length);
 
     res.render("participant/circulator_upload_confirm", {
@@ -118,9 +120,11 @@ router.post("/save_upload", aw(async (req, res) => {
         pump.pending = !list_now;
         pump.listed = list_now;
         pump.participant = req.participant._id;
-        // Ignore what's in the spreadsheet - the participant name attached to the pump
-        // must always be the currently logged in participant.
-
+        // Delete the failure key if there's no information to prevent an exception
+        if (pump.failure && Array.isArray(pump.failure)) {
+            if (pump.failure.length) pump.failure=(pump.failure).join(', ');
+            else delete pump.failure
+        }
         const toSave = new req.Circulators(pump);
         toSave.revisions.push({
             date: new Date(),
