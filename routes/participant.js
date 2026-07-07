@@ -376,6 +376,54 @@ router.get("/pumps/upload", function (req, res) {
     });
 })
 
+router.get("/pumps/upload_update", function (req, res) {
+    const template = require('./template_map.json');
+    req.log.debug("Rendering participant pump upload");
+    res.render("participant/upload_update", {
+        user: req.user,
+        participant: req.participant,
+        template: {
+            version: template.config.version,
+            revision_date: template.config.revision_date
+        }
+    });
+})
+
+router.post("/pumps/save_upload_update", aw(async (req, res) => {
+    if (!req.user.participant_edit) {
+        req.log.info("Submit pump attempted by unauthorized user");
+        req.log.info(req.user);
+        res.redirect("/unauthorized");
+        return;
+    }
+    var pumps = JSON.parse(req.body.pumps);
+    for (const pump of pumps) {
+        pump.date = new Date();
+        pump.participant = req.participant._id;
+        if (pump.brand) pump.brand = pump.brand.trim();
+        if (pump.basic_model) pump.basic_model = pump.basic_model.trim();
+        if (pump.individual_model) pump.individual_model = pump.individual_model.trim();
+        // Ignore what's in the spreadsheet - the participant name attached to the pump
+        // must always be the currently logged in participant.
+
+        const orig = await req.Pumps.findOne({rating_id: pump.rating_id}).exec();
+        pump.listed = orig.listed;
+        pump.pending = orig.pending;
+        delete pump._id; //Delete this because it doesn't need to get updated
+        delete pump.participant; //Delete this because it comes across as a string vs an Object. And it doesn't need to be updated.
+        pump.revisions = orig.revisions;
+        pump.revisions.push({
+            note: "Bulk Update",
+            date: new Date()
+        })
+        Object.assign(orig, pump);
+        await orig.save();
+        req.log.info(orig.rating_id + " saved");
+    }
+    res.redirect("/participant/pumps");
+
+}));
+
 router.post("/pumps/save_upload", aw(async (req, res) => {
     if (!req.user.participant_edit) {
         req.log.info("Submit pump attempted by unauthorized user");
@@ -418,7 +466,6 @@ router.post("/pumps/save_upload", aw(async (req, res) => {
     res.redirect("/participant/pumps");
 
 }));
-
 
 var find_lab = function (imported, labs) {
     console.log(imported, labs.map(l => l.code));
@@ -596,11 +643,175 @@ router.post("/pumps/upload", get_labels, aw(async (req, res) => {
         user: req.user,
         participant: req.participant,
         succeeded: pumps_succeeded,
-        failed: pumps_failed
+        failed: pumps_failed,
+        is_update: false
     });
 
 
 
+}));
+
+router.post("/pumps/upload_update", get_labels, aw(async (req, res) => {
+    if (!req.files || !req.files.template) {
+        res.send('No files were uploaded.');
+        return;
+    }
+    var workbook = new Excel.Workbook();
+
+    // Load all the laboratories for this participant
+    const labs = await req.Labs.find({
+        _id: {
+            $in: req.participant.labs
+        }
+    }).exec();
+    await workbook.xlsx.readFile(req.files.template.file);
+    const pumps_succeeded = [];
+    const pumps_failed = [];
+    const parse_warning = [];
+    const template = require('./template_map.json');
+    var r = template.config.first_row;
+    var worksheet = workbook.getWorksheet(1);
+    var first_cell = null;
+    var done = false;
+    while (!done) {
+        parse_warning.length = 0;
+        //This is the energy rating they are updating
+        first_cell = worksheet.getCell(template.mappings.participant.column + r)
+
+        if (first_cell.value) {
+            var pump = {};
+            pump.row = r;
+            var load120Cell = worksheet.getCell(template.mappings.bep120.column + r);
+            var load120 = common.map_boolean_input(load120Cell.value);
+
+            for (var mapping in template.mappings) {
+                var prop = template.mappings[mapping];
+                var cell = worksheet.getCell(prop.column + r);
+                var value = cell.value;
+                if (!value) value = "";
+                if (typeof value === 'object' && "formula" in value) {
+                    if ("result" in value)
+                        value = value.result;
+                    parse_warning.push("Column ["+prop.column+"] contains a formula. Formulas should not be used.");
+                }
+
+                if (value && value.trim) value = value.trim();
+                var enabled = true;
+                if (mapping == "configuration") {
+                    value = common.map_config_input(value);
+                }
+                if (mapping == "motor_type") {
+                    value = common.map_type_input(value);
+                }
+                if (prop.boolean) {
+                    value = common.map_boolean_input(value);
+                }
+                if (prop.bep120) {
+                    if (prop.bep120 == "no" && load120) {
+                        enabled = false;
+                    } else if (prop.bep120 == "yes" && !load120) {
+                        enabled = false;
+                    }
+                }
+                if (enabled && !prop.output_only) {
+                    if (prop.path2 && !load120) {
+                        // this property gets pulled from an alternative path if pump is tested @ 120 BEP
+                        _.set(pump, prop.path2, value);
+                    } else {
+                        _.set(pump, prop.path, value);
+                    }
+                }
+            }
+            pump.parse_warning = parse_warning;
+
+            // strip out driver/control if not used.
+            if (!pump.driver_input_power.bep100) {
+                delete pump.driver_input_power;
+            }
+            if (!pump.control_power_input.bep100) {
+                delete pump.control_power_input;
+            }
+            if (pump.flow && load120) {
+                pump.flow.bep75 = pump.flow.bep100 * 0.75;
+                pump.flow.bep110 = pump.flow.bep100 * 1.1;
+            } else if (pump.flow && !load120) {
+                pump.flow.bep75 = pump.flow.bep110 * 0.65;
+                pump.flow.bep100 = pump.flow.bep110 * 0.9;
+            }
+
+
+            pump.unit_set = req.session.unit_set;
+            pump = units.convert_to_us(pump);
+
+            var calculator = require("../calculator");
+            var results = calculator.calculate(pump, req.current_labels);
+            pump.results = results;
+
+            pump.active_admin = results.active_admin;
+            pump.note_admin = results.note_admin;
+
+            pump.energy_rating = pump.results.energy_rating;
+            pump.energy_savings = pump.results.energy_savings;
+            // Change requested by HI - 12/21/2018.
+            // Instead of using pei_baseline, always use 1.
+            pump.pei_baseline = 1 /*pump.results.pei_baseline*/;
+            delete pump.results.pump;
+
+            pump.laboratory = find_lab(pump.laboratory, labs);
+            pump.doe = map_doe(pump.doe.trim());
+            pump.participant = req.participant._id;
+            if (pump.results.success && !pump.doe) {
+                pump.results.success = false;
+                if (!pump.results.reasons) pump.results.reasons = [];
+                pump.results.reasons.push("The pump must have a recognized DOE category.")
+            }
+
+            if (pump.results.success && !pump.laboratory) {
+                pump.results.success = false;
+                if (!pump.results.reasons) pump.results.reasons = [];
+                pump.results.reasons.push("The laboratory specified for this pump is not one of your organization's active HI Laboratories.")
+            }
+
+            //Retrieve the pump
+            let rating_id_cell = worksheet.getCell(template.mappings.rating_id.column + r);
+            if (!rating_id_cell.value) {
+                pump.results.success = false;
+                if (!pump.results.reasons) pump.results.reasons = [];
+                pump.results.reasons.push("There is no rating id for this pump in the template's Rating ID column.");
+            }
+            else {
+                pump.rating_id = rating_id_cell.value;
+                const original = await req.Pumps.findOne({rating_id: rating_id_cell.value}).lean().exec();
+                if (!original) {
+                    pump.results.success = false;
+                    if (!pump.results.reasons) pump.results.reasons = [];
+                    pump.results.reasons.push("The rating id is invalid.")
+                }
+            }
+
+            if (pump.parse_warning.length) {
+                pump.results.success = false;
+                if (!pump.results.reasons) pump.results.reasons = [];
+                pump.results.reasons.push(...pump.parse_warning);
+            }
+            if (pump.results.success) {
+                pumps_succeeded.push(pump);
+            } else {
+                pumps_failed.push(pump)
+            }
+            r++;
+            console.log(pump);
+        } else {
+            done = true;
+        }
+    }
+    res.render("participant/upload_confirm", {
+        user: req.user,
+        participant: req.participant,
+        succeeded: pumps_succeeded,
+        failed: pumps_failed,
+        is_update: true
+    });
 }));
 
 router.get('/pumps/download', aw(async (req, res) => {
