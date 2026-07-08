@@ -288,6 +288,7 @@
             "column": "AO",
             "path": "rating_id",
             "output_only": true,
+            "update_only": true,
             "text": true
         },
         "listing_date": {
@@ -310,6 +311,12 @@
             "output_only": true,
             "text": true,
             "align": "right"
+        },
+        "revision_note": {
+            "column": "AS",
+            "path": "revision_note",
+            "update_only": true,
+            "text": true
         }
     }
 

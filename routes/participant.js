@@ -413,9 +413,10 @@ router.post("/pumps/save_upload_update", aw(async (req, res) => {
         delete pump.participant; //Delete this because it comes across as a string vs an Object. And it doesn't need to be updated.
         pump.revisions = orig.revisions;
         pump.revisions.push({
-            note: "Bulk Update",
+            note: pump.revision_note,
             date: new Date()
         })
+        delete pump.revision_note;
         Object.assign(orig, pump);
         await orig.save();
         req.log.info(orig.rating_id + " saved");
@@ -697,6 +698,9 @@ router.post("/pumps/upload_update", get_labels, aw(async (req, res) => {
 
                 if (value && value.trim) value = value.trim();
                 var enabled = true;
+                if (mapping == "revision_note") {
+                    if (!value) { value = "Bulk Update";}
+                }
                 if (mapping == "configuration") {
                     value = common.map_config_input(value);
                 }
@@ -713,7 +717,8 @@ router.post("/pumps/upload_update", get_labels, aw(async (req, res) => {
                         enabled = false;
                     }
                 }
-                if (enabled && !prop.output_only) {
+
+                if (enabled && (!prop.output_only || prop.update_only)) {
                     if (prop.path2 && !load120) {
                         // this property gets pulled from an alternative path if pump is tested @ 120 BEP
                         _.set(pump, prop.path2, value);
@@ -772,21 +777,41 @@ router.post("/pumps/upload_update", get_labels, aw(async (req, res) => {
                 pump.results.reasons.push("The laboratory specified for this pump is not one of your organization's active HI Laboratories.")
             }
 
-            //Retrieve the pump
-            let rating_id_cell = worksheet.getCell(template.mappings.rating_id.column + r);
-            if (!rating_id_cell.value) {
+            if (!pump.rating_id) {
                 pump.results.success = false;
                 if (!pump.results.reasons) pump.results.reasons = [];
-                pump.results.reasons.push("There is no rating id for this pump in the template's Rating ID column.");
+                pump.results.reasons.push("A Rating ID is required to update a pump.");
             }
             else {
-                pump.rating_id = rating_id_cell.value;
-                const original = await req.Pumps.findOne({rating_id: rating_id_cell.value}).lean().exec();
-                if (!original) {
+                const pump_from_rating_id = await req.Pumps.findOne({rating_id: pump.rating_id}).lean().exec();
+                if (!pump_from_rating_id) { //Is the rating ID valid?
                     pump.results.success = false;
                     if (!pump.results.reasons) pump.results.reasons = [];
-                    pump.results.reasons.push("The rating id is invalid.")
+                    pump.results.reasons.push("Cannot find the Rating ID in the database.")
                 }
+                else { //Make sure the participant, brand and basic model have not changed.
+                    if ((pump_from_rating_id.participant.toLocaleString() != pump.participant.toLocaleString()) ||
+                    (pump_from_rating_id.brand != pump.brand) || (pump_from_rating_id.basic_model != pump.basic_model)) {
+                        pump.results.success = false;
+                        if (!pump.results.reasons) pump.results.reasons = [];
+                        pump.results.reasons.push("Check the Rating ID. The participant, brand and basic_model cannot be changed on a bulk update.")   
+                    }
+                }
+                /*else { //If rating ID is valid, get the basic model from the database
+                    const pump_from_basic_model = await req.Pumps.findOne({basic_model: pump.basic_model}).lean().exec();
+                    if (!pump_from_basic_model) {
+                        pump.results.success = false;
+                        if (!pump.results.reasons) pump.results.reasons = [];
+                        pump.results.reasons.push("Cannot find the Basic Model in the database.")
+                    }
+                    else {
+                        if (pump_from_basic_model.basic_model != pump_from_rating_id.basic_model) { //Compare the two.
+                            pump.results.success = false;
+                            if (!pump.results.reasons) pump.results.reasons = [];
+                            pump.results.reasons.push("Is this the correct Rating ID? The Basic Model in the Template [" + pump.basic_model + "] does not match the Rating ID Basic Model in the database ["+ pump_from_rating_id.basic_model + "].")
+                        }
+                    }
+                }*/
             }
 
             if (pump.parse_warning.length) {
