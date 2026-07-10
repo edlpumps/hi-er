@@ -6,18 +6,20 @@ const common = require('./common');
 router.get('/', function(req, res) {
     var help = require("../public/resources/help.json");
     //PEI Calculator Enabled code
-    if (true) {
+    if (false) {
     req.log.debug("Rendering PEI calculator in standalone mode");
     res.render("ratings/standalone", {
         help:help
     });
+    res.render()
     }
-    else {
-        req.log.debug("PEI Calculator DISABLED");
-        req.flash("errorTitle", "Pump Energy Index Calculator");
-        req.flash("errorMessage", "We apologize, but the PEI Calculator is disabled until the updated regulatory rules are published and available.  Please check back again later. (Posted: 02/21/2024)");
-        res.redirect("/error");
-    }
+
+    //PEI Calculator Disabled Code
+    //Disabled 02/21/2024
+    req.log.debug("PEI Calculator DISABLED");
+    req.flash("errorTitle", "Pump Energy Index Calculator");
+    req.flash("errorMessage", "We apologize, but the PEI Calculator is disabled until the updated regulatory rules are published and available.  Please check back again later. (Posted: 02/21/2024)");
+    res.redirect("/error");
 });
 
 var get_labels = function(req, res, next) {
