@@ -1,2 +1,5 @@
 {
+    "terminal.integrated.env.windows": {
+        "PATH": "C:\\Users\\glade\\AppData\\Local\\nvm;${env:PATH}"
+    }
 }
