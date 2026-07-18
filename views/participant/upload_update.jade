@@ -9,7 +9,7 @@ block content
     .container
       .panel.panel-default
         .panel-heading 
-            h1 Upload C&amp;I Pump Listings
+            h1 Update C&amp;I Pump Listings
         .panel-body
           .row
             .col.col-md-12
@@ -17,27 +17,28 @@ block content
           .row
             .col.col-md-12
               p
-               strong
-                a(href="/participant/template") Download the template. 
-                | The current version for the upload template is #{template.version}, which was last updated on #{template.revision_date}.
+                strong
+                  a(href="/participant/template") Download the template. 
+                  | The current version for the upload template is #{template.version}, which was last updated on #{template.revision_date}.
             
               
           .row
             .col.col-md-12
               h2 Step 2 - Upload spreadsheet
-          form(action="upload", method="post", enctype="multipart/form-data")
+          form(action="upload_update", method="post", enctype="multipart/form-data")
            .row
             .col.col-md-6
               .form-group
                 label Select file
                 input.form-control(type="file",name="template", size="40")
               .form-group
-                button(type="submit")#go.btn.btn-primary Upload and list pumps
+                button(type="submit")#go.btn.btn-primary Upload and update pumps
             .col.col-md-6
               .alert(class=(units.active=="US" ? "alert-warning" : "alert-info"))
+                strong MAKE SURE TO INCLUDE THE RATING ID IN THE RATING_ID COLUMN IN THE TEMPLATE
                 p
                   strong Formulas should not be used in the spreadsheet; only raw values are accepted.
-                p
+                p 
                   strong Your active unit set is #{units.active} units.  All data in your template should be in the associated units. 
                 ul(style="margin-top:1em;margin-bottom:1em")
                   li Flow should be in #{units.flow.label}
