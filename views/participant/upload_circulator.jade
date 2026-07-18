@@ -15,9 +15,10 @@ block content
               h2 Step 1 - Populate spreadsheet template
           .row
             .col.col-md-12
-              p.strong
-               a(href="/participant/circulators/template") Download the template. 
-               | The current version for the upload template is #{template.version}, which was last updated on #{template.revision_date}.
+              p
+                strong
+                  a(href="/participant/circulators/template") Download the template. 
+                  | The current version for the upload template is #{template.version}, which was last updated on #{template.revision_date}.
             
               
           .row
@@ -33,8 +34,10 @@ block content
                 button(type="submit")#go.btn.btn-primary Upload and list pumps
             .col.col-md-6
               .alert(class=(units.active=="US" ? "alert-warning" : "alert-info"))
-                p.strong Formulas should not be used in the spreadsheet; only raw values are accepted.
-                p.strong Your active unit set is #{units.active} units.  All data in your template should be in the associated units. 
+                p
+                  strong Formulas should not be used in the spreadsheet; only raw values are accepted.
+                p
+                  strong Your active unit set is #{units.active} units.  All data in your template should be in the associated units. 
                 ul(style="margin-top:1em;margin-bottom:1em")
                   li Flow should be in #{units.flow.label}
                   li Head should be in #{units.head.label}
